@@ -134,7 +134,6 @@ export function PricingCalculator({ product }: { product: Product }) {
           <View style={styles.plans}>
             {pricing.plans.map((p) => {
               const on = cfg.plan === p.id;
-              const shown = cfg.billing === 'yearly' ? (p.monthly * ANNUAL_MONTHS) / 12 : p.monthly;
               return (
                 <Pressable
                   key={p.id}
@@ -146,11 +145,11 @@ export function PricingCalculator({ product }: { product: Product }) {
                   {p.popular ? <Text style={styles.popular}>{t(L.popular)}</Text> : null}
                   <Text style={styles.planName}>{t(p.name)}</Text>
                   <Text style={styles.planPrice}>
-                    {money(Math.round(shown * 100) / 100)}
+                    {money(p.monthly)}
                     <Text style={styles.planPer}>{t(L.perMo)}</Text>
                   </Text>
                   <Text style={styles.planBilled}>
-                    {cfg.billing === 'yearly' ? `${money(p.monthly * ANNUAL_MONTHS)} ${t(L.billedYearly)}` : t(L.billedMonthly)}
+                    {cfg.billing === 'yearly' ? `${money(p.monthly * ANNUAL_MONTHS)}${t(L.perYear)} ${t(L.billedYearly)} · ${lang === 'es' ? 'ahorras' : 'save'} ${money(p.monthly * (12 - ANNUAL_MONTHS))}` : t(L.billedMonthly)}
                   </Text>
                   <Text style={styles.planSetup}>{`+ ${money(p.setup)} ${t(L.setup)}`}</Text>
                   <View style={{ gap: 6, marginTop: 6 }}>
