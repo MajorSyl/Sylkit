@@ -10,7 +10,7 @@ import { supabase } from '../../src/lib/supabase';
 import { colors, shadow } from '../../src/theme';
 
 export default function AdminOrder() {
-  return <AdminGate title="Pedido">{() => <OrderDetail />}</AdminGate>;
+  return <AdminGate title="Order">{() => <OrderDetail />}</AdminGate>;
 }
 
 function OrderDetail() {
@@ -29,7 +29,7 @@ function OrderDetail() {
   const load = useCallback(async () => {
     if (!id) return setLoading(false);
     const [{ data: order }, { data: ev }] = await Promise.all([
-      supabase.from('orders').select('*, products(name_es)').eq('id', id).single(),
+      supabase.from('orders').select('*, products(name_en)').eq('id', id).single(),
       supabase.from('order_events').select('*').eq('order_id', id).order('created_at', { ascending: false }),
     ]);
     setO(order);
@@ -59,8 +59,8 @@ function OrderDetail() {
 
   const sendQuote = () => {
     const n = Number(amount.replace(',', '.'));
-    if (!n || n <= 0) return setMsg({ ok: false, text: 'Escribe un monto válido.' });
-    if (validUntil && !/^\d{4}-\d{2}-\d{2}$/.test(validUntil)) return setMsg({ ok: false, text: 'Fecha en formato AAAA-MM-DD.' });
+    if (!n || n <= 0) return setMsg({ ok: false, text: 'Enter a valid amount.' });
+    if (validUntil && !/^\d{4}-\d{2}-\d{2}$/.test(validUntil)) return setMsg({ ok: false, text: 'Use the date format YYYY-MM-DD.' });
     run(
       'quote',
       async () =>
@@ -68,14 +68,14 @@ function OrderDetail() {
           .from('orders')
           .update({ quote_amount: n, quote_notes: notes || null, quote_valid_until: validUntil || null, status: 'quoted' })
           .eq('id', id),
-      'Cotización enviada. El cliente la verá en su página y recibirá un correo.',
+      'Quote sent. The customer will see it on their page and get an email.',
     );
   };
 
   const setStatus = (status: OrderStatus, okText: string) =>
     run(status, async () => supabase.from('orders').update({ status }).eq('id', id), okText);
 
-  const saveNotes = () => run('notes', async () => supabase.from('orders').update({ admin_notes: adminNotes || null }).eq('id', id), 'Notas guardadas.');
+  const saveNotes = () => run('notes', async () => supabase.from('orders').update({ admin_notes: adminNotes || null }).eq('id', id), 'Notes saved.');
 
   const postUpdate = () => {
     if (update.trim().length < 3) return;
@@ -86,12 +86,12 @@ function OrderDetail() {
         if (!r.error) setUpdate('');
         return r;
       },
-      'Actualización publicada en la página del cliente.',
+      'Update posted to the customer page.',
     );
   };
 
   if (loading) return <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 60 }} />;
-  if (!o) return <Text style={adminStyles.muted}>Pedido no encontrado.</Text>;
+  if (!o) return <Text style={adminStyles.muted}>Order not found.</Text>;
 
   const sc = statusColor[o.status as OrderStatus];
   const trackUrl = `https://sylkit.com/track?t=${o.token}`;
@@ -100,7 +100,7 @@ function OrderDetail() {
   return (
     <View style={{ gap: 16 }}>
       <Link href="/admin" style={{ color: colors.primary, fontWeight: '700' }}>
-        ← Todos los pedidos
+        ← All orders
       </Link>
 
       <View style={[adminStyles.card, shadow]}>
@@ -108,11 +108,11 @@ function OrderDetail() {
           <View style={{ flex: 1, gap: 4, minWidth: 220 }}>
             <Text style={adminStyles.h1}>{o.order_number}</Text>
             <Text style={adminStyles.muted}>
-              {o.products?.name_es ?? 'Sistema a medida'} · {formatDate(o.created_at, 'es')} · idioma {o.lang.toUpperCase()}
+              {o.products?.name_en ?? 'Custom system'} · {formatDate(o.created_at, 'en')} · customer language {o.lang.toUpperCase()}
             </Text>
           </View>
           <View style={[styles.pill, { backgroundColor: sc.bg }]}>
-            <Text style={[styles.pillText, { color: sc.fg }]}>{statusLabel[o.status as OrderStatus].es}</Text>
+            <Text style={[styles.pillText, { color: sc.fg }]}>{statusLabel[o.status as OrderStatus].en}</Text>
           </View>
         </View>
       </View>
@@ -122,48 +122,48 @@ function OrderDetail() {
       <View style={styles.cols}>
         <View style={styles.col}>
           <View style={[adminStyles.card, shadow]}>
-            <Text style={adminStyles.h2}>Cliente</Text>
-            <Info label="Nombre" value={o.customer_name} />
-            <Info label="Empresa" value={o.business_name} />
-            <Info label="Correo" value={o.email} />
+            <Text style={adminStyles.h2}>Customer</Text>
+            <Info label="Name" value={o.customer_name} />
+            <Info label="Company" value={o.business_name} />
+            <Info label="Email" value={o.email} />
             <Info label="WhatsApp" value={o.whatsapp} />
-            <Info label="País" value={o.country} />
-            <Info label="Detalles" value={o.details} />
-            <Info label="Origen" value={o.source} />
+            <Info label="Country" value={o.country} />
+            <Info label="Details" value={o.details} />
+            <Info label="Source" value={o.source} />
             <View style={styles.actions}>
               {wa ? <Button label="WhatsApp" icon="logo-whatsapp" variant="whatsapp" onPress={() => Linking.openURL(`https://wa.me/${wa}`)} /> : null}
-              <Button label="Correo" icon="mail" variant="secondary" onPress={() => Linking.openURL(`mailto:${o.email}?subject=${encodeURIComponent(`Sylkit ${o.order_number}`)}`)} />
-              <Button label="Página del cliente" icon="open" variant="secondary" onPress={() => Linking.openURL(trackUrl)} />
+              <Button label="Email" icon="mail" variant="secondary" onPress={() => Linking.openURL(`mailto:${o.email}?subject=${encodeURIComponent(`Sylkit ${o.order_number}`)}`)} />
+              <Button label="Customer page" icon="open" variant="secondary" onPress={() => Linking.openURL(trackUrl)} />
             </View>
           </View>
 
           {o.payment_reference ? (
             <View style={[adminStyles.card, shadow]}>
-              <Text style={adminStyles.h2}>Pago reportado</Text>
-              <Info label="Método" value={o.payment_method} />
-              <Info label="Referencia" value={o.payment_reference} />
+              <Text style={adminStyles.h2}>Payment reported</Text>
+              <Info label="Method" value={o.payment_method} />
+              <Info label="Reference" value={o.payment_reference} />
               {o.status === 'payment_submitted' ? (
-                <Button label="Confirmar pago recibido" icon="checkmark-circle" onPress={() => setStatus('paid', 'Pago confirmado. Se notificó al cliente.')} loading={busy === 'paid'} />
+                <Button label="Confirm payment received" icon="checkmark-circle" onPress={() => setStatus('paid', 'Payment confirmed. Customer notified.')} loading={busy === 'paid'} />
               ) : null}
             </View>
           ) : null}
 
           <View style={[adminStyles.card, shadow]}>
-            <Text style={adminStyles.h2}>Notas internas</Text>
-            <Field label="Solo visibles para ti" value={adminNotes} onChangeText={setAdminNotes} multiline />
-            <Button label="Guardar notas" variant="secondary" onPress={saveNotes} loading={busy === 'notes'} />
+            <Text style={adminStyles.h2}>Internal notes</Text>
+            <Field label="Only visible to you" value={adminNotes} onChangeText={setAdminNotes} multiline />
+            <Button label="Save notes" variant="secondary" onPress={saveNotes} loading={busy === 'notes'} />
           </View>
         </View>
 
         <View style={styles.col}>
           <View style={[adminStyles.card, shadow]}>
-            <Text style={adminStyles.h2}>{o.quote_amount != null ? 'Cotización' : 'Enviar cotización'}</Text>
+            <Text style={adminStyles.h2}>{o.quote_amount != null ? 'Quote' : 'Send quote'}</Text>
             {o.quote_amount != null ? <Text style={styles.amount}>{formatMoney(o.quote_amount, o.quote_currency)}</Text> : null}
-            <Field label="Monto (USD)" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" placeholder="350" />
-            <Field label="Válida hasta (AAAA-MM-DD, opcional)" value={validUntil} onChangeText={setValidUntil} placeholder="2026-11-30" />
-            <Field label="Detalles para el cliente" value={notes} onChangeText={setNotes} multiline placeholder="Incluye instalación, capacitación y soporte por 1 año…" />
+            <Field label="Amount (USD)" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" placeholder="350" />
+            <Field label="Valid until (YYYY-MM-DD, optional)" value={validUntil} onChangeText={setValidUntil} placeholder="2026-11-30" />
+            <Field label="Details for the customer" value={notes} onChangeText={setNotes} multiline placeholder="Includes setup, training and 1 year of support…" />
             <Button
-              label={o.quote_amount != null ? 'Actualizar y reenviar cotización' : 'Enviar cotización'}
+              label={o.quote_amount != null ? 'Update and resend quote' : 'Send quote'}
               icon="send"
               onPress={sendQuote}
               loading={busy === 'quote'}
@@ -171,32 +171,32 @@ function OrderDetail() {
           </View>
 
           <View style={[adminStyles.card, shadow]}>
-            <Text style={adminStyles.h2}>Cambiar estado</Text>
+            <Text style={adminStyles.h2}>Change status</Text>
             <View style={styles.actions}>
-              <Button label="Pago confirmado" variant="secondary" onPress={() => setStatus('paid', 'Marcado como pagado.')} loading={busy === 'paid'} />
-              <Button label="En desarrollo" variant="secondary" onPress={() => setStatus('in_progress', 'Marcado en desarrollo.')} loading={busy === 'in_progress'} />
-              <Button label="Entregado" variant="secondary" onPress={() => setStatus('delivered', 'Marcado como entregado.')} loading={busy === 'delivered'} />
-              <Button label="Cancelar" variant="danger" onPress={() => setStatus('cancelled', 'Pedido cancelado.')} loading={busy === 'cancelled'} />
+              <Button label="Payment confirmed" variant="secondary" onPress={() => setStatus('paid', 'Marked as paid.')} loading={busy === 'paid'} />
+              <Button label="In progress" variant="secondary" onPress={() => setStatus('in_progress', 'Marked in progress.')} loading={busy === 'in_progress'} />
+              <Button label="Delivered" variant="secondary" onPress={() => setStatus('delivered', 'Marked as delivered.')} loading={busy === 'delivered'} />
+              <Button label="Cancel order" variant="danger" onPress={() => setStatus('cancelled', 'Order cancelled.')} loading={busy === 'cancelled'} />
             </View>
           </View>
 
           <View style={[adminStyles.card, shadow]}>
-            <Text style={adminStyles.h2}>Publicar actualización</Text>
-            <Field label="El cliente la verá en su historial" value={update} onChangeText={setUpdate} multiline placeholder="Ya tenemos el diseño listo, te lo mostramos el jueves." />
-            <Button label="Publicar" variant="secondary" icon="megaphone" onPress={postUpdate} loading={busy === 'update'} />
+            <Text style={adminStyles.h2}>Post an update</Text>
+            <Field label="The customer sees it in their order history" value={update} onChangeText={setUpdate} multiline placeholder="The design is ready; we'll show it to you on Thursday." />
+            <Button label="Post" variant="secondary" icon="megaphone" onPress={postUpdate} loading={busy === 'update'} />
           </View>
 
           <View style={[adminStyles.card, shadow]}>
-            <Text style={adminStyles.h2}>Historial</Text>
+            <Text style={adminStyles.h2}>History</Text>
             {events.map((e) => (
               <View key={e.id} style={{ flexDirection: 'row', gap: 10 }}>
                 <Ionicons name="ellipse" size={10} color={colors.cyan} style={{ marginTop: 5 }} />
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontWeight: '700', color: colors.text }}>
-                    {statusLabel[e.kind as OrderStatus]?.es ?? (e.kind === 'update' ? 'Actualización' : e.kind)}
+                    {statusLabel[e.kind as OrderStatus]?.en ?? (e.kind === 'update' ? 'Update' : e.kind)}
                   </Text>
                   {e.message ? <Text style={adminStyles.muted}>{e.message}</Text> : null}
-                  <Text style={{ fontSize: 12, color: colors.muted }}>{new Date(e.created_at).toLocaleString('es-VE')}</Text>
+                  <Text style={{ fontSize: 12, color: colors.muted }}>{new Date(e.created_at).toLocaleString('en-US')}</Text>
                 </View>
               </View>
             ))}

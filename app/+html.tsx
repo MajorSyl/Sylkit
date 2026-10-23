@@ -1,11 +1,11 @@
 import { ScrollViewStyleReset } from 'expo-router/html';
 import type { PropsWithChildren } from 'react';
 
-// Root HTML for every web page. The site has its own ES/EN switch,
-// so browser auto-translation is turned off (it garbled the toggle).
+// Root HTML for every web page. The site picks English or Spanish itself,
+// so browser auto-translation is turned off (it would double-translate).
 export default function Root({ children }: PropsWithChildren) {
   return (
-    <html lang="es" translate="no">
+    <html lang="en" translate="no">
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />

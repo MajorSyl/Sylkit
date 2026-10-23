@@ -7,10 +7,10 @@ import { supabase } from '../../src/lib/supabase';
 import { colors, shadow } from '../../src/theme';
 
 export default function AdminProducts() {
-  return <AdminGate title="Productos">{() => <Products />}</AdminGate>;
+  return <AdminGate title="Products">{() => <Products />}</AdminGate>;
 }
 
-type P = { slug: string; name_es: string; price_from: number | null; active: boolean; sort: number };
+type P = { slug: string; name_en: string; price_from: number | null; active: boolean; sort: number };
 type M = { id: string; name: string; details_es: string; details_en: string; active: boolean; kind: string };
 
 function Products() {
@@ -22,7 +22,7 @@ function Products() {
 
   const load = useCallback(async () => {
     const [{ data: p }, { data: m }] = await Promise.all([
-      supabase.from('products').select('slug,name_es,price_from,active,sort').order('sort'),
+      supabase.from('products').select('slug,name_en,price_from,active,sort').order('sort'),
       supabase.from('payment_methods').select('*').order('sort'),
     ]);
     setRows((p as P[]) ?? []);
@@ -38,11 +38,11 @@ function Products() {
     setMsg(null);
     const raw = (prices[slug] ?? '').trim();
     const price = raw === '' ? null : Number(raw.replace(',', '.'));
-    if (price != null && (isNaN(price) || price < 0)) return setMsg({ ok: false, text: 'Precio inválido.' });
+    if (price != null && (isNaN(price) || price < 0)) return setMsg({ ok: false, text: 'Invalid price.' });
     setBusy(slug);
     const { error } = await supabase.from('products').update({ price_from: price }).eq('slug', slug);
     setBusy('');
-    setMsg(error ? { ok: false, text: error.message } : { ok: true, text: 'Precio guardado. Ya se ve en el sitio.' });
+    setMsg(error ? { ok: false, text: error.message } : { ok: true, text: 'Price saved. It is live on the site.' });
     load();
   };
 
@@ -55,50 +55,50 @@ function Products() {
     setBusy(m.id);
     const { error } = await supabase.from('payment_methods').update({ details_es: m.details_es, details_en: m.details_en, active: m.active }).eq('id', m.id);
     setBusy('');
-    setMsg(error ? { ok: false, text: error.message } : { ok: true, text: `${m.name} guardado.` });
+    setMsg(error ? { ok: false, text: error.message } : { ok: true, text: `${m.name} saved.` });
   };
 
   if (!rows) return <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 60 }} />;
 
   return (
     <View style={{ gap: 18 }}>
-      <Text style={adminStyles.h1}>Productos y pagos</Text>
+      <Text style={adminStyles.h1}>Products and payments</Text>
       {msg ? <Text style={msg.ok ? formStyles.success : formStyles.error}>{msg.text}</Text> : null}
 
       <View style={[adminStyles.card, shadow]}>
-        <Text style={adminStyles.h2}>Precios</Text>
-        <Text style={adminStyles.muted}>Precio "desde", en USD por año. Déjalo vacío para mostrar "Precio a consultar".</Text>
+        <Text style={adminStyles.h2}>Prices</Text>
+        <Text style={adminStyles.muted}>"From" price in USD per year. Leave empty to show "Price on request".</Text>
         {rows.map((r) => (
           <View key={r.slug} style={styles.row}>
             <View style={{ flex: 1, minWidth: 180 }}>
-              <Text style={styles.name}>{r.name_es}</Text>
-              <Text style={adminStyles.muted}>{r.active ? 'Visible' : 'Oculto'}</Text>
+              <Text style={styles.name}>{r.name_en}</Text>
+              <Text style={adminStyles.muted}>{r.active ? 'Visible' : 'Hidden'}</Text>
             </View>
             <TextInput
               value={prices[r.slug] ?? ''}
               onChangeText={(v) => setPrices((s) => ({ ...s, [r.slug]: v }))}
-              placeholder="A consultar"
+              placeholder="On request"
               placeholderTextColor="#94A3B8"
               keyboardType="decimal-pad"
               style={styles.input}
             />
-            <Button label="Guardar" variant="secondary" onPress={() => save(r.slug)} loading={busy === r.slug} />
+            <Button label="Save" variant="secondary" onPress={() => save(r.slug)} loading={busy === r.slug} />
             <Switch value={r.active} onValueChange={(v) => toggle(r.slug, v)} />
           </View>
         ))}
       </View>
 
       <View style={[adminStyles.card, shadow]}>
-        <Text style={adminStyles.h2}>Métodos de pago</Text>
+        <Text style={adminStyles.h2}>Payment methods</Text>
         <Text style={adminStyles.muted}>
-          Escribe aquí tus datos reales (número de Zelle, Pago Móvil, cuenta bancaria). El cliente los ve después de aceptar la cotización.
+          Enter your real details here (Zelle, Pago Móvil, bank account, USDT address). Customers see them after accepting a quote.
         </Text>
         {methods.map((m, i) => (
           <View key={m.id} style={styles.method}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Text style={[styles.name, { flex: 1 }]}>
                 {m.name}
-                {m.kind === 'card' ? ' (requiere cuenta de pagos con tarjeta)' : ''}
+                {m.kind === 'card' ? ' (needs a card payment account)' : ''}
               </Text>
               <Switch
                 value={m.active}
@@ -111,7 +111,7 @@ function Products() {
               multiline
               onChangeText={(v) => setMethods((s) => s.map((x, j) => (j === i ? { ...x, details_es: v } : x)))}
               style={[styles.input, styles.area]}
-              placeholder="Datos en español"
+              placeholder="Details in Spanish (for Spanish-speaking customers)"
             />
             <TextInput
               value={m.details_en}
@@ -120,7 +120,7 @@ function Products() {
               style={[styles.input, styles.area]}
               placeholder="Details in English"
             />
-            <Button label="Guardar" variant="secondary" onPress={() => saveMethod(m)} loading={busy === m.id} disabled={m.kind === 'card'} />
+            <Button label="Save" variant="secondary" onPress={() => saveMethod(m)} loading={busy === m.id} disabled={m.kind === 'card'} />
           </View>
         ))}
       </View>

@@ -35,9 +35,15 @@
 
   function create(cfg) {
     const KEY = `sylkit_demo_${cfg.id}_v1`;
-    let lang = 'es';
-    try { lang = localStorage.getItem('sylkit_lang') || ((navigator.languages || [navigator.language || 'es']).find(Boolean) || 'es').slice(0, 2); } catch (e) {}
-    if (lang !== 'en') lang = 'es';
+    // English by default; Spanish when the visitor's browser is in Spanish.
+    // If the browser language is neither, the visitor's country decides (cookie set by the server).
+    const ES_CC = ['VE', 'CO', 'MX', 'AR', 'CL', 'PE', 'EC', 'BO', 'PY', 'UY', 'CR', 'PA', 'DO', 'GT', 'HN', 'SV', 'NI', 'CU', 'PR', 'ES', 'GQ'];
+    let lang = 'en';
+    try {
+      const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']).map((l) => l.toLowerCase());
+      const cc = (document.cookie.match(/(?:^|; )sk_cc=([A-Z]{2})/) || [])[1];
+      lang = prefs[0].startsWith('es') ? 'es' : prefs[0].startsWith('en') ? 'en' : cc ? (ES_CC.includes(cc) ? 'es' : 'en') : prefs.some((l) => l.startsWith('es')) ? 'es' : 'en';
+    } catch (e) {}
     let tab = cfg.tabs[0].id;
     let db = null;
 
@@ -142,7 +148,6 @@
           <div class="k-brand"><span id="k-name"></span><small id="k-subname"></small></div>
           <div class="k-spacer"></div>
           <button class="k-icon-btn" id="k-reset" title="Reset">↺</button>
-          <div class="k-lang"><button data-lang="es">ES</button><button data-lang="en">EN</button></div>
         </div>${side ? '' : '<nav class="k-nav" id="k-nav"></nav>'}</header>
         <div class="k-shell">${side ? '<aside class="k-aside"><nav class="k-nav" id="k-nav"></nav></aside>' : ''}
         <main class="k-main"><div id="k-view"></div>
@@ -164,7 +169,6 @@
       document.getElementById('k-cta-t').textContent = app.t('ctaTitle');
       document.getElementById('k-cta-s').textContent = app.t('ctaSub');
       document.getElementById('k-cta-b').textContent = app.t('ctaBtn');
-      document.querySelectorAll('.k-lang button').forEach((b) => b.classList.toggle('on', b.dataset.lang === lang));
       document.getElementById('k-nav').innerHTML = cfg.tabs.map((tb) => {
         const n = tb.badge ? tb.badge(app) : 0;
         return `<button data-tab="${tb.id}" class="${tb.id === tab ? 'on' : ''}">${tb.icon ? `<span class="ic">${tb.icon}</span>` : ''}${esc(app.t(tb.label))}${n ? ` <span class="k-badge">${n}</span>` : ''}</button>`;
@@ -184,8 +188,6 @@
       document.addEventListener('click', (e) => {
         const tb = e.target.closest('[data-tab]');
         if (tb) return app.go(tb.dataset.tab);
-        const lb = e.target.closest('[data-lang]');
-        if (lb) { lang = lb.dataset.lang; try { localStorage.setItem('sylkit_lang', lang); } catch (er) {} return render(); }
         if (e.target.closest('#k-reset')) { db = fresh(); save(); app.toast(app.t('resetDone')); return app.go(cfg.tabs[0].id); }
         const a = e.target.closest('[data-act]');
         if (a && cfg.actions[a.dataset.act]) { e.preventDefault(); cfg.actions[a.dataset.act](app, a.dataset, a); }

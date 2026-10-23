@@ -8,7 +8,7 @@ import { colors, shadow } from '../theme';
 import { Button } from './Button';
 import { Field, formStyles } from './Field';
 
-// Admin pages are in Spanish (internal tool).
+// Admin pages are in English (internal tool).
 
 export function AdminGate({ children, title }: { children: (session: Session) => React.ReactNode; title: string }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -35,9 +35,9 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
   else if (!isAdmin)
     content = (
       <View style={[styles.card, shadow]}>
-        <Text style={styles.h2}>Cuenta sin acceso de administrador</Text>
-        <Text style={styles.muted}>Sesión iniciada como {session.user.email}. Pide que activen esta cuenta como administrador.</Text>
-        <Button label="Cerrar sesión" variant="secondary" onPress={() => supabase.auth.signOut()} />
+        <Text style={styles.h2}>This account has no admin access</Text>
+        <Text style={styles.muted}>Signed in as {session.user.email}. Ask for this account to be activated as an admin.</Text>
+        <Button label="Sign out" variant="secondary" onPress={() => supabase.auth.signOut()} />
       </View>
     );
   else content = children(session);
@@ -55,11 +55,11 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
           </Link>
           {session && isAdmin ? (
             <View style={styles.nav}>
-              <Link href="/admin" style={styles.navLink}>Pedidos</Link>
-              <Link href="/admin/products" style={styles.navLink}>Productos</Link>
-              <Link href="/" style={styles.navLink}>Ver sitio</Link>
+              <Link href="/admin" style={styles.navLink}>Orders</Link>
+              <Link href="/admin/products" style={styles.navLink}>Products</Link>
+              <Link href="/" style={styles.navLink}>View site</Link>
               <Pressable onPress={() => supabase.auth.signOut()}>
-                <Text style={styles.navLink}>Salir</Text>
+                <Text style={styles.navLink}>Sign out</Text>
               </Pressable>
             </View>
           ) : null}
@@ -83,11 +83,11 @@ function Login() {
   const submit = async () => {
     setError('');
     setInfo('');
-    if (password.length < 8) return setError('La contraseña debe tener al menos 8 caracteres.');
+    if (password.length < 8) return setError('Password must be at least 8 characters.');
     setBusy(true);
     if (mode === 'in') {
       const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (err) setError(friendlyError(err, 'es'));
+      if (err) setError(friendlyError(err, 'en'));
     } else {
       const { data, error: err } = await supabase.auth.signUp({
         email: email.trim(),
@@ -95,22 +95,22 @@ function Login() {
         options: { emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/admin` : undefined },
       });
       if (err) setError(err.message);
-      else if (!data.session) setInfo('Cuenta creada. Revisa tu correo para confirmarla y luego inicia sesión.');
+      else if (!data.session) setInfo('Account created. Check your email to confirm it, then sign in.');
     }
     setBusy(false);
   };
 
   return (
     <View style={[styles.card, shadow, { maxWidth: 440, alignSelf: 'center', width: '100%' }]}>
-      <Text style={styles.h2}>{mode === 'in' ? 'Iniciar sesión' : 'Crear cuenta de administrador'}</Text>
-      <Field label="Correo" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
-      <Field label="Contraseña" value={password} onChangeText={setPassword} secureTextEntry autoComplete="password" onSubmitEditing={submit} />
+      <Text style={styles.h2}>{mode === 'in' ? 'Sign in' : 'Create admin account'}</Text>
+      <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
+      <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry autoComplete="password" onSubmitEditing={submit} />
       {error ? <Text style={formStyles.error}>{error}</Text> : null}
       {info ? <Text style={formStyles.success}>{info}</Text> : null}
-      <Button label={mode === 'in' ? 'Entrar' : 'Crear cuenta'} onPress={submit} loading={busy} />
+      <Button label={mode === 'in' ? 'Sign in' : 'Create account'} onPress={submit} loading={busy} />
       <Pressable onPress={() => setMode(mode === 'in' ? 'up' : 'in')} style={{ alignItems: 'center', padding: 8 }}>
         <Text style={{ color: colors.primary, fontWeight: '700' }}>
-          {mode === 'in' ? 'Primera vez: crear cuenta' : 'Ya tengo cuenta: iniciar sesión'}
+          {mode === 'in' ? 'First time? Create an account' : 'Already have an account? Sign in'}
         </Text>
       </Pressable>
     </View>

@@ -16,14 +16,14 @@ type Row = {
   quote_amount: number | null;
   quote_currency: string;
   created_at: string;
-  products: { name_es: string } | null;
+  products: { name_en: string } | null;
 };
 
 const filters: (OrderStatus | 'all' | 'action')[] = ['action', 'all', 'new', 'quoted', 'accepted', 'payment_submitted', 'paid', 'in_progress', 'delivered', 'cancelled'];
 const needsAction: OrderStatus[] = ['new', 'accepted', 'payment_submitted'];
 
 export default function AdminOrders() {
-  return <AdminGate title="Pedidos">{() => <Orders />}</AdminGate>;
+  return <AdminGate title="Orders">{() => <Orders />}</AdminGate>;
 }
 
 function Orders() {
@@ -34,7 +34,7 @@ function Orders() {
   const load = useCallback(async () => {
     const { data } = await supabase
       .from('orders')
-      .select('id,order_number,customer_name,business_name,email,status,quote_amount,quote_currency,created_at,products(name_es)')
+      .select('id,order_number,customer_name,business_name,email,status,quote_amount,quote_currency,created_at,products(name_en)')
       .order('created_at', { ascending: false })
       .limit(500);
     setRows((data as any) ?? []);
@@ -78,21 +78,21 @@ function Orders() {
 
   return (
     <View style={{ gap: 18 }}>
-      <Text style={adminStyles.h1}>Pedidos</Text>
+      <Text style={adminStyles.h1}>Orders</Text>
 
       <View style={styles.tiles}>
-        <Tile label="Requieren acción" value={String(stats.action)} accent />
-        <Tile label="Pedidos totales" value={String(stats.total)} />
-        <Tile label="En negociación" value={formatMoney(stats.pipeline)} />
-        <Tile label="Cobrado" value={formatMoney(stats.revenue)} />
+        <Tile label="Needs action" value={String(stats.action)} accent />
+        <Tile label="Total orders" value={String(stats.total)} />
+        <Tile label="In negotiation" value={formatMoney(stats.pipeline)} />
+        <Tile label="Collected" value={formatMoney(stats.revenue)} />
       </View>
 
-      <TextInput value={q} onChangeText={setQ} placeholder="Buscar por pedido, cliente o correo…" placeholderTextColor="#94A3B8" style={styles.search} />
+      <TextInput value={q} onChangeText={setQ} placeholder="Search by order, customer or email…" placeholderTextColor="#94A3B8" style={styles.search} />
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
         {filters.map((f) => {
           const on = filter === f;
-          const label = f === 'all' ? 'Todos' : f === 'action' ? 'Requieren acción' : statusLabel[f].es;
+          const label = f === 'all' ? 'All' : f === 'action' ? 'Needs action' : statusLabel[f].en;
           return (
             <Pressable key={f} onPress={() => setFilter(f)} style={[styles.chip, on && styles.chipOn]}>
               <Text style={[styles.chipText, on && { color: '#fff' }]}>{label}</Text>
@@ -103,7 +103,7 @@ function Orders() {
 
       {shown.length === 0 ? (
         <View style={[adminStyles.card, shadow, { alignItems: 'center' }]}>
-          <Text style={adminStyles.muted}>No hay pedidos aquí.</Text>
+          <Text style={adminStyles.muted}>No orders here.</Text>
         </View>
       ) : (
         <View style={{ gap: 10 }}>
@@ -117,13 +117,13 @@ function Orders() {
                       {r.order_number} · {r.customer_name}
                     </Text>
                     <Text style={adminStyles.muted}>
-                      {r.products?.name_es ?? 'A medida'}
-                      {r.business_name ? ` · ${r.business_name}` : ''} · {formatDate(r.created_at, 'es')}
+                      {r.products?.name_en ?? 'Custom'}
+                      {r.business_name ? ` · ${r.business_name}` : ''} · {formatDate(r.created_at, 'en')}
                     </Text>
                   </View>
                   {r.quote_amount != null ? <Text style={styles.amount}>{formatMoney(r.quote_amount, r.quote_currency)}</Text> : null}
                   <View style={[styles.pill, { backgroundColor: sc.bg }]}>
-                    <Text style={[styles.pillText, { color: sc.fg }]}>{statusLabel[r.status].es}</Text>
+                    <Text style={[styles.pillText, { color: sc.fg }]}>{statusLabel[r.status].en}</Text>
                   </View>
                 </Pressable>
               </Link>

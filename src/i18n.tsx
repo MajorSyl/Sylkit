@@ -3,34 +3,39 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 export type Lang = 'es' | 'en';
 export type Text = { es: string; en: string };
 
-type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (x: Text) => string };
+type Ctx = { lang: Lang; t: (x: Text) => string };
 
-const LangContext = createContext<Ctx>({
-  lang: 'es',
-  setLang: () => {},
-  t: (x) => x.es,
-});
+const LangContext = createContext<Ctx>({ lang: 'en', t: (x) => x.en });
 
+// Spanish-speaking countries (ISO codes), used only when the browser language is neither Spanish nor English.
+const ES_COUNTRIES = new Set(['VE', 'CO', 'MX', 'AR', 'CL', 'PE', 'EC', 'BO', 'PY', 'UY', 'CR', 'PA', 'DO', 'GT', 'HN', 'SV', 'NI', 'CU', 'PR', 'ES', 'GQ']);
+
+export function detectLang(): Lang {
+  try {
+    const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']).map((l) => l.toLowerCase());
+    const first = prefs.find((l) => l.startsWith('es') || l.startsWith('en'));
+    if (prefs[0].startsWith('es')) return 'es';
+    if (prefs[0].startsWith('en')) return 'en';
+    const cc = (document.cookie.match(/(?:^|; )sk_cc=([A-Z]{2})/) || [])[1];
+    if (cc) return ES_COUNTRIES.has(cc) ? 'es' : 'en';
+    return first && first.startsWith('es') ? 'es' : 'en';
+  } catch {
+    return 'en';
+  }
+}
+
+// The site is built in English and switches to Spanish automatically for Spanish-speaking visitors.
 export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('es');
-  // Language follows the visitor's saved choice, else their browser/region.
+  const [lang, setLang] = useState<Lang>('en');
   useEffect(() => {
+    const l = detectLang();
+    setLang(l);
     try {
-      const saved = window.localStorage.getItem('sylkit_lang');
-      if (saved === 'es' || saved === 'en') return setLangState(saved);
-      const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es']).map((l) => l.toLowerCase());
-      setLangState(prefs[0].startsWith('es') ? 'es' : prefs.some((l) => l.startsWith('es')) && !prefs[0].startsWith('en') ? 'es' : 'en');
-    } catch {}
-  }, []);
-  const setLang = (l: Lang) => {
-    setLangState(l);
-    try {
-      window.localStorage.setItem('sylkit_lang', l);
       document.documentElement.lang = l;
     } catch {}
-  };
+  }, []);
   const t = (x: Text) => x[lang];
-  return <LangContext.Provider value={{ lang, setLang, t }}>{children}</LangContext.Provider>;
+  return <LangContext.Provider value={{ lang, t }}>{children}</LangContext.Provider>;
 }
 
 export const useLang = () => useContext(LangContext);

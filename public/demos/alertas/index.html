@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en" translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -80,7 +80,6 @@ h1{font-size:24px;letter-spacing:-.4px;margin-bottom:4px}
     <div class="logo">S</div>
     <div class="brand">Sylkit Alertas<small data-t="store"></small></div>
     <div class="spacer"></div>
-    <div class="lang"><button data-lang="es">ES</button><button data-lang="en">EN</button></div>
   </div>
   <nav>
     <button data-tab="panel"><span data-t="tPanel"></span> <span class="badge" id="alertBadge"></span></button>
@@ -212,7 +211,11 @@ cats:['Dairy','Bakery','Drinks','Meat','Pharmacy','Cleaning','Snacks'],noResults
 const KEY='sylkit_demo_alertas_v1';
 const STORES=['Sucursal Centro','Sucursal Este'];
 const ICON={0:'🥛',1:'🥖',2:'🥤',3:'🥩',4:'💊',5:'🧴',6:'🍪'};
-let lang=(navigator.language||'es').startsWith('en')?'en':'es';
+let lang='en';
+try{const prefs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'en']).map(l=>l.toLowerCase());
+const cc=(document.cookie.match(/(?:^|; )sk_cc=([A-Z]{2})/)||[])[1];
+const ES_CC=['VE','CO','MX','AR','CL','PE','EC','BO','PY','UY','CR','PA','DO','GT','HN','SV','NI','CU','PR','ES','GQ'];
+lang=prefs[0].startsWith('es')?'es':prefs[0].startsWith('en')?'en':cc?(ES_CC.includes(cc)?'es':'en'):prefs.some(l=>l.startsWith('es'))?'es':'en';}catch(e){}
 let tab='panel', pending=null, stream=null, detector=null;
 const T=k=>I18N[lang][k];
 const $=s=>document.querySelector(s);
@@ -243,7 +246,6 @@ function renderStatic(){
   document.documentElement.lang=lang;
   document.querySelectorAll('[data-t]').forEach(el=>{const v=T(el.dataset.t);if(typeof v==='string')el.textContent=v});
   document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=T(el.dataset.ph));
-  document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));
   $('#npCat').innerHTML=T('cats').map((c,i)=>`<option value="${i}">${c}</option>`).join('');
   $('#bfStore').innerHTML=STORES.map(s=>`<option>${s}</option>`).join('');
   $('#invStore').innerHTML=`<option value="">${T('allStores')}</option>`+STORES.map(s=>`<option>${s}</option>`).join('');
@@ -315,7 +317,6 @@ function stopCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=nul
 document.addEventListener('click',e=>{
   const t=e.target.closest('button,[data-goto]');if(!t)return;
   if(t.dataset.tab)go(t.dataset.tab);
-  if(t.dataset.lang){lang=t.dataset.lang;render()}
   if(t.dataset.ack){const b=db.batches.find(x=>x.id===t.dataset.ack);b.ack=true;save();toast(T('ackDone'));render()}
   if(t.dataset.remove){const b=db.batches.find(x=>x.id===t.dataset.remove);b.removed=true;save();toast(T('removed'));render()}
   if(t.dataset.goto){tab='inventory';$('#invStatus').value=t.dataset.goto;render();window.scrollTo(0,0)}
