@@ -135,8 +135,8 @@ export default function Home() {
               <Text style={styles.bannerTitle}>{lang === 'es' ? 'Tu .com y correo profesional' : 'Your own .com and business email'}</Text>
               <Text style={styles.bannerSub}>
                 {lang === 'es'
-                  ? 'Busca tu dominio, lo registramos a tu nombre y pagas con Pago Móvil, USDT u Orange Money. Desde $25/año.'
-                  : 'Find your domain, we register it in your name and you pay with Pago Móvil, USDT or Orange Money. From $25/year.'}
+                  ? 'Busca tu dominio, lo registramos a tu nombre y pagas con Pago Móvil, USDT u Orange Money. Desde $15/año.'
+                  : 'Find your domain, we register it in your name and you pay with Pago Móvil, USDT or Orange Money. From $15/year.'}
               </Text>
             </View>
             <Pressable style={styles.bannerBtn} onPress={() => router.push('/domains')} accessibilityRole="link">

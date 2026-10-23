@@ -127,7 +127,7 @@ export default function DomainsPage() {
                 {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.searchBtnText}>{t(L.search)}</Text>}
               </Pressable>
             </View>
-            <Text style={styles.hint}>.com · .net · .org — {lang === 'es' ? 'desde' : 'from'} {money(yearOf('starter') || 25)}{lang === 'es' ? '/año' : '/year'}</Text>
+            <Text style={styles.hint}>.com · .net · .org — {lang === 'es' ? 'desde' : 'from'} {money(yearOf('starter') || 15)}{lang === 'es' ? '/año' : '/year'}</Text>
 
             {results ? (
               <View style={[styles.results, shadow]}>

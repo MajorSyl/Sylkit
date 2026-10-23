@@ -389,7 +389,7 @@ export const products: Product[] = [
     "es": "Nuevo",
     "en": "New"
   },
-  "priceFrom": 2.5,
+  "priceFrom": 1.5,
   "name": {
     "es": "Dominio y correo empresarial",
     "en": "Domain and business email"
