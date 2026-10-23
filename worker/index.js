@@ -12,16 +12,18 @@ const DEMOS = Object.fromEntries(
   ['alertas', 'pos', 'inventario', 'farmacia', 'clinica', 'restaurante', 'salon', 'taller', 'servicios', 'escuela', 'nomina', 'facturas', 'tienda', 'portafolio', 'asistente'].map((d) => [d, d]),
 );
 
-// Extensions we register for clients at a price the "Your own domain" add-on covers.
-const TLDS = ['com', 'net', 'org'];
+// Extensions we register for clients at a price the "Your own domain" add-on covers,
+// with each registry's public RDAP server (404 = not registered).
+const RDAP = {
+  com: (d) => `https://rdap.verisign.com/com/v1/domain/${d}`,
+  net: (d) => `https://rdap.verisign.com/net/v1/domain/${d}`,
+  org: (d) => `https://rdap.publicinterestregistry.org/rdap/domain/${d}`,
+};
+const TLDS = Object.keys(RDAP);
 
-async function checkOne(domain) {
+async function checkOne(domain, tld) {
   try {
-    const r = await fetch(`https://rdap.org/domain/${domain}`, {
-      redirect: 'follow',
-      headers: { accept: 'application/rdap+json' },
-      cf: { cacheTtl: 600, cacheEverything: true },
-    });
+    const r = await fetch(RDAP[tld](domain), { headers: { accept: 'application/rdap+json, application/json', 'user-agent': 'Sylkit domain check (sylkit.com)' } });
     if (r.status === 404) return 'available';
     if (r.ok) return 'taken';
     return 'unknown';
@@ -41,7 +43,7 @@ async function domainApi(url) {
     .slice(0, 63);
   const headers = { 'content-type': 'application/json', 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' };
   if (label.length < 2) return new Response(JSON.stringify({ error: 'invalid_name' }), { status: 400, headers });
-  const results = await Promise.all(TLDS.map(async (t) => ({ domain: `${label}.${t}`, status: await checkOne(`${label}.${t}`) })));
+  const results = await Promise.all(TLDS.map(async (t) => ({ domain: `${label}.${t}`, status: await checkOne(`${label}.${t}`, t) })));
   return new Response(JSON.stringify({ label, subdomain: `${label}.sylkit.com`, results }), { headers });
 }
 
