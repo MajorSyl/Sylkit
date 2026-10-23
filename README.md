@@ -13,10 +13,10 @@ npm run web
 
 All products live in `src/data/products.ts`. Set `priceFrom` to a number (USD per year) to show a price, or leave it `null` to show "Price on request".
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers, static assets)
 
 - Build command: `npx expo export --platform web`
-- Output directory: `dist`
-- Environment variable: `NODE_VERSION=20`
+- Deploy command: `npx wrangler deploy` (config in `wrangler.jsonc`, serves `dist`)
+- Node version comes from `.node-version`
 
 Every push to `main` redeploys sylkit.com.
