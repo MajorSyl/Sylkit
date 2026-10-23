@@ -128,6 +128,23 @@ export default function Home() {
             </Pressable>
           </View>
 
+          {/* Domains banner */}
+          <View style={[styles.banner, { backgroundColor: '#0E7F98', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
+            <View style={[styles.sphere, { width: 200, height: 200, bottom: -90, right: 60, backgroundColor: '#fff', opacity: 0.1 }]} />
+            <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
+              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Tu .com y correo profesional' : 'Your own .com and business email'}</Text>
+              <Text style={styles.bannerSub}>
+                {lang === 'es'
+                  ? 'Busca tu dominio, lo registramos a tu nombre y pagas con Pago Móvil, USDT u Orange Money. Desde $25/año.'
+                  : 'Find your domain, we register it in your name and you pay with Pago Móvil, USDT or Orange Money. From $25/year.'}
+              </Text>
+            </View>
+            <Pressable style={styles.bannerBtn} onPress={() => router.push('/domains')} accessibilityRole="link">
+              <Text style={[styles.bannerBtnText, { color: '#0E7F98' }]}>{lang === 'es' ? 'Buscar dominio' : 'Search a domain'}</Text>
+              <Ionicons name="search" size={16} color="#0E7F98" />
+            </Pressable>
+          </View>
+
           {/* How it works */}
           <Text style={[styles.h2, { marginTop: 48, marginBottom: 8 }]}>{t(ui.howTitle)}</Text>
           <View style={styles.grid}>

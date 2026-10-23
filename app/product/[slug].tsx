@@ -9,6 +9,7 @@ import { PricingCalculator } from '../../src/components/PricingCalculator';
 import { PriceLabel } from '../../src/components/ProductCard';
 import { categories, getProduct, products } from '../../src/data/products';
 import { useProducts } from '../../src/lib/catalog';
+import { configFromQuery } from '../../src/lib/pricing';
 import { ui, useLang } from '../../src/i18n';
 import { colors, shadow, waLink } from '../../src/theme';
 
@@ -18,7 +19,7 @@ export async function generateStaticParams(): Promise<Record<string, string>[]> 
 }
 
 export default function ProductPage() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
+  const { slug, plan, billing, add, domain } = useLocalSearchParams<{ slug: string; plan?: string; billing?: string; add?: string; domain?: string }>();
   const { t, lang } = useLang();
   const { width } = useWindowDimensions();
   const wide = width >= 860;
@@ -135,7 +136,7 @@ export default function ProductPage() {
 
           {product.pricing ? (
             <View style={{ marginTop: 36 }} onLayout={(e) => (pricingY.current = e.nativeEvent.layout.y)}>
-              <PricingCalculator product={product} />
+              <PricingCalculator key={`${plan ?? ""}-${domain ?? ""}`} product={product} initial={configFromQuery({ plan: plan ?? 'x', billing, add, domain })} />
             </View>
           ) : null}
 

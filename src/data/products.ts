@@ -6,7 +6,7 @@ import { pricingBySlug, type Pricing } from './pricing';
 // Plans and add-ons live in ./pricing.ts (and in the database, editable from the admin).
 // Later this list can move to Supabase without changing the screens.
 
-export type CategoryId = 'retail' | 'health' | 'food' | 'services' | 'education' | 'management' | 'web' | 'mobile' | 'ai';
+export type CategoryId = 'retail' | 'health' | 'food' | 'services' | 'education' | 'management' | 'web' | 'domains' | 'mobile' | 'ai';
 
 export const categories: { id: CategoryId; icon: string; name: Text }[] = [
   { id: 'retail', icon: 'storefront', name: { es: 'Comercio', en: 'Retail' } },
@@ -16,6 +16,7 @@ export const categories: { id: CategoryId; icon: string; name: Text }[] = [
   { id: 'education', icon: 'school', name: { es: 'Educación', en: 'Education' } },
   { id: 'management', icon: 'stats-chart', name: { es: 'Gestión', en: 'Management' } },
   { id: 'web', icon: 'globe', name: { es: 'Sitios web', en: 'Websites' } },
+  { id: 'domains', icon: 'server', name: { es: 'Dominios y hosting', en: 'Domains & hosting' } },
   { id: 'mobile', icon: 'phone-portrait', name: { es: 'Apps móviles', en: 'Mobile apps' } },
   { id: 'ai', icon: 'sparkles', name: { es: 'Herramientas IA', en: 'AI tools' } },
 ];
@@ -379,6 +380,90 @@ export const products: Product[] = [
     platforms: ["Web"],
     demoUrl: 'https://portafolio.sylkit.com',
   },
+{
+  "slug": "dominio-y-correo",
+  "category": "domains",
+  "icon": "at",
+  "tint": "cyan",
+  "badge": {
+    "es": "Nuevo",
+    "en": "New"
+  },
+  "priceFrom": 2.5,
+  "name": {
+    "es": "Dominio y correo empresarial",
+    "en": "Domain and business email"
+  },
+  "short": {
+    "es": "Tu .com a tu nombre y correos como ventas@tunegocio.com. Pagas en moneda local.",
+    "en": "Your own .com in your name and emails like sales@yourbusiness.com. Pay locally."
+  },
+  "description": {
+    "es": "Busca tu nombre, elige tu dominio y nosotros lo registramos a tu nombre, configuramos tus correos y lo renovamos cada año. Pagas con Pago Móvil, USDT u Orange Money: sin tarjeta internacional.",
+    "en": "Search your name, pick your domain and we register it in your name, set up your email and renew it every year. Pay with Pago Móvil, USDT or Orange Money, no international card needed."
+  },
+  "features": [
+    {
+      "es": "Registrado a tu nombre: es tuyo",
+      "en": "Registered in your name, so it is yours"
+    },
+    {
+      "es": "Correo profesional en tu teléfono",
+      "en": "Professional email on your phone"
+    },
+    {
+      "es": "Renovación automática",
+      "en": "Automatic renewal"
+    },
+    {
+      "es": "Pago local sin tarjeta",
+      "en": "Pay locally, no card needed"
+    }
+  ],
+  "platforms": [
+    "Web",
+    "Email"
+  ]
+},
+{
+  "slug": "hosting-web",
+  "category": "domains",
+  "icon": "server",
+  "tint": "blue",
+  "name": {
+    "es": "Hosting para tu sitio web",
+    "en": "Website hosting"
+  },
+  "short": {
+    "es": "Tu sitio rápido, seguro y siempre en línea, con soporte en tu idioma.",
+    "en": "Your site fast, secure and always online, with support in your language."
+  },
+  "description": {
+    "es": "Alojamos tu sitio o app web en una red global rápida con SSL, monitoreo y copias de seguridad. Si ya tienes un sitio, lo mudamos por ti.",
+    "en": "We host your website or web app on a fast global network with SSL, monitoring and backups. Already have a site? We move it for you."
+  },
+  "features": [
+    {
+      "es": "SSL y red global incluidos",
+      "en": "SSL and global network included"
+    },
+    {
+      "es": "Copias de seguridad",
+      "en": "Backups"
+    },
+    {
+      "es": "Monitoreo 24/7",
+      "en": "24/7 monitoring"
+    },
+    {
+      "es": "Mudanza de tu sitio actual",
+      "en": "We move your current site"
+    }
+  ],
+  "platforms": [
+    "Web"
+  ]
+}
 ];
 
 // Attach plans to every product and derive the "From" price from the cheapest plan.

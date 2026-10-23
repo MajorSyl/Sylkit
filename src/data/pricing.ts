@@ -6,13 +6,16 @@ import type { Text } from '../i18n';
 export type AddonKind = 'monthly' | 'one_time';
 export type Addon = { id: string; name: Text; desc: Text; kind: AddonKind; price: number; perUnit: boolean };
 export type Plan = { id: string; name: Text; monthly: number; setup: number; includes: Text[]; popular?: boolean };
-export type Pricing = { group: string; plans: Plan[]; addons: string[] };
+export type Pricing = { group: string; plans: Plan[]; addons: string[]; billing?: ('yearly' | 'monthly' | 'once')[] };
 
 export const ANNUAL_MONTHS = 10; // pay yearly: 12 months for the price of 10
 export const ONCE_MONTHS = 30; // buy once: license = monthly price × 30 (≈ 2.5 years), includes the first 12 months of hosting, support and updates
 export const CARE_MONTHS = 3; // after year 1, optional care plan (hosting, updates, support) = monthly price × 3 per year
 
 export const addonCatalog: Record<string, Addon> = {
+  "extra_mailboxes": {"id": "extra_mailboxes", "name": {"es": "+5 correos adicionales", "en": "+5 email addresses"}, "desc": {"es": "Cinco direcciones de correo más con tu dominio.", "en": "Five more email addresses on your domain."}, "kind": "monthly", "price": 3, "perUnit": true},
+  "domain_transfer": {"id": "domain_transfer", "name": {"es": "Traer un dominio que ya tienes", "en": "Move a domain you already own"}, "desc": {"es": "Lo transferimos a nuestra gestión; sigue siendo tuyo.", "en": "We transfer it into our management; it stays yours."}, "kind": "one_time", "price": 15, "perUnit": false},
+  "site_migration": {"id": "site_migration", "name": {"es": "Mudanza de tu sitio actual", "en": "Move your current site"}, "desc": {"es": "Traemos tu sitio desde tu hosting actual sin perder nada.", "en": "We move your site from your current host without losing anything."}, "kind": "one_time", "price": 50, "perUnit": false},
   "extra_branch": {
     "id": "extra_branch",
     "name": {
@@ -282,6 +285,8 @@ export const addonCatalog: Record<string, Addon> = {
 };
 
 export const pricingBySlug: Record<string, Pricing> = {
+  "dominio-y-correo": {"group": "domain", "billing": ["yearly"], "plans": [{"id": "starter", "name": {"es": "Solo dominio", "en": "Domain only"}, "monthly": 2.5, "setup": 0, "includes": [{"es": ".com, .net o .org registrado a tu nombre", "en": ".com, .net or .org registered in your name"}, {"es": "Lo conectamos a tu sitio o sistema", "en": "We connect it to your site or system"}, {"es": "Renovación automática: nunca se vence por olvido", "en": "Auto-renewal, it never expires by accident"}, {"es": "Transferencia gratis si te vas", "en": "Free transfer if you ever leave"}], "popular": false}, {"id": "business", "name": {"es": "Dominio + correo", "en": "Domain + email"}, "monthly": 6, "setup": 40, "includes": [{"es": "Tu dominio a tu nombre", "en": "Your domain in your name"}, {"es": "Hasta 5 correos (ventas@tunegocio.com)", "en": "Up to 5 email addresses (sales@yourbusiness.com)"}, {"es": "Configurado en tu teléfono y computadora", "en": "Set up on your phone and computer"}, {"es": "Protección contra spam y virus", "en": "Spam and virus protection"}], "popular": true}, {"id": "pro", "name": {"es": "Dominio + correo + página", "en": "Domain + email + page"}, "monthly": 10, "setup": 120, "includes": [{"es": "Todo lo de Dominio + correo", "en": "Everything in Domain + email"}, {"es": "Página web de 1 sección con botón de WhatsApp", "en": "1-page website with WhatsApp button"}, {"es": "Perfil de Google Business", "en": "Google Business profile"}, {"es": "Soporte prioritario", "en": "Priority support"}], "popular": false}], "addons": ["extra_mailboxes", "domain_transfer", "seo_pack", "priority_support"]},
+  "hosting-web": {"group": "hosting", "billing": ["yearly", "monthly"], "plans": [{"id": "starter", "name": {"es": "Básico", "en": "Basic"}, "monthly": 5, "setup": 30, "includes": [{"es": "Página o sitio estático", "en": "Landing page or static site"}, {"es": "SSL gratis y red global rápida", "en": "Free SSL and fast global network"}, {"es": "Monitoreo de disponibilidad", "en": "Uptime monitoring"}, {"es": "Soporte por correo", "en": "Email support"}], "popular": false}, {"id": "business", "name": {"es": "Negocio", "en": "Business"}, "monthly": 10, "setup": 50, "includes": [{"es": "Sitio con formularios o base de datos pequeña", "en": "Site with forms or a small database"}, {"es": "Copias de seguridad semanales", "en": "Weekly backups"}, {"es": "Actualizaciones y arreglos mensuales", "en": "Monthly updates and fixes"}, {"es": "Soporte por WhatsApp", "en": "WhatsApp support"}], "popular": true}, {"id": "pro", "name": {"es": "Pro", "en": "Pro"}, "monthly": 20, "setup": 80, "includes": [{"es": "App web o tienda en línea", "en": "Web app or online store"}, {"es": "Copias de seguridad diarias", "en": "Daily backups"}, {"es": "Monitoreo de seguridad", "en": "Security monitoring"}, {"es": "Soporte prioritario", "en": "Priority support"}], "popular": false}], "addons": ["site_migration", "custom_domain", "business_email", "seo_pack", "priority_support"]},
   "alertas-de-vencimiento": {
     "group": "system",
     "plans": [

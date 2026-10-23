@@ -22,6 +22,12 @@ export function Header() {
         </Link>
 
         <View style={styles.right}>
+          <Link href="/domains" asChild>
+            <Pressable style={styles.navLink} accessibilityRole="link">
+              <Ionicons name="globe-outline" size={18} color={colors.primary} />
+              <Text style={styles.navText}>{lang === 'es' ? 'Dominios' : 'Domains'}</Text>
+            </Pressable>
+          </Link>
           <Pressable
             style={styles.wa}
             onPress={() => Linking.openURL(waLink(lang === 'es' ? 'Hola, vi Sylkit y quiero información.' : 'Hi, I saw Sylkit and want more info.'))}
@@ -77,5 +83,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     minHeight: 40,
   },
+  navLink: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, minHeight: 40 },
+  navText: { fontSize: 14, fontWeight: '700', color: colors.text },
   waText: { color: '#fff', fontWeight: '700', fontSize: 14 },
 });

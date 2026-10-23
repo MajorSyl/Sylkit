@@ -9,10 +9,12 @@ import { colors, shadow } from '../theme';
 export function PriceLabel({ product }: { product: Product }) {
   const { t } = useLang();
   if (product.priceFrom == null) return <Text style={styles.price}>{t(ui.priceOnRequest)}</Text>;
+  const b = product.pricing?.billing;
+  const yearly = !!b && b.length === 1 && b[0] === 'yearly';
   return (
     <Text style={styles.price}>
-      {t(ui.from)} ${product.priceFrom}
-      <Text style={styles.per}>{t(ui.perMonth)}</Text>
+      {t(ui.from)} ${yearly ? product.priceFrom * 10 : product.priceFrom}
+      <Text style={styles.per}>{t(yearly ? ui.perYear : ui.perMonth)}</Text>
     </Text>
   );
 }

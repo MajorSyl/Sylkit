@@ -45,12 +45,24 @@ const L = {
 
 const clean = (v: string) => v.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/[^a-z0-9.-]/g, '');
 
-export function DomainPicker({ value, onChange, domainPrice }: { value?: DomainChoice; onChange: (d?: DomainChoice) => void; domainPrice: number }) {
+export function DomainPicker({
+  value,
+  onChange,
+  domainPrice,
+  modes = ['sub', 'new', 'own'],
+}: {
+  value?: DomainChoice;
+  onChange: (d?: DomainChoice) => void;
+  domainPrice: number;
+  modes?: DomainMode[];
+}) {
   const { t, lang } = useLang();
-  const [mode, setMode] = useState<DomainMode>(value?.mode ?? 'sub');
+  const [mode, setMode] = useState<DomainMode>(value?.mode ?? modes[0]);
   const [text, setText] = useState(value?.mode === 'new' ? value.name.split('.')[0] : value?.name ?? '');
   const [busy, setBusy] = useState(false);
-  const [results, setResults] = useState<DomainResult[] | null>(null);
+  const [results, setResults] = useState<DomainResult[] | null>(
+    value?.mode === 'new' ? [{ domain: value.name, status: 'available' }] : null,
+  );
   const [note, setNote] = useState('');
 
   const switchMode = (m: DomainMode) => {
@@ -91,7 +103,7 @@ export function DomainPicker({ value, onChange, domainPrice }: { value?: DomainC
 
   const options: { m: DomainMode; title: string; note: string; price?: string }[] = [
     { m: 'sub', title: t(L.modeSub), note: t(L.modeSubNote) },
-    { m: 'new', title: t(L.modeNew), note: t(L.modeNewNote), price: `+${money(domainPrice)}${lang === 'es' ? '/mes' : '/mo'}` },
+    { m: 'new', title: t(L.modeNew), note: t(L.modeNewNote), price: domainPrice > 0 ? `+${money(domainPrice)}${lang === 'es' ? '/mes' : '/mo'}` : undefined },
     { m: 'own', title: t(L.modeOwn), note: t(L.modeOwnNote) },
   ];
 
@@ -99,7 +111,7 @@ export function DomainPicker({ value, onChange, domainPrice }: { value?: DomainC
     <View style={[styles.box, shadow]}>
       <Text style={styles.h3}>{t(L.title)}</Text>
       <Text style={styles.muted}>{t(L.sub)}</Text>
-      {options.map((o) => {
+      {options.filter((o) => modes.includes(o.m)).map((o) => {
         const on = mode === o.m;
         return (
           <Pressable key={o.m} onPress={() => switchMode(o.m)} style={[styles.opt, on && styles.optOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>

@@ -22,6 +22,9 @@ const L = {
   onceLabel: { es: 'una sola vez', en: 'once' },
   onceIncl: { es: 'Incluye instalación y 12 meses de soporte y actualizaciones', en: 'Includes setup and 12 months of support and updates' },
   license: { es: 'Licencia de por vida', en: 'Lifetime license' },
+  yearlyFee: { es: 'Cuota anual', en: 'Yearly fee' },
+  noSetup: { es: 'Sin costo de instalación', en: 'No setup fee' },
+  pickDomain: { es: 'Primero elige tu dominio', en: 'Choose your domain first' },
   careAfter: {
     es: 'Desde el segundo año, plan de mantenimiento opcional (hosting, actualizaciones y soporte):',
     en: 'From year 2, optional care plan (hosting, updates and support):',
@@ -53,7 +56,7 @@ const L = {
   },
 };
 
-export function PricingCalculator({ product }: { product: Product }) {
+export function PricingCalculator({ product, initial }: { product: Product; initial?: Partial<Config> | null }) {
   const { t, lang } = useLang();
   const router = useRouter();
   const catalog = useAddons();
@@ -61,7 +64,18 @@ export function PricingCalculator({ product }: { product: Product }) {
   const wide = width >= 960;
   const pricing = product.pricing!;
   const defaultPlan = pricing.plans.find((p) => p.popular)?.id ?? pricing.plans[0].id;
-  const [cfg, setCfg] = useState<Config>({ plan: defaultPlan, billing: 'yearly', addons: {} });
+  const allowed: Billing[] = pricing.billing?.length ? pricing.billing : ['yearly', 'monthly', 'once'];
+  const yearlyOnly = allowed.length === 1 && allowed[0] === 'yearly';
+  const isDomainProduct = pricing.group === 'domain';
+  const [cfg, setCfg] = useState<Config>(() => ({
+    plan: initial?.plan && pricing.plans.some((p) => p.id === initial.plan) ? initial.plan : defaultPlan,
+    billing: initial?.billing && allowed.includes(initial.billing) ? initial.billing : allowed[0],
+    addons: {},
+    domain: initial?.domain && (!isDomainProduct || initial.domain.mode !== 'sub') ? initial.domain : undefined,
+  }));
+  // Yearly-only products (domains) show prices per year.
+  const yr = (monthly: number) => monthly * ANNUAL_MONTHS;
+  const needsDomain = isDomainProduct && !cfg.domain;
   const est = useMemo(() => estimate(pricing, catalog, cfg), [pricing, catalog, cfg]);
   const hasDomain = pricing.addons.includes('custom_domain') && !!catalog.custom_domain;
   // The domain extra is chosen in the web-address picker, not in the list.
@@ -69,7 +83,7 @@ export function PricingCalculator({ product }: { product: Product }) {
   const setDomain = (d?: DomainChoice) =>
     setCfg((c) => {
       const next = { ...c.addons };
-      if (d?.mode === 'new') next.custom_domain = 1;
+      if (hasDomain && d?.mode === 'new') next.custom_domain = 1;
       else delete next.custom_domain;
       return { ...c, domain: d, addons: next };
     });
@@ -84,7 +98,9 @@ export function PricingCalculator({ product }: { product: Product }) {
     });
 
   const unit = (n: number, kind: 'monthly' | 'one_time') =>
-    kind === 'monthly' && cfg.billing === 'once'
+    kind === 'monthly' && yearlyOnly
+      ? `+${money(yr(n))}${t(L.perYear)}`
+      : kind === 'monthly' && cfg.billing === 'once'
       ? `+${money(n * ONCE_MONTHS)} ${t(L.oneTime)}`
       : `+${money(n)}${kind === 'monthly' ? t(L.perMo) : ` ${t(L.oneTime)}`}`;
 
@@ -93,14 +109,26 @@ export function PricingCalculator({ product }: { product: Product }) {
       <Text style={styles.sumTitle}>{t(L.summary)}</Text>
       <Row
         label={`${t(L.plan)} ${t(est.plan.name)}`}
-        value={est.billing === 'once' ? money(est.plan.monthly * ONCE_MONTHS) : `${money(est.plan.monthly)}${t(L.perMo)}`}
+        value={
+          est.billing === 'once'
+            ? money(est.plan.monthly * ONCE_MONTHS)
+            : yearlyOnly
+              ? `${money(yr(est.plan.monthly))}${t(L.perYear)}`
+              : `${money(est.plan.monthly)}${t(L.perMo)}`
+        }
       />
       {est.lines.map((l) => (
         <Row
           key={l.id}
           label={`${t(l.name)}${l.qty > 1 ? ` ×${l.qty}` : ''}`}
           value={
-            l.kind === 'monthly' ? (est.billing === 'once' ? money(l.total * ONCE_MONTHS) : `${money(l.total)}${t(L.perMo)}`) : money(l.total)
+            l.kind === 'monthly'
+              ? est.billing === 'once'
+                ? money(l.total * ONCE_MONTHS)
+                : yearlyOnly
+                  ? `${money(yr(l.total))}${t(L.perYear)}`
+                  : `${money(l.total)}${t(L.perMo)}`
+              : money(l.total)
           }
           muted
         />
@@ -112,13 +140,15 @@ export function PricingCalculator({ product }: { product: Product }) {
         label={
           est.billing === 'once'
             ? `${t(L.license)} (${money(est.monthly)} × ${ONCE_MONTHS})`
-            : est.billing === 'yearly'
+            : yearlyOnly
+              ? t(L.yearlyFee)
+              : est.billing === 'yearly'
               ? `${t(L.subYear)} (${money(est.monthly)} × ${ANNUAL_MONTHS})`
               : t(L.subMonth)
         }
         value={money(est.billing === 'once' ? est.license : est.recurring)}
       />
-      {est.savings > 0 ? <Text style={styles.save}>{`${t(L.save)} ${money(est.savings)} ${lang === 'es' ? 'al año' : 'per year'}`}</Text> : null}
+      {est.savings > 0 && !yearlyOnly ? <Text style={styles.save}>{`${t(L.save)} ${money(est.savings)} ${lang === 'es' ? 'al año' : 'per year'}`}</Text> : null}
       <View style={styles.divider} />
       <View style={styles.dueRow}>
         <Text style={styles.dueLabel}>{t(L.dueToday)}</Text>
@@ -132,12 +162,13 @@ export function PricingCalculator({ product }: { product: Product }) {
           : `${t(L.renews)} ${money(est.renewal)}${est.renewalPer === 'year' ? t(L.perYear) : t(L.perMo)}`}
       </Text>
       <Pressable
-        style={styles.cta}
+        style={[styles.cta, needsDomain && { opacity: 0.5 }]}
         accessibilityRole="link"
+        disabled={needsDomain}
         onPress={() => router.push(`/quote?product=${product.slug}&${configToQuery(cfg)}`)}
       >
-        <Ionicons name="document-text" size={18} color="#fff" />
-        <Text style={styles.ctaText}>{t(L.cta)}</Text>
+        <Ionicons name={needsDomain ? 'globe-outline' : 'document-text'} size={18} color="#fff" />
+        <Text style={styles.ctaText}>{needsDomain ? t(L.pickDomain) : t(L.cta)}</Text>
       </Pressable>
       <Text style={styles.fine}>{t(L.fine)}</Text>
     </View>
@@ -150,8 +181,9 @@ export function PricingCalculator({ product }: { product: Product }) {
           <Text style={styles.h2}>{t(L.title)}</Text>
           <Text style={styles.muted}>{t(L.sub)}</Text>
         </View>
+        {allowed.length > 1 ? (
         <View style={styles.toggle} accessibilityRole="radiogroup">
-          {(['yearly', 'monthly', 'once'] as Billing[]).map((b) => {
+          {allowed.map((b) => {
             const on = cfg.billing === b;
             return (
               <Pressable key={b} onPress={() => setBilling(b)} style={[styles.toggleBtn, on && styles.toggleOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
@@ -163,6 +195,7 @@ export function PricingCalculator({ product }: { product: Product }) {
             );
           })}
         </View>
+        ) : null}
       </View>
 
       <View style={[{ gap: 16 }, wide && { flexDirection: 'row', alignItems: 'flex-start' }]}>
@@ -188,6 +221,15 @@ export function PricingCalculator({ product }: { product: Product }) {
                       </Text>
                       <Text style={styles.planBilled}>{t(L.onceIncl)}</Text>
                       <Text style={styles.planSetup}>{`${lang === 'es' ? 'Luego opcional' : 'Then optional'} ${money(p.monthly * CARE_MONTHS)}${t(L.perYear)}`}</Text>
+                    </>
+                  ) : yearlyOnly ? (
+                    <>
+                      <Text style={styles.planPrice}>
+                        {money(yr(p.monthly))}
+                        <Text style={styles.planPer}>{t(L.perYear)}</Text>
+                      </Text>
+                      <Text style={styles.planBilled}>{t(L.billedYearly)}</Text>
+                      <Text style={styles.planSetup}>{p.setup > 0 ? `+ ${money(p.setup)} ${t(L.setup)}` : t(L.noSetup)}</Text>
                     </>
                   ) : (
                     <>
@@ -219,7 +261,14 @@ export function PricingCalculator({ product }: { product: Product }) {
             })}
           </View>
 
-          {hasDomain ? <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={catalog.custom_domain.price} /> : null}
+          {hasDomain || isDomainProduct ? (
+            <DomainPicker
+              value={cfg.domain}
+              onChange={setDomain}
+              domainPrice={hasDomain ? catalog.custom_domain.price : 0}
+              modes={isDomainProduct ? ['new', 'own'] : undefined}
+            />
+          ) : null}
 
           {addons.length ? (
             <View style={[styles.addonsBox, shadow]}>
