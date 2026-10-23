@@ -9,6 +9,8 @@ export type Plan = { id: string; name: Text; monthly: number; setup: number; inc
 export type Pricing = { group: string; plans: Plan[]; addons: string[] };
 
 export const ANNUAL_MONTHS = 10; // pay yearly: 12 months for the price of 10
+export const ONCE_MONTHS = 30; // buy once: license = monthly price × 30 (≈ 2.5 years), includes the first 12 months of hosting, support and updates
+export const CARE_MONTHS = 3; // after year 1, optional care plan (hosting, updates, support) = monthly price × 3 per year
 
 export const addonCatalog: Record<string, Addon> = {
   "extra_branch": {

@@ -36,7 +36,7 @@ export default function QuotePage() {
           {est && cfg ? (
             <View style={styles.sum}>
               <Text style={styles.sumTitle}>
-                {es ? 'Plan' : 'Plan'} {t(est.plan.name)} · {cfg.billing === 'yearly' ? (es ? 'anual' : 'yearly') : es ? 'mensual' : 'monthly'}
+                {es ? 'Plan' : 'Plan'} {t(est.plan.name)} · {cfg.billing === 'once' ? (es ? 'pago único' : 'buy once') : cfg.billing === 'yearly' ? (es ? 'anual' : 'yearly') : es ? 'mensual' : 'monthly'}
               </Text>
               {est.lines.map((l) => (
                 <Text key={l.id} style={styles.sumLine}>
@@ -49,8 +49,9 @@ export default function QuotePage() {
                 <Text style={styles.sumTotal}>{money(est.dueToday)}</Text>
               </View>
               <Text style={styles.sumLine}>
-                {es ? 'Luego' : 'Then'} {money(est.recurring)}
-                {cfg.billing === 'yearly' ? (es ? '/año' : '/year') : es ? '/mes' : '/mo'}
+                {cfg.billing === 'once'
+                  ? `${es ? 'Desde el año 2, mantenimiento opcional' : 'From year 2, optional care plan'} ${money(est.care)}${es ? '/año' : '/year'}`
+                  : `${es ? 'Luego' : 'Then'} ${money(est.renewal)}${est.renewalPer === 'year' ? (es ? '/año' : '/year') : es ? '/mes' : '/mo'}`}
               </Text>
               <Link href={`/product/${p!.slug}`} style={styles.change}>
                 {es ? 'Cambiar plan o extras' : 'Change plan or extras'}

@@ -7,7 +7,9 @@ import { colors } from '../theme';
 export type ServerEstimate = {
   plan: string;
   plan_name: { es: string; en: string };
-  billing: 'yearly' | 'monthly';
+  billing: 'yearly' | 'monthly' | 'once';
+  license?: number;
+  care?: number;
   plan_monthly: number;
   plan_setup: number;
   monthly: number;
@@ -20,6 +22,32 @@ export type ServerEstimate = {
 export function EstimateBreakdown({ est, lang }: { est: ServerEstimate; lang: Lang }) {
   const es = lang === 'es';
   const mo = es ? '/mes' : '/mo';
+  if (est.billing === 'once') {
+    return (
+      <View style={{ gap: 6 }}>
+        <Row label={`Plan ${est.plan_name[lang]} · ${es ? 'pago único' : 'buy once'}`} value={money(Number(est.plan_monthly) * 30)} />
+        <Row label={es ? 'Instalación del plan' : 'Plan setup'} value={money(Number(est.plan_setup))} muted />
+        {est.lines.map((l) => (
+          <Row
+            key={l.id}
+            label={`${es ? l.name_es : l.name_en}${l.qty > 1 ? ` ×${l.qty}` : ''}`}
+            value={money(Number(l.total) * (l.kind === 'monthly' ? 30 : 1))}
+            muted
+          />
+        ))}
+        <View style={styles.divider} />
+        <Row label={es ? 'Instalación y extras' : 'Setup and extras'} value={money(Number(est.one_time))} />
+        <Row label={es ? `Licencia de por vida (${money(Number(est.monthly))} × 30)` : `Lifetime license (${money(Number(est.monthly))} × 30)`} value={money(Number(est.license ?? 0))} />
+        <View style={styles.divider} />
+        <Row label={es ? 'Total estimado (una sola vez)' : 'Estimated total (one time)'} value={money(Number(est.due_today))} strong />
+        <Text style={{ fontSize: 13, color: colors.muted }}>
+          {es
+            ? `Incluye 12 meses de soporte y actualizaciones. Luego, mantenimiento opcional ${money(Number(est.care ?? 0))}/año.`
+            : `Includes 12 months of support and updates. Then optional care plan ${money(Number(est.care ?? 0))}/year.`}
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={{ gap: 6 }}>
       <Row label={`${es ? 'Plan' : 'Plan'} ${est.plan_name[lang]} · ${est.billing === 'yearly' ? (es ? 'anual' : 'yearly') : es ? 'mensual' : 'monthly'}`} value={`${money(Number(est.plan_monthly))}${mo}`} />

@@ -222,6 +222,17 @@ function OrderDetail() {
 function quoteText(e: ServerEstimate, lang: string) {
   const es = lang === 'es';
   const mo = es ? '/mes' : '/mo';
+  if (e.billing === 'once') {
+    return [
+      `${es ? 'Plan' : 'Plan'} ${es ? e.plan_name.es : e.plan_name.en} (${es ? 'pago único, sin suscripción' : 'buy once, no subscription'})`,
+      `${es ? 'Licencia de por vida' : 'Lifetime license'}: ${money(Number(e.license ?? 0))}`,
+      `${es ? 'Instalación' : 'Setup'}: ${money(Number(e.plan_setup))}`,
+      ...e.lines.map((l) => `+ ${es ? l.name_es : l.name_en}${l.qty > 1 ? ` ×${l.qty}` : ''}: ${money(Number(l.total) * (l.kind === 'monthly' ? 30 : 1))}`),
+      `${es ? 'Total' : 'Total'}: ${money(Number(e.due_today))}`,
+      es ? 'Incluye 12 meses de soporte, hosting y actualizaciones.' : 'Includes 12 months of support, hosting and updates.',
+      `${es ? 'Desde el año 2, mantenimiento opcional' : 'From year 2, optional care plan'}: ${money(Number(e.care ?? 0))}${es ? '/año' : '/year'}`,
+    ].join('\n');
+  }
   const lines = [
     `${es ? 'Plan' : 'Plan'} ${es ? e.plan_name.es : e.plan_name.en} (${e.billing === 'yearly' ? (es ? 'anual, 2 meses gratis' : 'yearly, 2 months free') : es ? 'mensual' : 'monthly'}): ${money(Number(e.plan_monthly))}${mo}`,
     `${es ? 'Instalación' : 'Setup'}: ${money(Number(e.plan_setup))}`,

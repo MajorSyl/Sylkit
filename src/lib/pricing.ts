@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Addon, addonCatalog, ANNUAL_MONTHS, Plan, Pricing } from '../data/pricing';
+import { Addon, addonCatalog, ANNUAL_MONTHS, CARE_MONTHS, ONCE_MONTHS, Plan, Pricing } from '../data/pricing';
 import type { Text } from '../i18n';
 import { supabase } from './supabase';
 
@@ -8,8 +8,11 @@ import { supabase } from './supabase';
 //   one-time = plan setup   + one-time add-ons × qty
 //   recurring = monthly × 10 when billed yearly (2 months free), or monthly when billed monthly
 //   due today = one-time + first recurring payment
+// Buy once (no subscription):
+//   license  = monthly × 30, paid once on top of the one-time items; first 12 months of hosting, support and updates included
+//   care plan from year 2 (optional) = monthly × 3 per year
 
-export type Billing = 'yearly' | 'monthly';
+export type Billing = 'yearly' | 'monthly' | 'once';
 export type Config = { plan: string; billing: Billing; addons: Record<string, number> };
 export type Line = { id: string; name: Text; kind: Addon['kind']; qty: number; unit: number; total: number };
 export type Estimate = {
@@ -17,8 +20,12 @@ export type Estimate = {
   billing: Billing;
   monthly: number;
   oneTime: number;
-  recurring: number;
+  recurring: number; // subscription charged today (0 when buying once)
+  license: number; // one-time license (buy once only)
   dueToday: number;
+  renewal: number; // what is charged afterwards
+  renewalPer: 'year' | 'month'; // period of the renewal
+  care: number; // yearly care plan after year 1 (buy once only)
   savings: number;
   lines: Line[];
 };
@@ -41,9 +48,25 @@ export function estimate(pricing: Pricing, catalog: Record<string, Addon>, cfg: 
     else oneTime += total;
     lines.push({ id, name: a.name, kind: a.kind, qty, unit: a.price, total });
   }
-  const recurring = cfg.billing === 'yearly' ? monthly * ANNUAL_MONTHS : monthly;
+  const once = cfg.billing === 'once';
+  const recurring = once ? 0 : cfg.billing === 'yearly' ? monthly * ANNUAL_MONTHS : monthly;
+  const license = once ? monthly * ONCE_MONTHS : 0;
+  const care = once ? monthly * CARE_MONTHS : 0;
   const savings = cfg.billing === 'yearly' ? monthly * (12 - ANNUAL_MONTHS) : 0;
-  return { plan, billing: cfg.billing, monthly, oneTime, recurring, dueToday: oneTime + recurring, savings, lines };
+  return {
+    plan,
+    billing: cfg.billing,
+    monthly,
+    oneTime,
+    recurring,
+    license,
+    dueToday: oneTime + recurring + license,
+    renewal: once ? care : recurring,
+    renewalPer: cfg.billing === 'monthly' ? 'month' : 'year',
+    care,
+    savings,
+    lines,
+  };
 }
 
 // URL format: ?plan=business&billing=yearly&add=extra_branch*2,fiscal_printer
@@ -62,7 +85,7 @@ export function configFromQuery(q: { plan?: string; billing?: string; add?: stri
     const [id, n] = part.split('*');
     if (/^[a-z_]{2,40}$/.test(id ?? '')) addons[id] = Math.min(Math.max(parseInt(n ?? '1', 10) || 1, 1), MAX_QTY);
   }
-  return { plan: String(q.plan), billing: q.billing === 'monthly' ? 'monthly' : 'yearly', addons };
+  return { plan: String(q.plan), billing: q.billing === 'monthly' || q.billing === 'once' ? q.billing : 'yearly', addons };
 }
 
 export const money = (n: number) => `$${Number.isInteger(n) ? n.toLocaleString('en-US') : n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

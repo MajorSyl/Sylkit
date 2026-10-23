@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import { ANNUAL_MONTHS } from '../data/pricing';
+import { ANNUAL_MONTHS, CARE_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
 import { useLang } from '../i18n';
 import { Billing, Config, configToQuery, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
@@ -16,6 +16,15 @@ const L = {
   },
   yearly: { es: 'Anual', en: 'Yearly' },
   monthly: { es: 'Mensual', en: 'Monthly' },
+  once: { es: 'Pago único', en: 'Buy once' },
+  ownIt: { es: 'Sin suscripción', en: 'No subscription' },
+  onceLabel: { es: 'una sola vez', en: 'once' },
+  onceIncl: { es: 'Incluye instalación y 12 meses de soporte y actualizaciones', en: 'Includes setup and 12 months of support and updates' },
+  license: { es: 'Licencia de por vida', en: 'Lifetime license' },
+  careAfter: {
+    es: 'Desde el segundo año, plan de mantenimiento opcional (hosting, actualizaciones y soporte):',
+    en: 'From year 2, optional care plan (hosting, updates and support):',
+  },
   free2: { es: '2 meses gratis', en: '2 months free' },
   popular: { es: 'Más elegido', en: 'Most popular' },
   perMo: { es: '/mes', en: '/mo' },
@@ -64,25 +73,39 @@ export function PricingCalculator({ product }: { product: Product }) {
       return { ...c, addons: next };
     });
 
-  const unit = (n: number, kind: 'monthly' | 'one_time') => `+${money(n)}${kind === 'monthly' ? t(L.perMo) : ` ${t(L.oneTime)}`}`;
+  const unit = (n: number, kind: 'monthly' | 'one_time') =>
+    kind === 'monthly' && cfg.billing === 'once'
+      ? `+${money(n * ONCE_MONTHS)} ${t(L.oneTime)}`
+      : `+${money(n)}${kind === 'monthly' ? t(L.perMo) : ` ${t(L.oneTime)}`}`;
 
   const summary = est ? (
     <View style={[styles.summary, shadow, wide && { position: 'sticky' as any, top: 90 }]}>
       <Text style={styles.sumTitle}>{t(L.summary)}</Text>
-      <Row label={`${t(L.plan)} ${t(est.plan.name)}`} value={`${money(est.plan.monthly)}${t(L.perMo)}`} />
+      <Row
+        label={`${t(L.plan)} ${t(est.plan.name)}`}
+        value={est.billing === 'once' ? money(est.plan.monthly * ONCE_MONTHS) : `${money(est.plan.monthly)}${t(L.perMo)}`}
+      />
       {est.lines.map((l) => (
         <Row
           key={l.id}
           label={`${t(l.name)}${l.qty > 1 ? ` ×${l.qty}` : ''}`}
-          value={l.kind === 'monthly' ? `${money(l.total)}${t(L.perMo)}` : money(l.total)}
+          value={
+            l.kind === 'monthly' ? (est.billing === 'once' ? money(l.total * ONCE_MONTHS) : `${money(l.total)}${t(L.perMo)}`) : money(l.total)
+          }
           muted
         />
       ))}
       <View style={styles.divider} />
       <Row label={t(L.setupTotal)} value={money(est.oneTime)} />
       <Row
-        label={est.billing === 'yearly' ? `${t(L.subYear)} (${money(est.monthly)} × ${ANNUAL_MONTHS})` : t(L.subMonth)}
-        value={money(est.recurring)}
+        label={
+          est.billing === 'once'
+            ? `${t(L.license)} (${money(est.monthly)} × ${ONCE_MONTHS})`
+            : est.billing === 'yearly'
+              ? `${t(L.subYear)} (${money(est.monthly)} × ${ANNUAL_MONTHS})`
+              : t(L.subMonth)
+        }
+        value={money(est.billing === 'once' ? est.license : est.recurring)}
       />
       {est.savings > 0 ? <Text style={styles.save}>{`${t(L.save)} ${money(est.savings)} ${lang === 'es' ? 'al año' : 'per year'}`}</Text> : null}
       <View style={styles.divider} />
@@ -93,7 +116,9 @@ export function PricingCalculator({ product }: { product: Product }) {
         </Text>
       </View>
       <Text style={styles.renew}>
-        {`${t(L.renews)} ${money(est.recurring)}${est.billing === 'yearly' ? t(L.perYear) : t(L.perMo)}`}
+        {est.billing === 'once'
+          ? `${t(L.careAfter)} ${money(est.care)}${t(L.perYear)}`
+          : `${t(L.renews)} ${money(est.renewal)}${est.renewalPer === 'year' ? t(L.perYear) : t(L.perMo)}`}
       </Text>
       <Pressable
         style={styles.cta}
@@ -115,11 +140,11 @@ export function PricingCalculator({ product }: { product: Product }) {
           <Text style={styles.muted}>{t(L.sub)}</Text>
         </View>
         <View style={styles.toggle} accessibilityRole="radiogroup">
-          {(['yearly', 'monthly'] as Billing[]).map((b) => {
+          {(['yearly', 'monthly', 'once'] as Billing[]).map((b) => {
             const on = cfg.billing === b;
             return (
               <Pressable key={b} onPress={() => setBilling(b)} style={[styles.toggleBtn, on && styles.toggleOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
-                <Text style={[styles.toggleText, on && { color: '#fff' }]}>{t(b === 'yearly' ? L.yearly : L.monthly)}</Text>
+                <Text style={[styles.toggleText, on && { color: '#fff' }]}>{t(b === 'yearly' ? L.yearly : b === 'monthly' ? L.monthly : L.once)}</Text>
                 {b === 'yearly' ? (
                   <Text style={[styles.freeTag, on && { backgroundColor: 'rgba(255,255,255,0.2)', color: '#fff' }]}>{t(L.free2)}</Text>
                 ) : null}
@@ -144,14 +169,29 @@ export function PricingCalculator({ product }: { product: Product }) {
                 >
                   {p.popular ? <Text style={styles.popular}>{t(L.popular)}</Text> : null}
                   <Text style={styles.planName}>{t(p.name)}</Text>
-                  <Text style={styles.planPrice}>
-                    {money(p.monthly)}
-                    <Text style={styles.planPer}>{t(L.perMo)}</Text>
-                  </Text>
-                  <Text style={styles.planBilled}>
-                    {cfg.billing === 'yearly' ? `${money(p.monthly * ANNUAL_MONTHS)}${t(L.perYear)} ${t(L.billedYearly)} · ${lang === 'es' ? 'ahorras' : 'save'} ${money(p.monthly * (12 - ANNUAL_MONTHS))}` : t(L.billedMonthly)}
-                  </Text>
-                  <Text style={styles.planSetup}>{`+ ${money(p.setup)} ${t(L.setup)}`}</Text>
+                  {cfg.billing === 'once' ? (
+                    <>
+                      <Text style={styles.planPrice}>
+                        {money(p.monthly * ONCE_MONTHS + p.setup)}
+                        <Text style={styles.planPer}> {t(L.onceLabel)}</Text>
+                      </Text>
+                      <Text style={styles.planBilled}>{t(L.onceIncl)}</Text>
+                      <Text style={styles.planSetup}>{`${lang === 'es' ? 'Luego opcional' : 'Then optional'} ${money(p.monthly * CARE_MONTHS)}${t(L.perYear)}`}</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.planPrice}>
+                        {money(p.monthly)}
+                        <Text style={styles.planPer}>{t(L.perMo)}</Text>
+                      </Text>
+                      <Text style={styles.planBilled}>
+                        {cfg.billing === 'yearly'
+                          ? `${money(p.monthly * ANNUAL_MONTHS)}${t(L.perYear)} ${t(L.billedYearly)} · ${lang === 'es' ? 'ahorras' : 'save'} ${money(p.monthly * (12 - ANNUAL_MONTHS))}`
+                          : t(L.billedMonthly)}
+                      </Text>
+                      <Text style={styles.planSetup}>{`+ ${money(p.setup)} ${t(L.setup)}`}</Text>
+                    </>
+                  )}
                   <View style={{ gap: 6, marginTop: 6 }}>
                     {p.includes.map((inc, i) => (
                       <View key={i} style={styles.incRow}>
@@ -229,8 +269,8 @@ const styles = StyleSheet.create({
   h2: { fontSize: 26, fontWeight: '800', color: colors.text, letterSpacing: -0.4 },
   h3: { fontSize: 18, fontWeight: '800', color: colors.text },
   muted: { fontSize: 14, color: colors.muted, lineHeight: 20 },
-  toggle: { flexDirection: 'row', backgroundColor: colors.surface, borderRadius: 999, padding: 4, borderWidth: 1, borderColor: colors.border },
-  toggleBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, minHeight: 40 },
+  toggle: { flexDirection: 'row', flexWrap: 'wrap', backgroundColor: colors.surface, borderRadius: 22, padding: 4, borderWidth: 1, borderColor: colors.border },
+  toggleBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 9, borderRadius: 999, minHeight: 40 },
   toggleOn: { backgroundColor: colors.primary },
   toggleText: { fontSize: 14, fontWeight: '800', color: colors.text },
   freeTag: { fontSize: 11, fontWeight: '800', color: '#0E7F98', backgroundColor: colors.softCyan, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999, overflow: 'hidden' },
