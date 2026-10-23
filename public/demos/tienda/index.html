@@ -8,9 +8,10 @@ const OS = { es: { new: 'Nuevo', confirmed: 'Confirmado', shipped: 'Enviado', de
 const OC = { new: 'red', confirmed: 'blue', shipped: 'orange', delivered: 'green' };
 const ONX = { new: 'confirmed', confirmed: 'shipped', shipped: 'delivered' };
 SylDemo.create({
-  id: 'tienda', version: 1, product: 'tienda-online-whatsapp', logo: '🛍️', color: '#E04F8A',
-  name: { es: 'Tienda en línea', en: 'Online Store' }, brand: { es: 'Boutique Demo', en: 'Demo Boutique' },
-  sub: { es: 'Tienda en línea · pedidos por WhatsApp', en: 'Online store · WhatsApp orders' },
+  id: 'tienda', version: 1, theme: {"bg": "#ffffff", "card": "#ffffff", "text": "#111111", "muted": "#6B7280", "border": "rgba(17,17,17,.10)", "line": "#D1D5DB", "primary": "#111111", "primaryD": "#000000", "soft": "#F3F4F6", "font": "'Montserrat',sans-serif", "head": "'Montserrat',sans-serif", "fonts": "family=Montserrat:wght@400;600;700;800", "r": "0px", "rLg": "2px"},
+  product: 'tienda-online-whatsapp', logo: "M", color: '#E04F8A',
+  name: { es: 'Tienda en línea', en: 'Online Store' }, brand: { es: "Maison Valeria", en: "Maison Valeria" },
+  sub: { es: "Moda y accesorios · envíos nacionales", en: "Fashion & accessories · nationwide shipping" },
   t: {
     es: { tShop: 'Tienda (cliente)', tCart: 'Carrito', tOrders: 'Pedidos (dueño)', tCatalog: 'Catálogo (dueño)',
       hero: 'Nueva colección', heroSub: 'Envíos a todo el país · Paga con Pago Móvil, Zelle o efectivo', all: 'Todo', add: 'Agregar', added: 'Agregado al carrito.', size: 'Talla', inStock: 'Disponible', soldOut: 'Agotado',
@@ -36,7 +37,7 @@ SylDemo.create({
     return { products, orders, cart: [], cat: 'all', del: 'local' };
   },
   tabs: [
-    { id: 'shop', label: 'tShop', render: (a) => {
+    { id: 'shop', icon: "🛍️", label: 'tShop', render: (a) => {
         const d = a.db, u = a.ui, n = d.cart.reduce((s, x) => s + x.qty, 0);
         return `<div style="background:linear-gradient(135deg,#E04F8A,#7A5AF8);color:#fff;border-radius:20px;padding:24px;margin-bottom:16px"><div style="font-size:26px;font-weight:800">${a.t('hero')}</div><div style="opacity:.9;margin-top:4px">${a.t('heroSub')}</div></div>
           ${u.chips([['all', a.t('all')], ...Object.entries(a.t('cats'))], d.cat, 'cat')}
@@ -44,7 +45,7 @@ SylDemo.create({
             <span class="nm">${a.esc(p.name)}</span><span class="pr">${a.money(p.price)}</span>${p.stock ? u.btn(a.t('add'), 'add', { id: p.id }, 'p sm') : u.pill(a.t('soldOut'), 'gray')}</div>`).join('')}</div>
           ${n ? `<button class="k-btn p k-fab" data-act="goCart">🛍️ ${n} · ${a.money(d.cart.reduce((s, x) => s + x.price * x.qty, 0))}</button>` : ''}`;
       } },
-    { id: 'cart', label: 'tCart', badge: (a) => a.db.cart.reduce((s, x) => s + x.qty, 0), render: (a) => {
+    { id: 'cart', icon: "🛒", label: 'tCart', badge: (a) => a.db.cart.reduce((s, x) => s + x.qty, 0), render: (a) => {
         const d = a.db, u = a.ui, sub = d.cart.reduce((s, x) => s + x.price * x.qty, 0), ship = { pickup: 0, local: 3, ship: 5 }[d.del];
         if (!d.cart.length) return u.card(a.t('cartTitle'), u.empty(a.t('empty')) + `<div style="text-align:center">${u.btn(a.t('shopNow'), 'goShop', {}, 'p')}</div>`);
         return `<div class="k-cols"><div>${u.card(a.t('cartTitle'), d.cart.map((x) => `<div class="k-row"><div class="k-thumb">${x.em}</div><div class="k-grow"><div class="k-title">${a.esc(x.name)}</div><div class="k-meta">${a.money(x.price)}</div></div><span class="k-qty"><button data-act="dec" data-id="${x.id}">−</button><b>${x.qty}</b><button data-act="add" data-id="${x.id}">+</button></span></div>`).join(''))}</div>
@@ -53,12 +54,12 @@ SylDemo.create({
             <div class="k-total"><span>Subtotal</span><span>${a.money(sub)}</span></div><div class="k-total"><span>${a.t('shipping')}</span><span>${a.money(ship)}</span></div><div class="k-total big"><span>${a.t('total')}</span><span>${a.money(sub + ship)}</span></div>
             <button class="k-btn wa block" data-act="checkout">📲 ${a.t('checkout')}</button>`)}</div></div>`;
       } },
-    { id: 'orders', label: 'tOrders', badge: (a) => a.db.orders.filter((o) => o.status === 'new').length, render: (a) => {
+    { id: 'orders', icon: "📦", label: 'tOrders', badge: (a) => a.db.orders.filter((o) => o.status === 'new').length, render: (a) => {
         const d = a.db, u = a.ui, L = OS[a.lang], t = (o) => o.items.reduce((s, x) => s + x.price * x.qty, 0) + o.ship;
         return `<h1 class="k-h1">${a.t('oTitle')}</h1><p class="k-sub">${a.t('oSub')}</p>${u.stats([{ label: a.t('sToday'), value: a.money(d.orders.reduce((s, o) => s + t(o), 0)), color: 'var(--green)' }, { label: a.t('sOrders'), value: d.orders.length }, { label: a.t('sNew'), value: d.orders.filter((o) => o.status === 'new').length, color: 'var(--red)' }])}
           ${u.card('', d.orders.slice().reverse().map((o) => u.row({ icon: '📦', title: `${o.num} · ${o.name} · ${a.money(t(o))}`, meta: `${o.items.map((x) => `${x.qty}× ${x.name}`).join(', ')} · ${o.city} · ${o.phone}`, right: u.pill(L[o.status], OC[o.status]) + (ONX[o.status] ? u.btn('→ ' + L[ONX[o.status]], 'adv', { id: o.id }, 's sm') : '') })).join(''))}`;
       } },
-    { id: 'catalog', label: 'tCatalog', render: (a) => {
+    { id: 'catalog', icon: "🏷️", label: 'tCatalog', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('cTitle')}</h1><p class="k-sub">${a.t('cSub')}</p>${u.card('', d.products.map((p) => u.row({ icon: p.em, title: p.name, act: 'edit', id: p.id, meta: `${a.t('cats')[p.cat]} · ${a.money(p.price)}`, right: u.pill(p.stock ? `${a.t('pStock')}: ${p.stock}` : a.t('soldOut'), p.stock ? p.stock <= 3 ? 'orange' : 'green' : 'gray') })).join(''), u.btn('+ ' + a.t('newP'), 'edit', {}, 'p sm'))}`;
       } },

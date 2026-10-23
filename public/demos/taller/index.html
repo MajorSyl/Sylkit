@@ -9,9 +9,10 @@ const WL = { es: { received: 'Recibido', diagnosis: 'Diagnóstico', approval: 'E
   en: { received: 'Received', diagnosis: 'Diagnosis', approval: 'Awaiting approval', repair: 'In repair', ready: 'Ready for pickup', delivered: 'Delivered' } };
 const WC = { received: 'gray', diagnosis: 'blue', approval: 'orange', repair: 'purple', ready: 'green', delivered: 'gray' };
 SylDemo.create({
-  id: 'taller', version: 1, product: 'taller-mecanico', logo: '🔧', color: '#F79009',
-  name: { es: 'Taller mecánico', en: 'Car Workshop' }, brand: { es: 'Sylkit Taller', en: 'Sylkit Workshop' },
-  sub: { es: 'AutoServicio Demo · 4 mecánicos', en: 'Demo AutoService · 4 mechanics' },
+  id: 'taller', version: 1, theme: {"layout": "side", "dark": true, "headerDark": true, "bg": "#18181B", "card": "#27272A", "text": "#F4F4F5", "muted": "#A1A1AA", "border": "rgba(255,255,255,.08)", "line": "#3F3F46", "input": "#18181B", "primary": "#F97316", "primaryD": "#FDBA74", "soft": "rgba(249,115,22,.16)", "hbg": "#09090B", "hfg": "#ffffff", "font": "'Barlow',sans-serif", "head": "'Barlow Condensed',sans-serif", "fonts": "family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@400;600;700;800", "r": "4px", "rLg": "6px"},
+  product: 'taller-mecanico', logo: "🔧", color: '#F79009',
+  name: { es: 'Taller mecánico', en: 'Car Workshop' }, brand: { es: "AutoTaller El Rápido", en: "El Rápido Auto Shop" },
+  sub: { es: "Taller mecánico · 4 mecánicos", en: "Car workshop · 4 mechanics" },
   t: {
     es: { tOrders: 'Órdenes de trabajo', tVehicles: 'Vehículos', tParts: 'Repuestos', tIncome: 'Ingresos',
       oTitle: 'Órdenes de trabajo', oSub: 'Cada carro con su estado. El cliente aprueba el presupuesto desde su teléfono y sabe cuándo está listo.', newOrder: 'Nueva orden',
@@ -44,7 +45,7 @@ SylDemo.create({
     return { parts, orders, history, paid: [{ at: a.addDays(-1), labor: 30, parts: 64 }, { at: a.addDays(-2), labor: 15, parts: 22 }], filter: 'open' };
   },
   tabs: [
-    { id: 'orders', label: 'tOrders', badge: (a) => a.db.orders.filter((o) => o.status === 'ready').length, render: (a) => {
+    { id: 'orders', icon: "🔧", label: 'tOrders', badge: (a) => a.db.orders.filter((o) => o.status === 'ready').length, render: (a) => {
         const d = a.db, u = a.ui, L = WL[a.lang];
         const list = d.orders.filter((o) => (d.filter === 'open' ? o.status !== 'delivered' : o.status === d.filter));
         return `<h1 class="k-h1">${a.t('oTitle')}</h1><p class="k-sub">${a.t('oSub')}</p>
@@ -52,17 +53,17 @@ SylDemo.create({
           ${u.card('', list.map((o) => { const tot = o.lines.reduce((s, l) => s + l.price * l.qty, 0);
             return u.row({ icon: '🚗', iconBg: 'var(--orangebg)', title: `${o.plate} · ${o.car}`, act: 'open', id: o.id, meta: `${o.num} · ${o.owner} · ${o.problem} · 🔧 ${o.mech}`, right: u.pill(L[o.status], WC[o.status]) + (tot ? `<b>${a.money(tot)}</b>` : '') }); }).join('') || u.empty(), u.btn('+ ' + a.t('newOrder'), 'newOrder', {}, 'p sm'))}`;
       } },
-    { id: 'vehicles', label: 'tVehicles', render: (a) => {
+    { id: 'vehicles', icon: "🚗", label: 'tVehicles', render: (a) => {
         const d = a.db, u = a.ui;
         const cars = {}; d.orders.forEach((o) => (cars[o.plate] = cars[o.plate] || { plate: o.plate, car: o.car, owner: o.owner, km: o.km }));
         return `<h1 class="k-h1">${a.t('vTitle')}</h1><p class="k-sub">${a.t('vSub')}</p>${Object.values(cars).map((c) => { const h = d.history[c.plate] || [];
           return u.card(`${c.plate} · ${c.car}`, `<p class="k-meta" style="margin-bottom:8px">${c.owner} · ${c.km.toLocaleString()} km · ${a.t('nextService')}: ${(c.km + 5000).toLocaleString()} km</p>` + (h.length ? h.map((x) => u.row({ icon: '🧾', title: x.what, meta: a.date(x.at, { day: 'numeric', month: 'short', year: 'numeric' }), right: `<b>${a.money(x.total)}</b>` })).join('') : ''), u.pill(a.t('services', h.length), 'blue')); }).join('')}`;
       } },
-    { id: 'parts', label: 'tParts', badge: (a) => a.db.parts.filter((p) => p.stock <= 4).length, render: (a) => {
+    { id: 'parts', icon: "⚙️", label: 'tParts', badge: (a) => a.db.parts.filter((p) => p.stock <= 4).length, render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('pTitle')}</h1><p class="k-sub">${a.t('pSub')}</p>${u.card('', d.parts.map((p) => u.row({ icon: '⚙️', title: p.name, meta: `${a.t('price')}: ${a.money(p.price)}`, right: u.pill(`${a.t('stock')}: ${p.stock}`, p.stock <= 4 ? 'orange' : 'green') })).join(''))}`;
       } },
-    { id: 'income', label: 'tIncome', render: (a) => {
+    { id: 'income', icon: "💵", label: 'tIncome', render: (a) => {
         const d = a.db, u = a.ui; const labor = d.paid.reduce((s, p) => s + p.labor, 0), parts = d.paid.reduce((s, p) => s + p.parts, 0);
         return `<h1 class="k-h1">${a.t('iTitle')}</h1><p class="k-sub">${a.t('iSub')}</p>${u.stats([{ label: a.t('sTotal'), value: a.money(labor + parts), color: 'var(--green)' }, { label: a.t('sLabor'), value: a.money(labor) }, { label: a.t('sParts'), value: a.money(parts) }, { label: a.t('sOpen'), value: d.orders.filter((o) => o.status !== 'delivered').length, color: 'var(--orange)' }])}`;
       } },

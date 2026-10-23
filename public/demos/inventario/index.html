@@ -6,9 +6,10 @@
 <script>
 const CATS = { es: { ferre: 'Ferretería', elec: 'Electricidad', pint: 'Pinturas', plom: 'Plomería', herr: 'Herramientas' }, en: { ferre: 'Hardware', elec: 'Electrical', pint: 'Paint', plom: 'Plumbing', herr: 'Tools' } };
 SylDemo.create({
-  id: 'inventario', version: 1, product: 'control-de-inventario', logo: '📦', color: '#0E9384',
-  name: { es: 'Control de inventario', en: 'Inventory Control' }, brand: { es: 'Sylkit Inventario', en: 'Sylkit Inventory' },
-  sub: { es: 'Ferretería Demo · 2 almacenes', en: 'Demo Hardware Store · 2 warehouses' },
+  id: 'inventario', version: 1, theme: {"layout": "side", "headerDark": true, "bg": "#EEF0F3", "card": "#ffffff", "text": "#1F2933", "muted": "#616E7C", "border": "rgba(31,41,51,.10)", "line": "#CBD2D9", "primary": "#D97706", "primaryD": "#B45309", "soft": "#FEF3C7", "hbg": "#1F2933", "hfg": "#ffffff", "font": "'IBM Plex Sans',sans-serif", "head": "'IBM Plex Sans',sans-serif", "fonts": "family=IBM+Plex+Sans:wght@400;600;700;800", "r": "6px", "rLg": "8px"},
+  product: 'control-de-inventario', logo: "🔩", color: '#0E9384',
+  name: { es: 'Control de inventario', en: 'Inventory Control' }, brand: { es: "Ferretería El Tornillo", en: "El Tornillo Hardware" },
+  sub: { es: "Inventario · 2 almacenes", en: "Inventory · 2 warehouses" },
   t: {
     es: { tStock: 'Existencias', tMoves: 'Movimientos', tOrders: 'Compras', tReport: 'Reporte',
       stockTitle: 'Existencias en tiempo real', stockSub: 'Cada producto con su cantidad, mínimo y valor. Toca uno para registrar una entrada o salida.',
@@ -41,7 +42,7 @@ SylDemo.create({
     return { items, moves, pos: [], filter: 'all', q: '' };
   },
   tabs: [
-    { id: 'stock', label: 'tStock', badge: (a) => a.db.items.filter((i) => i.qty <= i.min).length, render: (a) => {
+    { id: 'stock', icon: "📦", label: 'tStock', badge: (a) => a.db.items.filter((i) => i.qty <= i.min).length, render: (a) => {
         const d = a.db, u = a.ui, c = CATS[a.lang];
         const value = d.items.reduce((s, i) => s + i.qty * i.cost, 0);
         const low = d.items.filter((i) => i.qty > 0 && i.qty <= i.min).length, out = d.items.filter((i) => i.qty === 0).length;
@@ -57,13 +58,13 @@ SylDemo.create({
               right: `<b style="font-size:18px;color:${col}">${i.qty}</b><span class="k-meta">${a.t('units')}</span>` });
           }).join('') || u.empty(), u.btn('+ ' + a.t('newMove'), 'move', {}, 'p sm'))}`;
       } },
-    { id: 'moves', label: 'tMoves', render: (a) => {
+    { id: 'moves', icon: "🔁", label: 'tMoves', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('moveTitle')}</h1><p class="k-sub">${a.t('moveSub')}</p>
           ${u.card('', d.moves.slice().sort((x, y) => y.at.localeCompare(x.at)).map((m) => { const it = d.items.find((i) => i.id === m.item);
             return u.row({ icon: m.type === 'in' ? '⬆️' : '⬇️', iconBg: m.type === 'in' ? 'var(--greenbg)' : 'var(--redbg)', title: `${m.type === 'in' ? '+' : '−'}${m.qty} · ${it ? it.name : ''}`, meta: `${a.date(m.at)} ${a.time(m.at)} · ${m.by} · ${m.note}`, right: u.pill(a.t(m.type), m.type === 'in' ? 'green' : 'red') }); }).join(''), u.btn('+ ' + a.t('newMove'), 'move', {}, 'p sm'))}`;
       } },
-    { id: 'orders', label: 'tOrders', badge: (a) => a.db.pos.filter((p) => p.status === 'pending').length, render: (a) => {
+    { id: 'orders', icon: "🧾", label: 'tOrders', badge: (a) => a.db.pos.filter((p) => p.status === 'pending').length, render: (a) => {
         const d = a.db, u = a.ui;
         const need = d.items.filter((i) => i.qty <= i.min); const bySup = {};
         need.forEach((i) => (bySup[i.sup] = bySup[i.sup] || []).push(i));
@@ -73,7 +74,7 @@ SylDemo.create({
           ${d.pos.length ? u.card(a.t('pos'), d.pos.slice().reverse().map((p) => u.row({ icon: '📝', title: `${p.num} · ${p.sup}`, meta: `${a.date(p.at)} · ${p.lines.length} · ${a.money(p.total)}`,
             right: p.status === 'pending' ? u.pill(a.t('pending'), 'orange') + u.btn(a.t('receive'), 'receive', { id: p.id }, 's sm') : u.pill(a.t('done'), 'green') })).join('')) : ''}`;
       } },
-    { id: 'report', label: 'tReport', render: (a) => {
+    { id: 'report', icon: "📈", label: 'tReport', render: (a) => {
         const d = a.db, u = a.ui, c = CATS[a.lang];
         const byCat = {}; d.items.forEach((i) => (byCat[i.cat] = (byCat[i.cat] || 0) + i.qty * i.cost)); const max = Math.max(1, ...Object.values(byCat));
         const outQ = {}; d.moves.filter((m) => m.type === 'out').forEach((m) => (outQ[m.item] = (outQ[m.item] || 0) + m.qty));

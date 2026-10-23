@@ -8,9 +8,10 @@ const JS = { es: { new: 'Nuevo', assigned: 'Asignado', onway: 'En camino', worki
 const JC = { new: 'red', assigned: 'blue', onway: 'orange', working: 'purple', done: 'green' };
 const JN = { assigned: 'onway', onway: 'working', working: 'done' };
 SylDemo.create({
-  id: 'servicios', version: 1, product: 'servicios-a-domicilio', logo: '🏠', color: '#0E9384',
-  name: { es: 'Servicios a domicilio', en: 'Home Services' }, brand: { es: 'Sylkit Servicios', en: 'Sylkit Services' },
-  sub: { es: 'HogarPro Demo · limpieza, plomería, electricidad', en: 'Demo HomePro · cleaning, plumbing, electrical' },
+  id: 'servicios', version: 1, theme: {"bg": "#EFFCF9", "card": "#ffffff", "primary": "#0D9488", "primaryD": "#0F766E", "soft": "#CCFBF1", "font": "'Outfit',sans-serif", "head": "'Outfit',sans-serif", "fonts": "family=Outfit:wght@400;600;700;800", "r": "14px", "rLg": "22px"},
+  product: 'servicios-a-domicilio', logo: "🏠", color: '#0E9384',
+  name: { es: 'Servicios a domicilio', en: 'Home Services' }, brand: { es: "HogarPro", en: "HogarPro" },
+  sub: { es: "Limpieza · plomería · electricidad", en: "Cleaning · plumbing · electrical" },
   t: {
     es: { tBook: 'Reservar (cliente)', tJobs: 'Trabajos', tTeam: 'Técnicos', tMoney: 'Ingresos',
       bTitle: '¿Qué necesitas en casa?', bSub: 'Así reservan tus clientes: eligen el servicio, ven el precio y escogen la hora. Tú recibes el trabajo al instante.',
@@ -38,7 +39,7 @@ SylDemo.create({
     return { svcs, team, jobs, done, bk: { s: 's0' } };
   },
   tabs: [
-    { id: 'book', label: 'tBook', render: (a) => {
+    { id: 'book', icon: "🏠", label: 'tBook', render: (a) => {
         const d = a.db, u = a.ui, s = d.svcs.find((x) => x.id === d.bk.s);
         return `<h1 class="k-h1">${a.t('bTitle')}</h1><p class="k-sub">${a.t('bSub')}</p><div class="k-cols"><div>
           <div class="k-tiles">${d.svcs.map((x) => `<button class="k-tile" data-act="pick" data-v="${x.id}" style="${x.id === d.bk.s ? 'border-color:var(--primary);background:var(--soft)' : ''}"><span class="em">${x.em}</span><span class="nm">${a.esc(x[a.lang])}</span><span class="pr">${a.t('from')} ${a.money(x.price)}</span></button>`).join('')}</div></div>
@@ -49,18 +50,18 @@ SylDemo.create({
             <div class="k-grid2"><div class="k-field"><label>${a.t('name')}</label><input id="bName" value="Visitante Demo"></div><div class="k-field"><label>${a.t('phone')}</label><input id="bPhone" value="+58 412 0000000"></div></div>
             <button class="k-btn p block" data-act="book">${a.t('book')}</button>`)}</div></div>`;
       } },
-    { id: 'jobs', label: 'tJobs', badge: (a) => a.db.jobs.filter((j) => j.status === 'new').length, render: (a) => {
+    { id: 'jobs', icon: "🧰", label: 'tJobs', badge: (a) => a.db.jobs.filter((j) => j.status === 'new').length, render: (a) => {
         const d = a.db, u = a.ui, L = JS[a.lang];
         return `<h1 class="k-h1">${a.t('jTitle')}</h1><p class="k-sub">${a.t('jSub')}</p>${u.card('', d.jobs.filter((j) => j.status !== 'done').sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time)).map((j) => { const s = d.svcs.find((x) => x.id === j.s), t = d.team.find((x) => x.id === j.tech);
           return u.row({ icon: s.em, title: `${s[a.lang]} · ${j.client}`, meta: `${a.date(j.date, { weekday: 'short', day: 'numeric' })} ${j.time} · ${j.zone} · ${j.address}${t ? ' · 👷 ' + t.name : ''}`,
             right: u.pill(L[j.status], JC[j.status]) + (j.status === 'new' ? u.btn(a.t('assign'), 'assign', { id: j.id }, 'p sm') : u.btn('→ ' + L[JN[j.status]], 'adv', { id: j.id }, 's sm')) }); }).join('') || u.empty())}`;
       } },
-    { id: 'team', label: 'tTeam', render: (a) => {
+    { id: 'team', icon: "👷", label: 'tTeam', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('tmTitle')}</h1><p class="k-sub">${a.t('tmSub')}</p>${u.card('', d.team.map((t) => { const busy = d.jobs.some((j) => j.tech === t.id && ['onway', 'working'].includes(j.status));
           return u.row({ avatar: u.initials(t.name), color: u.avatarColor(t.name), title: t.name, meta: `${d.svcs.find((s) => s.skill === t.skill)[a.lang].split(' ')[0]} · ⭐ ${t.rating} · ${a.t('jobsDone', t.jobs)}`, right: u.pill(busy ? a.t('busy') : a.t('available'), busy ? 'orange' : 'green') }); }).join(''))}`;
       } },
-    { id: 'money', label: 'tMoney', render: (a) => {
+    { id: 'money', icon: "💵", label: 'tMoney', render: (a) => {
         const d = a.db, u = a.ui, tot = d.done.reduce((s, x) => s + x.amount, 0);
         return `<h1 class="k-h1">${a.t('mTitle')}</h1><p class="k-sub">${a.t('mSub')}</p>${u.stats([{ label: a.t('sTotal'), value: a.money(tot), color: 'var(--green)' }, { label: a.t('sJobs'), value: d.done.length }, { label: a.t('sAvg'), value: '⭐ ' + (d.done.reduce((s, x) => s + x.rating, 0) / Math.max(1, d.done.length)).toFixed(1) }])}
           ${u.card('', d.done.slice().reverse().map((x) => { const s = d.svcs.find((y) => y.id === x.s), t = d.team.find((y) => y.id === x.tech); return u.row({ icon: s.em, title: `${s[a.lang]} · ${a.money(x.amount)}`, meta: `${a.date(x.at)} · ${t.name} · ${a.t('share')}: ${a.money(x.amount * 0.6)}`, right: u.pill('⭐ ' + x.rating, 'yellow') }); }).join(''))}`;

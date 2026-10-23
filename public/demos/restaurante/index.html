@@ -8,9 +8,10 @@ const OST = { es: { new: 'Nuevo', prep: 'Preparando', ready: 'Listo', served: 'S
 const OSC = { new: 'red', prep: 'orange', ready: 'green', served: 'gray' };
 const NEXT = { new: 'prep', prep: 'ready', ready: 'served' };
 SylDemo.create({
-  id: 'restaurante', version: 1, product: 'restaurante-menu-qr', logo: '🍽️', color: '#E04F8A',
-  name: { es: 'Restaurante', en: 'Restaurant' }, brand: { es: 'Sylkit Restaurante', en: 'Sylkit Restaurant' },
-  sub: { es: 'Restaurante Demo · 8 mesas', en: 'Demo Restaurant · 8 tables' },
+  id: 'restaurante', version: 1, theme: {"headerDark": true, "bg": "#FAF4EA", "card": "#FFFDF8", "text": "#3B2416", "muted": "#8A6E5A", "border": "rgba(59,36,22,.10)", "line": "#E8D9C5", "input": "#FFFDF8", "primary": "#C2410C", "primaryD": "#9A3412", "soft": "#FFEDD5", "hbg": "#3B2416", "hfg": "#FAF4EA", "font": "'DM Sans',sans-serif", "head": "'DM Serif Display',serif", "fonts": "family=DM+Sans:wght@400;600;700;800&family=DM+Serif+Display:wght@400;700", "r": "12px", "rLg": "20px"},
+  product: 'restaurante-menu-qr', logo: "🔥", color: '#E04F8A',
+  name: { es: 'Restaurante', en: 'Restaurant' }, brand: { es: "La Brasa Criolla", en: "La Brasa Criolla" },
+  sub: { es: "Restaurante · 8 mesas", en: "Restaurant · 8 tables" },
   t: {
     es: { tMenu: 'Menú QR (cliente)', tKitchen: 'Cocina', tTables: 'Mesas', tSales: 'Ventas',
       menuNote: (n) => `Así ve el cliente el menú al escanear el código QR de la Mesa ${n}. Pide desde su teléfono y el pedido llega directo a la cocina.`,
@@ -37,7 +38,7 @@ SylDemo.create({
     return { menu, orders, cart: [], myTable: 4, paid: [{ id: a.uid(), table: 1, total: 42.5, at: new Date(Date.now() - 2 * 3600e3).toISOString(), method: 'Zelle', items: [[menu[4].name, 2], [menu[12].name, 1]] }], cat: 'main' };
   },
   tabs: [
-    { id: 'menu', label: 'tMenu', render: (a) => {
+    { id: 'menu', icon: "📱", label: 'tMenu', render: (a) => {
         const d = a.db, u = a.ui, total = d.cart.reduce((s, x) => s + x.price * x.qty, 0);
         return `<div class="k-note">📱 ${a.t('menuNote', d.myTable)}</div><div class="k-cols"><div>
           ${u.chips(Object.entries(a.t('cats')), d.cat, 'cat')}
@@ -47,7 +48,7 @@ SylDemo.create({
             <div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div><button class="k-btn p block" data-act="send" ${d.cart.length ? '' : 'disabled'}>${a.t('send')}</button>`)}</div></div>
           ${d.cart.length ? `<button class="k-btn p k-fab" data-act="toCart">🧾 ${d.cart.reduce((n, x) => n + x.qty, 0)} · ${a.money(total)}</button>` : ''}`;
       } },
-    { id: 'kitchen', label: 'tKitchen', badge: (a) => a.db.orders.filter((o) => o.status === 'new').length, render: (a) => {
+    { id: 'kitchen', icon: "👨‍🍳", label: 'tKitchen', badge: (a) => a.db.orders.filter((o) => o.status === 'new').length, render: (a) => {
         const d = a.db, u = a.ui, st = OST[a.lang];
         const pending = d.orders.filter((o) => o.status !== 'served').sort((x, y) => x.at.localeCompare(y.at));
         return `<h1 class="k-h1">${a.t('kTitle')}</h1><p class="k-sub">${a.t('kSub')}</p>
@@ -56,13 +57,13 @@ SylDemo.create({
             ${o.items.map((i) => `<div class="k-total" style="padding:4px 0"><span><b>${i.qty}×</b> ${a.esc(i.name)}</span></div>`).join('')}${o.note ? `<div class="k-note" style="margin:8px 0 0">📝 ${a.esc(o.note)}</div>` : ''}
             <button class="k-btn p block" style="margin-top:12px" data-act="advance" data-id="${o.id}">→ ${st[NEXT[o.status]]}</button></div>`).join('')}</div>${pending.length ? '' : u.card('', u.empty(a.t('noOrders')))}`;
       } },
-    { id: 'tables', label: 'tTables', render: (a) => {
+    { id: 'tables', icon: "🪑", label: 'tTables', render: (a) => {
         const d = a.db, u = a.ui;
         const tables = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => { const os = d.orders.filter((o) => o.table === n); return { n, os, total: os.reduce((s, o) => s + o.items.reduce((t, i) => t + i.price * i.qty, 0), 0) }; });
         return `<h1 class="k-h1">${a.t('tbTitle')}</h1><p class="k-sub">${a.t('tbSub')}</p><div class="k-tiles">${tables.map((t) => `<button class="k-tile" data-act="bill" data-v="${t.n}" ${t.os.length ? '' : 'disabled'} style="${t.os.length ? 'border-color:var(--primary)' : 'opacity:.75'}">
           <span class="em">🪑</span><span class="nm">${a.t('table')} ${t.n}</span>${t.os.length ? `${u.pill(a.t('busy'), 'orange')}<span class="pr">${a.money(t.total)}</span>` : u.pill(a.t('free'), 'green')}</button>`).join('')}</div>`;
       } },
-    { id: 'sales', label: 'tSales', render: (a) => {
+    { id: 'sales', icon: "📊", label: 'tSales', render: (a) => {
         const d = a.db, u = a.ui; const inc = d.paid.reduce((s, p) => s + p.total, 0);
         const q = {}; d.paid.forEach((p) => p.items.forEach(([n, k]) => (q[n] = (q[n] || 0) + k))); d.orders.forEach((o) => o.items.forEach((i) => (q[i.name] = (q[i.name] || 0) + i.qty)));
         const top = Object.entries(q).sort((x, y) => y[1] - x[1]).slice(0, 6), max = top[0] ? top[0][1] : 1;

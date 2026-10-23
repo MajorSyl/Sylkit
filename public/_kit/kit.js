@@ -120,20 +120,34 @@
     }
     function closeModal() { document.querySelectorAll('.k-modal-bg').forEach((m) => m.remove()); }
 
+    function applyTheme() {
+      const th = cfg.theme || {};
+      const map = { onPrimary: '--on-primary', primary: '--primary', primaryD: '--primary-d', soft: '--soft', accent: '--accent', bg: '--bg', card: '--card', text: '--text', muted: '--muted', border: '--border', line: '--line', input: '--input', hbg: '--hbg', hfg: '--hfg', r: '--r', rLg: '--r-lg', font: '--font', head: '--head' };
+      Object.entries(map).forEach(([k, v]) => { if (th[k]) document.documentElement.style.setProperty(v, th[k]); });
+      if (th.fonts) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = `https://fonts.googleapis.com/css2?${th.fonts}&display=swap`; document.head.appendChild(l); }
+      document.body.classList.toggle('k-dark', !!th.dark);
+      document.body.classList.toggle('k-hdark', !!th.headerDark);
+      document.body.classList.toggle('k-side', th.layout === 'side');
+      const meta = document.createElement('meta'); meta.name = 'theme-color'; meta.content = th.hbg && !th.hbg.startsWith('var') ? th.hbg : th.primary || '#1D6BFF'; document.head.appendChild(meta);
+    }
+
     function shell() {
       const quote = `https://sylkit.com/quote?product=${cfg.product}`;
+      const side = cfg.theme && cfg.theme.layout === 'side';
+      applyTheme();
       document.body.innerHTML = `
         <div class="k-demobar"><span id="k-demobar"></span><a href="${quote}" id="k-getit"></a></div>
         <header class="k-header"><div class="k-hwrap">
-          <div class="k-logo" style="background:${cfg.color || 'var(--primary)'}">${cfg.logo}</div>
+          <div class="k-logo">${cfg.logo}</div>
           <div class="k-brand"><span id="k-name"></span><small id="k-subname"></small></div>
           <div class="k-spacer"></div>
           <button class="k-icon-btn" id="k-reset" title="Reset">↺</button>
           <div class="k-lang"><button data-lang="es">ES</button><button data-lang="en">EN</button></div>
-        </div><nav class="k-nav" id="k-nav"></nav></header>
+        </div>${side ? '' : '<nav class="k-nav" id="k-nav"></nav>'}</header>
+        <div class="k-shell">${side ? '<aside class="k-aside"><nav class="k-nav" id="k-nav"></nav></aside>' : ''}
         <main class="k-main"><div id="k-view"></div>
           <div class="k-cta"><div style="flex:1;min-width:220px"><h3 id="k-cta-t"></h3><p id="k-cta-s"></p></div><a href="${quote}" id="k-cta-b"></a></div>
-        </main><div class="k-toast" id="k-toast" role="status"></div>`;
+        </main></div><div class="k-toast" id="k-toast" role="status"></div>`;
     }
 
     function render(keepFocus) {
@@ -153,7 +167,7 @@
       document.querySelectorAll('.k-lang button').forEach((b) => b.classList.toggle('on', b.dataset.lang === lang));
       document.getElementById('k-nav').innerHTML = cfg.tabs.map((tb) => {
         const n = tb.badge ? tb.badge(app) : 0;
-        return `<button data-tab="${tb.id}" class="${tb.id === tab ? 'on' : ''}">${esc(app.t(tb.label))}${n ? ` <span class="k-badge">${n}</span>` : ''}</button>`;
+        return `<button data-tab="${tb.id}" class="${tb.id === tab ? 'on' : ''}">${tb.icon ? `<span class="ic">${tb.icon}</span>` : ''}${esc(app.t(tb.label))}${n ? ` <span class="k-badge">${n}</span>` : ''}</button>`;
       }).join('');
       const current = cfg.tabs.find((x) => x.id === tab);
       document.getElementById('k-view').innerHTML = current.render(app);

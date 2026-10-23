@@ -8,9 +8,10 @@ const SLOTS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '1
 const ST = { es: { booked: 'Agendada', waiting: 'En espera', consult: 'En consulta', done: 'Atendida', noshow: 'No asistió' }, en: { booked: 'Booked', waiting: 'Waiting', consult: 'In consultation', done: 'Seen', noshow: 'No-show' } };
 const STC = { booked: 'blue', waiting: 'orange', consult: 'purple', done: 'green', noshow: 'gray' };
 SylDemo.create({
-  id: 'clinica', version: 1, product: 'clinica-citas-historias', logo: '🩺', color: '#1D6BFF',
-  name: { es: 'Clínica', en: 'Clinic' }, brand: { es: 'Sylkit Clínica', en: 'Sylkit Clinic' },
-  sub: { es: 'Centro Médico Demo · 3 especialistas', en: 'Demo Medical Center · 3 specialists' },
+  id: 'clinica', version: 1, theme: {"layout": "side", "bg": "#F3F7FA", "card": "#ffffff", "primary": "#0E7490", "primaryD": "#155E75", "soft": "#CFFAFE", "font": "'Plus Jakarta Sans',sans-serif", "head": "'Plus Jakarta Sans',sans-serif", "fonts": "family=Plus+Jakarta+Sans:wght@400;600;700;800", "r": "10px", "rLg": "16px"},
+  product: 'clinica-citas-historias', logo: "🩺", color: '#1D6BFF',
+  name: { es: 'Clínica', en: 'Clinic' }, brand: { es: "Centro Médico Vida", en: "Vida Medical Center" },
+  sub: { es: "Recepción · 3 especialistas", en: "Reception · 3 specialists" },
   t: {
     es: { tAgenda: 'Agenda de hoy', tPatients: 'Pacientes', tBook: 'Reservar cita', tCash: 'Caja',
       agTitle: 'Agenda de hoy', agSub: 'La recepción ve todas las citas del día y el estado de cada paciente.', allDocs: 'Todos los médicos',
@@ -46,7 +47,7 @@ SylDemo.create({
     return { docs, patients, appts, pays: [{ id: a.uid(), at: new Date().toISOString(), p: 'p1', amount: 45, method: 'Zelle' }], docF: 'all', bk: { doc: 'd1', day: 1, slot: '' } };
   },
   tabs: [
-    { id: 'agenda', label: 'tAgenda', badge: (a) => a.db.appts.filter((x) => x.date === a.addDays(0) && x.status === 'waiting').length, render: (a) => {
+    { id: 'agenda', icon: "📅", label: 'tAgenda', badge: (a) => a.db.appts.filter((x) => x.date === a.addDays(0) && x.status === 'waiting').length, render: (a) => {
         const d = a.db, u = a.ui, st = ST[a.lang], today = a.addDays(0);
         const list = d.appts.filter((x) => x.date === today && (d.docF === 'all' || x.doc === d.docF)).sort((x, y) => x.time.localeCompare(y.time));
         const inc = d.pays.filter((p) => p.at.slice(0, 10) === today).reduce((s, p) => s + p.amount, 0);
@@ -58,12 +59,12 @@ SylDemo.create({
               : x.status === 'waiting' ? u.btn(a.t('start'), 'set', { id: x.id, s: 'consult' }, 'p sm') : x.status === 'consult' ? u.btn(a.t('finish'), 'finish', { id: x.id }, 'p sm') : '';
             return u.row({ avatar: x.time, color: '#0B1B3A', title: p.name, meta: `${doc.name} · ${doc.spec} · ${a.t('reason')}: ${x.reason}`, right: u.pill(st[x.status], STC[x.status]) + btns }); }).join('') || u.empty())}`;
       } },
-    { id: 'patients', label: 'tPatients', render: (a) => {
+    { id: 'patients', icon: "🗂️", label: 'tPatients', render: (a) => {
         const d = a.db, u = a.ui, yr = new Date().getFullYear();
         return `<h1 class="k-h1">${a.t('ptTitle')}</h1><p class="k-sub">${a.t('ptSub')}</p>
           ${u.card('', d.patients.map((p) => u.row({ avatar: u.initials(p.name), color: u.avatarColor(p.name), title: p.name, act: 'record', id: p.id, meta: `${yr - p.birth} ${a.t('age')} · ${p.blood}${p.allergies ? ' · ⚠ ' + p.allergies : ''} · ${a.t('visits', p.visits.length)}` })).join(''), u.btn('+ ' + a.t('newPt'), 'newPt', {}, 'p sm'))}`;
       } },
-    { id: 'book', label: 'tBook', render: (a) => {
+    { id: 'book', icon: "🌐", label: 'tBook', render: (a) => {
         const d = a.db, u = a.ui, bk = d.bk, date = a.addDays(bk.day);
         const taken = d.appts.filter((x) => x.doc === bk.doc && x.date === date).map((x) => x.time);
         const days = [1, 2, 3, 4, 5].map((n) => [String(n), n === 1 ? a.t('tomorrow') : a.date(a.addDays(n), { weekday: 'short', day: 'numeric' })]);
@@ -74,7 +75,7 @@ SylDemo.create({
           <div class="k-grid2"><div class="k-field"><label>${a.t('yourName')} *</label><input id="bkName" value="Visitante Demo"></div><div class="k-field"><label>${a.t('yourPhone')}</label><input id="bkPhone" value="+58 412 0000000"></div></div>
           <button class="k-btn p block" data-act="book">${a.t('book')} · ${d.docs.find((x) => x.id === bk.doc).fee ? a.money(d.docs.find((x) => x.id === bk.doc).fee) : ''}</button></div>`;
       } },
-    { id: 'cash', label: 'tCash', render: (a) => {
+    { id: 'cash', icon: "💵", label: 'tCash', render: (a) => {
         const d = a.db, u = a.ui; const by = {}; d.pays.forEach((p) => (by[p.method] = (by[p.method] || 0) + p.amount));
         return `<h1 class="k-h1">${a.t('cashTitle')}</h1><p class="k-sub">${a.t('cashSub')}</p><div class="k-cols"><div>${u.card('', d.pays.length ? d.pays.slice().reverse().map((p) => u.row({ icon: '💵', title: `${a.money(p.amount)} · ${d.patients.find((x) => x.id === p.p).name}`, meta: `${a.time(p.at)} · ${p.method}` })).join('') : u.empty(a.t('noPay')))}</div>
           <div>${u.card('', Object.entries(by).map(([m, v]) => `<div class="k-total"><span>${m}</span><b>${a.money(v)}</b></div>`).join('') + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(d.pays.reduce((s, p) => s + p.amount, 0))}</span></div>`)}</div></div>`;

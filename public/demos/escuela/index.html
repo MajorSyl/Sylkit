@@ -6,9 +6,10 @@
 <script>
 const SUBJ = { es: ['Matemáticas', 'Lengua', 'Ciencias', 'Historia', 'Inglés'], en: ['Math', 'Language', 'Science', 'History', 'English'] };
 SylDemo.create({
-  id: 'escuela', version: 1, product: 'gestion-escolar', logo: '🎓', color: '#1D6BFF',
-  name: { es: 'Gestión escolar', en: 'School Management' }, brand: { es: 'Sylkit Escuela', en: 'Sylkit School' },
-  sub: { es: 'Colegio Demo · Primaria', en: 'Demo School · Primary' },
+  id: 'escuela', version: 1, theme: {"headerDark": true, "bg": "#FFF9E8", "card": "#ffffff", "primary": "#2563EB", "primaryD": "#1D4ED8", "soft": "#DBEAFE", "accent": "#FBBF24", "hbg": "#2563EB", "hfg": "#ffffff", "font": "'Nunito',sans-serif", "head": "'Fredoka',sans-serif", "fonts": "family=Nunito:wght@400;600;700;800&family=Fredoka:wght@400;600;700;800", "r": "16px", "rLg": "24px"},
+  product: 'gestion-escolar', logo: "🎒", color: '#1D6BFF',
+  name: { es: 'Gestión escolar', en: 'School Management' }, brand: { es: "Colegio Los Próceres", en: "Los Próceres School" },
+  sub: { es: "Primaria · Año escolar 2026–2027", en: "Primary · 2026–2027 school year" },
   t: {
     es: { tStudents: 'Estudiantes', tGrades: 'Notas', tAttend: 'Asistencia', tFees: 'Mensualidades', tParents: 'Portal de padres',
       stTitle: 'Estudiantes', stSub: 'Todos los alumnos por grado, con su representante y estado de pago.', grade: 'Grado', parent: 'Representante', avg: 'Promedio', newSt: 'Inscribir estudiante', name: 'Nombre completo', phone: 'WhatsApp del representante', enrolled: 'Estudiante inscrito.',
@@ -33,29 +34,29 @@ SylDemo.create({
     return { students, gradeF: '4to', subj: 0, today: {}, fee: 45 };
   },
   tabs: [
-    { id: 'students', label: 'tStudents', render: (a) => {
+    { id: 'students', icon: "👧", label: 'tStudents', render: (a) => {
         const d = a.db, u = a.ui;
         const avg = (s) => (s.grades.reduce((x, y) => x + y, 0) / s.grades.length).toFixed(1);
         return `<h1 class="k-h1">${a.t('stTitle')}</h1><p class="k-sub">${a.t('stSub')}</p>${u.chips(['3er', '4to', '5to'].map((g) => [g, `${g} ${a.t('grade')}`]), d.gradeF, 'gradeF')}
           ${u.card('', d.students.filter((s) => s.grade === d.gradeF).map((s) => u.row({ avatar: u.initials(s.name), color: u.avatarColor(s.name), title: s.name, meta: `${a.t('parent')}: ${s.parent} · ${s.phone}`, right: u.pill(`${a.t('avg')} ${avg(s)}`, avg(s) >= 15 ? 'green' : avg(s) >= 12 ? 'blue' : 'orange') + u.pill(a.t(s.fee), s.fee === 'paid' ? 'green' : s.fee === 'pending' ? 'orange' : 'red') })).join(''), u.btn('+ ' + a.t('newSt'), 'newSt', {}, 'p sm'))}`;
       } },
-    { id: 'grades', label: 'tGrades', render: (a) => {
+    { id: 'grades', icon: "📝", label: 'tGrades', render: (a) => {
         const d = a.db, u = a.ui, list = d.students.filter((s) => s.grade === d.gradeF);
         return `<h1 class="k-h1">${a.t('grTitle')}</h1><p class="k-sub">${a.t('grSub')}</p>${u.chips(['3er', '4to', '5to'].map((g) => [g, `${g} ${a.t('grade')}`]), d.gradeF, 'gradeF')}${u.chips(SUBJ[a.lang].map((s, i) => [String(i), s]), String(d.subj), 'subj')}
           ${u.card('', list.map((s) => u.row({ avatar: u.initials(s.name), color: u.avatarColor(s.name), title: s.name, right: `<input class="k-input" type="number" min="1" max="20" inputmode="numeric" data-g="${s.id}" value="${s.grades[d.subj]}" style="width:80px;text-align:center;font-weight:800">` })).join('')
             + `<div class="k-total big"><span>${a.t('avg')}</span><span>${(list.reduce((x, s) => x + s.grades[d.subj], 0) / Math.max(1, list.length)).toFixed(1)}</span></div><button class="k-btn p block" data-act="saveGrades">${a.t('saveGrades')}</button>`)}`;
       } },
-    { id: 'attend', label: 'tAttend', render: (a) => {
+    { id: 'attend', icon: "✅", label: 'tAttend', render: (a) => {
         const d = a.db, u = a.ui, list = d.students.filter((s) => s.grade === d.gradeF), C = { p: 'green', a: 'red', l: 'orange' }, L = { p: a.t('present'), a: a.t('absent'), l: a.t('late') };
         return `<h1 class="k-h1">${a.t('atTitle')}</h1><p class="k-sub">${a.t('atSub')}</p>${u.chips(['3er', '4to', '5to'].map((g) => [g, `${g} ${a.t('grade')}`]), d.gradeF, 'gradeF')}
           ${u.card(a.date(a.addDays(0), { weekday: 'long', day: 'numeric', month: 'long' }), list.map((s) => { const v = d.today[s.id] || 'p'; return u.row({ avatar: u.initials(s.name), color: u.avatarColor(s.name), title: s.name, right: ['p', 'l', 'a'].map((k) => `<button class="k-btn sm ${v === k ? 'p' : 'g'}" data-act="mark" data-id="${s.id}" data-v="${k}" style="${v === k && k !== 'p' ? `background:var(--${C[k]})` : ''}">${L[k]}</button>`).join('') }); }).join('') + `<button class="k-btn p block" data-act="saveAtt" style="margin-top:10px">${a.t('saveAtt')}</button>`)}`;
       } },
-    { id: 'fees', label: 'tFees', badge: (a) => a.db.students.filter((s) => s.fee !== 'paid').length, render: (a) => {
+    { id: 'fees', icon: "💳", label: 'tFees', badge: (a) => a.db.students.filter((s) => s.fee !== 'paid').length, render: (a) => {
         const d = a.db, u = a.ui, paid = d.students.filter((s) => s.fee === 'paid').length;
         return `<h1 class="k-h1">${a.t('feTitle')}</h1><p class="k-sub">${a.t('feSub')}</p>${u.stats([{ label: a.t('sCollected'), value: a.money(paid * d.fee), color: 'var(--green)' }, { label: a.t('sPending'), value: a.money((d.students.length - paid) * d.fee), color: 'var(--orange)' }, { label: a.t('sRate'), value: Math.round((paid / d.students.length) * 100) + '%' }])}
           ${u.card(`${a.t('fee')}: ${a.money(d.fee)}`, d.students.slice().sort((x, y) => (x.fee === 'paid') - (y.fee === 'paid')).map((s) => u.row({ avatar: u.initials(s.name), color: u.avatarColor(s.name), title: s.name, meta: `${s.grade} · ${s.parent}`, right: u.pill(a.t(s.fee), s.fee === 'paid' ? 'green' : s.fee === 'pending' ? 'orange' : 'red') + (s.fee !== 'paid' ? u.btn('📲 ' + a.t('remind'), 'remind', { id: s.id }, 'wa sm') + u.btn(a.t('markPaid'), 'pay', { id: s.id }, 's sm') : '') })).join(''))}`;
       } },
-    { id: 'parents', label: 'tParents', render: (a) => {
+    { id: 'parents', icon: "👨‍👩‍👧", label: 'tParents', render: (a) => {
         const d = a.db, u = a.ui, s = d.students[1], subj = SUBJ[a.lang];
         return `<h1 class="k-h1">${a.t('paTitle')}</h1><p class="k-sub">${a.t('paSub')}</p><div style="max-width:480px">${u.card(`${a.t('child')}: ${s.name} · ${s.grade}`, `<h3 style="font-size:15px;margin:4px 0 6px">${a.t('report')}</h3>${subj.map((n, i) => `<div class="k-total"><span>${n}</span><b style="color:${s.grades[i] >= 15 ? 'var(--green)' : s.grades[i] >= 10 ? 'var(--text)' : 'var(--red)'}">${s.grades[i]}/20</b></div>`).join('')}
           <div class="k-total big"><span>${a.t('avg')}</span><span>${(s.grades.reduce((x, y) => x + y, 0) / s.grades.length).toFixed(1)}</span></div>

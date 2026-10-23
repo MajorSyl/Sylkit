@@ -5,9 +5,10 @@
 <script src="/_kit/kit.js"></script>
 <script>
 SylDemo.create({
-  id: 'farmacia', version: 1, product: 'farmacia-pos', logo: '💊', color: '#12B76A',
-  name: { es: 'Farmacia', en: 'Pharmacy' }, brand: { es: 'Sylkit Farmacia', en: 'Sylkit Pharmacy' },
-  sub: { es: 'Farmacia Demo · Caja principal', en: 'Demo Pharmacy · Main register' },
+  id: 'farmacia', version: 1, theme: {"bg": "#F0FAF5", "card": "#ffffff", "primary": "#059669", "primaryD": "#047857", "soft": "#D1FAE5", "font": "'Nunito',sans-serif", "head": "'Nunito',sans-serif", "fonts": "family=Nunito:wght@400;600;700;800", "r": "14px", "rLg": "22px"},
+  product: 'farmacia-pos', logo: "💊", color: '#12B76A',
+  name: { es: 'Farmacia', en: 'Pharmacy' }, brand: { es: "Farmacia San Rafael", en: "San Rafael Pharmacy" },
+  sub: { es: "Caja principal", en: "Main register" },
   t: {
     es: { tSell: 'Vender', tExp: 'Vencimientos', tRx: 'Recetas', tChronic: 'Crónicos',
       ph: 'Buscar medicamento o principio activo…', cart: 'Venta actual', emptyCart: 'Busca y agrega medicamentos.', charge: 'Cobrar', rxReq: 'Requiere receta',
@@ -41,7 +42,7 @@ SylDemo.create({
     return { meds, lots, rx: [{ id: a.uid(), at: new Date(Date.now() - 864e5).toISOString(), med: 'm4', doctor: 'Dra. Morales', patient: 'Juan Silva', number: 'MPPS 45.120' }], cart: [], q: '', chronic };
   },
   tabs: [
-    { id: 'sell', label: 'tSell', render: (a) => {
+    { id: 'sell', icon: "💊", label: 'tSell', render: (a) => {
         const d = a.db, u = a.ui, q = d.q.toLowerCase();
         const stock = (id) => d.lots.filter((l) => l.med === id && !l.returned && a.daysTo(l.exp) >= 0).reduce((s, l) => s + l.qty, 0);
         const list = d.meds.filter((m) => !q || (m.name + m.active).toLowerCase().includes(q));
@@ -54,7 +55,7 @@ SylDemo.create({
             + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div><p class="k-meta" style="margin-bottom:10px">${a.t('fefo')}</p><button class="k-btn p block" data-act="charge" ${d.cart.length ? '' : 'disabled'}>${a.t('charge')} ${a.money(total)}</button>`)}</div></div>
           ${d.cart.length ? `<button class="k-btn p k-fab" data-act="toCart">💊 ${d.cart.length} · ${a.t('charge')} ${a.money(total)}</button>` : ''}`;
       } },
-    { id: 'exp', label: 'tExp', badge: (a) => a.db.lots.filter((l) => !l.returned && a.daysTo(l.exp) <= 30).length, render: (a) => {
+    { id: 'exp', icon: "⏳", label: 'tExp', badge: (a) => a.db.lots.filter((l) => !l.returned && a.daysTo(l.exp) <= 30).length, render: (a) => {
         const d = a.db, u = a.ui; const live = d.lots.filter((l) => !l.returned);
         const cls = (l) => { const n = a.daysTo(l.exp); return n < 0 ? 'red' : n <= 30 ? 'orange' : n <= 90 ? 'yellow' : 'green'; };
         const cnt = (c) => live.filter((l) => cls(l) === c).length;
@@ -63,11 +64,11 @@ SylDemo.create({
           ${u.card('', live.sort((x, y) => x.exp.localeCompare(y.exp)).map((l) => { const m = d.meds.find((x) => x.id === l.med); const c = cls(l);
             return u.row({ icon: '📦', title: m.name, meta: `${l.lot} · ${l.qty} uds · ${a.t('expires')} ${a.date(l.exp, { day: 'numeric', month: 'short', year: 'numeric' })}`, right: u.pill(a.t('d', a.daysTo(l.exp)), c) + (c === 'red' || c === 'orange' ? u.btn(a.t('returnBtn'), 'ret', { id: l.id }, 'g sm') : '') }); }).join(''))}`;
       } },
-    { id: 'rx', label: 'tRx', render: (a) => {
+    { id: 'rx', icon: "📋", label: 'tRx', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('rxListTitle')}</h1><p class="k-sub">${a.t('rxListSub')}</p>${u.card('', d.rx.length ? d.rx.slice().reverse().map((r) => u.row({ icon: '📋', iconBg: 'var(--purplebg)', title: d.meds.find((m) => m.id === r.med).name, meta: `${a.date(r.at)} · ${r.patient} · ${r.doctor} · ${r.number}` })).join('') : u.empty(a.t('noRx')))}`;
       } },
-    { id: 'chronic', label: 'tChronic', badge: (a) => a.db.chronic.filter((c) => a.daysTo(c.due) <= 3).length, render: (a) => {
+    { id: 'chronic', icon: "❤️", label: 'tChronic', badge: (a) => a.db.chronic.filter((c) => a.daysTo(c.due) <= 3).length, render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('chTitle')}</h1><p class="k-sub">${a.t('chSub')}</p>${u.card('', d.chronic.slice().sort((x, y) => x.due.localeCompare(y.due)).map((c) => { const n = a.daysTo(c.due);
           return u.row({ avatar: u.initials(c.name), color: u.avatarColor(c.name), title: c.name, meta: `${d.meds.find((m) => m.id === c.med).name} · ${c.phone}`, right: u.pill(`${a.t('due')} ${a.t('inDays', n)}`, n <= 0 ? 'red' : n <= 3 ? 'orange' : 'blue') + u.btn('📲 ' + a.t('remind'), 'remind', { id: c.id }, 'wa sm') }); }).join(''))}`;

@@ -6,9 +6,10 @@
 <script>
 const HOURS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 SylDemo.create({
-  id: 'salon', version: 1, product: 'salon-barberia-reservas', logo: '💇', color: '#7A5AF8',
-  name: { es: 'Salón y barbería', en: 'Salon & Barbershop' }, brand: { es: 'Sylkit Salón', en: 'Sylkit Salon' },
-  sub: { es: 'Studio Demo · 3 estilistas', en: 'Demo Studio · 3 stylists' },
+  id: 'salon', version: 1, theme: {"dark": true, "headerDark": true, "bg": "#0C0A09", "card": "#1C1917", "text": "#F5F5F4", "muted": "#A8A29E", "border": "rgba(255,255,255,.08)", "line": "#44403C", "input": "#0C0A09", "primary": "#D4A64A", "primaryD": "#E7C27A", "soft": "rgba(212,166,74,.16)", "onPrimary": "#1C1917", "hbg": "#0C0A09", "hfg": "#ffffff", "font": "'Lato',sans-serif", "head": "'Playfair Display',serif", "fonts": "family=Lato:wght@400;600;700;800&family=Playfair+Display:wght@400;700", "r": "4px", "rLg": "8px"},
+  product: 'salon-barberia-reservas', logo: "✂️", color: '#7A5AF8',
+  name: { es: 'Salón y barbería', en: 'Salon & Barbershop' }, brand: { es: "Barbería Royal", en: "Royal Barbershop" },
+  sub: { es: "Barbería & Spa · 3 estilistas", en: "Barbershop & Spa · 3 stylists" },
   t: {
     es: { tBook: 'Reservar (cliente)', tAgenda: 'Agenda', tClients: 'Clientes', tCommissions: 'Comisiones',
       bkTitle: 'Reserva tu cita', bkSub: 'Así reservan tus clientes desde Instagram o WhatsApp: eligen servicio, estilista y hora.', service: '1. Servicio', stylist: '2. Estilista', day: '3. Día', hour: '4. Hora',
@@ -35,7 +36,7 @@ SylDemo.create({
     return { services, staff, clients, appts, sales, bk: { s: 's0', e: 'e1', day: 0, h: '' }, agDay: 0 };
   },
   tabs: [
-    { id: 'book', label: 'tBook', render: (a) => {
+    { id: 'book', icon: "✂️", label: 'tBook', render: (a) => {
         const d = a.db, u = a.ui, bk = d.bk, date = a.addDays(bk.day), svc = d.services.find((s) => s.id === bk.s);
         const taken = d.appts.filter((x) => x.e === bk.e && x.date === date).map((x) => x.h);
         const nowH = new Date().getHours();
@@ -47,18 +48,18 @@ SylDemo.create({
           <div class="k-field"><label>${a.t('yourName')}</label><input id="bkName" value="Visitante Demo"></div>
           <button class="k-btn p block" data-act="book">${a.t('confirm')} · ${svc ? a.money(svc.price) : ''}</button></div>`;
       } },
-    { id: 'agenda', label: 'tAgenda', badge: (a) => a.db.appts.filter((x) => x.date === a.addDays(0) && !x.done).length, render: (a) => {
+    { id: 'agenda', icon: "📅", label: 'tAgenda', badge: (a) => a.db.appts.filter((x) => x.date === a.addDays(0) && !x.done).length, render: (a) => {
         const d = a.db, u = a.ui, date = a.addDays(d.agDay);
         const day = d.appts.filter((x) => x.date === date).sort((x, y) => x.h.localeCompare(y.h));
         return `<h1 class="k-h1">${a.t('agTitle')}</h1><p class="k-sub">${a.t('agSub')}</p>${u.chips([0, 1, 2, 3].map((n) => [String(n), n === 0 ? a.t('today') : a.date(a.addDays(n), { weekday: 'short', day: 'numeric' })]), String(d.agDay), 'agD')}
           <div class="k-grid3">${d.staff.map((e) => u.card(`${e.name} · ${e.role}`, day.filter((x) => x.e === e.id).map((x) => { const s = d.services.find((y) => y.id === x.s), c = d.clients.find((y) => y.id === x.c);
             return u.row({ avatar: x.h, color: '#7A5AF8', title: c.name, meta: `${s[a.lang]} · ${a.money(s.price)}`, right: x.done ? u.pill('✓', 'green') : u.btn(a.t('complete'), 'complete', { id: x.id }, 's sm') }); }).join('') || u.empty(a.t('noAppts')))).join('')}</div>`;
       } },
-    { id: 'clients', label: 'tClients', render: (a) => {
+    { id: 'clients', icon: "👤", label: 'tClients', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('clTitle')}</h1><p class="k-sub">${a.t('clSub')}</p>${u.card('', d.clients.slice().sort((x, y) => y.pts - x.pts).map((c) => u.row({ avatar: u.initials(c.name), color: u.avatarColor(c.name), title: c.name, meta: `${a.t('visits', c.visits)} · ${a.t('lastVisit')}: ${a.date(c.last)}`, right: u.pill(`⭐ ${c.pts} ${a.t('pts')}`, 'purple') })).join(''))}`;
       } },
-    { id: 'comm', label: 'tCommissions', render: (a) => {
+    { id: 'comm', icon: "💰", label: 'tCommissions', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('coTitle')}</h1><p class="k-sub">${a.t('coSub')}</p>${u.card('', `<div class="k-table-wrap"><table class="k-table"><thead><tr><th></th><th>${a.t('services')}</th><th>${a.t('sales')}</th><th>${a.t('rate')}</th><th>${a.t('commission')}</th></tr></thead><tbody>
           ${d.staff.map((e) => { const s = d.sales.filter((x) => x.e === e.id), tot = s.reduce((t, x) => t + x.amount, 0); return `<tr><td><b>${e.name}</b><div class="k-meta">${e.role}</div></td><td>${s.length}</td><td>${a.money(tot)}</td><td>${Math.round(e.rate * 100)}%</td><td><b style="color:var(--green)">${a.money(tot * e.rate)}</b></td></tr>`; }).join('')}</tbody></table></div>`)}`;

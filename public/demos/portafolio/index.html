@@ -20,7 +20,8 @@ const TPL = {
   clean: { es: 'Minimalista', en: 'Minimal', bg: '#F6F8FC', fg: '#0B1B3A', accent: '#1D6BFF', body: '#fff', text: '#0B1B3A' },
 };
 SylDemo.create({
-  id: 'portafolio', version: 1, product: 'sitio-web-personal', logo: '🌐', color: '#7A5AF8',
+  id: 'portafolio', version: 1, theme: {"bg": "#F7F5FF", "primary": "#7C3AED", "primaryD": "#6D28D9", "soft": "#EDE9FE", "font": "'Plus Jakarta Sans',sans-serif", "head": "'Plus Jakarta Sans',sans-serif", "fonts": "family=Plus+Jakarta+Sans:wght@400;600;700;800", "r": "12px", "rLg": "20px"},
+  product: 'sitio-web-personal', logo: '🌐', color: '#7A5AF8',
   name: { es: 'Sitio web personal', en: 'Personal Website' }, brand: { es: 'Sylkit Sitios', en: 'Sylkit Sites' },
   sub: { es: 'Tu sitio profesional en minutos', en: 'Your professional site in minutes' },
   t: {
@@ -38,12 +39,12 @@ SylDemo.create({
   seed: () => ({ tpl: 'pro', p: { name: 'Dra. Laura Méndez', role: 'Cardióloga · Caracas', about: 'Más de 10 años cuidando el corazón de mis pacientes. Consultas presenciales y en línea, con un trato cercano y basado en evidencia.',
     services: 'Consulta de cardiología\nElectrocardiograma\nEcocardiograma\nControl de hipertensión', work: 'Especialista certificada\n+5.000 pacientes atendidos\nPonente en congresos nacionales', phone: '+58 412 0000000', email: 'consulta@lauramendez.demo', city: 'Caracas, Venezuela' } }),
   tabs: [
-    { id: 'site', label: 'tSite', render: (a) => site(a, a.db.tpl) },
-    { id: 'edit', label: 'tEdit', render: (a) => {
+    { id: 'site', icon: "👁️", label: 'tSite', render: (a) => site(a, a.db.tpl) },
+    { id: 'edit', icon: "✏️", label: 'tEdit', render: (a) => {
         const p = a.db.p, f = (k, label, ta) => `<div class="k-field"><label>${a.t(label)}</label>${ta ? `<textarea id="f-${k}">${a.esc(p[k])}</textarea>` : `<input id="f-${k}" value="${a.esc(p[k])}">`}</div>`;
         return `<h1 class="k-h1">${a.t('eTitle')}</h1><p class="k-sub">${a.t('eSub')}</p><div class="k-card" style="max-width:720px">${f('name', 'fName')}${f('role', 'fRole')}${f('about', 'fAbout', 1)}${f('services', 'fServices', 1)}${f('work', 'fWork', 1)}<div class="k-grid3">${f('phone', 'fPhone')}${f('email', 'fEmail')}${f('city', 'fCity')}</div><button class="k-btn p block" data-act="saveSite">${a.t('apply')}</button></div>`;
       } },
-    { id: 'tpl', label: 'tTpl', render: (a) => `<h1 class="k-h1">${a.t('tTitle')}</h1><p class="k-sub">${a.t('tSub')}</p><div class="k-grid3">${Object.entries(TPL).map(([k, t]) => `<div class="k-card"><div style="height:120px;border-radius:12px;background:${t.bg};display:grid;place-items:center;color:${t.fg};font-weight:800;font-size:18px;margin-bottom:12px">${t[a.lang]}</div>${a.db.tpl === k ? a.ui.pill(a.t('current'), 'green') : a.ui.btn(a.t('choose'), 'tpl', { v: k }, 'p sm')}</div>`).join('')}</div>` },
+    { id: 'tpl', icon: "🎨", label: 'tTpl', render: (a) => `<h1 class="k-h1">${a.t('tTitle')}</h1><p class="k-sub">${a.t('tSub')}</p><div class="k-grid3">${Object.entries(TPL).map(([k, t]) => `<div class="k-card"><div style="height:120px;border-radius:12px;background:${t.bg};display:grid;place-items:center;color:${t.fg};font-weight:800;font-size:18px;margin-bottom:12px">${t[a.lang]}</div>${a.db.tpl === k ? a.ui.pill(a.t('current'), 'green') : a.ui.btn(a.t('choose'), 'tpl', { v: k }, 'p sm')}</div>`).join('')}</div>` },
   ],
   actions: {
     saveSite: (a) => { Object.keys(a.db.p).forEach((k) => { const el = document.getElementById('f-' + k); if (el) a.db.p[k] = el.value; }); a.save(); a.toast(a.t('saved')); a.go('site'); },

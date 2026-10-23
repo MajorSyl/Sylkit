@@ -17,21 +17,22 @@
 <script src="/_kit/kit.js"></script>
 <script>
 SylDemo.create({
-  id: 'asistente', version: 1, product: 'asistente-ia-para-negocios', logo: '🤖', color: '#25D366',
-  name: { es: 'Asistente de WhatsApp', en: 'WhatsApp Assistant' }, brand: { es: 'Sylkit Asistente', en: 'Sylkit Assistant' },
-  sub: { es: 'Atiende a tus clientes 24/7', en: 'Answers your customers 24/7' },
+  id: 'asistente', version: 1, theme: {"headerDark": true, "bg": "#F0F2F5", "primary": "#128C7E", "primaryD": "#075E54", "soft": "#D9FDD3", "hbg": "#075E54", "hfg": "#ffffff", "font": "'Inter',sans-serif", "head": "'Inter',sans-serif", "fonts": "family=Inter:wght@400;600;700;800", "r": "10px", "rLg": "16px"},
+  product: 'asistente-ia-para-negocios', logo: "🍕", color: '#25D366',
+  name: { es: 'Asistente de WhatsApp', en: 'WhatsApp Assistant' }, brand: { es: "Pizzería Don Vito", en: "Don Vito Pizzeria" },
+  sub: { es: "Asistente de WhatsApp 24/7", en: "24/7 WhatsApp assistant" },
   t: {
     es: { tChat: 'Chat (cliente)', tTrain: 'Entrenamiento', tInbox: 'Conversaciones',
-      note: 'Escribe como si fueras un cliente de la Pizzería Demo. El asistente responde con la información del negocio. (Esta demo es una simulación: la versión real usa inteligencia artificial entrenada con los datos de tu negocio.)',
+      note: 'Escribe como si fueras un cliente de la Pizzería Don Vito. El asistente responde con la información del negocio. (Esta demo es una simulación: la versión real usa inteligencia artificial entrenada con los datos de tu negocio.)',
       online: 'en línea', ph: 'Escribe un mensaje…', typing: 'escribiendo…', handoff: 'Te comunico con una persona del equipo. Te responderán en unos minutos. 🙌', fallback: 'Buena pregunta. Para eso te comunico con una persona del equipo, ¿te parece? Mientras tanto puedo ayudarte con horarios, menú, precios, delivery y pagos.',
-      greeting: '¡Hola! 👋 Soy el asistente de Pizzería Demo. Puedo ayudarte con el menú, precios, horarios, delivery y formas de pago. ¿Qué necesitas?',
+      greeting: '¡Hola! 👋 Soy el asistente de Pizzería Don Vito. Puedo ayudarte con el menú, precios, horarios, delivery y formas de pago. ¿Qué necesitas?',
       sugg: ['¿Cuál es el horario?', '¿Tienen delivery?', 'Ver el menú', '¿Cómo puedo pagar?', 'Quiero hablar con una persona'],
       trTitle: 'Entrena a tu asistente', trSub: 'Escribe las preguntas frecuentes y sus respuestas. El asistente las usa para atender a tus clientes, incluso si preguntan con otras palabras.', q: 'Palabras clave (separadas por coma)', ans: 'Respuesta', addFaq: 'Agregar respuesta', faqSaved: 'Respuesta guardada. Pruébala en el chat.',
       inTitle: 'Conversaciones', inSub: 'Todo lo que preguntan tus clientes. Las que necesitan a una persona quedan marcadas.', sTotal: 'Mensajes respondidos', sAuto: 'Resueltos solos', sHuman: 'Pasados a una persona', needsHuman: 'Requiere persona', auto: 'Resuelto' },
     en: { tChat: 'Chat (customer)', tTrain: 'Training', tInbox: 'Conversations',
-      note: 'Type as if you were a customer of Demo Pizzeria. The assistant answers with the business information. (This demo is a simulation: the real version uses AI trained on your business data.)',
+      note: 'Type as if you were a customer of Don Vito Pizzeria. The assistant answers with the business information. (This demo is a simulation: the real version uses AI trained on your business data.)',
       online: 'online', ph: 'Type a message…', typing: 'typing…', handoff: 'I\'m connecting you with a team member. They\'ll reply in a few minutes. 🙌', fallback: 'Good question. Let me connect you with a team member for that. Meanwhile I can help with hours, menu, prices, delivery and payments.',
-      greeting: 'Hi! 👋 I\'m Demo Pizzeria\'s assistant. I can help with the menu, prices, hours, delivery and payment methods. What do you need?',
+      greeting: 'Hi! 👋 I\'m Don Vito Pizzeria\'s assistant. I can help with the menu, prices, hours, delivery and payment methods. What do you need?',
       sugg: ['What are your hours?', 'Do you deliver?', 'Show me the menu', 'How can I pay?', 'I want to talk to a person'],
       trTitle: 'Train your assistant', trSub: 'Write frequent questions and their answers. The assistant uses them to serve your customers, even when they ask in different words.', q: 'Keywords (comma-separated)', ans: 'Answer', addFaq: 'Add answer', faqSaved: 'Answer saved. Try it in the chat.',
       inTitle: 'Conversations', inSub: 'Everything your customers ask. The ones that need a person are flagged.', sTotal: 'Messages answered', sAuto: 'Resolved automatically', sHuman: 'Handed to a person', needsHuman: 'Needs a person', auto: 'Resolved' },
@@ -48,9 +49,9 @@ SylDemo.create({
     chat: [], log: [{ q: '¿Tienen delivery a Chacao?', human: false, at: new Date(Date.now() - 3600e3).toISOString() }, { q: '¿Hacen pizzas para eventos de 100 personas?', human: true, at: new Date(Date.now() - 2 * 3600e3).toISOString() }, { q: 'Horario del domingo', human: false, at: new Date(Date.now() - 5 * 3600e3).toISOString() }],
   }),
   tabs: [
-    { id: 'chat', label: 'tChat', render: (a) => {
+    { id: 'chat', icon: "💬", label: 'tChat', render: (a) => {
         const d = a.db, msgs = d.chat.length ? d.chat : [{ me: false, text: a.t('greeting'), at: new Date().toISOString() }];
-        return `<div class="k-note">💡 ${a.t('note')}</div><div class="wa-phone"><div class="wa-top"><div class="av">🍕</div><div><b>Pizzería Demo</b><div style="font-size:12px;opacity:.85" id="waStatus">${a.t('online')}</div></div></div>
+        return `<div class="k-note">💡 ${a.t('note')}</div><div class="wa-phone"><div class="wa-top"><div class="av">🍕</div><div><b>Pizzería Don Vito</b><div style="font-size:12px;opacity:.85" id="waStatus">${a.t('online')}</div></div></div>
           <div class="wa-body" id="waBody">${msgs.map((m) => `<div class="wa-msg ${m.me ? 'out' : 'in'}">${a.esc(m.text)}<small>${a.time(m.at)}</small></div>`).join('')}</div>
           <form class="wa-input" id="waForm"><input id="waIn" placeholder="${a.t('ph')}" autocomplete="off"><button type="submit" aria-label="Send">➤</button></form></div>
           <div class="wa-sugg">${a.t('sugg').map((s) => `<button class="k-chip" data-act="ask" data-v="${a.esc(s)}">${a.esc(s)}</button>`).join('')}</div>`;
@@ -58,12 +59,12 @@ SylDemo.create({
         const b = document.getElementById('waBody'); if (b) b.scrollTop = b.scrollHeight;
         const f = document.getElementById('waForm'); if (f) f.onsubmit = (e) => { e.preventDefault(); const v = document.getElementById('waIn').value.trim(); if (v) ask(a, v); };
       } },
-    { id: 'train', label: 'tTrain', render: (a) => {
+    { id: 'train', icon: "🧠", label: 'tTrain', render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('trTitle')}</h1><p class="k-sub">${a.t('trSub')}</p>${d.faqs.map((f, i) => u.card('', `<div class="k-meta" style="margin-bottom:6px">🔑 ${a.esc(f.k)}</div><div style="white-space:pre-wrap">${a.esc(f[a.lang] || f.es)}</div>`, u.btn(a.t('del'), 'delFaq', { i }, 'g sm'))).join('')}
           ${u.card(a.t('addFaq'), `<div class="k-field"><label>${a.t('q')}</label><input id="fk" placeholder="estacionamiento, parking"></div><div class="k-field"><label>${a.t('ans')}</label><textarea id="fa" placeholder="${a.lang === 'es' ? 'Sí, tenemos estacionamiento gratis para clientes.' : 'Yes, we have free parking for customers.'}"></textarea></div><button class="k-btn p" data-act="addFaq">${a.t('addFaq')}</button>`)}`;
       } },
-    { id: 'inbox', label: 'tInbox', badge: (a) => a.db.log.filter((l) => l.human).length, render: (a) => {
+    { id: 'inbox', icon: "📥", label: 'tInbox', badge: (a) => a.db.log.filter((l) => l.human).length, render: (a) => {
         const d = a.db, u = a.ui, h = d.log.filter((l) => l.human).length;
         return `<h1 class="k-h1">${a.t('inTitle')}</h1><p class="k-sub">${a.t('inSub')}</p>${u.stats([{ label: a.t('sTotal'), value: d.log.length }, { label: a.t('sAuto'), value: d.log.length - h, color: 'var(--green)' }, { label: a.t('sHuman'), value: h, color: 'var(--orange)' }])}
           ${u.card('', d.log.slice().reverse().map((l) => u.row({ icon: '💬', title: l.q, meta: `${a.date(l.at)} ${a.time(l.at)}`, right: u.pill(l.human ? a.t('needsHuman') : a.t('auto'), l.human ? 'orange' : 'green') })).join(''))}`;

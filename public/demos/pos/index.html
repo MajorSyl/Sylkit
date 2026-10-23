@@ -5,9 +5,10 @@
 <script src="/_kit/kit.js"></script>
 <script>
 SylDemo.create({
-  id: 'pos', version: 1, product: 'punto-de-venta', logo: '🛒',
-  name: { es: 'Punto de venta', en: 'Point of Sale' }, brand: { es: 'Sylkit POS', en: 'Sylkit POS' },
-  sub: { es: 'Minimercado Demo · Caja 1', en: 'Demo Minimarket · Register 1' },
+  id: 'pos', version: 1, theme: {"dark": true, "headerDark": true, "bg": "#0F172A", "card": "#1E293B", "text": "#E2E8F0", "muted": "#94A3B8", "border": "rgba(255,255,255,.08)", "line": "#334155", "input": "#0F172A", "primary": "#14B8A6", "primaryD": "#5EEAD4", "soft": "rgba(20,184,166,.16)", "hbg": "#0B1220", "hfg": "#ffffff", "font": "'Manrope',sans-serif", "head": "'Manrope',sans-serif", "fonts": "family=Manrope:wght@400;600;700;800", "r": "10px", "rLg": "14px"},
+  product: 'punto-de-venta', logo: "🛒",
+  name: { es: 'Punto de venta', en: 'Point of Sale' }, brand: { es: "Bodegón La Esquina", en: "La Esquina Market" },
+  sub: { es: "Caja 1 · Punto de venta", en: "Register 1 · Point of sale" },
   t: {
     es: { tSell: 'Vender', tSales: 'Ventas de hoy', tProducts: 'Productos', tReport: 'Reportes',
       cart: 'Venta actual', emptyCart: 'Toca un producto para agregarlo.', charge: 'Cobrar', clear: 'Vaciar',
@@ -51,7 +52,7 @@ SylDemo.create({
     return { products, sales, cart: [], rate: 150, cat: 'all', q: '' };
   },
   tabs: [
-    { id: 'sell', label: 'tSell', render: (a) => {
+    { id: 'sell', icon: "🛒", label: 'tSell', render: (a) => {
         const d = a.db, u = a.ui;
         const cats = [['all', a.t('allCats')], ...Object.entries(a.t('cats'))];
         const q = d.q.toLowerCase();
@@ -69,7 +70,7 @@ SylDemo.create({
             <div style="display:flex;gap:8px"><button class="k-btn g" data-act="clear" ${d.cart.length ? '' : 'disabled'}>${a.t('clear')}</button><button class="k-btn p block" data-act="charge" ${d.cart.length ? '' : 'disabled'}>${a.t('charge')} ${a.money(total)}</button></div>`)}
         </div></div>${d.cart.length ? `<button class="k-btn p k-fab" data-act="toCart">🛒 ${d.cart.reduce((n, x) => n + x.qty, 0)} · ${a.t('charge')} ${a.money(total)}</button>` : ''}`;
       } },
-    { id: 'sales', label: 'tSales', badge: (a) => a.db.sales.length, render: (a) => {
+    { id: 'sales', icon: "🧾", label: 'tSales', badge: (a) => a.db.sales.length, render: (a) => {
         const d = a.db, u = a.ui;
         const total = d.sales.reduce((s, x) => s + x.total, 0);
         const by = {}; d.sales.forEach((s) => (by[s.method] = (by[s.method] || 0) + s.total));
@@ -78,14 +79,14 @@ SylDemo.create({
           <div class="k-cols"><div>${u.card('', d.sales.length ? d.sales.slice().reverse().map((s) => u.row({ icon: '🧾', title: `${a.money(s.total)} · ${s.method}`, meta: `${a.time(s.at)} · ${a.t('items')(s.items.reduce((n, x) => n + x.qty, 0))}`, act: 'receipt', id: s.id })).join('') : u.empty(a.t('noSales')))}</div>
           <div>${u.card(a.t('byMethod'), Object.entries(by).map(([m, v]) => `<div class="k-total"><span>${m}</span><b>${a.money(v)}</b></div>`).join('') + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div><button class="k-btn p block" data-act="close">${a.t('closeBtn')}</button>`)}</div></div>`;
       } },
-    { id: 'products', label: 'tProducts', badge: (a) => a.db.products.filter((p) => p.stock <= 5).length, render: (a) => {
+    { id: 'products', icon: "📦", label: 'tProducts', badge: (a) => a.db.products.filter((p) => p.stock <= 5).length, render: (a) => {
         const d = a.db, u = a.ui;
         return `<h1 class="k-h1">${a.t('prodTitle')}</h1><p class="k-sub">${a.t('prodSub')}</p>
           ${u.card('', `<div class="k-table-wrap"><table class="k-table"><thead><tr><th></th><th>${a.t('pName')}</th><th>${a.t('pCat')}</th><th>USD</th><th>Bs</th><th>${a.t('stock')}</th></tr></thead><tbody>
           ${d.products.map((p) => `<tr data-act="editProd" data-id="${p.id}" style="cursor:pointer"><td style="font-size:20px">${p.em}</td><td><b>${a.esc(p.name)}</b><div class="k-meta">${p.code}</div></td><td>${a.t('cats')[p.cat]}</td><td>${a.money(p.price)}</td><td>${(p.price * d.rate).toFixed(2)}</td><td>${p.stock <= 5 ? u.pill(p.stock + ' · ' + a.t('low'), 'orange') : p.stock}</td></tr>`).join('')}
           </tbody></table></div>`, u.btn('+ ' + a.t('newProd'), 'newProd', {}, 'p sm'))}`;
       } },
-    { id: 'report', label: 'tReport', render: (a) => {
+    { id: 'report', icon: "📊", label: 'tReport', render: (a) => {
         const d = a.db, u = a.ui;
         const qty = {}; d.sales.forEach((s) => s.items.forEach((x) => (qty[x.name] = (qty[x.name] || 0) + x.qty)));
         const top = Object.entries(qty).sort((x, y) => y[1] - x[1]).slice(0, 6); const max = top[0] ? top[0][1] : 1;
@@ -138,7 +139,7 @@ function addToCart(a, id) {
 }
 function showReceipt(a, s, change) {
   const lines = s.items.map((x) => `${(x.qty + ' x ' + x.name).slice(0, 22).padEnd(22)}${a.money(x.price * x.qty).padStart(10)}`).join('\n');
-  const txt = `MINIMERCADO DEMO\n${new Date(s.at).toLocaleString()}\n--------------------------------\n${lines}\n--------------------------------\n${a.t('total').toUpperCase().padEnd(22)}${a.money(s.total).padStart(10)}\n${'Bs'.padEnd(22)}${(s.total * a.db.rate).toFixed(2).padStart(10)}\n${s.method}${change ? `\n${a.t('change').padEnd(22)}${a.money(change).padStart(10)}` : ''}\n\n¡Gracias por su compra!`;
+  const txt = `BODEGÓN LA ESQUINA\n${new Date(s.at).toLocaleString()}\n--------------------------------\n${lines}\n--------------------------------\n${a.t('total').toUpperCase().padEnd(22)}${a.money(s.total).padStart(10)}\n${'Bs'.padEnd(22)}${(s.total * a.db.rate).toFixed(2).padStart(10)}\n${s.method}${change ? `\n${a.t('change').padEnd(22)}${a.money(change).padStart(10)}` : ''}\n\n¡Gracias por su compra!`;
   a.modal({ title: a.t('receipt'), html: `<div class="k-receipt">${a.esc(txt)}</div>` });
 }
 function prodForm(a, p) {
