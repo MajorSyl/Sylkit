@@ -14,7 +14,9 @@ import {
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
 import { ProductCard } from '../src/components/ProductCard';
-import { categories, CategoryId, products } from '../src/data/products';
+import { categories, CategoryId } from '../src/data/products';
+import { useProducts } from '../src/lib/catalog';
+import { useRouter } from 'expo-router';
 import { steps, ui, useLang } from '../src/i18n';
 import { colors, glass, shadow, waLink } from '../src/theme';
 
@@ -23,6 +25,8 @@ export default function Home() {
   const { width } = useWindowDimensions();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<CategoryId | 'all'>('all');
+  const products = useProducts();
+  const router = useRouter();
 
   const cols = width >= 1024 ? 3 : width >= 640 ? 2 : 1;
   const wide = width >= 820;
@@ -35,7 +39,7 @@ export default function Home() {
       const hay = [p.name.es, p.name.en, p.short.es, p.short.en, ...p.platforms].join(' ').toLowerCase();
       return hay.includes(q);
     });
-  }, [query, cat]);
+  }, [query, cat, products]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -116,11 +120,7 @@ export default function Home() {
             </View>
             <Pressable
               style={styles.bannerBtn}
-              onPress={() =>
-                Linking.openURL(
-                  waLink(lang === 'es' ? 'Hola, quiero un sistema a medida para mi negocio.' : 'Hi, I want a custom system for my business.'),
-                )
-              }
+              onPress={() => router.push('/quote')}
               accessibilityRole="link"
             >
               <Text style={styles.bannerBtnText}>{t(ui.customCta)}</Text>

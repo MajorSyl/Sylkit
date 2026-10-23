@@ -1,11 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { Footer } from '../../src/components/Footer';
 import { Header } from '../../src/components/Header';
 import { PriceLabel } from '../../src/components/ProductCard';
 import { categories, getProduct, products } from '../../src/data/products';
+import { useProducts } from '../../src/lib/catalog';
 import { ui, useLang } from '../../src/i18n';
 import { colors, shadow, waLink } from '../../src/theme';
 
@@ -19,7 +20,9 @@ export default function ProductPage() {
   const { t, lang } = useLang();
   const { width } = useWindowDimensions();
   const wide = width >= 860;
-  const product = getProduct(String(slug));
+  const live = useProducts();
+  const router = useRouter();
+  const product = live.find((p) => p.slug === String(slug)) ?? getProduct(String(slug));
 
   if (!product) {
     return (
@@ -100,15 +103,15 @@ export default function ProductPage() {
               <View style={[styles.buyBox, shadow]}>
                 <PriceLabel product={product} />
                 <Text style={styles.plan}>{t(ui.plan)}</Text>
-                <Pressable style={styles.primaryBtn} onPress={() => Linking.openURL(msg('buy'))} accessibilityRole="link">
-                  <Ionicons name="logo-whatsapp" size={18} color="#fff" />
-                  <Text style={styles.primaryBtnText}>{t(ui.buy)}</Text>
+                <Pressable style={[styles.primaryBtn, { backgroundColor: colors.primary }]} onPress={() => router.push(`/quote?product=${product.slug}`)} accessibilityRole="link">
+                  <Ionicons name="document-text" size={18} color="#fff" />
+                  <Text style={styles.primaryBtnText}>{lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}</Text>
                 </Pressable>
                 <Pressable style={styles.secondaryBtn} onPress={() => Linking.openURL(msg('demo'))} accessibilityRole="link">
-                  <Ionicons name="play-circle" size={18} color={colors.primary} />
+                  <Ionicons name="logo-whatsapp" size={18} color={colors.primary} />
                   <Text style={styles.secondaryBtnText}>{t(ui.demo)}</Text>
                 </Pressable>
-                <Pressable style={styles.textBtn} onPress={() => Linking.openURL(msg('custom'))} accessibilityRole="link">
+                <Pressable style={styles.textBtn} onPress={() => router.push('/quote')} accessibilityRole="link">
                   <Text style={styles.textBtnText}>{t(ui.customVersion)}</Text>
                   <Ionicons name="arrow-forward" size={14} color={colors.primary} />
                 </Pressable>
