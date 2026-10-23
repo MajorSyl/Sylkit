@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Tienda en línea · Sylkit</title><meta name="description" content="Prueba en vivo la tienda en línea de Sylkit: catálogo, carrito y pedido directo a WhatsApp, con panel de pedidos para el dueño.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const OS = { es: { new: 'Nuevo', confirmed: 'Confirmado', shipped: 'Enviado', delivered: 'Entregado' }, en: { new: 'New', confirmed: 'Confirmed', shipped: 'Shipped', delivered: 'Delivered' } };
+const OC = { new: 'red', confirmed: 'blue', shipped: 'orange', delivered: 'green' };
+const ONX = { new: 'confirmed', confirmed: 'shipped', shipped: 'delivered' };
+SylDemo.create({
+  id: 'tienda', version: 1, product: 'tienda-online-whatsapp', logo: '🛍️', color: '#E04F8A',
+  name: { es: 'Tienda en línea', en: 'Online Store' }, brand: { es: 'Boutique Demo', en: 'Demo Boutique' },
+  sub: { es: 'Tienda en línea · pedidos por WhatsApp', en: 'Online store · WhatsApp orders' },
+  t: {
+    es: { tShop: 'Tienda (cliente)', tCart: 'Carrito', tOrders: 'Pedidos (dueño)', tCatalog: 'Catálogo (dueño)',
+      hero: 'Nueva colección', heroSub: 'Envíos a todo el país · Paga con Pago Móvil, Zelle o efectivo', all: 'Todo', add: 'Agregar', added: 'Agregado al carrito.', size: 'Talla', inStock: 'Disponible', soldOut: 'Agotado',
+      cartTitle: 'Tu carrito', empty: 'Tu carrito está vacío.', shopNow: 'Ver productos', name: 'Nombre', phone: 'WhatsApp', city: 'Ciudad', delivery: 'Entrega', pickup: 'Retiro en tienda', ship: 'Envío nacional (+$5)', local: 'Delivery en la ciudad (+$3)',
+      checkout: 'Enviar pedido por WhatsApp', placed: (n) => `Pedido ${n} enviado. El dueño lo recibe por WhatsApp y en su panel.`, msgPreview: 'Mensaje que se envía', openWa: 'Abrir WhatsApp', shipping: 'Envío',
+      oTitle: 'Pedidos', oSub: 'Cada pedido llega con todos los datos. Avanza el estado y el cliente recibe un aviso.', sToday: 'Ventas', sOrders: 'Pedidos', sNew: 'Por confirmar', advance: 'Avanzar',
+      cTitle: 'Catálogo', cSub: 'Agrega productos con foto, precio y existencia. Lo que se agota se oculta solo.', newP: 'Nuevo producto', pName: 'Nombre', pPrice: 'Precio (USD)', pStock: 'Existencia', pCat: 'Categoría', pEmoji: 'Ícono (emoji)', saved: 'Producto guardado.',
+      cats: { ropa: 'Ropa', zapatos: 'Zapatos', accesorios: 'Accesorios', belleza: 'Belleza' } },
+    en: { tShop: 'Store (customer)', tCart: 'Cart', tOrders: 'Orders (owner)', tCatalog: 'Catalog (owner)',
+      hero: 'New collection', heroSub: 'Nationwide shipping · Pay by Pago Móvil, Zelle or cash', all: 'All', add: 'Add', added: 'Added to cart.', size: 'Size', inStock: 'In stock', soldOut: 'Sold out',
+      cartTitle: 'Your cart', empty: 'Your cart is empty.', shopNow: 'Browse products', name: 'Name', phone: 'WhatsApp', city: 'City', delivery: 'Delivery', pickup: 'Store pickup', ship: 'National shipping (+$5)', local: 'City delivery (+$3)',
+      checkout: 'Send order via WhatsApp', placed: (n) => `Order ${n} sent. The owner gets it on WhatsApp and in their panel.`, msgPreview: 'Message being sent', openWa: 'Open WhatsApp', shipping: 'Shipping',
+      oTitle: 'Orders', oSub: 'Every order arrives with full details. Move the status and the customer gets notified.', sToday: 'Sales', sOrders: 'Orders', sNew: 'To confirm', advance: 'Advance',
+      cTitle: 'Catalog', cSub: 'Add products with photo, price and stock. Sold-out items hide automatically.', newP: 'New product', pName: 'Name', pPrice: 'Price (USD)', pStock: 'Stock', pCat: 'Category', pEmoji: 'Icon (emoji)', saved: 'Product saved.',
+      cats: { ropa: 'Clothing', zapatos: 'Shoes', accesorios: 'Accessories', belleza: 'Beauty' } },
+  },
+  seed: (a) => {
+    const P = [['Vestido floral', 'ropa', 28, 6, '👗'], ['Blusa de lino', 'ropa', 18, 10, '👚'], ['Jean clásico', 'ropa', 25, 8, '👖'], ['Camisa casual', 'ropa', 20, 0, '👔'], ['Sandalias', 'zapatos', 22, 5, '👡'], ['Zapatos deportivos', 'zapatos', 45, 4, '👟'],
+      ['Botas', 'zapatos', 55, 2, '👢'], ['Cartera de cuero', 'accesorios', 35, 7, '👜'], ['Lentes de sol', 'accesorios', 15, 12, '🕶️'], ['Reloj', 'accesorios', 40, 3, '⌚'], ['Perfume 100ml', 'belleza', 38, 9, '🧴'], ['Labial', 'belleza', 9, 20, '💄']];
+    const products = P.map(([name, cat, price, stock, em], i) => ({ id: 'p' + i, name, cat, price, stock, em }));
+    const orders = [{ id: a.uid(), num: 'P-301', name: 'Daniela M.', phone: '+58 414 1112233', city: 'Valencia', delivery: 'ship', items: [{ name: 'Vestido floral', qty: 1, price: 28 }, { name: 'Sandalias', qty: 1, price: 22 }], ship: 5, status: 'shipped', at: new Date(Date.now() - 864e5).toISOString() },
+      { id: a.uid(), num: 'P-302', name: 'Rosa P.', phone: '+58 424 5556677', city: 'Caracas', delivery: 'local', items: [{ name: 'Perfume 100ml', qty: 1, price: 38 }], ship: 3, status: 'new', at: new Date(Date.now() - 3600e3).toISOString() }];
+    return { products, orders, cart: [], cat: 'all', del: 'local' };
+  },
+  tabs: [
+    { id: 'shop', label: 'tShop', render: (a) => {
+        const d = a.db, u = a.ui, n = d.cart.reduce((s, x) => s + x.qty, 0);
+        return `<div style="background:linear-gradient(135deg,#E04F8A,#7A5AF8);color:#fff;border-radius:20px;padding:24px;margin-bottom:16px"><div style="font-size:26px;font-weight:800">${a.t('hero')}</div><div style="opacity:.9;margin-top:4px">${a.t('heroSub')}</div></div>
+          ${u.chips([['all', a.t('all')], ...Object.entries(a.t('cats'))], d.cat, 'cat')}
+          <div class="k-tiles" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">${d.products.filter((p) => d.cat === 'all' || p.cat === d.cat).map((p) => `<div class="k-tile" style="cursor:default"><div style="background:var(--graybg);border-radius:12px;height:110px;display:grid;place-items:center;font-size:52px">${p.em}</div>
+            <span class="nm">${a.esc(p.name)}</span><span class="pr">${a.money(p.price)}</span>${p.stock ? u.btn(a.t('add'), 'add', { id: p.id }, 'p sm') : u.pill(a.t('soldOut'), 'gray')}</div>`).join('')}</div>
+          ${n ? `<button class="k-btn p k-fab" data-act="goCart">🛍️ ${n} · ${a.money(d.cart.reduce((s, x) => s + x.price * x.qty, 0))}</button>` : ''}`;
+      } },
+    { id: 'cart', label: 'tCart', badge: (a) => a.db.cart.reduce((s, x) => s + x.qty, 0), render: (a) => {
+        const d = a.db, u = a.ui, sub = d.cart.reduce((s, x) => s + x.price * x.qty, 0), ship = { pickup: 0, local: 3, ship: 5 }[d.del];
+        if (!d.cart.length) return u.card(a.t('cartTitle'), u.empty(a.t('empty')) + `<div style="text-align:center">${u.btn(a.t('shopNow'), 'goShop', {}, 'p')}</div>`);
+        return `<div class="k-cols"><div>${u.card(a.t('cartTitle'), d.cart.map((x) => `<div class="k-row"><div class="k-thumb">${x.em}</div><div class="k-grow"><div class="k-title">${a.esc(x.name)}</div><div class="k-meta">${a.money(x.price)}</div></div><span class="k-qty"><button data-act="dec" data-id="${x.id}">−</button><b>${x.qty}</b><button data-act="add" data-id="${x.id}">+</button></span></div>`).join(''))}</div>
+          <div>${u.card(a.t('delivery'), `${u.chips([['local', a.t('local')], ['ship', a.t('ship')], ['pickup', a.t('pickup')]], d.del, 'del')}
+            <div class="k-field"><label>${a.t('name')} *</label><input id="cName" value="Visitante Demo"></div><div class="k-grid2"><div class="k-field"><label>${a.t('phone')}</label><input id="cPhone" value="+58 412 0000000"></div><div class="k-field"><label>${a.t('city')}</label><input id="cCity" value="Caracas"></div></div>
+            <div class="k-total"><span>Subtotal</span><span>${a.money(sub)}</span></div><div class="k-total"><span>${a.t('shipping')}</span><span>${a.money(ship)}</span></div><div class="k-total big"><span>${a.t('total')}</span><span>${a.money(sub + ship)}</span></div>
+            <button class="k-btn wa block" data-act="checkout">📲 ${a.t('checkout')}</button>`)}</div></div>`;
+      } },
+    { id: 'orders', label: 'tOrders', badge: (a) => a.db.orders.filter((o) => o.status === 'new').length, render: (a) => {
+        const d = a.db, u = a.ui, L = OS[a.lang], t = (o) => o.items.reduce((s, x) => s + x.price * x.qty, 0) + o.ship;
+        return `<h1 class="k-h1">${a.t('oTitle')}</h1><p class="k-sub">${a.t('oSub')}</p>${u.stats([{ label: a.t('sToday'), value: a.money(d.orders.reduce((s, o) => s + t(o), 0)), color: 'var(--green)' }, { label: a.t('sOrders'), value: d.orders.length }, { label: a.t('sNew'), value: d.orders.filter((o) => o.status === 'new').length, color: 'var(--red)' }])}
+          ${u.card('', d.orders.slice().reverse().map((o) => u.row({ icon: '📦', title: `${o.num} · ${o.name} · ${a.money(t(o))}`, meta: `${o.items.map((x) => `${x.qty}× ${x.name}`).join(', ')} · ${o.city} · ${o.phone}`, right: u.pill(L[o.status], OC[o.status]) + (ONX[o.status] ? u.btn('→ ' + L[ONX[o.status]], 'adv', { id: o.id }, 's sm') : '') })).join(''))}`;
+      } },
+    { id: 'catalog', label: 'tCatalog', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('cTitle')}</h1><p class="k-sub">${a.t('cSub')}</p>${u.card('', d.products.map((p) => u.row({ icon: p.em, title: p.name, act: 'edit', id: p.id, meta: `${a.t('cats')[p.cat]} · ${a.money(p.price)}`, right: u.pill(p.stock ? `${a.t('pStock')}: ${p.stock}` : a.t('soldOut'), p.stock ? p.stock <= 3 ? 'orange' : 'green' : 'gray') })).join(''), u.btn('+ ' + a.t('newP'), 'edit', {}, 'p sm'))}`;
+      } },
+  ],
+  actions: {
+    cat: (a, d) => { a.db.cat = d.v; a.rerender(); }, del: (a, d) => { a.db.del = d.v; a.rerender(); },
+    goCart: (a) => a.go('cart'), goShop: (a) => a.go('shop'),
+    add: (a, d) => { const p = a.db.products.find((x) => x.id === d.id); const c = a.db.cart.find((x) => x.id === d.id); if (c) { if (c.qty < p.stock) c.qty++; } else a.db.cart.push({ id: p.id, name: p.name, price: p.price, em: p.em, qty: 1 }); a.save(); if (a.tab === 'shop') a.toast(a.t('added')); a.rerender(); },
+    dec: (a, d) => { const c = a.db.cart.find((x) => x.id === d.id); c.qty--; if (!c.qty) a.db.cart = a.db.cart.filter((x) => x !== c); a.save(); a.rerender(); },
+    checkout: (a) => {
+      const g = (id) => (document.getElementById(id).value || '').trim(), ship = { pickup: 0, local: 3, ship: 5 }[a.db.del], num = 'P-' + (301 + a.db.orders.length);
+      const o = { id: a.uid(), num, name: g('cName') || 'Visitante Demo', phone: g('cPhone'), city: g('cCity'), delivery: a.db.del, items: a.db.cart.map((x) => ({ name: x.name, qty: x.qty, price: x.price })), ship, status: 'new', at: new Date().toISOString() };
+      const total = o.items.reduce((s, x) => s + x.price * x.qty, 0) + ship;
+      const msg = `🛍️ *Pedido ${num}*\n${o.items.map((x) => `• ${x.qty}× ${x.name} — ${a.money(x.price * x.qty)}`).join('\n')}\n${a.t('shipping')}: ${a.money(ship)}\n*${a.t('total')}: ${a.money(total)}*\n\n${o.name} · ${o.city} · ${o.phone}`;
+      o.items.forEach((x) => { const p = a.db.products.find((y) => y.name === x.name); if (p) p.stock = Math.max(0, p.stock - x.qty); });
+      a.db.orders.push(o); a.db.cart = []; a.save(); a.toast(a.t('placed', num)); a.rerender();
+      a.modal({ title: a.t('msgPreview'), html: `<div class="k-receipt" style="background:#E7FFDB;border-color:#C8F0B0">${a.esc(msg)}</div><a class="k-btn wa block" style="margin-top:12px" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">📲 ${a.t('openWa')}</a>` });
+    },
+    adv: (a, d) => { const o = a.db.orders.find((x) => x.id === d.id); o.status = ONX[o.status]; a.save(); a.rerender(); },
+    edit: (a, d) => { const p = d.id ? a.db.products.find((x) => x.id === d.id) : null;
+      a.modal({ title: p ? p.name : a.t('newP'), submit: a.t('save'), fields: [{ name: 'name', label: a.t('pName'), value: p?.name, required: true }, { name: 'price', label: a.t('pPrice'), type: 'number', step: '0.01', value: p?.price, required: true }, { name: 'stock', label: a.t('pStock'), type: 'number', value: p?.stock ?? 5, required: true }, { name: 'cat', label: a.t('pCat'), type: 'select', value: p?.cat || 'ropa', options: Object.entries(a.t('cats')) }, { name: 'em', label: a.t('pEmoji'), value: p?.em || '🏷️' }],
+        onSubmit: (v) => { if (p) Object.assign(p, v); else a.db.products.unshift({ id: a.uid(), ...v }); a.save(); a.toast(a.t('saved')); a.rerender(); } }); },
+  },
+});
+</script>
+</body></html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Sitio web personal · Sylkit</title><meta name="description" content="Prueba en vivo un sitio web personal de Sylkit: elige plantilla, edita tus datos y mira tu sitio al instante.">
+<link rel="stylesheet" href="/_kit/kit.css">
+<style>
+.pf{border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 12px 40px rgba(15,40,90,.08);background:#fff}
+.pf-bar{background:#EEF1F6;padding:8px 12px;display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}.pf-bar i{width:10px;height:10px;border-radius:50%;background:#D0D5DD;display:inline-block}
+.pf-url{background:#fff;border-radius:8px;padding:4px 10px;margin-left:8px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-hero{padding:48px 24px;text-align:center}.pf-photo{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;display:grid;place-items:center;font-size:40px;font-weight:800;color:#fff}
+.pf-name{font-size:32px;font-weight:800;letter-spacing:-.6px}.pf-role{font-size:16px;opacity:.85;margin-top:6px}
+.pf-sec{padding:28px 24px;border-top:1px solid rgba(0,0,0,.06)}.pf-sec h3{font-size:20px;margin-bottom:12px}
+.pf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}.pf-item{border-radius:14px;padding:16px;background:rgba(0,0,0,.035)}
+.pf-cta{display:inline-flex;gap:8px;align-items:center;padding:12px 20px;border-radius:12px;font-weight:800;text-decoration:none;margin:6px}
+</style></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const TPL = {
+  pro: { es: 'Profesional', en: 'Professional', bg: '#0B1B3A', fg: '#fff', accent: '#19C3E6', body: '#fff', text: '#0B1B3A' },
+  creative: { es: 'Creativo', en: 'Creative', bg: 'linear-gradient(135deg,#7A5AF8,#E04F8A)', fg: '#fff', accent: '#FDB022', body: '#FFFBF5', text: '#2D1B4E' },
+  clean: { es: 'Minimalista', en: 'Minimal', bg: '#F6F8FC', fg: '#0B1B3A', accent: '#1D6BFF', body: '#fff', text: '#0B1B3A' },
+};
+SylDemo.create({
+  id: 'portafolio', version: 1, product: 'sitio-web-personal', logo: '🌐', color: '#7A5AF8',
+  name: { es: 'Sitio web personal', en: 'Personal Website' }, brand: { es: 'Sylkit Sitios', en: 'Sylkit Sites' },
+  sub: { es: 'Tu sitio profesional en minutos', en: 'Your professional site in minutes' },
+  t: {
+    es: { tSite: 'Ver mi sitio', tEdit: 'Editar contenido', tTpl: 'Plantillas',
+      about: 'Sobre mí', services: 'Servicios', work: 'Proyectos', contact: 'Contacto', book: 'Agendar una cita', wa: 'Escríbeme por WhatsApp',
+      eTitle: 'Edita tu sitio', eSub: 'Cambia el texto y mira el resultado al instante en "Ver mi sitio". En la versión real, usas tu propio dominio (tunombre.com).',
+      fName: 'Tu nombre', fRole: 'Profesión o título', fAbout: 'Sobre ti', fServices: 'Servicios (uno por línea)', fWork: 'Proyectos o logros (uno por línea)', fPhone: 'WhatsApp', fEmail: 'Correo', fCity: 'Ciudad', saved: 'Sitio actualizado.', apply: 'Guardar cambios',
+      tTitle: 'Elige una plantilla', tSub: 'Todas se adaptan al teléfono y se cargan rápido. Te la personalizamos con tus colores y fotos.', choose: 'Usar esta', chosen: 'Plantilla aplicada.', current: 'Actual' },
+    en: { tSite: 'View my site', tEdit: 'Edit content', tTpl: 'Templates',
+      about: 'About me', services: 'Services', work: 'Projects', contact: 'Contact', book: 'Book a meeting', wa: 'Message me on WhatsApp',
+      eTitle: 'Edit your site', eSub: 'Change the text and see the result instantly under "View my site". In the real version, you use your own domain (yourname.com).',
+      fName: 'Your name', fRole: 'Profession or title', fAbout: 'About you', fServices: 'Services (one per line)', fWork: 'Projects or achievements (one per line)', fPhone: 'WhatsApp', fEmail: 'Email', fCity: 'City', saved: 'Site updated.', apply: 'Save changes',
+      tTitle: 'Choose a template', tSub: 'All are mobile-friendly and load fast. We customize it with your colors and photos.', choose: 'Use this', chosen: 'Template applied.', current: 'Current' },
+  },
+  seed: () => ({ tpl: 'pro', p: { name: 'Dra. Laura Méndez', role: 'Cardióloga · Caracas', about: 'Más de 10 años cuidando el corazón de mis pacientes. Consultas presenciales y en línea, con un trato cercano y basado en evidencia.',
+    services: 'Consulta de cardiología\nElectrocardiograma\nEcocardiograma\nControl de hipertensión', work: 'Especialista certificada\n+5.000 pacientes atendidos\nPonente en congresos nacionales', phone: '+58 412 0000000', email: 'consulta@lauramendez.demo', city: 'Caracas, Venezuela' } }),
+  tabs: [
+    { id: 'site', label: 'tSite', render: (a) => site(a, a.db.tpl) },
+    { id: 'edit', label: 'tEdit', render: (a) => {
+        const p = a.db.p, f = (k, label, ta) => `<div class="k-field"><label>${a.t(label)}</label>${ta ? `<textarea id="f-${k}">${a.esc(p[k])}</textarea>` : `<input id="f-${k}" value="${a.esc(p[k])}">`}</div>`;
+        return `<h1 class="k-h1">${a.t('eTitle')}</h1><p class="k-sub">${a.t('eSub')}</p><div class="k-card" style="max-width:720px">${f('name', 'fName')}${f('role', 'fRole')}${f('about', 'fAbout', 1)}${f('services', 'fServices', 1)}${f('work', 'fWork', 1)}<div class="k-grid3">${f('phone', 'fPhone')}${f('email', 'fEmail')}${f('city', 'fCity')}</div><button class="k-btn p block" data-act="saveSite">${a.t('apply')}</button></div>`;
+      } },
+    { id: 'tpl', label: 'tTpl', render: (a) => `<h1 class="k-h1">${a.t('tTitle')}</h1><p class="k-sub">${a.t('tSub')}</p><div class="k-grid3">${Object.entries(TPL).map(([k, t]) => `<div class="k-card"><div style="height:120px;border-radius:12px;background:${t.bg};display:grid;place-items:center;color:${t.fg};font-weight:800;font-size:18px;margin-bottom:12px">${t[a.lang]}</div>${a.db.tpl === k ? a.ui.pill(a.t('current'), 'green') : a.ui.btn(a.t('choose'), 'tpl', { v: k }, 'p sm')}</div>`).join('')}</div>` },
+  ],
+  actions: {
+    saveSite: (a) => { Object.keys(a.db.p).forEach((k) => { const el = document.getElementById('f-' + k); if (el) a.db.p[k] = el.value; }); a.save(); a.toast(a.t('saved')); a.go('site'); },
+    tpl: (a, d) => { a.db.tpl = d.v; a.save(); a.toast(a.t('chosen')); a.go('site'); },
+  },
+});
+function site(a, k) {
+  const t = TPL[k], p = a.db.p, e = a.esc, lines = (s) => String(s).split('\n').map((x) => x.trim()).filter(Boolean);
+  const slug = String(p.name).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]+/g, '');
+  return `<div class="pf"><div class="pf-bar"><i></i><i></i><i></i><span class="pf-url">🔒 ${slug || 'tunombre'}.com</span></div>
+    <div class="pf-hero" style="background:${t.bg};color:${t.fg}"><div class="pf-photo" style="background:${t.accent}">${e(a.ui.initials(p.name))}</div><div class="pf-name">${e(p.name)}</div><div class="pf-role">${e(p.role)}</div>
+      <div style="margin-top:18px"><a class="pf-cta" style="background:${t.accent};color:${k === 'clean' ? '#fff' : '#0B1B3A'}" href="#contact">📅 ${a.t('book')}</a><a class="pf-cta" style="background:#25D366;color:#fff" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent('Hola ' + p.name)}">💬 WhatsApp</a></div></div>
+    <div style="background:${t.body};color:${t.text}">
+      <div class="pf-sec"><h3>${a.t('about')}</h3><p style="line-height:1.6">${e(p.about)}</p></div>
+      <div class="pf-sec"><h3>${a.t('services')}</h3><div class="pf-grid">${lines(p.services).map((s) => `<div class="pf-item"><b>✓</b> ${e(s)}</div>`).join('')}</div></div>
+      <div class="pf-sec"><h3>${a.t('work')}</h3><div class="pf-grid">${lines(p.work).map((s) => `<div class="pf-item" style="border-left:4px solid ${t.accent}">${e(s)}</div>`).join('')}</div></div>
+      <div class="pf-sec" id="contact"><h3>${a.t('contact')}</h3><p>📞 ${e(p.phone)}<br>✉️ ${e(p.email)}<br>📍 ${e(p.city)}</p></div>
+      <div class="pf-sec" style="text-align:center;font-size:12px;opacity:.6">© ${new Date().getFullYear()} ${e(p.name)}</div></div></div>`;
+}
+</script>
+</body></html>

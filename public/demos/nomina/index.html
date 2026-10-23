@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Nómina y asistencia · Sylkit</title><meta name="description" content="Prueba en vivo el sistema de nómina y asistencia de Sylkit: marcaje de entrada y salida, horas extra, cálculo de nómina y recibos de pago.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+SylDemo.create({
+  id: 'nomina', version: 1, product: 'nomina-asistencia', logo: '👥', color: '#0E9384',
+  name: { es: 'Nómina y asistencia', en: 'Payroll & Attendance' }, brand: { es: 'Sylkit Nómina', en: 'Sylkit Payroll' },
+  sub: { es: 'Distribuidora Demo · 8 empleados', en: 'Demo Distributor · 8 employees' },
+  t: {
+    es: { tClock: 'Marcar asistencia', tToday: 'Asistencia de hoy', tPayroll: 'Nómina', tEmployees: 'Empleados',
+      ckTitle: 'Marcaje de entrada y salida', ckSub: 'Así marcan los empleados desde un teléfono o tablet en la entrada. Elige tu nombre y marca.', clockIn: 'Marcar entrada', clockOut: 'Marcar salida', inAt: 'Entró', outAt: 'Salió', notYet: 'Sin marcar',
+      inDone: (n, t) => `${n}: entrada registrada a las ${t}.`, outDone: (n, t) => `${n}: salida registrada a las ${t}.`, late: 'Tarde',
+      tdTitle: 'Asistencia de hoy', tdSub: 'Quién llegó, quién llegó tarde y quién falta. Horario de entrada: 08:00.', sPresent: 'Presentes', sLate: 'Llegaron tarde', sAbsent: 'Ausentes', sHours: 'Horas extra (quincena)',
+      prTitle: 'Nómina de la quincena', prSub: 'Calculada sola con el salario, horas extra, bonos y deducciones. Los porcentajes son de ejemplo: se configuran según tu país.', base: 'Salario', ot: 'Horas extra', bonus: 'Bonos', ded: 'Deducciones', net: 'Neto a pagar',
+      run: 'Generar recibos de pago', ran: 'Recibos generados y enviados por WhatsApp a cada empleado.', slip: 'Recibo de pago', period: 'Período', otHours: 'h extra', ssLabel: 'Seguro social (4%, ejemplo)', advance: 'Adelanto',
+      emTitle: 'Empleados', emSub: 'Ficha de cada empleado: cargo, salario y contacto.', newEm: 'Nuevo empleado', name: 'Nombre', role: 'Cargo', salary: 'Salario mensual (USD)', phone: 'WhatsApp', emSaved: 'Empleado registrado.', since: 'Desde' },
+    en: { tClock: 'Clock in/out', tToday: "Today's attendance", tPayroll: 'Payroll', tEmployees: 'Employees',
+      ckTitle: 'Clock in and out', ckSub: 'This is how employees clock in from a phone or tablet at the entrance. Pick your name and tap.', clockIn: 'Clock in', clockOut: 'Clock out', inAt: 'In', outAt: 'Out', notYet: 'Not yet',
+      inDone: (n, t) => `${n}: clocked in at ${t}.`, outDone: (n, t) => `${n}: clocked out at ${t}.`, late: 'Late',
+      tdTitle: "Today's attendance", tdSub: 'Who arrived, who was late and who is missing. Start time: 08:00.', sPresent: 'Present', sLate: 'Late', sAbsent: 'Absent', sHours: 'Overtime (this period)',
+      prTitle: 'Payroll for this period', prSub: 'Calculated automatically from salary, overtime, bonuses and deductions. Percentages are examples: set to your country\'s rules.', base: 'Salary', ot: 'Overtime', bonus: 'Bonuses', ded: 'Deductions', net: 'Net pay',
+      run: 'Generate payslips', ran: 'Payslips generated and sent to each employee on WhatsApp.', slip: 'Payslip', period: 'Period', otHours: 'h overtime', ssLabel: 'Social security (4%, example)', advance: 'Advance',
+      emTitle: 'Employees', emSub: 'Each employee\'s file: role, salary and contact.', newEm: 'New employee', name: 'Name', role: 'Role', salary: 'Monthly salary (USD)', phone: 'WhatsApp', emSaved: 'Employee added.', since: 'Since' },
+  },
+  seed: (a) => {
+    const E = [['Pedro Salazar', 'Gerente de almacén', 650], ['Luisa Ortega', 'Contadora', 600], ['Jhonny Pérez', 'Chofer', 420], ['Mariana Vélez', 'Vendedora', 450], ['Óscar Blanco', 'Despachador', 380], ['Yelitza Rangel', 'Cajera', 400], ['Ricardo Suárez', 'Chofer', 420], ['Daniela Fuentes', 'Asistente administrativa', 430]];
+    const emps = E.map(([name, role, salary], i) => ({ id: 'e' + i, name, role, salary, phone: '+58 412 66' + (10000 + i * 271), since: a.addDays(-(200 + i * 97)), ot: [6, 0, 10, 3, 8, 0, 12, 2][i], bonus: i === 3 ? 40 : 0, adv: i === 4 ? 30 : 0 }));
+    const day = a.addDays(0); const at = (h, m) => { const x = new Date(); x.setHours(h, m, 0, 0); return x.toISOString(); };
+    const clock = { [day]: { e0: { in: at(7, 52) }, e1: { in: at(7, 58) }, e2: { in: at(8, 14) }, e3: { in: at(7, 49) }, e5: { in: at(8, 3) }, e7: { in: at(7, 55) } } };
+    return { emps, clock, pick: 'e4', runs: [] };
+  },
+  tabs: [
+    { id: 'clock', label: 'tClock', render: (a) => {
+        const d = a.db, u = a.ui, today = d.clock[a.addDays(0)] || {}, e = d.emps.find((x) => x.id === d.pick), rec = today[e.id] || {};
+        return `<h1 class="k-h1">${a.t('ckTitle')}</h1><p class="k-sub">${a.t('ckSub')}</p><div class="k-card" style="max-width:520px;text-align:center">
+          <div style="font-size:44px;font-weight:800;letter-spacing:-1px" id="clockNow">${new Date().toLocaleTimeString(a.lang === 'es' ? 'es-VE' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+          <div class="k-meta" style="margin-bottom:16px">${a.date(a.addDays(0), { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+          <div class="k-field" style="text-align:left"><label>${a.t('name')}</label><select data-in="pick" class="k-input">${d.emps.map((x) => `<option value="${x.id}"${x.id === d.pick ? ' selected' : ''}>${a.esc(x.name)}</option>`).join('')}</select></div>
+          <p class="k-meta" style="margin-bottom:14px">${a.t('inAt')}: <b>${rec.in ? a.time(rec.in) : a.t('notYet')}</b> · ${a.t('outAt')}: <b>${rec.out ? a.time(rec.out) : a.t('notYet')}</b></p>
+          <div class="k-grid2"><button class="k-btn p" data-act="cin" ${rec.in ? 'disabled' : ''}>🟢 ${a.t('clockIn')}</button><button class="k-btn s" data-act="cout" ${!rec.in || rec.out ? 'disabled' : ''}>🔴 ${a.t('clockOut')}</button></div></div>`;
+      } },
+    { id: 'today', label: 'tToday', badge: (a) => a.db.emps.length - Object.keys(a.db.clock[a.addDays(0)] || {}).length, render: (a) => {
+        const d = a.db, u = a.ui, today = d.clock[a.addDays(0)] || {};
+        const isLate = (r) => r && r.in && new Date(r.in).getHours() * 60 + new Date(r.in).getMinutes() > 8 * 60 + 5;
+        const present = d.emps.filter((e) => today[e.id]).length, late = d.emps.filter((e) => isLate(today[e.id])).length;
+        return `<h1 class="k-h1">${a.t('tdTitle')}</h1><p class="k-sub">${a.t('tdSub')}</p>${u.stats([{ label: a.t('sPresent'), value: present, color: 'var(--green)' }, { label: a.t('sLate'), value: late, color: 'var(--orange)' }, { label: a.t('sAbsent'), value: d.emps.length - present, color: 'var(--red)' }, { label: a.t('sHours'), value: d.emps.reduce((s, e) => s + e.ot, 0) + ' h' }])}
+          ${u.card('', d.emps.map((e) => { const r = today[e.id]; return u.row({ avatar: u.initials(e.name), color: u.avatarColor(e.name), title: e.name, meta: `${e.role}${r ? ` · ${a.t('inAt')} ${a.time(r.in)}${r.out ? ` · ${a.t('outAt')} ${a.time(r.out)}` : ''}` : ''}`, right: !r ? u.pill(a.t('sAbsent'), 'red') : isLate(r) ? u.pill(a.t('late'), 'orange') : u.pill(a.t('sPresent'), 'green') }); }).join(''))}`;
+      } },
+    { id: 'payroll', label: 'tPayroll', render: (a) => {
+        const d = a.db, u = a.ui, rows = d.emps.map((e) => calc(e)), tot = rows.reduce((s, r) => s + r.net, 0);
+        return `<h1 class="k-h1">${a.t('prTitle')}</h1><p class="k-sub">${a.t('prSub')}</p>${u.card(`${a.t('period')}: ${periodLabel(a)}`, `<div class="k-table-wrap"><table class="k-table"><thead><tr><th>${a.t('name')}</th><th>${a.t('base')}</th><th>${a.t('ot')}</th><th>${a.t('bonus')}</th><th>${a.t('ded')}</th><th>${a.t('net')}</th></tr></thead><tbody>
+          ${rows.map((r) => `<tr data-act="slip" data-id="${r.e.id}" style="cursor:pointer"><td><b>${a.esc(r.e.name)}</b><div class="k-meta">${a.esc(r.e.role)}</div></td><td>${a.money(r.base)}</td><td>${a.money(r.ot)}<div class="k-meta">${r.e.ot} ${a.t('otHours')}</div></td><td>${a.money(r.e.bonus)}</td><td style="color:var(--red)">−${a.money(r.ded)}</td><td><b>${a.money(r.net)}</b></td></tr>`).join('')}
+          </tbody></table></div><div class="k-total big"><span>${a.t('total')}</span><span>${a.money(tot)}</span></div><button class="k-btn p block" data-act="run">${a.t('run')}</button>`)}`;
+      } },
+    { id: 'emps', label: 'tEmployees', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('emTitle')}</h1><p class="k-sub">${a.t('emSub')}</p>${u.card('', d.emps.map((e) => u.row({ avatar: u.initials(e.name), color: u.avatarColor(e.name), title: e.name, meta: `${e.role} · ${e.phone} · ${a.t('since')} ${a.date(e.since, { month: 'short', year: 'numeric' })}`, right: `<b>${a.money(e.salary)}</b>` })).join(''), u.btn('+ ' + a.t('newEm'), 'newEm', {}, 'p sm'))}`;
+      } },
+  ],
+  actions: {
+    pick: (a, v) => { a.db.pick = v; a.rerender(); },
+    cin: (a) => { const day = a.addDays(0); a.db.clock[day] = a.db.clock[day] || {}; const now = new Date().toISOString(); a.db.clock[day][a.db.pick] = { in: now }; a.save(); a.toast(a.t('inDone', a.db.emps.find((e) => e.id === a.db.pick).name, a.time(now))); a.rerender(); },
+    cout: (a) => { const r = a.db.clock[a.addDays(0)][a.db.pick]; r.out = new Date().toISOString(); a.save(); a.toast(a.t('outDone', a.db.emps.find((e) => e.id === a.db.pick).name, a.time(r.out))); a.rerender(); },
+    run: (a) => { a.db.runs.push({ at: new Date().toISOString() }); a.save(); a.toast(a.t('ran')); },
+    slip: (a, d) => {
+      const r = calc(a.db.emps.find((e) => e.id === d.id)), m = (x) => ((x < 0 ? '−' : '') + a.money(Math.abs(x))).padStart(12), line = (l, v) => String(l).slice(0, 28).padEnd(28) + m(v);
+      const txt = ['DISTRIBUIDORA DEMO', `${a.t('slip').toUpperCase()} · ${periodLabel(a)}`, `${r.e.name} · ${r.e.role}`, '-'.repeat(40),
+        line(a.t('base'), r.base), line(`${a.t('ot')} (${r.e.ot}h)`, r.ot), line(a.t('bonus'), r.e.bonus), line(a.t('ssLabel'), -r.ss), line(a.t('advance'), -r.e.adv),
+        '-'.repeat(40), line(a.t('net').toUpperCase(), r.net)].join('\n');
+      a.modal({ title: `${a.t('slip')} · ${r.e.name}`, html: `<div class="k-receipt">${a.esc(txt)}</div>` });
+    },
+    newEm: (a) => a.modal({ title: a.t('newEm'), submit: a.t('save'), fields: [{ name: 'name', label: a.t('name'), required: true }, { name: 'role', label: a.t('role'), required: true }, { name: 'salary', label: a.t('salary'), type: 'number', value: 400, required: true }, { name: 'phone', label: a.t('phone') }],
+      onSubmit: (v) => { a.db.emps.push({ id: a.uid(), ...v, since: a.addDays(0), ot: 0, bonus: 0, adv: 0 }); a.save(); a.toast(a.t('emSaved')); a.rerender(); } }),
+  },
+});
+function calc(e) { const base = e.salary / 2, hourly = e.salary / 240, ot = +(e.ot * hourly * 1.5).toFixed(2), ss = +((base + ot) * 0.04).toFixed(2), ded = +(ss + e.adv).toFixed(2); return { e, base, ot, ss, ded, net: +(base + ot + e.bonus - ded).toFixed(2) }; }
+function periodLabel(a) { const d = new Date(), first = d.getDate() <= 15; const s = new Date(d.getFullYear(), d.getMonth(), first ? 1 : 16), en = first ? new Date(d.getFullYear(), d.getMonth(), 15) : new Date(d.getFullYear(), d.getMonth() + 1, 0); return `${a.date(a.iso(s))} – ${a.date(a.iso(en))}`; }
+</script>
+</body></html>

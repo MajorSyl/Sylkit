@@ -6,7 +6,9 @@ const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
 
 // subdomain -> folder under public/demos
-const DEMOS = { alertas: 'alertas', pos: 'pos', inventario: 'inventario' };
+const DEMOS = Object.fromEntries(
+  ['alertas', 'pos', 'inventario', 'farmacia', 'clinica', 'restaurante', 'salon', 'taller', 'servicios', 'escuela', 'nomina', 'facturas', 'tienda', 'portafolio', 'asistente'].map((d) => [d, d]),
+);
 
 export default {
   async fetch(request, env) {
@@ -14,7 +16,7 @@ export default {
     const sub = url.hostname.split('.')[0];
     const demo = url.hostname.endsWith('sylkit.com') ? DEMOS[sub] : undefined;
 
-    if (demo) {
+    if (demo && !url.pathname.startsWith('/_kit/')) {
       const target = new URL(url);
       target.pathname = `/demos/${demo}${url.pathname === '/' ? '/' : url.pathname}`;
       const res = await env.ASSETS.fetch(new Request(target, request));

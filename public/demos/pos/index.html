@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Punto de venta · Sylkit</title><meta name="description" content="Prueba en vivo el punto de venta de Sylkit: ventas rápidas, varias monedas, cierre de caja y reportes.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+SylDemo.create({
+  id: 'pos', version: 1, product: 'punto-de-venta', logo: '🛒',
+  name: { es: 'Punto de venta', en: 'Point of Sale' }, brand: { es: 'Sylkit POS', en: 'Sylkit POS' },
+  sub: { es: 'Minimercado Demo · Caja 1', en: 'Demo Minimarket · Register 1' },
+  t: {
+    es: { tSell: 'Vender', tSales: 'Ventas de hoy', tProducts: 'Productos', tReport: 'Reportes',
+      cart: 'Venta actual', emptyCart: 'Toca un producto para agregarlo.', charge: 'Cobrar', clear: 'Vaciar',
+      pay: 'Cobrar venta', method: 'Método de pago', received: 'Monto recibido (USD)', change: 'Vuelto',
+      rate: 'Tasa de ejemplo', paid: 'Venta registrada.', receipt: 'Recibo', allCats: 'Todo',
+      salesTitle: 'Ventas de hoy', salesSub: 'Cada venta con su método de pago. Al final del día haces el cierre de caja.',
+      byMethod: 'Por método de pago', closeBtn: 'Cierre de caja', closed: 'Cierre de caja generado.', noSales: 'Aún no hay ventas hoy.',
+      prodTitle: 'Productos y precios', prodSub: 'Precios en dólares; el sistema calcula bolívares automáticamente.', newProd: 'Nuevo producto',
+      pName: 'Nombre', pPrice: 'Precio (USD)', pStock: 'Existencia', pCat: 'Categoría', pCode: 'Código de barras', low: 'Stock bajo', stock: 'Stock',
+      repTitle: 'Reportes', repSub: 'Lo que más se vende y cuánto entra por hora.', top: 'Más vendidos', hours: 'Ventas por hora',
+      sToday: 'Vendido hoy', sTickets: 'Tickets', sAvg: 'Ticket promedio', sLow: 'Productos con stock bajo',
+      items: (n) => `${n} artículo${n === 1 ? '' : 's'}`, scan: 'Escanear código', codePh: 'Código o nombre…', notFound: 'Producto no encontrado.',
+      cats: { bebidas: 'Bebidas', viveres: 'Víveres', lacteos: 'Lácteos', limpieza: 'Limpieza', snacks: 'Snacks' } },
+    en: { tSell: 'Sell', tSales: "Today's sales", tProducts: 'Products', tReport: 'Reports',
+      cart: 'Current sale', emptyCart: 'Tap a product to add it.', charge: 'Charge', clear: 'Clear',
+      pay: 'Charge sale', method: 'Payment method', received: 'Amount received (USD)', change: 'Change',
+      rate: 'Sample rate', paid: 'Sale recorded.', receipt: 'Receipt', allCats: 'All',
+      salesTitle: "Today's sales", salesSub: 'Every sale with its payment method. Close the register at the end of the day.',
+      byMethod: 'By payment method', closeBtn: 'Close register', closed: 'Register closing generated.', noSales: 'No sales yet today.',
+      prodTitle: 'Products and prices', prodSub: 'Prices in dollars; the system converts to bolívares automatically.', newProd: 'New product',
+      pName: 'Name', pPrice: 'Price (USD)', pStock: 'Stock', pCat: 'Category', pCode: 'Barcode', low: 'Low stock', stock: 'Stock',
+      repTitle: 'Reports', repSub: 'What sells most and how much comes in per hour.', top: 'Best sellers', hours: 'Sales by hour',
+      sToday: 'Sold today', sTickets: 'Tickets', sAvg: 'Average ticket', sLow: 'Low-stock products',
+      items: (n) => `${n} item${n === 1 ? '' : 's'}`, scan: 'Scan barcode', codePh: 'Barcode or name…', notFound: 'Product not found.',
+      cats: { bebidas: 'Drinks', viveres: 'Groceries', lacteos: 'Dairy', limpieza: 'Cleaning', snacks: 'Snacks' } },
+  },
+  seed: (app) => {
+    const P = [['Agua mineral 1.5L','bebidas',1.2,'💧'],['Refresco cola 2L','bebidas',2.5,'🥤'],['Jugo de naranja 1L','bebidas',2.2,'🧃'],['Café molido 250g','viveres',4.5,'☕'],
+      ['Harina de maíz 1kg','viveres',1.6,'🌽'],['Arroz 1kg','viveres',1.4,'🍚'],['Pasta 1kg','viveres',1.8,'🍝'],['Aceite 1L','viveres',3.9,'🫒'],['Azúcar 1kg','viveres',1.5,'🧂'],
+      ['Leche entera 1L','lacteos',1.9,'🥛'],['Queso blanco 500g','lacteos',4.2,'🧀'],['Yogurt 1L','lacteos',3.1,'🥣'],['Huevos x12','lacteos',3.6,'🥚'],
+      ['Jabón de baño','limpieza',1.1,'🧼'],['Detergente 1kg','limpieza',3.4,'🫧'],['Papel higiénico x4','limpieza',2.8,'🧻'],['Cloro 1L','limpieza',1.3,'🧴'],
+      ['Galletas','snacks',1.2,'🍪'],['Papas fritas','snacks',1.5,'🥔'],['Chocolate','snacks',1.7,'🍫']];
+    const products = P.map(([name, cat, price, em], i) => ({ id: 'p' + i, code: '75910000' + String(i).padStart(5, '0'), name, cat, price, em, stock: [3, 40, 18, 2, 60, 55, 30, 12, 45, 22, 9, 14, 20, 35, 16, 25, 4, 50, 38, 27][i] }));
+    const now = Date.now(), sales = [];
+    const methods = ['Efectivo $', 'Pago Móvil', 'Bolívares', 'Zelle', 'Tarjeta'];
+    for (let i = 0; i < 14; i++) {
+      const items = []; const n = 1 + (i % 4);
+      for (let j = 0; j < n; j++) { const p = products[(i * 3 + j * 7) % products.length]; items.push({ id: p.id, name: p.name, price: p.price, qty: 1 + ((i + j) % 3) }); }
+      sales.push({ id: app.uid(), at: new Date(now - (14 - i) * 37 * 60000).toISOString(), items, method: methods[i % methods.length], total: +items.reduce((s, x) => s + x.price * x.qty, 0).toFixed(2) });
+    }
+    return { products, sales, cart: [], rate: 150, cat: 'all', q: '' };
+  },
+  tabs: [
+    { id: 'sell', label: 'tSell', render: (a) => {
+        const d = a.db, u = a.ui;
+        const cats = [['all', a.t('allCats')], ...Object.entries(a.t('cats'))];
+        const q = d.q.toLowerCase();
+        const list = d.products.filter((p) => (d.cat === 'all' || p.cat === d.cat) && (!q || (p.name + p.code).toLowerCase().includes(q)));
+        const total = d.cart.reduce((s, x) => s + x.price * x.qty, 0);
+        const cartHtml = d.cart.length ? d.cart.map((x) => `<div class="k-row"><div class="k-grow"><div class="k-title">${a.esc(x.name)}</div><div class="k-meta">${a.money(x.price)} × ${x.qty}</div></div>
+          <div class="k-right"><span class="k-qty"><button data-act="dec" data-id="${x.id}">−</button><b>${x.qty}</b><button data-act="inc" data-id="${x.id}">+</button></span><b style="min-width:64px;text-align:right">${a.money(x.price * x.qty)}</b></div></div>`).join('') : u.empty(a.t('emptyCart'));
+        return `<div class="k-cols"><div>
+          <div class="k-tools">${u.search('q', d.q, a.t('codePh'))}</div>
+          ${u.chips(cats, d.cat, 'cat')}
+          <div class="k-tiles">${list.map((p) => `<button class="k-tile" data-act="add" data-id="${p.id}"><span class="em">${p.em}</span><span class="nm">${a.esc(p.name)}</span><span class="pr">${a.money(p.price)}</span>${p.stock <= 5 ? u.pill(`${a.t('stock')}: ${p.stock}`, 'orange') : ''}</button>`).join('') || u.empty()}</div>
+        </div><div class="k-sticky" id="cart">
+          ${u.card(a.t('cart'), cartHtml + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div>
+            <div class="k-meta" style="text-align:right;margin-bottom:12px">Bs ${(total * d.rate).toLocaleString('es-VE', { minimumFractionDigits: 2 })} · ${a.t('rate')} ${d.rate}</div>
+            <div style="display:flex;gap:8px"><button class="k-btn g" data-act="clear" ${d.cart.length ? '' : 'disabled'}>${a.t('clear')}</button><button class="k-btn p block" data-act="charge" ${d.cart.length ? '' : 'disabled'}>${a.t('charge')} ${a.money(total)}</button></div>`)}
+        </div></div>${d.cart.length ? `<button class="k-btn p k-fab" data-act="toCart">🛒 ${d.cart.reduce((n, x) => n + x.qty, 0)} · ${a.t('charge')} ${a.money(total)}</button>` : ''}`;
+      } },
+    { id: 'sales', label: 'tSales', badge: (a) => a.db.sales.length, render: (a) => {
+        const d = a.db, u = a.ui;
+        const total = d.sales.reduce((s, x) => s + x.total, 0);
+        const by = {}; d.sales.forEach((s) => (by[s.method] = (by[s.method] || 0) + s.total));
+        return `<h1 class="k-h1">${a.t('salesTitle')}</h1><p class="k-sub">${a.t('salesSub')}</p>
+          ${u.stats([{ label: a.t('sToday'), value: a.money(total), color: 'var(--green)' }, { label: a.t('sTickets'), value: d.sales.length }, { label: a.t('sAvg'), value: a.money(d.sales.length ? total / d.sales.length : 0) }])}
+          <div class="k-cols"><div>${u.card('', d.sales.length ? d.sales.slice().reverse().map((s) => u.row({ icon: '🧾', title: `${a.money(s.total)} · ${s.method}`, meta: `${a.time(s.at)} · ${a.t('items')(s.items.reduce((n, x) => n + x.qty, 0))}`, act: 'receipt', id: s.id })).join('') : u.empty(a.t('noSales')))}</div>
+          <div>${u.card(a.t('byMethod'), Object.entries(by).map(([m, v]) => `<div class="k-total"><span>${m}</span><b>${a.money(v)}</b></div>`).join('') + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div><button class="k-btn p block" data-act="close">${a.t('closeBtn')}</button>`)}</div></div>`;
+      } },
+    { id: 'products', label: 'tProducts', badge: (a) => a.db.products.filter((p) => p.stock <= 5).length, render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('prodTitle')}</h1><p class="k-sub">${a.t('prodSub')}</p>
+          ${u.card('', `<div class="k-table-wrap"><table class="k-table"><thead><tr><th></th><th>${a.t('pName')}</th><th>${a.t('pCat')}</th><th>USD</th><th>Bs</th><th>${a.t('stock')}</th></tr></thead><tbody>
+          ${d.products.map((p) => `<tr data-act="editProd" data-id="${p.id}" style="cursor:pointer"><td style="font-size:20px">${p.em}</td><td><b>${a.esc(p.name)}</b><div class="k-meta">${p.code}</div></td><td>${a.t('cats')[p.cat]}</td><td>${a.money(p.price)}</td><td>${(p.price * d.rate).toFixed(2)}</td><td>${p.stock <= 5 ? u.pill(p.stock + ' · ' + a.t('low'), 'orange') : p.stock}</td></tr>`).join('')}
+          </tbody></table></div>`, u.btn('+ ' + a.t('newProd'), 'newProd', {}, 'p sm'))}`;
+      } },
+    { id: 'report', label: 'tReport', render: (a) => {
+        const d = a.db, u = a.ui;
+        const qty = {}; d.sales.forEach((s) => s.items.forEach((x) => (qty[x.name] = (qty[x.name] || 0) + x.qty)));
+        const top = Object.entries(qty).sort((x, y) => y[1] - x[1]).slice(0, 6); const max = top[0] ? top[0][1] : 1;
+        const hrs = {}; d.sales.forEach((s) => { const h = new Date(s.at).getHours(); hrs[h] = (hrs[h] || 0) + s.total; });
+        const hmax = Math.max(1, ...Object.values(hrs));
+        return `<h1 class="k-h1">${a.t('repTitle')}</h1><p class="k-sub">${a.t('repSub')}</p>
+          ${u.stats([{ label: a.t('sLow'), value: d.products.filter((p) => p.stock <= 5).length, color: 'var(--orange)' }, { label: a.t('sTickets'), value: d.sales.length }])}
+          <div class="k-grid2">${u.card(a.t('top'), top.map(([n, q]) => `<div style="margin:10px 0"><div class="k-total" style="padding:0 0 4px"><span>${a.esc(n)}</span><b>${q}</b></div><div class="k-bar"><i style="width:${(q / max) * 100}%"></i></div></div>`).join('') || u.empty())}
+          ${u.card(a.t('hours'), Object.keys(hrs).sort((x, y) => x - y).map((h) => `<div style="margin:10px 0"><div class="k-total" style="padding:0 0 4px"><span>${String(h).padStart(2, '0')}:00</span><b>${a.money(hrs[h])}</b></div><div class="k-bar"><i style="width:${(hrs[h] / hmax) * 100}%;background:var(--cyan)"></i></div></div>`).join('') || u.empty())}</div>`;
+      } },
+  ],
+  actions: {
+    q: (a, v) => { a.db.q = v; const m = a.db.products.find((p) => p.code === v.trim()); if (m) { a.db.q = ''; addToCart(a, m.id); } a.rerender(); },
+    cat: (a, d) => { a.db.cat = d.v; a.rerender(); },
+    add: (a, d) => { addToCart(a, d.id); a.rerender(); },
+    inc: (a, d) => { addToCart(a, d.id); a.rerender(); },
+    dec: (a, d) => { const c = a.db.cart.find((x) => x.id === d.id); if (c) { c.qty--; if (c.qty <= 0) a.db.cart = a.db.cart.filter((x) => x !== c); } a.save(); a.rerender(); },
+    toCart: () => document.getElementById('cart').scrollIntoView({ behavior: 'smooth' }),
+    clear: (a) => { a.db.cart = []; a.save(); a.rerender(); },
+    charge: (a) => {
+      const total = +a.db.cart.reduce((s, x) => s + x.price * x.qty, 0).toFixed(2);
+      a.modal({ title: `${a.t('pay')} · ${a.money(total)}`, submit: a.t('charge'),
+        html: `<p class="k-meta" style="margin-bottom:12px">Bs ${(total * a.db.rate).toLocaleString('es-VE', { minimumFractionDigits: 2 })}</p>`,
+        fields: [{ name: 'method', label: a.t('method'), type: 'select', value: 'Efectivo $', options: ['Efectivo $', 'Bolívares', 'Pago Móvil', 'Zelle', 'Tarjeta'].map((m) => [m, m]) },
+          { name: 'received', label: a.t('received'), type: 'number', step: '0.01', value: total }],
+        onSubmit: (v) => {
+          const sale = { id: a.uid(), at: new Date().toISOString(), items: a.db.cart.map((x) => ({ ...x })), method: v.method, total };
+          a.db.sales.push(sale);
+          a.db.cart.forEach((x) => { const p = a.db.products.find((y) => y.id === x.id); if (p) p.stock = Math.max(0, p.stock - x.qty); });
+          a.db.cart = []; a.save(); a.toast(a.t('paid'));
+          const change = v.method === 'Efectivo $' && v.received > total ? v.received - total : 0;
+          setTimeout(() => showReceipt(a, sale, change), 50); a.rerender();
+        } });
+    },
+    receipt: (a, d) => showReceipt(a, a.db.sales.find((s) => s.id === d.id), 0),
+    close: (a) => {
+      const total = a.db.sales.reduce((s, x) => s + x.total, 0); const by = {}; a.db.sales.forEach((s) => (by[s.method] = (by[s.method] || 0) + s.total));
+      const txt = `${a.t('closeBtn').toUpperCase()}\n${new Date().toLocaleString()}\n--------------------------\n${Object.entries(by).map(([m, v]) => `${m.padEnd(16)}${a.money(v).padStart(10)}`).join('\n')}\n--------------------------\n${a.t('sTickets').padEnd(16)}${String(a.db.sales.length).padStart(10)}\n${a.t('total').toUpperCase().padEnd(16)}${a.money(total).padStart(10)}`;
+      a.modal({ title: a.t('closeBtn'), html: `<div class="k-receipt">${a.esc(txt)}</div>` }); a.toast(a.t('closed'));
+    },
+    newProd: (a) => prodForm(a, null),
+    editProd: (a, d) => prodForm(a, a.db.products.find((p) => p.id === d.id)),
+  },
+});
+function addToCart(a, id) {
+  const p = a.db.products.find((x) => x.id === id); if (!p) return;
+  const c = a.db.cart.find((x) => x.id === id);
+  if (c) c.qty++; else a.db.cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 });
+  a.save();
+}
+function showReceipt(a, s, change) {
+  const lines = s.items.map((x) => `${(x.qty + ' x ' + x.name).slice(0, 22).padEnd(22)}${a.money(x.price * x.qty).padStart(10)}`).join('\n');
+  const txt = `MINIMERCADO DEMO\n${new Date(s.at).toLocaleString()}\n--------------------------------\n${lines}\n--------------------------------\n${a.t('total').toUpperCase().padEnd(22)}${a.money(s.total).padStart(10)}\n${'Bs'.padEnd(22)}${(s.total * a.db.rate).toFixed(2).padStart(10)}\n${s.method}${change ? `\n${a.t('change').padEnd(22)}${a.money(change).padStart(10)}` : ''}\n\n¡Gracias por su compra!`;
+  a.modal({ title: a.t('receipt'), html: `<div class="k-receipt">${a.esc(txt)}</div>` });
+}
+function prodForm(a, p) {
+  a.modal({ title: p ? p.name : a.t('newProd'), submit: a.t('save'), fields: [
+    { name: 'name', label: a.t('pName'), value: p?.name, required: true },
+    { name: 'price', label: a.t('pPrice'), type: 'number', step: '0.01', value: p?.price, required: true },
+    { name: 'stock', label: a.t('pStock'), type: 'number', value: p?.stock ?? 10, required: true },
+    { name: 'cat', label: a.t('pCat'), type: 'select', value: p?.cat || 'viveres', options: Object.entries(a.t('cats')) },
+    { name: 'code', label: a.t('pCode'), value: p?.code || '7591' + Date.now().toString().slice(-9) }],
+    onSubmit: (v) => {
+      if (p) Object.assign(p, v); else a.db.products.unshift({ id: a.uid(), em: '📦', ...v });
+      a.save(); a.toast(a.t('saved')); a.rerender();
+    } });
+}
+</script>
+</body></html>

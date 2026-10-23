@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 export type Lang = 'es' | 'en';
 export type Text = { es: string; en: string };
@@ -12,7 +12,23 @@ const LangContext = createContext<Ctx>({
 });
 
 export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLang] = useState<Lang>('es');
+  const [lang, setLangState] = useState<Lang>('es');
+  // Language follows the visitor's saved choice, else their browser/region.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem('sylkit_lang');
+      if (saved === 'es' || saved === 'en') return setLangState(saved);
+      const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es']).map((l) => l.toLowerCase());
+      setLangState(prefs[0].startsWith('es') ? 'es' : prefs.some((l) => l.startsWith('es')) && !prefs[0].startsWith('en') ? 'es' : 'en');
+    } catch {}
+  }, []);
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    try {
+      window.localStorage.setItem('sylkit_lang', l);
+      document.documentElement.lang = l;
+    } catch {}
+  };
   const t = (x: Text) => x[lang];
   return <LangContext.Provider value={{ lang, setLang, t }}>{children}</LangContext.Provider>;
 }

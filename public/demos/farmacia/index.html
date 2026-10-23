@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Farmacia · Sylkit</title><meta name="description" content="Prueba en vivo el sistema para farmacias de Sylkit: ventas, lotes con vencimiento, recetas y recordatorios para pacientes crónicos.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+SylDemo.create({
+  id: 'farmacia', version: 1, product: 'farmacia-pos', logo: '💊', color: '#12B76A',
+  name: { es: 'Farmacia', en: 'Pharmacy' }, brand: { es: 'Sylkit Farmacia', en: 'Sylkit Pharmacy' },
+  sub: { es: 'Farmacia Demo · Caja principal', en: 'Demo Pharmacy · Main register' },
+  t: {
+    es: { tSell: 'Vender', tExp: 'Vencimientos', tRx: 'Recetas', tChronic: 'Crónicos',
+      ph: 'Buscar medicamento o principio activo…', cart: 'Venta actual', emptyCart: 'Busca y agrega medicamentos.', charge: 'Cobrar', rxReq: 'Requiere receta',
+      fefo: 'Se descuenta primero el lote que vence antes (FEFO).', rxTitle: 'Datos de la receta', rxDoctor: 'Médico', rxPatient: 'Paciente', rxNumber: 'N° de receta / colegiatura',
+      sold: 'Venta registrada.', stock: 'Stock', lots: (n) => `${n} lote${n === 1 ? '' : 's'}`, expires: 'Vence', method: 'Método de pago',
+      expTitle: 'Lotes y vencimientos', expSub: 'Cada lote con su fecha. El sistema alerta a 90, 60 y 30 días para devolver al proveedor a tiempo.',
+      sExpired: 'Vencidos', s30: '≤ 30 días', s90: '≤ 90 días', sOk: 'En regla', returnBtn: 'Devolver al proveedor', returned: 'Lote marcado para devolución.',
+      d: (n) => (n < 0 ? `venció hace ${-n} d` : `${n} días`),
+      rxListTitle: 'Libro de recetas', rxListSub: 'Registro de medicamentos que requieren receta: quién lo recetó, a quién y cuándo.', noRx: 'Aún no hay recetas registradas.',
+      chTitle: 'Pacientes crónicos', chSub: 'Clientes con tratamiento mensual. El sistema avisa cuándo les toca reponer y les envía un recordatorio.',
+      remind: 'Enviar recordatorio', reminded: (n) => `Recordatorio enviado por WhatsApp a ${n}.`, due: 'Le toca reponer', inDays: (n) => (n <= 0 ? 'hoy' : `en ${n} días`) },
+    en: { tSell: 'Sell', tExp: 'Expiry', tRx: 'Prescriptions', tChronic: 'Chronic',
+      ph: 'Search medicine or active ingredient…', cart: 'Current sale', emptyCart: 'Search and add medicines.', charge: 'Charge', rxReq: 'Prescription required',
+      fefo: 'The batch that expires first is used first (FEFO).', rxTitle: 'Prescription details', rxDoctor: 'Doctor', rxPatient: 'Patient', rxNumber: 'Prescription / license no.',
+      sold: 'Sale recorded.', stock: 'Stock', lots: (n) => `${n} batch${n === 1 ? '' : 'es'}`, expires: 'Expires', method: 'Payment method',
+      expTitle: 'Batches and expiry', expSub: 'Every batch with its date. Alerts at 90, 60 and 30 days so you can return stock to suppliers in time.',
+      sExpired: 'Expired', s30: '≤ 30 days', s90: '≤ 90 days', sOk: 'OK', returnBtn: 'Return to supplier', returned: 'Batch marked for return.',
+      d: (n) => (n < 0 ? `expired ${-n} d ago` : `${n} days`),
+      rxListTitle: 'Prescription log', rxListSub: 'Record of prescription medicines: who prescribed, to whom and when.', noRx: 'No prescriptions recorded yet.',
+      chTitle: 'Chronic patients', chSub: 'Customers on monthly treatment. The system tells you when they need a refill and sends a reminder.',
+      remind: 'Send reminder', reminded: (n) => `WhatsApp reminder sent to ${n}.`, due: 'Refill due', inDays: (n) => (n <= 0 ? 'today' : `in ${n} days`) },
+  },
+  seed: (a) => {
+    const M = [['Acetaminofén 500mg x20','Paracetamol',2.4,false],['Ibuprofeno 400mg x10','Ibuprofeno',2.9,false],['Loratadina 10mg x10','Loratadina',3.2,false],['Omeprazol 20mg x14','Omeprazol',4.1,false],
+      ['Amoxicilina 500mg x21','Amoxicilina',6.5,true],['Losartán 50mg x30','Losartán',7.8,true],['Metformina 850mg x30','Metformina',5.9,true],['Atorvastatina 20mg x30','Atorvastatina',9.4,true],
+      ['Salbutamol inhalador','Salbutamol',8.2,true],['Suero oral','Electrolitos',1.5,false],['Vitamina C 1g x10','Ácido ascórbico',3.6,false],['Jarabe para la tos','Dextrometorfano',4.4,false]];
+    const meds = M.map(([name, active, price, rx], i) => ({ id: 'm' + i, name, active, price, rx }));
+    const offs = [[-5, 400], [20, 75], [160, 300], [45, 210], [12, 95], [70, 330], [230, 400], [28, 380], [85, 500], [-1, 140], [55, 260], [190, 350]];
+    const lots = []; meds.forEach((m, i) => offs[i].forEach((d, j) => lots.push({ id: a.uid(), med: m.id, lot: 'L' + (i * 10 + j + 100), exp: a.addDays(d), qty: 6 + ((i * 7 + j * 3) % 30), returned: false })));
+    const chronic = [['Rosa Pérez', 'm5', -1], ['Luis Gómez', 'm6', 3], ['Carmen Díaz', 'm7', 9], ['Pedro Rojas', 'm5', 15], ['Ana Torres', 'm8', 1]].map(([n, med, due], i) => ({ id: 'c' + i, name: n, med, due: a.addDays(due), phone: '+58 412 55' + (10000 + i * 731) }));
+    return { meds, lots, rx: [{ id: a.uid(), at: new Date(Date.now() - 864e5).toISOString(), med: 'm4', doctor: 'Dra. Morales', patient: 'Juan Silva', number: 'MPPS 45.120' }], cart: [], q: '', chronic };
+  },
+  tabs: [
+    { id: 'sell', label: 'tSell', render: (a) => {
+        const d = a.db, u = a.ui, q = d.q.toLowerCase();
+        const stock = (id) => d.lots.filter((l) => l.med === id && !l.returned && a.daysTo(l.exp) >= 0).reduce((s, l) => s + l.qty, 0);
+        const list = d.meds.filter((m) => !q || (m.name + m.active).toLowerCase().includes(q));
+        const total = d.cart.reduce((s, x) => s + x.price * x.qty, 0);
+        return `<div class="k-cols"><div><div class="k-tools">${u.search('q', d.q, a.t('ph'))}</div>
+          ${u.card('', list.map((m) => { const nextLot = d.lots.filter((l) => l.med === m.id && !l.returned && a.daysTo(l.exp) >= 0).sort((x, y) => x.exp.localeCompare(y.exp))[0];
+            return u.row({ icon: '💊', iconBg: 'var(--greenbg)', title: m.name, meta: `${m.active} · ${a.t('stock')} ${stock(m.id)}${nextLot ? ` · ${a.t('expires')} ${a.date(nextLot.exp)}` : ''}`,
+              right: (m.rx ? u.pill(a.t('rxReq'), 'purple') : '') + `<b>${a.money(m.price)}</b>` + u.btn('+', 'add', { id: m.id }, 'p sm') }); }).join('') || u.empty())}</div>
+          <div class="k-sticky" id="cart">${u.card(a.t('cart'), (d.cart.length ? d.cart.map((x) => u.row({ title: x.name, meta: `${a.money(x.price)} × ${x.qty}`, right: `<b>${a.money(x.price * x.qty)}</b>` + u.btn('−', 'dec', { id: x.id }, 'g sm') })).join('') : u.empty(a.t('emptyCart')))
+            + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div><p class="k-meta" style="margin-bottom:10px">${a.t('fefo')}</p><button class="k-btn p block" data-act="charge" ${d.cart.length ? '' : 'disabled'}>${a.t('charge')} ${a.money(total)}</button>`)}</div></div>
+          ${d.cart.length ? `<button class="k-btn p k-fab" data-act="toCart">💊 ${d.cart.length} · ${a.t('charge')} ${a.money(total)}</button>` : ''}`;
+      } },
+    { id: 'exp', label: 'tExp', badge: (a) => a.db.lots.filter((l) => !l.returned && a.daysTo(l.exp) <= 30).length, render: (a) => {
+        const d = a.db, u = a.ui; const live = d.lots.filter((l) => !l.returned);
+        const cls = (l) => { const n = a.daysTo(l.exp); return n < 0 ? 'red' : n <= 30 ? 'orange' : n <= 90 ? 'yellow' : 'green'; };
+        const cnt = (c) => live.filter((l) => cls(l) === c).length;
+        return `<h1 class="k-h1">${a.t('expTitle')}</h1><p class="k-sub">${a.t('expSub')}</p>
+          ${u.stats([{ label: a.t('sExpired'), value: cnt('red'), color: 'var(--red)' }, { label: a.t('s30'), value: cnt('orange'), color: 'var(--orange)' }, { label: a.t('s90'), value: cnt('yellow'), color: 'var(--yellow)' }, { label: a.t('sOk'), value: cnt('green'), color: 'var(--green)' }])}
+          ${u.card('', live.sort((x, y) => x.exp.localeCompare(y.exp)).map((l) => { const m = d.meds.find((x) => x.id === l.med); const c = cls(l);
+            return u.row({ icon: '📦', title: m.name, meta: `${l.lot} · ${l.qty} uds · ${a.t('expires')} ${a.date(l.exp, { day: 'numeric', month: 'short', year: 'numeric' })}`, right: u.pill(a.t('d', a.daysTo(l.exp)), c) + (c === 'red' || c === 'orange' ? u.btn(a.t('returnBtn'), 'ret', { id: l.id }, 'g sm') : '') }); }).join(''))}`;
+      } },
+    { id: 'rx', label: 'tRx', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('rxListTitle')}</h1><p class="k-sub">${a.t('rxListSub')}</p>${u.card('', d.rx.length ? d.rx.slice().reverse().map((r) => u.row({ icon: '📋', iconBg: 'var(--purplebg)', title: d.meds.find((m) => m.id === r.med).name, meta: `${a.date(r.at)} · ${r.patient} · ${r.doctor} · ${r.number}` })).join('') : u.empty(a.t('noRx')))}`;
+      } },
+    { id: 'chronic', label: 'tChronic', badge: (a) => a.db.chronic.filter((c) => a.daysTo(c.due) <= 3).length, render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('chTitle')}</h1><p class="k-sub">${a.t('chSub')}</p>${u.card('', d.chronic.slice().sort((x, y) => x.due.localeCompare(y.due)).map((c) => { const n = a.daysTo(c.due);
+          return u.row({ avatar: u.initials(c.name), color: u.avatarColor(c.name), title: c.name, meta: `${d.meds.find((m) => m.id === c.med).name} · ${c.phone}`, right: u.pill(`${a.t('due')} ${a.t('inDays', n)}`, n <= 0 ? 'red' : n <= 3 ? 'orange' : 'blue') + u.btn('📲 ' + a.t('remind'), 'remind', { id: c.id }, 'wa sm') }); }).join(''))}`;
+      } },
+  ],
+  actions: {
+    q: (a, v) => { a.db.q = v; a.rerender(); },
+    toCart: () => document.getElementById('cart').scrollIntoView({ behavior: 'smooth' }),
+    add: (a, d) => { const m = a.db.meds.find((x) => x.id === d.id); const c = a.db.cart.find((x) => x.id === m.id); if (c) c.qty++; else a.db.cart.push({ id: m.id, name: m.name, price: m.price, qty: 1, rx: m.rx }); a.save(); a.rerender(); },
+    dec: (a, d) => { const c = a.db.cart.find((x) => x.id === d.id); c.qty--; if (!c.qty) a.db.cart = a.db.cart.filter((x) => x !== c); a.save(); a.rerender(); },
+    ret: (a, d) => { a.db.lots.find((l) => l.id === d.id).returned = true; a.save(); a.toast(a.t('returned')); a.rerender(); },
+    remind: (a, d) => { const c = a.db.chronic.find((x) => x.id === d.id); c.due = a.addDays(30); a.save(); a.toast(a.t('reminded', c.name)); a.rerender(); },
+    charge: (a) => {
+      const needsRx = a.db.cart.some((x) => x.rx); const total = a.db.cart.reduce((s, x) => s + x.price * x.qty, 0);
+      a.modal({ title: `${a.t('charge')} · ${a.money(total)}`, submit: a.t('charge'),
+        html: needsRx ? `<div class="k-note">${a.t('rxReq')}: ${a.db.cart.filter((x) => x.rx).map((x) => a.esc(x.name)).join(', ')}</div>` : '',
+        fields: [...(needsRx ? [{ name: 'patient', label: a.t('rxPatient'), required: true }, { name: 'doctor', label: a.t('rxDoctor'), required: true }, { name: 'number', label: a.t('rxNumber'), required: true }] : []),
+          { name: 'method', label: a.t('method'), type: 'select', options: ['Efectivo $', 'Pago Móvil', 'Zelle', 'Tarjeta'].map((m) => [m, m]) }],
+        onSubmit: (v) => {
+          a.db.cart.forEach((x) => {
+            let need = x.qty;
+            a.db.lots.filter((l) => l.med === x.id && !l.returned && a.daysTo(l.exp) >= 0).sort((p, q) => p.exp.localeCompare(q.exp)).forEach((l) => { const take = Math.min(need, l.qty); l.qty -= take; need -= take; });
+            if (x.rx) a.db.rx.push({ id: a.uid(), at: new Date().toISOString(), med: x.id, doctor: v.doctor, patient: v.patient, number: v.number });
+          });
+          a.db.cart = []; a.save(); a.toast(a.t('sold')); a.rerender();
+        } });
+    },
+  },
+});
+</script>
+</body></html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Control de inventario · Sylkit</title><meta name="description" content="Prueba en vivo el control de inventario de Sylkit: existencias en tiempo real, entradas y salidas, alertas de stock bajo y órdenes de compra.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const CATS = { es: { ferre: 'Ferretería', elec: 'Electricidad', pint: 'Pinturas', plom: 'Plomería', herr: 'Herramientas' }, en: { ferre: 'Hardware', elec: 'Electrical', pint: 'Paint', plom: 'Plumbing', herr: 'Tools' } };
+SylDemo.create({
+  id: 'inventario', version: 1, product: 'control-de-inventario', logo: '📦', color: '#0E9384',
+  name: { es: 'Control de inventario', en: 'Inventory Control' }, brand: { es: 'Sylkit Inventario', en: 'Sylkit Inventory' },
+  sub: { es: 'Ferretería Demo · 2 almacenes', en: 'Demo Hardware Store · 2 warehouses' },
+  t: {
+    es: { tStock: 'Existencias', tMoves: 'Movimientos', tOrders: 'Compras', tReport: 'Reporte',
+      stockTitle: 'Existencias en tiempo real', stockSub: 'Cada producto con su cantidad, mínimo y valor. Toca uno para registrar una entrada o salida.',
+      sItems: 'Productos', sValue: 'Valor del inventario', sLow: 'Stock bajo', sOut: 'Agotados', all: 'Todos', lowF: 'Stock bajo', outF: 'Agotados',
+      min: 'Mín.', units: 'uds', cost: 'Costo', export: 'Exportar a Excel (CSV)', exported: 'Archivo descargado.',
+      moveTitle: 'Movimientos', moveSub: 'Historial de entradas y salidas: quién, cuándo y cuánto.', in: 'Entrada', out: 'Salida', newMove: 'Registrar movimiento',
+      mType: 'Tipo', mQty: 'Cantidad', mNote: 'Nota', mWh: 'Almacén', mProduct: 'Producto', moved: 'Movimiento registrado. Existencias actualizadas.', noStock: 'No hay suficiente existencia.',
+      ordTitle: 'Compras sugeridas', ordSub: 'El sistema calcula qué pedir para volver al nivel ideal, agrupado por proveedor.', suggest: 'Pedido sugerido', createPO: 'Crear orden de compra',
+      poDone: 'Orden de compra creada.', receive: 'Recibir', received: 'Mercancía recibida e ingresada al inventario.', pos: 'Órdenes de compra', pending: 'Pendiente', done: 'Recibida', nothing: 'Todo está por encima del mínimo.',
+      repTitle: 'Reporte de inventario', repSub: 'Valor por categoría y productos que más se mueven.', byCat: 'Valor por categoría', topOut: 'Más salidas (30 días)', supplier: 'Proveedor' },
+    en: { tStock: 'Stock', tMoves: 'Movements', tOrders: 'Purchasing', tReport: 'Report',
+      stockTitle: 'Real-time stock', stockSub: 'Every product with its quantity, minimum and value. Tap one to record stock in or out.',
+      sItems: 'Products', sValue: 'Inventory value', sLow: 'Low stock', sOut: 'Out of stock', all: 'All', lowF: 'Low stock', outF: 'Out of stock',
+      min: 'Min.', units: 'units', cost: 'Cost', export: 'Export to Excel (CSV)', exported: 'File downloaded.',
+      moveTitle: 'Movements', moveSub: 'History of stock in and out: who, when and how much.', in: 'Stock in', out: 'Stock out', newMove: 'Record movement',
+      mType: 'Type', mQty: 'Quantity', mNote: 'Note', mWh: 'Warehouse', mProduct: 'Product', moved: 'Movement recorded. Stock updated.', noStock: 'Not enough stock.',
+      ordTitle: 'Suggested purchases', ordSub: 'The system works out what to order to get back to ideal levels, grouped by supplier.', suggest: 'Suggested order', createPO: 'Create purchase order',
+      poDone: 'Purchase order created.', receive: 'Receive', received: 'Goods received and added to stock.', pos: 'Purchase orders', pending: 'Pending', done: 'Received', nothing: 'Everything is above minimum.',
+      repTitle: 'Inventory report', repSub: 'Value by category and fastest-moving products.', byCat: 'Value by category', topOut: 'Most stock out (30 days)', supplier: 'Supplier' },
+  },
+  seed: (a) => {
+    const P = [['Cemento gris 42.5kg','ferre',7.5,40,'Construmax'],['Cabilla 3/8"','ferre',4.2,25,'Construmax'],['Clavos 2" (kg)','ferre',2.1,15,'Construmax'],['Cable #12 (m)','elec',0.6,200,'ElectroVen'],
+      ['Breaker 20A','elec',6.8,10,'ElectroVen'],['Bombillo LED 9W','elec',1.4,50,'ElectroVen'],['Tomacorriente doble','elec',2.3,20,'ElectroVen'],['Pintura blanca galón','pint',14.5,12,'Colorama'],
+      ['Brocha 3"','pint',2.9,15,'Colorama'],['Rodillo 9"','pint',4.6,10,'Colorama'],['Tubo PVC 1/2" 3m','plom',3.2,30,'HidroPlast'],['Codo PVC 1/2"','plom',0.35,100,'HidroPlast'],
+      ['Llave de paso 1/2"','plom',5.4,12,'HidroPlast'],['Taladro percutor','herr',48,4,'ToolPro'],['Martillo','herr',7.9,8,'ToolPro'],['Cinta métrica 5m','herr',3.8,10,'ToolPro']];
+    const qty = [52, 18, 6, 340, 4, 120, 9, 0, 22, 7, 41, 260, 5, 2, 15, 14];
+    const items = P.map(([name, cat, cost, min, sup], i) => ({ id: 'i' + i, sku: 'SKU-' + (1001 + i), name, cat, cost, min, ideal: min * 2, sup, qty: qty[i], wh: i % 3 ? 'Almacén A' : 'Almacén B' }));
+    const moves = []; const who = ['Carlos', 'María', 'José'];
+    for (let k = 0; k < 18; k++) { const it = items[(k * 5) % items.length]; const out = k % 3 !== 0; moves.push({ id: a.uid(), at: new Date(Date.now() - k * 7.3 * 3600e3).toISOString(), item: it.id, type: out ? 'out' : 'in', qty: out ? 1 + (k % 5) : 10 + k, by: who[k % 3], note: out ? 'Venta' : 'Compra' }); }
+    return { items, moves, pos: [], filter: 'all', q: '' };
+  },
+  tabs: [
+    { id: 'stock', label: 'tStock', badge: (a) => a.db.items.filter((i) => i.qty <= i.min).length, render: (a) => {
+        const d = a.db, u = a.ui, c = CATS[a.lang];
+        const value = d.items.reduce((s, i) => s + i.qty * i.cost, 0);
+        const low = d.items.filter((i) => i.qty > 0 && i.qty <= i.min).length, out = d.items.filter((i) => i.qty === 0).length;
+        const q = d.q.toLowerCase();
+        const list = d.items.filter((i) => (d.filter === 'all' || (d.filter === 'low' ? i.qty > 0 && i.qty <= i.min : i.qty === 0)) && (!q || (i.name + i.sku).toLowerCase().includes(q)));
+        return `<h1 class="k-h1">${a.t('stockTitle')}</h1><p class="k-sub">${a.t('stockSub')}</p>
+          ${u.stats([{ label: a.t('sItems'), value: d.items.length }, { label: a.t('sValue'), value: a.money(value), color: 'var(--green)' }, { label: a.t('sLow'), value: low, color: 'var(--orange)', act: 'filter', v: 'low' }, { label: a.t('sOut'), value: out, color: 'var(--red)', act: 'filter', v: 'out' }])}
+          <div class="k-tools">${u.search('q', d.q)}${u.btn('⬇ ' + a.t('export'), 'export', {}, 's')}</div>
+          ${u.chips([['all', a.t('all')], ['low', a.t('lowF')], ['out', a.t('outF')]], d.filter, 'filter')}
+          ${u.card('', list.map((i) => {
+            const pct = Math.min(100, (i.qty / i.ideal) * 100); const col = i.qty === 0 ? 'var(--red)' : i.qty <= i.min ? 'var(--orange)' : 'var(--green)';
+            return u.row({ icon: '📦', title: i.name, act: 'move', id: i.id, metaHtml: true, meta: `${i.sku} · ${c[i.cat]} · ${i.wh} · ${a.t('min')} ${i.min}<div class="k-bar" style="margin-top:6px;max-width:260px"><i style="width:${pct}%;background:${col}"></i></div>`,
+              right: `<b style="font-size:18px;color:${col}">${i.qty}</b><span class="k-meta">${a.t('units')}</span>` });
+          }).join('') || u.empty(), u.btn('+ ' + a.t('newMove'), 'move', {}, 'p sm'))}`;
+      } },
+    { id: 'moves', label: 'tMoves', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('moveTitle')}</h1><p class="k-sub">${a.t('moveSub')}</p>
+          ${u.card('', d.moves.slice().sort((x, y) => y.at.localeCompare(x.at)).map((m) => { const it = d.items.find((i) => i.id === m.item);
+            return u.row({ icon: m.type === 'in' ? '⬆️' : '⬇️', iconBg: m.type === 'in' ? 'var(--greenbg)' : 'var(--redbg)', title: `${m.type === 'in' ? '+' : '−'}${m.qty} · ${it ? it.name : ''}`, meta: `${a.date(m.at)} ${a.time(m.at)} · ${m.by} · ${m.note}`, right: u.pill(a.t(m.type), m.type === 'in' ? 'green' : 'red') }); }).join(''), u.btn('+ ' + a.t('newMove'), 'move', {}, 'p sm'))}`;
+      } },
+    { id: 'orders', label: 'tOrders', badge: (a) => a.db.pos.filter((p) => p.status === 'pending').length, render: (a) => {
+        const d = a.db, u = a.ui;
+        const need = d.items.filter((i) => i.qty <= i.min); const bySup = {};
+        need.forEach((i) => (bySup[i.sup] = bySup[i.sup] || []).push(i));
+        const sug = Object.entries(bySup).map(([sup, list]) => u.card(`${a.t('supplier')}: ${sup}`, list.map((i) => `<div class="k-total"><span>${a.esc(i.name)} <span class="k-meta">(${i.qty} → ${i.ideal})</span></span><b>${i.ideal - i.qty} × ${a.money(i.cost)}</b></div>`).join('')
+          + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(list.reduce((s, i) => s + (i.ideal - i.qty) * i.cost, 0))}</span></div>`, u.btn(a.t('createPO'), 'po', { sup }, 'p sm'))).join('');
+        return `<h1 class="k-h1">${a.t('ordTitle')}</h1><p class="k-sub">${a.t('ordSub')}</p>${sug || u.card('', u.empty(a.t('nothing')))}
+          ${d.pos.length ? u.card(a.t('pos'), d.pos.slice().reverse().map((p) => u.row({ icon: '📝', title: `${p.num} · ${p.sup}`, meta: `${a.date(p.at)} · ${p.lines.length} · ${a.money(p.total)}`,
+            right: p.status === 'pending' ? u.pill(a.t('pending'), 'orange') + u.btn(a.t('receive'), 'receive', { id: p.id }, 's sm') : u.pill(a.t('done'), 'green') })).join('')) : ''}`;
+      } },
+    { id: 'report', label: 'tReport', render: (a) => {
+        const d = a.db, u = a.ui, c = CATS[a.lang];
+        const byCat = {}; d.items.forEach((i) => (byCat[i.cat] = (byCat[i.cat] || 0) + i.qty * i.cost)); const max = Math.max(1, ...Object.values(byCat));
+        const outQ = {}; d.moves.filter((m) => m.type === 'out').forEach((m) => (outQ[m.item] = (outQ[m.item] || 0) + m.qty));
+        const top = Object.entries(outQ).sort((x, y) => y[1] - x[1]).slice(0, 6);
+        return `<h1 class="k-h1">${a.t('repTitle')}</h1><p class="k-sub">${a.t('repSub')}</p><div class="k-grid2">
+          ${u.card(a.t('byCat'), Object.entries(byCat).sort((x, y) => y[1] - x[1]).map(([k, v]) => `<div style="margin:10px 0"><div class="k-total" style="padding:0 0 4px"><span>${c[k]}</span><b>${a.money(v)}</b></div><div class="k-bar"><i style="width:${(v / max) * 100}%;background:#0E9384"></i></div></div>`).join(''))}
+          ${u.card(a.t('topOut'), top.map(([id, q]) => `<div class="k-total"><span>${a.esc(d.items.find((i) => i.id === id)?.name || '')}</span><b>${q} ${a.t('units')}</b></div>`).join('') || u.empty())}</div>`;
+      } },
+  ],
+  actions: {
+    q: (a, v) => { a.db.q = v; a.rerender(); },
+    filter: (a, d) => { a.db.filter = d.v; a.go('stock'); },
+    move: (a, d) => {
+      const it = d.id ? a.db.items.find((i) => i.id === d.id) : null;
+      a.modal({ title: it ? it.name : a.t('newMove'), submit: a.t('save'),
+        html: it ? `<p class="k-meta" style="margin-bottom:12px">${it.sku} · ${it.qty} ${a.t('units')} · ${it.wh}</p>` : '',
+        fields: [...(it ? [] : [{ name: 'item', label: a.t('mProduct'), type: 'select', options: a.db.items.map((i) => [i.id, `${i.name} (${i.qty})`]) }]),
+          { name: 'type', label: a.t('mType'), type: 'select', value: 'out', options: [['in', a.t('in')], ['out', a.t('out')]] },
+          { name: 'qty', label: a.t('mQty'), type: 'number', min: 1, value: 1, required: true },
+          { name: 'note', label: a.t('mNote'), value: '', ph: a.lang === 'es' ? 'Venta, compra, ajuste…' : 'Sale, purchase, adjustment…' }],
+        onSubmit: (v) => {
+          const item = it || a.db.items.find((i) => i.id === v.item); const q = Math.max(1, v.qty || 1);
+          if (v.type === 'out' && q > item.qty) { a.toast(a.t('noStock')); return false; }
+          item.qty += v.type === 'in' ? q : -q;
+          a.db.moves.push({ id: a.uid(), at: new Date().toISOString(), item: item.id, type: v.type, qty: q, by: 'Demo', note: v.note || a.t(v.type) });
+          a.save(); a.toast(a.t('moved')); a.rerender();
+        } });
+    },
+    po: (a, d) => {
+      const lines = a.db.items.filter((i) => i.qty <= i.min && i.sup === d.sup).map((i) => ({ id: i.id, qty: i.ideal - i.qty, cost: i.cost }));
+      a.db.pos.push({ id: a.uid(), num: 'OC-' + (2001 + a.db.pos.length), sup: d.sup, at: new Date().toISOString(), lines, total: lines.reduce((s, l) => s + l.qty * l.cost, 0), status: 'pending' });
+      a.save(); a.toast(a.t('poDone')); a.rerender();
+    },
+    receive: (a, d) => {
+      const p = a.db.pos.find((x) => x.id === d.id); p.status = 'done';
+      p.lines.forEach((l) => { const i = a.db.items.find((x) => x.id === l.id); i.qty += l.qty; a.db.moves.push({ id: a.uid(), at: new Date().toISOString(), item: i.id, type: 'in', qty: l.qty, by: 'Demo', note: p.num }); });
+      a.save(); a.toast(a.t('received')); a.rerender();
+    },
+    export: (a) => {
+      const rows = [['SKU', 'Producto', 'Categoria', 'Almacen', 'Existencia', 'Minimo', 'Costo', 'Valor'], ...a.db.items.map((i) => [i.sku, i.name, CATS.es[i.cat], i.wh, i.qty, i.min, i.cost, (i.qty * i.cost).toFixed(2)])];
+      const csv = '﻿' + rows.map((r) => r.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(';')).join('\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const l = document.createElement('a'); l.href = url; l.download = 'inventario-demo.csv'; l.click(); setTimeout(() => URL.revokeObjectURL(url), 2000);
+      a.toast(a.t('exported'));
+    },
+  },
+});
+</script>
+</body></html>

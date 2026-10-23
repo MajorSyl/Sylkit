@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Taller mecánico · Sylkit</title><meta name="description" content="Prueba en vivo el sistema para talleres mecánicos de Sylkit: órdenes de trabajo, presupuestos, historial por vehículo y repuestos.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const WST = ['received', 'diagnosis', 'approval', 'repair', 'ready', 'delivered'];
+const WL = { es: { received: 'Recibido', diagnosis: 'Diagnóstico', approval: 'Esperando aprobación', repair: 'En reparación', ready: 'Listo para entregar', delivered: 'Entregado' },
+  en: { received: 'Received', diagnosis: 'Diagnosis', approval: 'Awaiting approval', repair: 'In repair', ready: 'Ready for pickup', delivered: 'Delivered' } };
+const WC = { received: 'gray', diagnosis: 'blue', approval: 'orange', repair: 'purple', ready: 'green', delivered: 'gray' };
+SylDemo.create({
+  id: 'taller', version: 1, product: 'taller-mecanico', logo: '🔧', color: '#F79009',
+  name: { es: 'Taller mecánico', en: 'Car Workshop' }, brand: { es: 'Sylkit Taller', en: 'Sylkit Workshop' },
+  sub: { es: 'AutoServicio Demo · 4 mecánicos', en: 'Demo AutoService · 4 mechanics' },
+  t: {
+    es: { tOrders: 'Órdenes de trabajo', tVehicles: 'Vehículos', tParts: 'Repuestos', tIncome: 'Ingresos',
+      oTitle: 'Órdenes de trabajo', oSub: 'Cada carro con su estado. El cliente aprueba el presupuesto desde su teléfono y sabe cuándo está listo.', newOrder: 'Nueva orden',
+      plate: 'Placa', car: 'Vehículo', owner: 'Cliente', phone: 'WhatsApp', problem: 'Falla reportada', km: 'Kilometraje', mechanic: 'Mecánico', all: 'Activas',
+      quote: 'Presupuesto', addLine: 'Agregar repuesto o mano de obra', part: 'Repuesto', labor: 'Mano de obra (USD)', sendQuote: 'Enviar presupuesto por WhatsApp', approve: 'Cliente aprobó', next: 'Avanzar',
+      quoteSent: 'Presupuesto enviado al cliente. Cuando apruebe, pasa a reparación.', approved: 'Aprobado. A reparar.', created: 'Orden creada.', delivered: 'Vehículo entregado y cobrado.', deliver: 'Entregar y cobrar', method: 'Método de pago',
+      notify: 'Avisar que está listo', notified: (n) => `WhatsApp enviado a ${n}: "Tu vehículo está listo para retirar".`, items: 'Detalle', noItems: 'Agrega repuestos y mano de obra.',
+      vTitle: 'Vehículos y su historial', vSub: 'Todo lo que se le ha hecho a cada carro: útil para recordar servicios y dar confianza al cliente.', services: (n) => `${n} servicio${n === 1 ? '' : 's'}`, nextService: 'Próximo cambio de aceite',
+      pTitle: 'Repuestos en stock', pSub: 'Se descuentan solos al usarlos en una orden.', stock: 'Stock', price: 'Precio',
+      iTitle: 'Ingresos', iSub: 'Lo cobrado por mano de obra y repuestos.', sTotal: 'Total cobrado', sLabor: 'Mano de obra', sParts: 'Repuestos', sOpen: 'Órdenes abiertas' },
+    en: { tOrders: 'Work orders', tVehicles: 'Vehicles', tParts: 'Parts', tIncome: 'Income',
+      oTitle: 'Work orders', oSub: 'Every car with its status. The customer approves the quote from their phone and knows when it\'s ready.', newOrder: 'New order',
+      plate: 'Plate', car: 'Vehicle', owner: 'Customer', phone: 'WhatsApp', problem: 'Reported issue', km: 'Mileage', mechanic: 'Mechanic', all: 'Open',
+      quote: 'Quote', addLine: 'Add part or labor', part: 'Part', labor: 'Labor (USD)', sendQuote: 'Send quote via WhatsApp', approve: 'Customer approved', next: 'Advance',
+      quoteSent: 'Quote sent to the customer. Once approved, it moves to repair.', approved: 'Approved. Repairing.', created: 'Order created.', delivered: 'Vehicle delivered and charged.', deliver: 'Deliver and charge', method: 'Payment method',
+      notify: 'Notify ready', notified: (n) => `WhatsApp sent to ${n}: "Your vehicle is ready for pickup".`, items: 'Details', noItems: 'Add parts and labor.',
+      vTitle: 'Vehicles and history', vSub: 'Everything done to each car: handy for service reminders and building customer trust.', services: (n) => `${n} service${n === 1 ? '' : 's'}`, nextService: 'Next oil change',
+      pTitle: 'Parts in stock', pSub: 'Deducted automatically when used in an order.', stock: 'Stock', price: 'Price',
+      iTitle: 'Income', iSub: 'Collected for labor and parts.', sTotal: 'Total collected', sLabor: 'Labor', sParts: 'Parts', sOpen: 'Open orders' },
+  },
+  seed: (a) => {
+    const parts = [['Aceite 15W40 (L)', 6, 40], ['Filtro de aceite', 5, 18], ['Pastillas de freno', 22, 8], ['Bujía', 4, 30], ['Filtro de aire', 9, 12], ['Correa de tiempo', 35, 3], ['Batería 12V', 85, 4], ['Amortiguador', 48, 6]]
+      .map(([name, price, stock], i) => ({ id: 'r' + i, name, price, stock }));
+    const mech = ['Pedro', 'Jesús', 'Ronald', 'Wilmer'];
+    const O = [['AB123CD', 'Toyota Corolla 2015', 'Luis Mendoza', 'Ruido al frenar', 'repair', [['r2', 1], ['L', 25]]], ['XY789ZT', 'Chevrolet Aveo 2012', 'Carla Suárez', 'Cambio de aceite y filtros', 'ready', [['r0', 4], ['r1', 1], ['r4', 1], ['L', 10]]],
+      ['KL456MN', 'Ford Explorer 2010', 'Jorge Palacios', 'No enciende en las mañanas', 'approval', [['r6', 1], ['L', 15]]], ['GH321JK', 'Hyundai Accent 2018', 'Mónica Rey', 'Revisión general', 'diagnosis', []], ['PQ654RS', 'Mitsubishi Lancer 2009', 'Iván Castro', 'Vibración en el volante', 'received', []]];
+    const orders = O.map(([plate, car, owner, problem, status, lines], i) => ({ id: a.uid(), num: 'OT-' + (501 + i), plate, car, owner, phone: '+58 424 77' + (10000 + i * 517), problem, status, mech: mech[i % 4], km: 80000 + i * 23110, at: a.addDays(-i),
+      lines: lines.map(([id, q]) => (id === 'L' ? { type: 'labor', name: 'Mano de obra', price: q, qty: 1 } : { type: 'part', id, name: parts.find((p) => p.id === id).name, price: parts.find((p) => p.id === id).price, qty: q })) }));
+    const history = { AB123CD: [{ at: a.addDays(-95), what: 'Cambio de aceite', total: 38 }], XY789ZT: [{ at: a.addDays(-180), what: 'Correa de tiempo', total: 95 }, { at: a.addDays(-60), what: 'Batería', total: 85 }] };
+    return { parts, orders, history, paid: [{ at: a.addDays(-1), labor: 30, parts: 64 }, { at: a.addDays(-2), labor: 15, parts: 22 }], filter: 'open' };
+  },
+  tabs: [
+    { id: 'orders', label: 'tOrders', badge: (a) => a.db.orders.filter((o) => o.status === 'ready').length, render: (a) => {
+        const d = a.db, u = a.ui, L = WL[a.lang];
+        const list = d.orders.filter((o) => (d.filter === 'open' ? o.status !== 'delivered' : o.status === d.filter));
+        return `<h1 class="k-h1">${a.t('oTitle')}</h1><p class="k-sub">${a.t('oSub')}</p>
+          ${u.chips([['open', a.t('all')], ...WST.map((s) => [s, L[s]])], d.filter, 'filter')}
+          ${u.card('', list.map((o) => { const tot = o.lines.reduce((s, l) => s + l.price * l.qty, 0);
+            return u.row({ icon: '🚗', iconBg: 'var(--orangebg)', title: `${o.plate} · ${o.car}`, act: 'open', id: o.id, meta: `${o.num} · ${o.owner} · ${o.problem} · 🔧 ${o.mech}`, right: u.pill(L[o.status], WC[o.status]) + (tot ? `<b>${a.money(tot)}</b>` : '') }); }).join('') || u.empty(), u.btn('+ ' + a.t('newOrder'), 'newOrder', {}, 'p sm'))}`;
+      } },
+    { id: 'vehicles', label: 'tVehicles', render: (a) => {
+        const d = a.db, u = a.ui;
+        const cars = {}; d.orders.forEach((o) => (cars[o.plate] = cars[o.plate] || { plate: o.plate, car: o.car, owner: o.owner, km: o.km }));
+        return `<h1 class="k-h1">${a.t('vTitle')}</h1><p class="k-sub">${a.t('vSub')}</p>${Object.values(cars).map((c) => { const h = d.history[c.plate] || [];
+          return u.card(`${c.plate} · ${c.car}`, `<p class="k-meta" style="margin-bottom:8px">${c.owner} · ${c.km.toLocaleString()} km · ${a.t('nextService')}: ${(c.km + 5000).toLocaleString()} km</p>` + (h.length ? h.map((x) => u.row({ icon: '🧾', title: x.what, meta: a.date(x.at, { day: 'numeric', month: 'short', year: 'numeric' }), right: `<b>${a.money(x.total)}</b>` })).join('') : ''), u.pill(a.t('services', h.length), 'blue')); }).join('')}`;
+      } },
+    { id: 'parts', label: 'tParts', badge: (a) => a.db.parts.filter((p) => p.stock <= 4).length, render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('pTitle')}</h1><p class="k-sub">${a.t('pSub')}</p>${u.card('', d.parts.map((p) => u.row({ icon: '⚙️', title: p.name, meta: `${a.t('price')}: ${a.money(p.price)}`, right: u.pill(`${a.t('stock')}: ${p.stock}`, p.stock <= 4 ? 'orange' : 'green') })).join(''))}`;
+      } },
+    { id: 'income', label: 'tIncome', render: (a) => {
+        const d = a.db, u = a.ui; const labor = d.paid.reduce((s, p) => s + p.labor, 0), parts = d.paid.reduce((s, p) => s + p.parts, 0);
+        return `<h1 class="k-h1">${a.t('iTitle')}</h1><p class="k-sub">${a.t('iSub')}</p>${u.stats([{ label: a.t('sTotal'), value: a.money(labor + parts), color: 'var(--green)' }, { label: a.t('sLabor'), value: a.money(labor) }, { label: a.t('sParts'), value: a.money(parts) }, { label: a.t('sOpen'), value: d.orders.filter((o) => o.status !== 'delivered').length, color: 'var(--orange)' }])}`;
+      } },
+  ],
+  actions: {
+    filter: (a, d) => { a.db.filter = d.v; a.rerender(); },
+    newOrder: (a) => a.modal({ title: a.t('newOrder'), submit: a.t('save'), fields: [{ name: 'plate', label: a.t('plate'), required: true }, { name: 'car', label: a.t('car'), required: true, ph: 'Toyota Hilux 2016' }, { name: 'owner', label: a.t('owner'), required: true }, { name: 'phone', label: a.t('phone') }, { name: 'km', label: a.t('km'), type: 'number', value: 100000 }, { name: 'problem', label: a.t('problem'), type: 'textarea', required: true }, { name: 'mech', label: a.t('mechanic'), type: 'select', options: ['Pedro', 'Jesús', 'Ronald', 'Wilmer'].map((m) => [m, m]) }],
+      onSubmit: (v) => { a.db.orders.unshift({ id: a.uid(), num: 'OT-' + (501 + a.db.orders.length), ...v, plate: v.plate.toUpperCase(), status: 'received', at: a.addDays(0), lines: [] }); a.save(); a.toast(a.t('created')); a.rerender(); } }),
+    open: (a, d) => openOrder(a, a.db.orders.find((o) => o.id === d.id)),
+  },
+});
+function openOrder(a, o) {
+  const L = WL[a.lang], u = a.ui, tot = o.lines.reduce((s, l) => s + l.price * l.qty, 0);
+  const lines = o.lines.length ? o.lines.map((l) => `<div class="k-total"><span>${l.qty}× ${a.esc(l.name)}</span><b>${a.money(l.price * l.qty)}</b></div>`).join('') + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(tot)}</span></div>` : u.empty(a.t('noItems'));
+  const canEdit = ['received', 'diagnosis', 'approval'].includes(o.status);
+  const actions = { received: [['next', a.t('next') + ' → ' + L.diagnosis]], diagnosis: [['sendQuote', '📲 ' + a.t('sendQuote')]], approval: [['approve', '✓ ' + a.t('approve')]], repair: [['next', a.t('next') + ' → ' + L.ready]], ready: [['notify', '📲 ' + a.t('notify')], ['deliver', a.t('deliver')]], delivered: [] }[o.status];
+  const bg = a.modal({ title: `${o.num} · ${o.plate}`, wide: true, html: `<p class="k-meta">${a.esc(o.car)} · ${a.esc(o.owner)} · ${a.esc(o.phone || '')}</p><p style="margin:8px 0 12px">${u.pill(L[o.status], WC[o.status])} <b>${a.esc(o.problem)}</b></p>
+    <h3 style="font-size:16px;margin:8px 0">${a.t('quote')}</h3>${lines}
+    ${canEdit ? `<div class="k-grid2" style="margin-top:12px"><div class="k-field"><label>${a.t('part')}</label><select id="ol-part"><option value="">—</option>${a.db.parts.map((p) => `<option value="${p.id}">${a.esc(p.name)} · ${a.money(p.price)}</option>`).join('')}</select></div><div class="k-field"><label>${a.t('labor')}</label><input id="ol-labor" type="number" inputmode="decimal" placeholder="20"></div></div><button type="button" class="k-btn s" id="ol-add">+ ${a.t('addLine')}</button>` : ''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">${actions.map(([k, l]) => `<button type="button" class="k-btn ${k === 'notify' ? 'wa' : 'p'}" data-oa="${k}">${l}</button>`).join('')}</div>` });
+  const add = bg.querySelector('#ol-add');
+  if (add) add.onclick = () => {
+    const pid = bg.querySelector('#ol-part').value, lab = +bg.querySelector('#ol-labor').value;
+    if (pid) { const p = a.db.parts.find((x) => x.id === pid); const ex = o.lines.find((l) => l.id === pid); if (ex) ex.qty++; else o.lines.push({ type: 'part', id: pid, name: p.name, price: p.price, qty: 1 }); }
+    if (lab > 0) o.lines.push({ type: 'labor', name: a.t('labor').replace(' (USD)', ''), price: lab, qty: 1 });
+    a.save(); a.rerender(); openOrder(a, o);
+  };
+  bg.querySelectorAll('[data-oa]').forEach((b) => (b.onclick = () => {
+    const k = b.dataset.oa;
+    if (k === 'next') o.status = WST[WST.indexOf(o.status) + 1];
+    if (k === 'sendQuote') { o.status = 'approval'; a.toast(a.t('quoteSent')); }
+    if (k === 'approve') { o.status = 'repair'; o.lines.filter((l) => l.type === 'part').forEach((l) => { const p = a.db.parts.find((x) => x.id === l.id); p.stock = Math.max(0, p.stock - l.qty); }); a.toast(a.t('approved')); }
+    if (k === 'notify') { a.toast(a.t('notified', o.owner)); return; }
+    if (k === 'deliver') {
+      const labor = o.lines.filter((l) => l.type === 'labor').reduce((s, l) => s + l.price, 0), parts = o.lines.filter((l) => l.type === 'part').reduce((s, l) => s + l.price * l.qty, 0);
+      o.status = 'delivered'; a.db.paid.push({ at: a.addDays(0), labor, parts }); (a.db.history[o.plate] = a.db.history[o.plate] || []).push({ at: a.addDays(0), what: o.problem, total: labor + parts }); a.toast(a.t('delivered'));
+    }
+    a.save(); a.closeModal(); a.rerender();
+  }));
+}
+</script>
+</body></html>

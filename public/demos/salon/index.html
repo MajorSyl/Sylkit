@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Salón y barbería · Sylkit</title><meta name="description" content="Prueba en vivo el sistema de reservas para salones de belleza y barberías de Sylkit: citas en línea, agenda por estilista, comisiones y clientes.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const HOURS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+SylDemo.create({
+  id: 'salon', version: 1, product: 'salon-barberia-reservas', logo: '💇', color: '#7A5AF8',
+  name: { es: 'Salón y barbería', en: 'Salon & Barbershop' }, brand: { es: 'Sylkit Salón', en: 'Sylkit Salon' },
+  sub: { es: 'Studio Demo · 3 estilistas', en: 'Demo Studio · 3 stylists' },
+  t: {
+    es: { tBook: 'Reservar (cliente)', tAgenda: 'Agenda', tClients: 'Clientes', tCommissions: 'Comisiones',
+      bkTitle: 'Reserva tu cita', bkSub: 'Así reservan tus clientes desde Instagram o WhatsApp: eligen servicio, estilista y hora.', service: '1. Servicio', stylist: '2. Estilista', day: '3. Día', hour: '4. Hora',
+      yourName: 'Tu nombre', confirm: 'Confirmar reserva', pick: 'Elige servicio, estilista y hora.', done: (d, h) => `¡Listo! Cita reservada para ${d} a las ${h}. Te recordaremos por WhatsApp.`, tomorrow: 'Mañana', min: 'min',
+      agTitle: 'Agenda', agSub: 'Citas por estilista. Marca cada servicio como terminado para registrar el pago y la comisión.', noAppts: 'Sin citas este día.', complete: 'Terminado', completed: 'Servicio cobrado. Comisión registrada.', method: 'Método de pago',
+      clTitle: 'Clientes', clSub: 'Historial de cada cliente y su programa de puntos (1 punto por cada $1).', pts: 'puntos', lastVisit: 'Última visita', visits: (n) => `${n} visita${n === 1 ? '' : 's'}`,
+      coTitle: 'Comisiones', coSub: 'Cuánto ha generado cada estilista y su comisión, calculada sola.', sales: 'Ventas', commission: 'Comisión', rate: 'Porcentaje', services: 'Servicios' },
+    en: { tBook: 'Book (client)', tAgenda: 'Schedule', tClients: 'Clients', tCommissions: 'Commissions',
+      bkTitle: 'Book your appointment', bkSub: 'This is how clients book from Instagram or WhatsApp: choose a service, stylist and time.', service: '1. Service', stylist: '2. Stylist', day: '3. Day', hour: '4. Time',
+      yourName: 'Your name', confirm: 'Confirm booking', pick: 'Choose a service, stylist and time.', done: (d, h) => `Done! Booked for ${d} at ${h}. We'll remind you on WhatsApp.`, tomorrow: 'Tomorrow', min: 'min',
+      agTitle: 'Schedule', agSub: 'Appointments by stylist. Mark each service as done to record payment and commission.', noAppts: 'No appointments this day.', complete: 'Done', completed: 'Service charged. Commission recorded.', method: 'Payment method',
+      clTitle: 'Clients', clSub: 'Each client\'s history and loyalty points (1 point per $1).', pts: 'points', lastVisit: 'Last visit', visits: (n) => `${n} visit${n === 1 ? '' : 's'}`,
+      coTitle: 'Commissions', coSub: 'How much each stylist generated and their commission, calculated automatically.', sales: 'Sales', commission: 'Commission', rate: 'Rate', services: 'Services' },
+  },
+  seed: (a) => {
+    const services = [['Corte de caballero', 'Men\'s haircut', 8, 30, '💈'], ['Corte y peinado dama', 'Women\'s cut & style', 18, 60, '💇‍♀️'], ['Barba', 'Beard trim', 5, 20, '🧔'], ['Tinte completo', 'Full color', 40, 120, '🎨'],
+      ['Manicure', 'Manicure', 10, 45, '💅'], ['Pedicure', 'Pedicure', 14, 60, '🦶'], ['Alisado', 'Keratin straightening', 60, 150, '✨'], ['Cejas', 'Eyebrows', 6, 20, '👁️']]
+      .map(([es, en, price, mins, em], i) => ({ id: 's' + i, es, en, price, mins, em }));
+    const staff = [{ id: 'e1', name: 'Yorman', role: 'Barbero', rate: 0.4 }, { id: 'e2', name: 'Daniela', role: 'Estilista', rate: 0.45 }, { id: 'e3', name: 'Mariela', role: 'Manicurista', rate: 0.5 }];
+    const clients = [['Carlos Pérez', 12, 96], ['Andreína Gil', 7, 210], ['Miguel Ortiz', 20, 160], ['Patricia Vera', 4, 88], ['Luisa Marín', 9, 140]].map(([name, v, pts], i) => ({ id: 'c' + i, name, visits: v, pts, last: a.addDays(-(i * 6 + 3)) }));
+    const A = [['c0', 's0', 'e1', 0, '09:00', true], ['c2', 's2', 'e1', 0, '10:00', false], ['c1', 's3', 'e2', 0, '10:00', false], ['c3', 's4', 'e3', 0, '11:00', false], ['c4', 's1', 'e2', 0, '15:00', false], ['c0', 's2', 'e1', 1, '11:00', false]];
+    const appts = A.map(([c, s, e, day, h, done]) => ({ id: a.uid(), c, s, e, date: a.addDays(day), h, done }));
+    const sales = [{ e: 'e1', amount: 8, at: a.addDays(0) }, { e: 'e2', amount: 40, at: a.addDays(-1) }, { e: 'e3', amount: 24, at: a.addDays(-1) }, { e: 'e1', amount: 13, at: a.addDays(-2) }, { e: 'e2', amount: 78, at: a.addDays(-3) }];
+    return { services, staff, clients, appts, sales, bk: { s: 's0', e: 'e1', day: 0, h: '' }, agDay: 0 };
+  },
+  tabs: [
+    { id: 'book', label: 'tBook', render: (a) => {
+        const d = a.db, u = a.ui, bk = d.bk, date = a.addDays(bk.day), svc = d.services.find((s) => s.id === bk.s);
+        const taken = d.appts.filter((x) => x.e === bk.e && x.date === date).map((x) => x.h);
+        const nowH = new Date().getHours();
+        return `<h1 class="k-h1">${a.t('bkTitle')}</h1><p class="k-sub">${a.t('bkSub')}</p><div class="k-card" style="max-width:720px">
+          <div class="k-field"><label>${a.t('service')}</label></div><div class="k-tiles" style="margin-bottom:14px">${d.services.map((s) => `<button class="k-tile" data-act="bkS" data-v="${s.id}" style="${s.id === bk.s ? 'border-color:var(--primary);background:var(--soft)' : ''}"><span class="em">${s.em}</span><span class="nm">${a.esc(s[a.lang])}</span><span class="pr">${a.money(s.price)} · ${s.mins} ${a.t('min')}</span></button>`).join('')}</div>
+          <div class="k-field"><label>${a.t('stylist')}</label></div>${u.chips(d.staff.map((e) => [e.id, `${e.name} · ${e.role}`]), bk.e, 'bkE')}
+          <div class="k-field"><label>${a.t('day')}</label></div>${u.chips([0, 1, 2, 3, 4, 5].map((n) => [String(n), n === 0 ? a.t('today') : n === 1 ? a.t('tomorrow') : a.date(a.addDays(n), { weekday: 'short', day: 'numeric' })]), String(bk.day), 'bkD')}
+          <div class="k-field"><label>${a.t('hour')}</label></div><div class="k-slots" style="margin-bottom:14px">${HOURS.map((h) => `<button class="k-slot${bk.h === h ? ' on' : ''}" data-act="bkH" data-v="${h}" ${taken.includes(h) || (bk.day === 0 && +h.slice(0, 2) <= nowH) ? 'disabled' : ''}>${h}</button>`).join('')}</div>
+          <div class="k-field"><label>${a.t('yourName')}</label><input id="bkName" value="Visitante Demo"></div>
+          <button class="k-btn p block" data-act="book">${a.t('confirm')} · ${svc ? a.money(svc.price) : ''}</button></div>`;
+      } },
+    { id: 'agenda', label: 'tAgenda', badge: (a) => a.db.appts.filter((x) => x.date === a.addDays(0) && !x.done).length, render: (a) => {
+        const d = a.db, u = a.ui, date = a.addDays(d.agDay);
+        const day = d.appts.filter((x) => x.date === date).sort((x, y) => x.h.localeCompare(y.h));
+        return `<h1 class="k-h1">${a.t('agTitle')}</h1><p class="k-sub">${a.t('agSub')}</p>${u.chips([0, 1, 2, 3].map((n) => [String(n), n === 0 ? a.t('today') : a.date(a.addDays(n), { weekday: 'short', day: 'numeric' })]), String(d.agDay), 'agD')}
+          <div class="k-grid3">${d.staff.map((e) => u.card(`${e.name} · ${e.role}`, day.filter((x) => x.e === e.id).map((x) => { const s = d.services.find((y) => y.id === x.s), c = d.clients.find((y) => y.id === x.c);
+            return u.row({ avatar: x.h, color: '#7A5AF8', title: c.name, meta: `${s[a.lang]} · ${a.money(s.price)}`, right: x.done ? u.pill('✓', 'green') : u.btn(a.t('complete'), 'complete', { id: x.id }, 's sm') }); }).join('') || u.empty(a.t('noAppts')))).join('')}</div>`;
+      } },
+    { id: 'clients', label: 'tClients', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('clTitle')}</h1><p class="k-sub">${a.t('clSub')}</p>${u.card('', d.clients.slice().sort((x, y) => y.pts - x.pts).map((c) => u.row({ avatar: u.initials(c.name), color: u.avatarColor(c.name), title: c.name, meta: `${a.t('visits', c.visits)} · ${a.t('lastVisit')}: ${a.date(c.last)}`, right: u.pill(`⭐ ${c.pts} ${a.t('pts')}`, 'purple') })).join(''))}`;
+      } },
+    { id: 'comm', label: 'tCommissions', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('coTitle')}</h1><p class="k-sub">${a.t('coSub')}</p>${u.card('', `<div class="k-table-wrap"><table class="k-table"><thead><tr><th></th><th>${a.t('services')}</th><th>${a.t('sales')}</th><th>${a.t('rate')}</th><th>${a.t('commission')}</th></tr></thead><tbody>
+          ${d.staff.map((e) => { const s = d.sales.filter((x) => x.e === e.id), tot = s.reduce((t, x) => t + x.amount, 0); return `<tr><td><b>${e.name}</b><div class="k-meta">${e.role}</div></td><td>${s.length}</td><td>${a.money(tot)}</td><td>${Math.round(e.rate * 100)}%</td><td><b style="color:var(--green)">${a.money(tot * e.rate)}</b></td></tr>`; }).join('')}</tbody></table></div>`)}`;
+      } },
+  ],
+  actions: {
+    bkS: (a, d) => { a.db.bk.s = d.v; a.rerender(); }, bkE: (a, d) => { a.db.bk.e = d.v; a.db.bk.h = ''; a.rerender(); },
+    bkD: (a, d) => { a.db.bk.day = +d.v; a.db.bk.h = ''; a.rerender(); }, bkH: (a, d) => { a.db.bk.h = d.v; a.rerender(); },
+    agD: (a, d) => { a.db.agDay = +d.v; a.rerender(); },
+    book: (a) => {
+      const bk = a.db.bk; if (!bk.s || !bk.e || !bk.h) return a.toast(a.t('pick'));
+      const name = (document.getElementById('bkName').value || '').trim() || 'Visitante Demo';
+      let c = a.db.clients.find((x) => x.name === name); if (!c) { c = { id: a.uid(), name, visits: 0, pts: 0, last: a.addDays(0) }; a.db.clients.push(c); }
+      const date = a.addDays(bk.day); a.db.appts.push({ id: a.uid(), c: c.id, s: bk.s, e: bk.e, date, h: bk.h, done: false });
+      a.toast(a.t('done', a.date(date, { weekday: 'long', day: 'numeric', month: 'long' }), bk.h)); a.db.agDay = bk.day; bk.h = ''; a.save(); a.go('agenda');
+    },
+    complete: (a, d) => {
+      const x = a.db.appts.find((y) => y.id === d.id), s = a.db.services.find((y) => y.id === x.s);
+      a.modal({ title: `${s[a.lang]} · ${a.money(s.price)}`, submit: a.t('complete'), fields: [{ name: 'method', label: a.t('method'), type: 'select', options: ['Efectivo $', 'Pago Móvil', 'Zelle', 'Tarjeta'].map((m) => [m, m]) }],
+        onSubmit: () => { x.done = true; a.db.sales.push({ e: x.e, amount: s.price, at: a.addDays(0) }); const c = a.db.clients.find((y) => y.id === x.c); c.visits++; c.pts += Math.round(s.price); c.last = a.addDays(0); a.save(); a.toast(a.t('completed')); a.rerender(); } });
+    },
+  },
+});
+</script>
+</body></html>

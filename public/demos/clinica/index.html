@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Clínica · Sylkit</title><meta name="description" content="Prueba en vivo el sistema para clínicas de Sylkit: citas en línea, sala de espera, historias clínicas y caja.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const SLOTS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '14:00', '14:30', '15:00', '15:30', '16:00'];
+const ST = { es: { booked: 'Agendada', waiting: 'En espera', consult: 'En consulta', done: 'Atendida', noshow: 'No asistió' }, en: { booked: 'Booked', waiting: 'Waiting', consult: 'In consultation', done: 'Seen', noshow: 'No-show' } };
+const STC = { booked: 'blue', waiting: 'orange', consult: 'purple', done: 'green', noshow: 'gray' };
+SylDemo.create({
+  id: 'clinica', version: 1, product: 'clinica-citas-historias', logo: '🩺', color: '#1D6BFF',
+  name: { es: 'Clínica', en: 'Clinic' }, brand: { es: 'Sylkit Clínica', en: 'Sylkit Clinic' },
+  sub: { es: 'Centro Médico Demo · 3 especialistas', en: 'Demo Medical Center · 3 specialists' },
+  t: {
+    es: { tAgenda: 'Agenda de hoy', tPatients: 'Pacientes', tBook: 'Reservar cita', tCash: 'Caja',
+      agTitle: 'Agenda de hoy', agSub: 'La recepción ve todas las citas del día y el estado de cada paciente.', allDocs: 'Todos los médicos',
+      sToday: 'Citas hoy', sWaiting: 'En sala de espera', sDone: 'Atendidos', sIncome: 'Cobrado hoy',
+      checkin: 'Llegó', start: 'Pasar a consulta', finish: 'Finalizar', noshow: 'No asistió',
+      finTitle: 'Finalizar consulta', diag: 'Diagnóstico', notes: 'Indicaciones / receta', fee: 'Monto cobrado (USD)', method: 'Método de pago', finished: 'Consulta registrada en la historia clínica.',
+      ptTitle: 'Pacientes', ptSub: 'Historia clínica digital: datos, alergias y todas las consultas anteriores.', newPt: 'Nuevo paciente', age: 'años', visits: (n) => `${n} consulta${n === 1 ? '' : 's'}`,
+      record: 'Historia clínica', allergies: 'Alergias', blood: 'Tipo de sangre', phone: 'Teléfono', noVisits: 'Sin consultas registradas.', name: 'Nombre completo', birth: 'Año de nacimiento', ptSaved: 'Paciente registrado.',
+      bkTitle: 'Reservar cita en línea', bkSub: 'Así reservan tus pacientes desde tu sitio web o WhatsApp, sin llamar.', doctor: 'Médico', day: 'Día', slot: 'Hora disponible', yourName: 'Tu nombre', yourPhone: 'WhatsApp',
+      book: 'Confirmar cita', booked: (d, t) => `Cita confirmada: ${d} a las ${t}. Te enviaremos un recordatorio por WhatsApp.`, pickSlot: 'Elige una hora.', tomorrow: 'Mañana',
+      cashTitle: 'Caja del día', cashSub: 'Pagos de consultas por método de pago.', noPay: 'Aún no hay pagos hoy.', reason: 'Motivo' },
+    en: { tAgenda: "Today's schedule", tPatients: 'Patients', tBook: 'Book appointment', tCash: 'Cash',
+      agTitle: "Today's schedule", agSub: 'Reception sees every appointment of the day and each patient\'s status.', allDocs: 'All doctors',
+      sToday: 'Appointments today', sWaiting: 'In waiting room', sDone: 'Seen', sIncome: 'Collected today',
+      checkin: 'Arrived', start: 'Call in', finish: 'Finish', noshow: 'No-show',
+      finTitle: 'Finish consultation', diag: 'Diagnosis', notes: 'Instructions / prescription', fee: 'Amount charged (USD)', method: 'Payment method', finished: 'Consultation saved to the medical record.',
+      ptTitle: 'Patients', ptSub: 'Digital medical record: details, allergies and every past consultation.', newPt: 'New patient', age: 'yrs', visits: (n) => `${n} visit${n === 1 ? '' : 's'}`,
+      record: 'Medical record', allergies: 'Allergies', blood: 'Blood type', phone: 'Phone', noVisits: 'No visits recorded.', name: 'Full name', birth: 'Birth year', ptSaved: 'Patient registered.',
+      bkTitle: 'Book online', bkSub: 'This is how patients book from your website or WhatsApp, without calling.', doctor: 'Doctor', day: 'Day', slot: 'Available time', yourName: 'Your name', yourPhone: 'WhatsApp',
+      book: 'Confirm appointment', booked: (d, t) => `Appointment confirmed: ${d} at ${t}. We'll send a WhatsApp reminder.`, pickSlot: 'Choose a time.', tomorrow: 'Tomorrow',
+      cashTitle: "Today's cash", cashSub: 'Consultation payments by method.', noPay: 'No payments yet today.', reason: 'Reason' },
+  },
+  seed: (a) => {
+    const docs = [{ id: 'd1', name: 'Dra. Andrea Morales', spec: 'Medicina general', fee: 25 }, { id: 'd2', name: 'Dr. Ricardo León', spec: 'Cardiología', fee: 45 }, { id: 'd3', name: 'Dra. Paula Rivas', spec: 'Pediatría', fee: 30 }];
+    const N = [['María González', 1985, 'Penicilina', 'O+'], ['José Ramírez', 1962, '', 'A+'], ['Valentina Cruz', 2019, '', 'B+'], ['Luis Herrera', 1978, 'AINEs', 'O-'], ['Carmen Rojas', 1950, '', 'A-'],
+      ['Diego Fernández', 1999, '', 'O+'], ['Sofía Medina', 2016, 'Maní', 'AB+'], ['Andrés Silva', 1971, '', 'B-']];
+    const patients = N.map(([name, birth, allergies, blood], i) => ({ id: 'p' + i, name, birth, allergies, blood, phone: '+58 414 30' + (10000 + i * 913), visits: [] }));
+    patients[1].visits.push({ at: a.addDays(-40), doc: 'd2', diag: 'Hipertensión arterial controlada', notes: 'Losartán 50mg c/24h. Control en 1 mes.' });
+    patients[0].visits.push({ at: a.addDays(-120), doc: 'd1', diag: 'Faringitis', notes: 'Reposo 3 días.' });
+    const ap = [['p1', 'd2', '08:30', 'done'], ['p0', 'd1', '09:00', 'consult'], ['p3', 'd1', '09:30', 'waiting'], ['p2', 'd3', '10:00', 'waiting'], ['p4', 'd2', '10:30', 'booked'], ['p5', 'd1', '11:00', 'booked'], ['p6', 'd3', '14:00', 'booked'], ['p7', 'd2', '15:00', 'booked']];
+    const reasons = ['Control', 'Dolor de garganta', 'Dolor de cabeza', 'Fiebre', 'Chequeo', 'Consulta', 'Vacunas', 'Palpitaciones'];
+    const appts = ap.map(([p, doc, time, status], i) => ({ id: 'a' + i, p, doc, date: a.addDays(0), time, status, reason: reasons[i] }));
+    return { docs, patients, appts, pays: [{ id: a.uid(), at: new Date().toISOString(), p: 'p1', amount: 45, method: 'Zelle' }], docF: 'all', bk: { doc: 'd1', day: 1, slot: '' } };
+  },
+  tabs: [
+    { id: 'agenda', label: 'tAgenda', badge: (a) => a.db.appts.filter((x) => x.date === a.addDays(0) && x.status === 'waiting').length, render: (a) => {
+        const d = a.db, u = a.ui, st = ST[a.lang], today = a.addDays(0);
+        const list = d.appts.filter((x) => x.date === today && (d.docF === 'all' || x.doc === d.docF)).sort((x, y) => x.time.localeCompare(y.time));
+        const inc = d.pays.filter((p) => p.at.slice(0, 10) === today).reduce((s, p) => s + p.amount, 0);
+        return `<h1 class="k-h1">${a.t('agTitle')}</h1><p class="k-sub">${a.t('agSub')}</p>
+          ${u.stats([{ label: a.t('sToday'), value: d.appts.filter((x) => x.date === today).length }, { label: a.t('sWaiting'), value: d.appts.filter((x) => x.date === today && x.status === 'waiting').length, color: 'var(--orange)' }, { label: a.t('sDone'), value: d.appts.filter((x) => x.date === today && x.status === 'done').length, color: 'var(--green)' }, { label: a.t('sIncome'), value: a.money(inc), color: 'var(--green)' }])}
+          ${u.chips([['all', a.t('allDocs')], ...d.docs.map((x) => [x.id, x.name])], d.docF, 'docF')}
+          ${u.card('', list.map((x) => { const p = d.patients.find((y) => y.id === x.p), doc = d.docs.find((y) => y.id === x.doc);
+            const btns = x.status === 'booked' ? u.btn(a.t('checkin'), 'set', { id: x.id, s: 'waiting' }, 's sm') + u.btn(a.t('noshow'), 'set', { id: x.id, s: 'noshow' }, 'g sm')
+              : x.status === 'waiting' ? u.btn(a.t('start'), 'set', { id: x.id, s: 'consult' }, 'p sm') : x.status === 'consult' ? u.btn(a.t('finish'), 'finish', { id: x.id }, 'p sm') : '';
+            return u.row({ avatar: x.time, color: '#0B1B3A', title: p.name, meta: `${doc.name} · ${doc.spec} · ${a.t('reason')}: ${x.reason}`, right: u.pill(st[x.status], STC[x.status]) + btns }); }).join('') || u.empty())}`;
+      } },
+    { id: 'patients', label: 'tPatients', render: (a) => {
+        const d = a.db, u = a.ui, yr = new Date().getFullYear();
+        return `<h1 class="k-h1">${a.t('ptTitle')}</h1><p class="k-sub">${a.t('ptSub')}</p>
+          ${u.card('', d.patients.map((p) => u.row({ avatar: u.initials(p.name), color: u.avatarColor(p.name), title: p.name, act: 'record', id: p.id, meta: `${yr - p.birth} ${a.t('age')} · ${p.blood}${p.allergies ? ' · ⚠ ' + p.allergies : ''} · ${a.t('visits', p.visits.length)}` })).join(''), u.btn('+ ' + a.t('newPt'), 'newPt', {}, 'p sm'))}`;
+      } },
+    { id: 'book', label: 'tBook', render: (a) => {
+        const d = a.db, u = a.ui, bk = d.bk, date = a.addDays(bk.day);
+        const taken = d.appts.filter((x) => x.doc === bk.doc && x.date === date).map((x) => x.time);
+        const days = [1, 2, 3, 4, 5].map((n) => [String(n), n === 1 ? a.t('tomorrow') : a.date(a.addDays(n), { weekday: 'short', day: 'numeric' })]);
+        return `<h1 class="k-h1">${a.t('bkTitle')}</h1><p class="k-sub">${a.t('bkSub')}</p><div class="k-card" style="max-width:640px">
+          <div class="k-field"><label>${a.t('doctor')}</label></div>${u.chips(d.docs.map((x) => [x.id, `${x.name} · ${x.spec}`]), bk.doc, 'bkDoc')}
+          <div class="k-field"><label>${a.t('day')}</label></div>${u.chips(days, String(bk.day), 'bkDay')}
+          <div class="k-field"><label>${a.t('slot')}</label></div><div class="k-slots" style="margin-bottom:14px">${SLOTS.map((s) => `<button class="k-slot${bk.slot === s ? ' on' : ''}" data-act="bkSlot" data-v="${s}" ${taken.includes(s) ? 'disabled' : ''}>${s}</button>`).join('')}</div>
+          <div class="k-grid2"><div class="k-field"><label>${a.t('yourName')} *</label><input id="bkName" value="Visitante Demo"></div><div class="k-field"><label>${a.t('yourPhone')}</label><input id="bkPhone" value="+58 412 0000000"></div></div>
+          <button class="k-btn p block" data-act="book">${a.t('book')} · ${d.docs.find((x) => x.id === bk.doc).fee ? a.money(d.docs.find((x) => x.id === bk.doc).fee) : ''}</button></div>`;
+      } },
+    { id: 'cash', label: 'tCash', render: (a) => {
+        const d = a.db, u = a.ui; const by = {}; d.pays.forEach((p) => (by[p.method] = (by[p.method] || 0) + p.amount));
+        return `<h1 class="k-h1">${a.t('cashTitle')}</h1><p class="k-sub">${a.t('cashSub')}</p><div class="k-cols"><div>${u.card('', d.pays.length ? d.pays.slice().reverse().map((p) => u.row({ icon: '💵', title: `${a.money(p.amount)} · ${d.patients.find((x) => x.id === p.p).name}`, meta: `${a.time(p.at)} · ${p.method}` })).join('') : u.empty(a.t('noPay')))}</div>
+          <div>${u.card('', Object.entries(by).map(([m, v]) => `<div class="k-total"><span>${m}</span><b>${a.money(v)}</b></div>`).join('') + `<div class="k-total big"><span>${a.t('total')}</span><span>${a.money(d.pays.reduce((s, p) => s + p.amount, 0))}</span></div>`)}</div></div>`;
+      } },
+  ],
+  actions: {
+    docF: (a, d) => { a.db.docF = d.v; a.rerender(); },
+    set: (a, d) => { a.db.appts.find((x) => x.id === d.id).status = d.s; a.save(); a.rerender(); },
+    finish: (a, d) => {
+      const ap = a.db.appts.find((x) => x.id === d.id), doc = a.db.docs.find((x) => x.id === ap.doc), p = a.db.patients.find((x) => x.id === ap.p);
+      a.modal({ title: `${a.t('finTitle')} · ${p.name}`, submit: a.t('finish'), html: p.allergies ? `<div class="k-note">⚠ ${a.t('allergies')}: ${a.esc(p.allergies)}</div>` : '',
+        fields: [{ name: 'diag', label: a.t('diag'), required: true }, { name: 'notes', label: a.t('notes'), type: 'textarea' }, { name: 'fee', label: a.t('fee'), type: 'number', value: doc.fee, required: true },
+          { name: 'method', label: a.t('method'), type: 'select', options: ['Efectivo $', 'Pago Móvil', 'Zelle', 'Tarjeta', 'Seguro'].map((m) => [m, m]) }],
+        onSubmit: (v) => { ap.status = 'done'; p.visits.push({ at: a.addDays(0), doc: doc.id, diag: v.diag, notes: v.notes }); a.db.pays.push({ id: a.uid(), at: new Date().toISOString(), p: p.id, amount: v.fee || 0, method: v.method }); a.save(); a.toast(a.t('finished')); a.rerender(); } });
+    },
+    record: (a, d) => {
+      const p = a.db.patients.find((x) => x.id === d.id), u = a.ui;
+      a.modal({ title: `${a.t('record')} · ${p.name}`, wide: true, html: `<div class="k-grid3" style="margin-bottom:14px"><div><div class="k-meta">${a.t('blood')}</div><b>${p.blood}</b></div><div><div class="k-meta">${a.t('allergies')}</div><b>${a.esc(p.allergies || '—')}</b></div><div><div class="k-meta">${a.t('phone')}</div><b>${p.phone}</b></div></div>
+        ${p.visits.length ? p.visits.slice().reverse().map((v) => u.row({ icon: '📄', title: v.diag, meta: `${a.date(v.at, { day: 'numeric', month: 'short', year: 'numeric' })} · ${a.db.docs.find((x) => x.id === v.doc).name}${v.notes ? ' · ' + v.notes : ''}` })).join('') : u.empty(a.t('noVisits'))}` });
+    },
+    newPt: (a) => a.modal({ title: a.t('newPt'), submit: a.t('save'), fields: [{ name: 'name', label: a.t('name'), required: true }, { name: 'birth', label: a.t('birth'), type: 'number', value: 1990, required: true }, { name: 'phone', label: a.t('phone') }, { name: 'blood', label: a.t('blood'), type: 'select', options: ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'].map((x) => [x, x]) }, { name: 'allergies', label: a.t('allergies') }],
+      onSubmit: (v) => { a.db.patients.unshift({ id: a.uid(), ...v, visits: [] }); a.save(); a.toast(a.t('ptSaved')); a.rerender(); } }),
+    bkDoc: (a, d) => { a.db.bk.doc = d.v; a.db.bk.slot = ''; a.rerender(); },
+    bkDay: (a, d) => { a.db.bk.day = +d.v; a.db.bk.slot = ''; a.rerender(); },
+    bkSlot: (a, d) => { a.db.bk.slot = d.v; a.rerender(); },
+    book: (a) => {
+      const bk = a.db.bk; if (!bk.slot) return a.toast(a.t('pickSlot'));
+      const name = (document.getElementById('bkName').value || '').trim() || 'Visitante Demo';
+      let p = a.db.patients.find((x) => x.name === name); if (!p) { p = { id: a.uid(), name, birth: 1990, blood: 'O+', allergies: '', phone: document.getElementById('bkPhone').value, visits: [] }; a.db.patients.push(p); }
+      const date = a.addDays(bk.day); a.db.appts.push({ id: a.uid(), p: p.id, doc: bk.doc, date, time: bk.slot, status: 'booked', reason: 'Consulta' });
+      a.toast(a.t('booked', a.date(date, { weekday: 'long', day: 'numeric', month: 'long' }), bk.slot)); bk.slot = ''; a.save(); a.rerender();
+    },
+  },
+});
+</script>
+</body></html>

@@ -29,9 +29,9 @@ export function ProductCard({ product }: { product: Product }) {
         <View style={[styles.thumb, { backgroundColor: tintBg }]}>
           <View style={[styles.orb, { backgroundColor: tintFg, opacity: 0.12 }]} />
           <Ionicons name={product.icon as any} size={44} color={tintFg} />
-          {product.badge && (
+          {(product.badge || product.demoUrl) && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{t(product.badge)}</Text>
+              <Text style={styles.badgeText}>{product.badge ? t(product.badge) : t({ es: '✓ Listo para usar', en: '✓ Ready to use' })}</Text>
             </View>
           )}
         </View>

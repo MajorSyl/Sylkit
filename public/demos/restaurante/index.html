@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Restaurante · Sylkit</title><meta name="description" content="Prueba en vivo el sistema para restaurantes de Sylkit: menú QR, pedidos desde la mesa, pantalla de cocina y cuentas por mesa.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const OST = { es: { new: 'Nuevo', prep: 'Preparando', ready: 'Listo', served: 'Servido' }, en: { new: 'New', prep: 'Preparing', ready: 'Ready', served: 'Served' } };
+const OSC = { new: 'red', prep: 'orange', ready: 'green', served: 'gray' };
+const NEXT = { new: 'prep', prep: 'ready', ready: 'served' };
+SylDemo.create({
+  id: 'restaurante', version: 1, product: 'restaurante-menu-qr', logo: '🍽️', color: '#E04F8A',
+  name: { es: 'Restaurante', en: 'Restaurant' }, brand: { es: 'Sylkit Restaurante', en: 'Sylkit Restaurant' },
+  sub: { es: 'Restaurante Demo · 8 mesas', en: 'Demo Restaurant · 8 tables' },
+  t: {
+    es: { tMenu: 'Menú QR (cliente)', tKitchen: 'Cocina', tTables: 'Mesas', tSales: 'Ventas',
+      menuNote: (n) => `Así ve el cliente el menú al escanear el código QR de la Mesa ${n}. Pide desde su teléfono y el pedido llega directo a la cocina.`,
+      table: 'Mesa', order: 'Tu pedido', emptyOrder: 'Agrega platos del menú.', send: 'Enviar pedido a cocina', sent: '¡Pedido enviado! La cocina ya lo está viendo.', note: 'Nota para la cocina',
+      kTitle: 'Pantalla de cocina', kSub: 'Los pedidos llegan solos. El cocinero toca para avanzar: Nuevo → Preparando → Listo → Servido.', noOrders: 'No hay pedidos pendientes.', ago: (m) => (m < 1 ? 'ahora' : `hace ${m} min`),
+      tbTitle: 'Mesas', tbSub: 'Estado de cada mesa y su cuenta. Cierra la cuenta cuando el cliente paga.', free: 'Libre', busy: 'Ocupada', bill: 'Ver cuenta', closeBill: 'Cobrar y cerrar mesa', closed: 'Cuenta cobrada. Mesa libre.', tip: 'Propina (10%)', method: 'Método de pago',
+      sTitle: 'Ventas de hoy', sSub: 'Platos más vendidos e ingresos del día.', sIncome: 'Ingresos hoy', sOrders: 'Pedidos', sAvg: 'Ticket promedio', top: 'Platos más vendidos',
+      cats: { ent: 'Entradas', main: 'Platos fuertes', drinks: 'Bebidas', dessert: 'Postres' } },
+    en: { tMenu: 'QR menu (guest)', tKitchen: 'Kitchen', tTables: 'Tables', tSales: 'Sales',
+      menuNote: (n) => `This is what guests see after scanning the QR code on Table ${n}. They order from their phone and it goes straight to the kitchen.`,
+      table: 'Table', order: 'Your order', emptyOrder: 'Add dishes from the menu.', send: 'Send order to kitchen', sent: 'Order sent! The kitchen can see it now.', note: 'Note for the kitchen',
+      kTitle: 'Kitchen display', kSub: 'Orders arrive automatically. The cook taps to move them: New → Preparing → Ready → Served.', noOrders: 'No pending orders.', ago: (m) => (m < 1 ? 'now' : `${m} min ago`),
+      tbTitle: 'Tables', tbSub: 'Status of every table and its bill. Close the bill when the guest pays.', free: 'Free', busy: 'Occupied', bill: 'View bill', closeBill: 'Charge and close table', closed: 'Bill paid. Table is free.', tip: 'Tip (10%)', method: 'Payment method',
+      sTitle: "Today's sales", sSub: 'Best-selling dishes and income for the day.', sIncome: 'Income today', sOrders: 'Orders', sAvg: 'Average ticket', top: 'Best-selling dishes',
+      cats: { ent: 'Starters', main: 'Mains', drinks: 'Drinks', dessert: 'Desserts' } },
+  },
+  seed: (a) => {
+    const M = [['Tequeños (8)','ent',6,'🧀'],['Empanadas (3)','ent',5,'🥟'],['Ensalada César','ent',7,'🥗'],['Pabellón criollo','main',12,'🍛'],['Parrilla mixta','main',18,'🥩'],['Pasta carbonara','main',11,'🍝'],
+      ['Pescado frito','main',14,'🐟'],['Hamburguesa de la casa','main',10,'🍔'],['Jugo natural','drinks',3,'🧃'],['Papelón con limón','drinks',2.5,'🍋'],['Refresco','drinks',2,'🥤'],['Café','drinks',1.5,'☕'],
+      ['Quesillo','dessert',4,'🍮'],['Torta de chocolate','dessert',5,'🍰']];
+    const menu = M.map(([name, cat, price, em], i) => ({ id: 'm' + i, name, cat, price, em }));
+    const mk = (table, items, status, minAgo) => ({ id: a.uid(), table, items: items.map(([i, q]) => ({ id: menu[i].id, name: menu[i].name, price: menu[i].price, qty: q })), status, at: new Date(Date.now() - minAgo * 60000).toISOString(), note: '' });
+    const orders = [mk(2, [[3, 2], [8, 2]], 'served', 50), mk(5, [[4, 1], [0, 1], [10, 2]], 'ready', 18), mk(7, [[5, 1], [7, 1], [9, 2]], 'prep', 9), mk(3, [[1, 2], [11, 2]], 'new', 2)];
+    return { menu, orders, cart: [], myTable: 4, paid: [{ id: a.uid(), table: 1, total: 42.5, at: new Date(Date.now() - 2 * 3600e3).toISOString(), method: 'Zelle', items: [[menu[4].name, 2], [menu[12].name, 1]] }], cat: 'main' };
+  },
+  tabs: [
+    { id: 'menu', label: 'tMenu', render: (a) => {
+        const d = a.db, u = a.ui, total = d.cart.reduce((s, x) => s + x.price * x.qty, 0);
+        return `<div class="k-note">📱 ${a.t('menuNote', d.myTable)}</div><div class="k-cols"><div>
+          ${u.chips(Object.entries(a.t('cats')), d.cat, 'cat')}
+          <div class="k-tiles">${d.menu.filter((m) => m.cat === d.cat).map((m) => `<button class="k-tile" data-act="add" data-id="${m.id}"><span class="em">${m.em}</span><span class="nm">${a.esc(m.name)}</span><span class="pr">${a.money(m.price)}</span></button>`).join('')}</div></div>
+          <div class="k-sticky" id="cart">${u.card(`${a.t('order')} · ${a.t('table')} ${d.myTable}`, (d.cart.length ? d.cart.map((x) => `<div class="k-row"><div class="k-grow"><div class="k-title">${a.esc(x.name)}</div><div class="k-meta">${a.money(x.price)}</div></div><span class="k-qty"><button data-act="dec" data-id="${x.id}">−</button><b>${x.qty}</b><button data-act="add" data-id="${x.id}">+</button></span></div>`).join('') : u.empty(a.t('emptyOrder')))
+            + `<div class="k-field" style="margin-top:10px"><label>${a.t('note')}</label><input id="note" placeholder="${a.lang === 'es' ? 'Sin cebolla, término medio…' : 'No onions, medium rare…'}"></div>
+            <div class="k-total big"><span>${a.t('total')}</span><span>${a.money(total)}</span></div><button class="k-btn p block" data-act="send" ${d.cart.length ? '' : 'disabled'}>${a.t('send')}</button>`)}</div></div>
+          ${d.cart.length ? `<button class="k-btn p k-fab" data-act="toCart">🧾 ${d.cart.reduce((n, x) => n + x.qty, 0)} · ${a.money(total)}</button>` : ''}`;
+      } },
+    { id: 'kitchen', label: 'tKitchen', badge: (a) => a.db.orders.filter((o) => o.status === 'new').length, render: (a) => {
+        const d = a.db, u = a.ui, st = OST[a.lang];
+        const pending = d.orders.filter((o) => o.status !== 'served').sort((x, y) => x.at.localeCompare(y.at));
+        return `<h1 class="k-h1">${a.t('kTitle')}</h1><p class="k-sub">${a.t('kSub')}</p>
+          <div class="k-grid3">${pending.map((o) => `<div class="k-card" style="border-top:5px solid var(--${OSC[o.status] === 'red' ? 'red' : OSC[o.status] === 'orange' ? 'orange' : 'green'})">
+            <div class="k-card-h"><h2>${a.t('table')} ${o.table}</h2>${u.pill(st[o.status], OSC[o.status])}</div><div class="k-meta" style="margin-bottom:8px">${a.t('ago', Math.round((Date.now() - new Date(o.at)) / 60000))}</div>
+            ${o.items.map((i) => `<div class="k-total" style="padding:4px 0"><span><b>${i.qty}×</b> ${a.esc(i.name)}</span></div>`).join('')}${o.note ? `<div class="k-note" style="margin:8px 0 0">📝 ${a.esc(o.note)}</div>` : ''}
+            <button class="k-btn p block" style="margin-top:12px" data-act="advance" data-id="${o.id}">→ ${st[NEXT[o.status]]}</button></div>`).join('')}</div>${pending.length ? '' : u.card('', u.empty(a.t('noOrders')))}`;
+      } },
+    { id: 'tables', label: 'tTables', render: (a) => {
+        const d = a.db, u = a.ui;
+        const tables = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => { const os = d.orders.filter((o) => o.table === n); return { n, os, total: os.reduce((s, o) => s + o.items.reduce((t, i) => t + i.price * i.qty, 0), 0) }; });
+        return `<h1 class="k-h1">${a.t('tbTitle')}</h1><p class="k-sub">${a.t('tbSub')}</p><div class="k-tiles">${tables.map((t) => `<button class="k-tile" data-act="bill" data-v="${t.n}" ${t.os.length ? '' : 'disabled'} style="${t.os.length ? 'border-color:var(--primary)' : 'opacity:.75'}">
+          <span class="em">🪑</span><span class="nm">${a.t('table')} ${t.n}</span>${t.os.length ? `${u.pill(a.t('busy'), 'orange')}<span class="pr">${a.money(t.total)}</span>` : u.pill(a.t('free'), 'green')}</button>`).join('')}</div>`;
+      } },
+    { id: 'sales', label: 'tSales', render: (a) => {
+        const d = a.db, u = a.ui; const inc = d.paid.reduce((s, p) => s + p.total, 0);
+        const q = {}; d.paid.forEach((p) => p.items.forEach(([n, k]) => (q[n] = (q[n] || 0) + k))); d.orders.forEach((o) => o.items.forEach((i) => (q[i.name] = (q[i.name] || 0) + i.qty)));
+        const top = Object.entries(q).sort((x, y) => y[1] - x[1]).slice(0, 6), max = top[0] ? top[0][1] : 1;
+        return `<h1 class="k-h1">${a.t('sTitle')}</h1><p class="k-sub">${a.t('sSub')}</p>${u.stats([{ label: a.t('sIncome'), value: a.money(inc), color: 'var(--green)' }, { label: a.t('sOrders'), value: d.paid.length + d.orders.length }, { label: a.t('sAvg'), value: a.money(d.paid.length ? inc / d.paid.length : 0) }])}
+          ${u.card(a.t('top'), top.map(([n, k]) => `<div style="margin:10px 0"><div class="k-total" style="padding:0 0 4px"><span>${a.esc(n)}</span><b>${k}</b></div><div class="k-bar"><i style="width:${(k / max) * 100}%;background:#E04F8A"></i></div></div>`).join(''))}`;
+      } },
+  ],
+  actions: {
+    cat: (a, d) => { a.db.cat = d.v; a.rerender(); },
+    toCart: () => document.getElementById('cart').scrollIntoView({ behavior: 'smooth' }),
+    add: (a, d) => { const m = a.db.menu.find((x) => x.id === d.id); const c = a.db.cart.find((x) => x.id === d.id); if (c) c.qty++; else a.db.cart.push({ id: m.id, name: m.name, price: m.price, qty: 1 }); a.save(); a.rerender(); },
+    dec: (a, d) => { const c = a.db.cart.find((x) => x.id === d.id); c.qty--; if (!c.qty) a.db.cart = a.db.cart.filter((x) => x !== c); a.save(); a.rerender(); },
+    send: (a) => { a.db.orders.push({ id: a.uid(), table: a.db.myTable, items: a.db.cart, status: 'new', at: new Date().toISOString(), note: (document.getElementById('note').value || '').trim() }); a.db.cart = []; a.save(); a.toast(a.t('sent')); a.go('kitchen'); },
+    advance: (a, d) => { const o = a.db.orders.find((x) => x.id === d.id); o.status = NEXT[o.status]; a.save(); a.rerender(); },
+    bill: (a, d) => {
+      const n = +d.v, os = a.db.orders.filter((o) => o.table === n); const items = {}; os.forEach((o) => o.items.forEach((i) => { items[i.name] = items[i.name] || { ...i, qty: 0 }; items[i.name].qty += i.qty; }));
+      const sub = Object.values(items).reduce((s, i) => s + i.price * i.qty, 0), tip = sub * 0.1;
+      a.modal({ title: `${a.t('table')} ${n}`, submit: a.t('closeBill'), html: Object.values(items).map((i) => `<div class="k-total"><span>${i.qty}× ${a.esc(i.name)}</span><b>${a.money(i.price * i.qty)}</b></div>`).join('') + `<div class="k-total"><span>${a.t('tip')}</span><b>${a.money(tip)}</b></div><div class="k-total big"><span>${a.t('total')}</span><span>${a.money(sub + tip)}</span></div>`,
+        fields: [{ name: 'method', label: a.t('method'), type: 'select', options: ['Efectivo $', 'Pago Móvil', 'Zelle', 'Tarjeta'].map((m) => [m, m]) }],
+        onSubmit: (v) => { a.db.paid.push({ id: a.uid(), table: n, total: +(sub + tip).toFixed(2), at: new Date().toISOString(), method: v.method, items: Object.values(items).map((i) => [i.name, i.qty]) }); a.db.orders = a.db.orders.filter((o) => o.table !== n); a.save(); a.toast(a.t('closed')); a.rerender(); } });
+    },
+  },
+});
+</script>
+</body></html>

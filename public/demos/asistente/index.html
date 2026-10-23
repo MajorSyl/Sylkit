@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Asistente de WhatsApp · Sylkit</title><meta name="description" content="Prueba en vivo el asistente de WhatsApp de Sylkit: responde a tus clientes las 24 horas con la información de tu negocio.">
+<link rel="stylesheet" href="/_kit/kit.css">
+<style>
+.wa-phone{max-width:420px;margin:0 auto;border-radius:24px;overflow:hidden;border:1px solid var(--border);box-shadow:0 16px 40px rgba(15,40,90,.12)}
+.wa-top{background:#075E54;color:#fff;padding:12px 14px;display:flex;gap:10px;align-items:center}.wa-top .av{width:38px;height:38px;border-radius:50%;background:#25D366;display:grid;place-items:center;font-size:18px}
+.wa-body{background:#ECE5DD;height:420px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:6px}
+.wa-msg{max-width:82%;padding:8px 10px;border-radius:10px;font-size:14px;line-height:1.4;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.wa-msg.in{background:#fff;align-self:flex-start;border-top-left-radius:2px}.wa-msg.out{background:#DCF8C6;align-self:flex-end;border-top-right-radius:2px}
+.wa-msg small{display:block;text-align:right;font-size:10px;color:#667781;margin-top:2px}
+.wa-input{display:flex;gap:8px;padding:8px;background:#F0F0F0}.wa-input input{flex:1;border:0;border-radius:20px;padding:10px 14px;font-size:15px;outline:none}
+.wa-input button{width:44px;height:44px;border-radius:50%;border:0;background:#25D366;color:#fff;font-size:18px;cursor:pointer}
+.wa-sugg{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.typing{font-style:italic;color:#667781}
+</style></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+SylDemo.create({
+  id: 'asistente', version: 1, product: 'asistente-ia-para-negocios', logo: '🤖', color: '#25D366',
+  name: { es: 'Asistente de WhatsApp', en: 'WhatsApp Assistant' }, brand: { es: 'Sylkit Asistente', en: 'Sylkit Assistant' },
+  sub: { es: 'Atiende a tus clientes 24/7', en: 'Answers your customers 24/7' },
+  t: {
+    es: { tChat: 'Chat (cliente)', tTrain: 'Entrenamiento', tInbox: 'Conversaciones',
+      note: 'Escribe como si fueras un cliente de la Pizzería Demo. El asistente responde con la información del negocio. (Esta demo es una simulación: la versión real usa inteligencia artificial entrenada con los datos de tu negocio.)',
+      online: 'en línea', ph: 'Escribe un mensaje…', typing: 'escribiendo…', handoff: 'Te comunico con una persona del equipo. Te responderán en unos minutos. 🙌', fallback: 'Buena pregunta. Para eso te comunico con una persona del equipo, ¿te parece? Mientras tanto puedo ayudarte con horarios, menú, precios, delivery y pagos.',
+      greeting: '¡Hola! 👋 Soy el asistente de Pizzería Demo. Puedo ayudarte con el menú, precios, horarios, delivery y formas de pago. ¿Qué necesitas?',
+      sugg: ['¿Cuál es el horario?', '¿Tienen delivery?', 'Ver el menú', '¿Cómo puedo pagar?', 'Quiero hablar con una persona'],
+      trTitle: 'Entrena a tu asistente', trSub: 'Escribe las preguntas frecuentes y sus respuestas. El asistente las usa para atender a tus clientes, incluso si preguntan con otras palabras.', q: 'Palabras clave (separadas por coma)', ans: 'Respuesta', addFaq: 'Agregar respuesta', faqSaved: 'Respuesta guardada. Pruébala en el chat.',
+      inTitle: 'Conversaciones', inSub: 'Todo lo que preguntan tus clientes. Las que necesitan a una persona quedan marcadas.', sTotal: 'Mensajes respondidos', sAuto: 'Resueltos solos', sHuman: 'Pasados a una persona', needsHuman: 'Requiere persona', auto: 'Resuelto' },
+    en: { tChat: 'Chat (customer)', tTrain: 'Training', tInbox: 'Conversations',
+      note: 'Type as if you were a customer of Demo Pizzeria. The assistant answers with the business information. (This demo is a simulation: the real version uses AI trained on your business data.)',
+      online: 'online', ph: 'Type a message…', typing: 'typing…', handoff: 'I\'m connecting you with a team member. They\'ll reply in a few minutes. 🙌', fallback: 'Good question. Let me connect you with a team member for that. Meanwhile I can help with hours, menu, prices, delivery and payments.',
+      greeting: 'Hi! 👋 I\'m Demo Pizzeria\'s assistant. I can help with the menu, prices, hours, delivery and payment methods. What do you need?',
+      sugg: ['What are your hours?', 'Do you deliver?', 'Show me the menu', 'How can I pay?', 'I want to talk to a person'],
+      trTitle: 'Train your assistant', trSub: 'Write frequent questions and their answers. The assistant uses them to serve your customers, even when they ask in different words.', q: 'Keywords (comma-separated)', ans: 'Answer', addFaq: 'Add answer', faqSaved: 'Answer saved. Try it in the chat.',
+      inTitle: 'Conversations', inSub: 'Everything your customers ask. The ones that need a person are flagged.', sTotal: 'Messages answered', sAuto: 'Resolved automatically', sHuman: 'Handed to a person', needsHuman: 'Needs a person', auto: 'Resolved' },
+  },
+  seed: () => ({
+    faqs: [
+      { k: 'horario,hora,abren,cierran,abierto,hours,open,close', es: '🕐 Abrimos todos los días de 11:00 am a 11:00 pm. Los viernes y sábados hasta la medianoche.', en: '🕐 We\'re open every day from 11am to 11pm. Fridays and Saturdays until midnight.' },
+      { k: 'delivery,envio,envío,domicilio,llevan,deliver,shipping', es: '🛵 ¡Sí! Hacemos delivery en toda la ciudad. Cuesta $2 y llega en 30–45 minutos. Pedidos de más de $25 tienen delivery gratis.', en: '🛵 Yes! We deliver across the city. It costs $2 and arrives in 30–45 minutes. Orders over $25 get free delivery.' },
+      { k: 'menu,menú,carta,pizzas,precio,precios,cuesta,price,prices,show', es: '🍕 Menú:\n• Margarita — $8\n• Pepperoni — $10\n• Cuatro quesos — $11\n• Vegetariana — $9\n• Refresco 1.5L — $2\n¿Quieres hacer un pedido?', en: '🍕 Menu:\n• Margherita — $8\n• Pepperoni — $10\n• Four cheese — $11\n• Veggie — $9\n• Soda 1.5L — $2\nWould you like to order?' },
+      { k: 'pagar,pago,pagos,zelle,pago movil,pago móvil,efectivo,tarjeta,pay,payment', es: '💳 Aceptamos efectivo en dólares, Pago Móvil, Zelle y tarjeta. Te enviamos los datos al confirmar tu pedido.', en: '💳 We accept cash (USD), Pago Móvil, Zelle and card. We send the details when you confirm your order.' },
+      { k: 'pedido,pedir,ordenar,quiero una,order', es: '📝 ¡Perfecto! Dime qué pizzas quieres, tu dirección y tu nombre, y te confirmo el total y el tiempo de entrega.', en: '📝 Great! Tell me which pizzas you want, your address and your name, and I\'ll confirm the total and delivery time.' },
+      { k: 'ubicacion,ubicación,direccion,dirección,donde,dónde,where,address,location', es: '📍 Estamos en Av. Principal de Las Mercedes, frente a la plaza. Hay estacionamiento.', en: '📍 We\'re on Main Avenue in Las Mercedes, across from the square. Parking available.' },
+    ],
+    chat: [], log: [{ q: '¿Tienen delivery a Chacao?', human: false, at: new Date(Date.now() - 3600e3).toISOString() }, { q: '¿Hacen pizzas para eventos de 100 personas?', human: true, at: new Date(Date.now() - 2 * 3600e3).toISOString() }, { q: 'Horario del domingo', human: false, at: new Date(Date.now() - 5 * 3600e3).toISOString() }],
+  }),
+  tabs: [
+    { id: 'chat', label: 'tChat', render: (a) => {
+        const d = a.db, msgs = d.chat.length ? d.chat : [{ me: false, text: a.t('greeting'), at: new Date().toISOString() }];
+        return `<div class="k-note">💡 ${a.t('note')}</div><div class="wa-phone"><div class="wa-top"><div class="av">🍕</div><div><b>Pizzería Demo</b><div style="font-size:12px;opacity:.85" id="waStatus">${a.t('online')}</div></div></div>
+          <div class="wa-body" id="waBody">${msgs.map((m) => `<div class="wa-msg ${m.me ? 'out' : 'in'}">${a.esc(m.text)}<small>${a.time(m.at)}</small></div>`).join('')}</div>
+          <form class="wa-input" id="waForm"><input id="waIn" placeholder="${a.t('ph')}" autocomplete="off"><button type="submit" aria-label="Send">➤</button></form></div>
+          <div class="wa-sugg">${a.t('sugg').map((s) => `<button class="k-chip" data-act="ask" data-v="${a.esc(s)}">${a.esc(s)}</button>`).join('')}</div>`;
+      }, after: (a) => {
+        const b = document.getElementById('waBody'); if (b) b.scrollTop = b.scrollHeight;
+        const f = document.getElementById('waForm'); if (f) f.onsubmit = (e) => { e.preventDefault(); const v = document.getElementById('waIn').value.trim(); if (v) ask(a, v); };
+      } },
+    { id: 'train', label: 'tTrain', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('trTitle')}</h1><p class="k-sub">${a.t('trSub')}</p>${d.faqs.map((f, i) => u.card('', `<div class="k-meta" style="margin-bottom:6px">🔑 ${a.esc(f.k)}</div><div style="white-space:pre-wrap">${a.esc(f[a.lang] || f.es)}</div>`, u.btn(a.t('del'), 'delFaq', { i }, 'g sm'))).join('')}
+          ${u.card(a.t('addFaq'), `<div class="k-field"><label>${a.t('q')}</label><input id="fk" placeholder="estacionamiento, parking"></div><div class="k-field"><label>${a.t('ans')}</label><textarea id="fa" placeholder="${a.lang === 'es' ? 'Sí, tenemos estacionamiento gratis para clientes.' : 'Yes, we have free parking for customers.'}"></textarea></div><button class="k-btn p" data-act="addFaq">${a.t('addFaq')}</button>`)}`;
+      } },
+    { id: 'inbox', label: 'tInbox', badge: (a) => a.db.log.filter((l) => l.human).length, render: (a) => {
+        const d = a.db, u = a.ui, h = d.log.filter((l) => l.human).length;
+        return `<h1 class="k-h1">${a.t('inTitle')}</h1><p class="k-sub">${a.t('inSub')}</p>${u.stats([{ label: a.t('sTotal'), value: d.log.length }, { label: a.t('sAuto'), value: d.log.length - h, color: 'var(--green)' }, { label: a.t('sHuman'), value: h, color: 'var(--orange)' }])}
+          ${u.card('', d.log.slice().reverse().map((l) => u.row({ icon: '💬', title: l.q, meta: `${a.date(l.at)} ${a.time(l.at)}`, right: u.pill(l.human ? a.t('needsHuman') : a.t('auto'), l.human ? 'orange' : 'green') })).join(''))}`;
+      } },
+  ],
+  actions: {
+    ask: (a, d) => ask(a, d.v),
+    addFaq: (a) => { const k = document.getElementById('fk').value.trim(), v = document.getElementById('fa').value.trim(); if (!k || !v) return a.toast(a.t('required')); a.db.faqs.push({ k: k.toLowerCase(), es: v, en: v }); a.save(); a.toast(a.t('faqSaved')); a.rerender(); },
+    delFaq: (a, d) => { a.db.faqs.splice(+d.i, 1); a.save(); a.rerender(); },
+  },
+});
+function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function ask(a, text) {
+  const d = a.db; if (!d.chat.length) d.chat.push({ me: false, text: a.t('greeting'), at: new Date().toISOString() });
+  d.chat.push({ me: true, text, at: new Date().toISOString() }); a.save(); a.rerender();
+  const st = document.getElementById('waStatus'); if (st) { st.textContent = a.t('typing'); st.className = 'typing'; }
+  const q = norm(text), human = /persona|humano|agente|asesor|person|human|agent/.test(q);
+  let best = null, score = 0;
+  if (!human) d.faqs.forEach((f) => { const s = f.k.split(',').map((x) => norm(x.trim())).filter(Boolean).reduce((n, kw) => n + (q.includes(kw) ? kw.length : 0), 0); if (s > score) { score = s; best = f; } });
+  const reply = human ? a.t('handoff') : best ? (best[a.lang] || best.es) : a.t('fallback');
+  d.log.push({ q: text, human: human || !best, at: new Date().toISOString() });
+  setTimeout(() => { d.chat.push({ me: false, text: reply, at: new Date().toISOString() }); a.save(); if (a.tab === 'chat') a.rerender(); }, 700 + Math.min(1200, reply.length * 8));
+}
+</script>
+</body></html>

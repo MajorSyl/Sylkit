@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Servicios a domicilio · Sylkit</title><meta name="description" content="Prueba en vivo el sistema de Sylkit para empresas de servicios a domicilio: reservas en línea, asignación de técnicos, seguimiento y cobros.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const JS = { es: { new: 'Nuevo', assigned: 'Asignado', onway: 'En camino', working: 'Trabajando', done: 'Completado' }, en: { new: 'New', assigned: 'Assigned', onway: 'On the way', working: 'Working', done: 'Completed' } };
+const JC = { new: 'red', assigned: 'blue', onway: 'orange', working: 'purple', done: 'green' };
+const JN = { assigned: 'onway', onway: 'working', working: 'done' };
+SylDemo.create({
+  id: 'servicios', version: 1, product: 'servicios-a-domicilio', logo: '🏠', color: '#0E9384',
+  name: { es: 'Servicios a domicilio', en: 'Home Services' }, brand: { es: 'Sylkit Servicios', en: 'Sylkit Services' },
+  sub: { es: 'HogarPro Demo · limpieza, plomería, electricidad', en: 'Demo HomePro · cleaning, plumbing, electrical' },
+  t: {
+    es: { tBook: 'Reservar (cliente)', tJobs: 'Trabajos', tTeam: 'Técnicos', tMoney: 'Ingresos',
+      bTitle: '¿Qué necesitas en casa?', bSub: 'Así reservan tus clientes: eligen el servicio, ven el precio y escogen la hora. Tú recibes el trabajo al instante.',
+      zone: 'Zona', date: 'Fecha', time: 'Hora', address: 'Dirección', name: 'Tu nombre', phone: 'WhatsApp', estimate: 'Precio estimado', book: 'Reservar servicio', from: 'desde', hours: 'h aprox.',
+      booked: 'Servicio reservado. Te avisaremos por WhatsApp cuando el técnico vaya en camino.', pickSvc: 'Elige un servicio.',
+      jTitle: 'Trabajos', jSub: 'Asigna cada trabajo a un técnico disponible y sigue su estado en tiempo real.', assign: 'Asignar técnico', assignTo: 'Técnico', next: 'Avanzar', assigned: 'Técnico asignado. Se notificó al cliente.', completed: 'Trabajo completado y cobrado.', method: 'Método de pago', rate: 'Calificación del cliente',
+      tmTitle: 'Técnicos', tmSub: 'Disponibilidad, especialidad y calificación de cada técnico.', available: 'Disponible', busy: 'Ocupado', jobsDone: (n) => `${n} trabajos`,
+      mTitle: 'Ingresos', mSub: 'Lo cobrado por servicio y la parte de cada técnico.', sTotal: 'Total cobrado', sJobs: 'Trabajos completados', sAvg: 'Calificación promedio', share: 'Pago al técnico (60%)', zones: ['Chacao', 'Altamira', 'Los Palos Grandes', 'El Cafetal', 'La Candelaria'] },
+    en: { tBook: 'Book (client)', tJobs: 'Jobs', tTeam: 'Technicians', tMoney: 'Income',
+      bTitle: 'What do you need at home?', bSub: 'This is how customers book: pick a service, see the price and choose a time. You get the job instantly.',
+      zone: 'Area', date: 'Date', time: 'Time', address: 'Address', name: 'Your name', phone: 'WhatsApp', estimate: 'Estimated price', book: 'Book service', from: 'from', hours: 'h approx.',
+      booked: 'Service booked. We\'ll WhatsApp you when the technician is on the way.', pickSvc: 'Choose a service.',
+      jTitle: 'Jobs', jSub: 'Assign each job to an available technician and track it in real time.', assign: 'Assign technician', assignTo: 'Technician', next: 'Advance', assigned: 'Technician assigned. Customer notified.', completed: 'Job completed and charged.', method: 'Payment method', rate: 'Customer rating',
+      tmTitle: 'Technicians', tmSub: 'Availability, specialty and rating of each technician.', available: 'Available', busy: 'Busy', jobsDone: (n) => `${n} jobs`,
+      mTitle: 'Income', mSub: 'Collected per service and each technician\'s share.', sTotal: 'Total collected', sJobs: 'Completed jobs', sAvg: 'Average rating', share: 'Technician pay (60%)', zones: ['Chacao', 'Altamira', 'Los Palos Grandes', 'El Cafetal', 'La Candelaria'] },
+  },
+  seed: (a) => {
+    const svcs = [['Limpieza general', 'Deep cleaning', 35, 4, '🧹', 'clean'], ['Limpieza de oficina', 'Office cleaning', 50, 5, '🏢', 'clean'], ['Destapar tubería', 'Unclog drain', 25, 1, '🚿', 'plumb'], ['Reparar fuga', 'Fix a leak', 30, 2, '💧', 'plumb'],
+      ['Instalar lámparas', 'Install lights', 20, 1, '💡', 'elec'], ['Revisión eléctrica', 'Electrical check', 40, 2, '⚡', 'elec'], ['Mantenimiento A/C', 'A/C service', 45, 2, '❄️', 'ac'], ['Pintura de habitación', 'Paint a room', 90, 8, '🖌️', 'paint']]
+      .map(([es, en, price, h, em, skill], i) => ({ id: 's' + i, es, en, price, h, em, skill }));
+    const team = [['Ramón Díaz', 'plumb', 4.9, 132], ['Yusmary León', 'clean', 4.8, 210], ['Kevin Rojas', 'elec', 4.7, 88], ['Gabriel Pino', 'ac', 4.9, 64], ['Rosa Linares', 'clean', 4.6, 150]].map(([name, skill, rating, jobs], i) => ({ id: 't' + i, name, skill, rating, jobs }));
+    const J = [['s0', 'María López', 'Chacao', 'working', 't1', 0, '09:00'], ['s2', 'Antonio Ruiz', 'Altamira', 'onway', 't0', 0, '10:30'], ['s6', 'Elena Paredes', 'El Cafetal', 'assigned', 't3', 0, '14:00'], ['s4', 'Juan Bello', 'Los Palos Grandes', 'new', null, 0, '16:00'], ['s5', 'Sonia Vargas', 'La Candelaria', 'new', null, 1, '09:00']];
+    const jobs = J.map(([s, c, zone, status, tech, day, time]) => ({ id: a.uid(), s, client: c, zone, status, tech, date: a.addDays(day), time, address: 'Calle Demo #' + Math.floor(Math.random() * 90 + 10) }));
+    const done = [{ s: 's0', tech: 't1', amount: 35, rating: 5, at: a.addDays(-1) }, { s: 's3', tech: 't0', amount: 30, rating: 5, at: a.addDays(-1) }, { s: 's5', tech: 't2', amount: 40, rating: 4, at: a.addDays(-2) }];
+    return { svcs, team, jobs, done, bk: { s: 's0' } };
+  },
+  tabs: [
+    { id: 'book', label: 'tBook', render: (a) => {
+        const d = a.db, u = a.ui, s = d.svcs.find((x) => x.id === d.bk.s);
+        return `<h1 class="k-h1">${a.t('bTitle')}</h1><p class="k-sub">${a.t('bSub')}</p><div class="k-cols"><div>
+          <div class="k-tiles">${d.svcs.map((x) => `<button class="k-tile" data-act="pick" data-v="${x.id}" style="${x.id === d.bk.s ? 'border-color:var(--primary);background:var(--soft)' : ''}"><span class="em">${x.em}</span><span class="nm">${a.esc(x[a.lang])}</span><span class="pr">${a.t('from')} ${a.money(x.price)}</span></button>`).join('')}</div></div>
+          <div class="k-sticky">${u.card(s ? s[a.lang] : '', `<div class="k-total big" style="margin-top:0"><span>${a.t('estimate')}</span><span>${a.money(s.price)}</span></div><p class="k-meta" style="margin-bottom:12px">≈ ${s.h} ${a.t('hours')}</p>
+            <div class="k-field"><label>${a.t('zone')}</label><select id="bZone">${a.t('zones').map((z) => `<option>${z}</option>`).join('')}</select></div>
+            <div class="k-grid2"><div class="k-field"><label>${a.t('date')}</label><input id="bDate" type="date" value="${a.addDays(1)}" min="${a.addDays(0)}"></div><div class="k-field"><label>${a.t('time')}</label><select id="bTime">${['08:00', '09:00', '10:30', '12:00', '14:00', '16:00'].map((h) => `<option>${h}</option>`).join('')}</select></div></div>
+            <div class="k-field"><label>${a.t('address')}</label><input id="bAddr" value="Av. Principal, Edif. Demo"></div>
+            <div class="k-grid2"><div class="k-field"><label>${a.t('name')}</label><input id="bName" value="Visitante Demo"></div><div class="k-field"><label>${a.t('phone')}</label><input id="bPhone" value="+58 412 0000000"></div></div>
+            <button class="k-btn p block" data-act="book">${a.t('book')}</button>`)}</div></div>`;
+      } },
+    { id: 'jobs', label: 'tJobs', badge: (a) => a.db.jobs.filter((j) => j.status === 'new').length, render: (a) => {
+        const d = a.db, u = a.ui, L = JS[a.lang];
+        return `<h1 class="k-h1">${a.t('jTitle')}</h1><p class="k-sub">${a.t('jSub')}</p>${u.card('', d.jobs.filter((j) => j.status !== 'done').sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time)).map((j) => { const s = d.svcs.find((x) => x.id === j.s), t = d.team.find((x) => x.id === j.tech);
+          return u.row({ icon: s.em, title: `${s[a.lang]} · ${j.client}`, meta: `${a.date(j.date, { weekday: 'short', day: 'numeric' })} ${j.time} · ${j.zone} · ${j.address}${t ? ' · 👷 ' + t.name : ''}`,
+            right: u.pill(L[j.status], JC[j.status]) + (j.status === 'new' ? u.btn(a.t('assign'), 'assign', { id: j.id }, 'p sm') : u.btn('→ ' + L[JN[j.status]], 'adv', { id: j.id }, 's sm')) }); }).join('') || u.empty())}`;
+      } },
+    { id: 'team', label: 'tTeam', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('tmTitle')}</h1><p class="k-sub">${a.t('tmSub')}</p>${u.card('', d.team.map((t) => { const busy = d.jobs.some((j) => j.tech === t.id && ['onway', 'working'].includes(j.status));
+          return u.row({ avatar: u.initials(t.name), color: u.avatarColor(t.name), title: t.name, meta: `${d.svcs.find((s) => s.skill === t.skill)[a.lang].split(' ')[0]} · ⭐ ${t.rating} · ${a.t('jobsDone', t.jobs)}`, right: u.pill(busy ? a.t('busy') : a.t('available'), busy ? 'orange' : 'green') }); }).join(''))}`;
+      } },
+    { id: 'money', label: 'tMoney', render: (a) => {
+        const d = a.db, u = a.ui, tot = d.done.reduce((s, x) => s + x.amount, 0);
+        return `<h1 class="k-h1">${a.t('mTitle')}</h1><p class="k-sub">${a.t('mSub')}</p>${u.stats([{ label: a.t('sTotal'), value: a.money(tot), color: 'var(--green)' }, { label: a.t('sJobs'), value: d.done.length }, { label: a.t('sAvg'), value: '⭐ ' + (d.done.reduce((s, x) => s + x.rating, 0) / Math.max(1, d.done.length)).toFixed(1) }])}
+          ${u.card('', d.done.slice().reverse().map((x) => { const s = d.svcs.find((y) => y.id === x.s), t = d.team.find((y) => y.id === x.tech); return u.row({ icon: s.em, title: `${s[a.lang]} · ${a.money(x.amount)}`, meta: `${a.date(x.at)} · ${t.name} · ${a.t('share')}: ${a.money(x.amount * 0.6)}`, right: u.pill('⭐ ' + x.rating, 'yellow') }); }).join(''))}`;
+      } },
+  ],
+  actions: {
+    pick: (a, d) => { a.db.bk.s = d.v; a.rerender(); },
+    book: (a) => {
+      const g = (id) => (document.getElementById(id).value || '').trim();
+      a.db.jobs.push({ id: a.uid(), s: a.db.bk.s, client: g('bName') || 'Visitante Demo', zone: g('bZone'), status: 'new', tech: null, date: g('bDate') || a.addDays(1), time: g('bTime'), address: g('bAddr') });
+      a.save(); a.toast(a.t('booked')); a.go('jobs');
+    },
+    assign: (a, d) => {
+      const j = a.db.jobs.find((x) => x.id === d.id), s = a.db.svcs.find((x) => x.id === j.s);
+      const opts = a.db.team.slice().sort((x, y) => (y.skill === s.skill) - (x.skill === s.skill)).map((t) => [t.id, `${t.name} · ⭐ ${t.rating}${t.skill === s.skill ? ' ✓' : ''}`]);
+      a.modal({ title: a.t('assign'), submit: a.t('assign'), fields: [{ name: 'tech', label: a.t('assignTo'), type: 'select', options: opts }], onSubmit: (v) => { j.tech = v.tech; j.status = 'assigned'; a.save(); a.toast(a.t('assigned')); a.rerender(); } });
+    },
+    adv: (a, d) => {
+      const j = a.db.jobs.find((x) => x.id === d.id);
+      if (JN[j.status] !== 'done') { j.status = JN[j.status]; a.save(); return a.rerender(); }
+      const s = a.db.svcs.find((x) => x.id === j.s);
+      a.modal({ title: `${s[a.lang]} · ${a.money(s.price)}`, submit: a.t('next'), fields: [{ name: 'amount', label: a.t('total') + ' (USD)', type: 'number', value: s.price, required: true }, { name: 'method', label: a.t('method'), type: 'select', options: ['Efectivo $', 'Pago Móvil', 'Zelle'].map((m) => [m, m]) }, { name: 'rating', label: a.t('rate'), type: 'select', value: '5', options: [5, 4, 3, 2, 1].map((n) => [n, '⭐'.repeat(n)]) }],
+        onSubmit: (v) => { j.status = 'done'; a.db.done.push({ s: j.s, tech: j.tech, amount: v.amount || s.price, rating: +v.rating, at: a.addDays(0) }); const t = a.db.team.find((x) => x.id === j.tech); if (t) t.jobs++; a.save(); a.toast(a.t('completed')); a.rerender(); } });
+    },
+  },
+});
+</script>
+</body></html>

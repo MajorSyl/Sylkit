@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="google" content="notranslate">
+<title>Demo · Facturación · Sylkit</title><meta name="description" content="Prueba en vivo el sistema de facturación de Sylkit: facturas profesionales en segundos, cobros pendientes, recordatorios y PDF.">
+<link rel="stylesheet" href="/_kit/kit.css"></head><body>
+<script src="/_kit/kit.js"></script>
+<script>
+const FS = { es: { paid: 'Pagada', pending: 'Pendiente', overdue: 'Vencida', draft: 'Borrador' }, en: { paid: 'Paid', pending: 'Pending', overdue: 'Overdue', draft: 'Draft' } };
+const FC = { paid: 'green', pending: 'orange', overdue: 'red', draft: 'gray' };
+SylDemo.create({
+  id: 'facturas', version: 1, product: 'facturacion', logo: '🧾', color: '#1D6BFF',
+  name: { es: 'Facturación', en: 'Invoicing' }, brand: { es: 'Sylkit Facturas', en: 'Sylkit Invoices' },
+  sub: { es: 'Servicios Demo C.A.', en: 'Demo Services Ltd.' },
+  t: {
+    es: { tList: 'Facturas', tNew: 'Nueva factura', tClients: 'Clientes', tReport: 'Cobranza',
+      lTitle: 'Facturas', lSub: 'Todas tus facturas y su estado. El sistema marca como vencidas las que pasan la fecha de pago.', sBilled: 'Facturado', sPaid: 'Cobrado', sOut: 'Por cobrar', sOverdue: 'Vencido',
+      view: 'Ver', markPaid: 'Marcar pagada', remind: 'Recordar', reminded: (n) => `Recordatorio de pago enviado a ${n} por WhatsApp y correo.`, paidOk: 'Factura marcada como pagada.', due: 'Vence', issued: 'Emitida',
+      nTitle: 'Nueva factura', nSub: 'Completa los datos y mira la factura a la derecha en tiempo real.', client: 'Cliente', dueDays: 'Plazo de pago', days: (n) => `${n} días`, item: 'Concepto', qty: 'Cant.', price: 'Precio',
+      addItem: '+ Agregar línea', tax: 'Impuesto (IVA %)', notes: 'Notas', create: 'Emitir factura', created: (n) => `Factura ${n} emitida.`, subtotal: 'Subtotal', preview: 'Vista previa', needItem: 'Agrega al menos un concepto con precio.',
+      invoice: 'FACTURA', billTo: 'Facturar a', print: 'Descargar PDF / Imprimir', send: 'Enviar por WhatsApp', sent: 'Factura enviada al cliente.',
+      cTitle: 'Clientes', cSub: 'Cada cliente con lo facturado y lo que debe.', owes: 'Debe', billed: 'Facturado', newClient: 'Nuevo cliente', cName: 'Empresa o nombre', cEmail: 'Correo', cRif: 'RIF / ID fiscal', cSaved: 'Cliente agregado.',
+      rTitle: 'Cobranza', rSub: 'Cuánto te deben y desde hace cuánto (antigüedad de saldos).', current: 'Al día', d30: '1–30 días vencido', d60: '31–60 días', d90: 'Más de 60 días' },
+    en: { tList: 'Invoices', tNew: 'New invoice', tClients: 'Clients', tReport: 'Collections',
+      lTitle: 'Invoices', lSub: 'All your invoices and their status. Invoices past their due date are flagged automatically.', sBilled: 'Billed', sPaid: 'Collected', sOut: 'Outstanding', sOverdue: 'Overdue',
+      view: 'View', markPaid: 'Mark paid', remind: 'Remind', reminded: (n) => `Payment reminder sent to ${n} via WhatsApp and email.`, paidOk: 'Invoice marked as paid.', due: 'Due', issued: 'Issued',
+      nTitle: 'New invoice', nSub: 'Fill in the details and watch the invoice update on the right in real time.', client: 'Client', dueDays: 'Payment terms', days: (n) => `${n} days`, item: 'Description', qty: 'Qty', price: 'Price',
+      addItem: '+ Add line', tax: 'Tax (%)', notes: 'Notes', create: 'Issue invoice', created: (n) => `Invoice ${n} issued.`, subtotal: 'Subtotal', preview: 'Preview', needItem: 'Add at least one line with a price.',
+      invoice: 'INVOICE', billTo: 'Bill to', print: 'Download PDF / Print', send: 'Send via WhatsApp', sent: 'Invoice sent to the client.',
+      cTitle: 'Clients', cSub: 'Each client with what you billed and what they owe.', owes: 'Owes', billed: 'Billed', newClient: 'New client', cName: 'Company or name', cEmail: 'Email', cRif: 'Tax ID', cSaved: 'Client added.',
+      rTitle: 'Collections', rSub: 'How much you\'re owed and for how long (aging report).', current: 'Current', d30: '1–30 days overdue', d60: '31–60 days', d90: 'Over 60 days' },
+  },
+  seed: (a) => {
+    const clients = [['Inversiones Delta C.A.', 'J-40123456-7', 'pagos@delta.demo'], ['Farmacia La Salud', 'J-30987654-1', 'admin@lasalud.demo'], ['Constructora Ávila', 'J-41234567-0', 'cxp@avila.demo'], ['Panadería El Trigal', 'J-29876543-2', 'trigal@demo.com'], ['Dr. Ricardo León', 'V-12345678', 'rleon@demo.com']]
+      .map(([name, rif, email], i) => ({ id: 'c' + i, name, rif, email }));
+    const I = [['c0', -50, 30, 'paid', [['Desarrollo de sitio web', 1, 450]]], ['c1', -40, 15, 'overdue', [['Sistema de inventario (licencia anual)', 1, 320], ['Instalación', 1, 60]]], ['c2', -20, 15, 'pending', [['Mantenimiento mensual', 1, 120]]],
+      ['c3', -70, 30, 'overdue', [['Diseño de menú y flyers', 3, 25]]], ['c4', -10, 15, 'pending', [['Página profesional + dominio', 1, 280]]], ['c0', -5, 30, 'pending', [['Soporte técnico (horas)', 6, 20]]], ['c2', -90, 30, 'paid', [['Implementación POS', 1, 600]]]];
+    const invoices = I.map(([c, off, terms, status, lines], i) => ({ id: a.uid(), num: 'F-' + String(1201 + i).padStart(5, '0'), c, date: a.addDays(off), due: a.addDays(off + terms), status, lines: lines.map(([d, q, p]) => ({ d, q, p })), tax: 16, notes: '' }));
+    return { clients, invoices, draft: { c: 'c0', terms: 15, tax: 16, lines: [{ d: '', q: 1, p: '' }], notes: '' } };
+  },
+  tabs: [
+    { id: 'list', label: 'tList', badge: (a) => a.db.invoices.filter((i) => st(a, i) === 'overdue').length, render: (a) => {
+        const d = a.db, u = a.ui, L = FS[a.lang];
+        const sum = (f) => d.invoices.filter(f).reduce((s, i) => s + tot(i), 0);
+        return `<h1 class="k-h1">${a.t('lTitle')}</h1><p class="k-sub">${a.t('lSub')}</p>${u.stats([{ label: a.t('sBilled'), value: a.money(sum(() => true)) }, { label: a.t('sPaid'), value: a.money(sum((i) => i.status === 'paid')), color: 'var(--green)' }, { label: a.t('sOut'), value: a.money(sum((i) => i.status !== 'paid')), color: 'var(--orange)' }, { label: a.t('sOverdue'), value: a.money(sum((i) => st(a, i) === 'overdue')), color: 'var(--red)' }])}
+          ${u.card('', d.invoices.slice().sort((x, y) => y.date.localeCompare(x.date)).map((i) => { const c = d.clients.find((x) => x.id === i.c), s = st(a, i);
+            return u.row({ icon: '🧾', title: `${i.num} · ${c.name}`, act: 'view', id: i.id, meta: `${a.t('issued')} ${a.date(i.date)} · ${a.t('due')} ${a.date(i.due)}`, right: `<b>${a.money(tot(i))}</b>` + u.pill(L[s], FC[s]) + (s !== 'paid' ? u.btn('📲 ' + a.t('remind'), 'remind', { id: i.id }, 'g sm') : '') }); }).join(''), u.btn('+ ' + a.t('tNew'), 'goNew', {}, 'p sm'))}`;
+      } },
+    { id: 'new', label: 'tNew', render: (a) => {
+        const d = a.db, f = d.draft;
+        return `<h1 class="k-h1">${a.t('nTitle')}</h1><p class="k-sub">${a.t('nSub')}</p><div class="k-cols"><div class="k-card">
+          <div class="k-grid2"><div class="k-field"><label>${a.t('client')}</label><select data-in="dC">${d.clients.map((c) => `<option value="${c.id}"${c.id === f.c ? ' selected' : ''}>${a.esc(c.name)}</option>`).join('')}</select></div>
+          <div class="k-field"><label>${a.t('dueDays')}</label><select data-in="dT">${[0, 7, 15, 30].map((n) => `<option value="${n}"${n === f.terms ? ' selected' : ''}>${a.t('days', n)}</option>`).join('')}</select></div></div>
+          ${f.lines.map((l, i) => `<div style="display:grid;grid-template-columns:minmax(0,3fr) 70px minmax(0,1fr);gap:8px;margin-bottom:8px"><input class="k-input" data-in="dL" data-i="${i}" data-k="d" value="${a.esc(l.d)}" placeholder="${a.t('item')}"><input class="k-input" data-in="dL" data-i="${i}" data-k="q" type="number" inputmode="decimal" value="${l.q}" placeholder="${a.t('qty')}"><input class="k-input" data-in="dL" data-i="${i}" data-k="p" type="number" inputmode="decimal" value="${l.p}" placeholder="${a.t('price')}"></div>`).join('')}
+          <button class="k-btn g sm" data-act="addLine">${a.t('addItem')}</button>
+          <div class="k-grid2" style="margin-top:10px"><div class="k-field"><label>${a.t('tax')}</label><input data-in="dX" type="number" value="${f.tax}"></div><div class="k-field"><label>${a.t('notes')}</label><input data-in="dN" value="${a.esc(f.notes)}"></div></div>
+          <button class="k-btn p block" data-act="create">${a.t('create')}</button></div>
+          <div><h3 style="font-size:15px;margin-bottom:8px">${a.t('preview')}</h3><div id="pv">${invoiceHtml(a, { num: 'F-' + String(1201 + d.invoices.length).padStart(5, '0'), c: f.c, date: a.addDays(0), due: a.addDays(f.terms), lines: f.lines.filter((l) => l.d || l.p), tax: f.tax, notes: f.notes })}</div></div></div>`;
+      } },
+    { id: 'clients', label: 'tClients', render: (a) => {
+        const d = a.db, u = a.ui;
+        return `<h1 class="k-h1">${a.t('cTitle')}</h1><p class="k-sub">${a.t('cSub')}</p>${u.card('', d.clients.map((c) => { const inv = d.invoices.filter((i) => i.c === c.id), owes = inv.filter((i) => i.status !== 'paid').reduce((s, i) => s + tot(i), 0);
+          return u.row({ avatar: u.initials(c.name), color: u.avatarColor(c.name), title: c.name, meta: `${c.rif} · ${c.email} · ${a.t('billed')} ${a.money(inv.reduce((s, i) => s + tot(i), 0))}`, right: owes ? u.pill(`${a.t('owes')} ${a.money(owes)}`, 'orange') : u.pill('✓', 'green') }); }).join(''), u.btn('+ ' + a.t('newClient'), 'newClient', {}, 'p sm'))}`;
+      } },
+    { id: 'report', label: 'tReport', render: (a) => {
+        const d = a.db, u = a.ui, b = { current: 0, d30: 0, d60: 0, d90: 0 };
+        d.invoices.filter((i) => i.status !== 'paid').forEach((i) => { const late = -a.daysTo(i.due); b[late <= 0 ? 'current' : late <= 30 ? 'd30' : late <= 60 ? 'd60' : 'd90'] += tot(i); });
+        const max = Math.max(1, ...Object.values(b)), col = { current: 'var(--green)', d30: 'var(--yellow)', d60: 'var(--orange)', d90: 'var(--red)' };
+        return `<h1 class="k-h1">${a.t('rTitle')}</h1><p class="k-sub">${a.t('rSub')}</p>${u.card('', Object.entries(b).map(([k, v]) => `<div style="margin:12px 0"><div class="k-total" style="padding:0 0 4px"><span>${a.t(k)}</span><b>${a.money(v)}</b></div><div class="k-bar"><i style="width:${(v / max) * 100}%;background:${col[k]}"></i></div></div>`).join(''))}`;
+      } },
+  ],
+  actions: {
+    goNew: (a) => a.go('new'),
+    dC: (a, v) => { a.db.draft.c = v; a.save(); refreshPreview(a); }, dT: (a, v) => { a.db.draft.terms = +v; a.save(); refreshPreview(a); },
+    dX: (a, v) => { a.db.draft.tax = +v || 0; a.save(); refreshPreview(a); }, dN: (a, v) => { a.db.draft.notes = v; a.save(); refreshPreview(a); },
+    dL: (a, v, el) => { const l = a.db.draft.lines[+el.dataset.i]; l[el.dataset.k] = el.dataset.k === 'd' ? v : v === '' ? '' : +v; a.save(); refreshPreview(a); },
+    addLine: (a) => { a.db.draft.lines.push({ d: '', q: 1, p: '' }); a.save(); a.rerender(); },
+    create: (a) => {
+      const f = a.db.draft, lines = f.lines.filter((l) => l.d && +l.p > 0).map((l) => ({ d: l.d, q: +l.q || 1, p: +l.p }));
+      if (!lines.length) return a.toast(a.t('needItem'));
+      const inv = { id: a.uid(), num: 'F-' + String(1201 + a.db.invoices.length).padStart(5, '0'), c: f.c, date: a.addDays(0), due: a.addDays(f.terms), status: 'pending', lines, tax: f.tax, notes: f.notes };
+      a.db.invoices.push(inv); a.db.draft = { c: f.c, terms: 15, tax: f.tax, lines: [{ d: '', q: 1, p: '' }], notes: '' }; a.save(); a.toast(a.t('created', inv.num)); a.go('list'); showInvoice(a, inv);
+    },
+    view: (a, d) => showInvoice(a, a.db.invoices.find((i) => i.id === d.id)),
+    remind: (a, d) => { const i = a.db.invoices.find((x) => x.id === d.id); a.toast(a.t('reminded', a.db.clients.find((c) => c.id === i.c).name)); },
+    newClient: (a) => a.modal({ title: a.t('newClient'), submit: a.t('save'), fields: [{ name: 'name', label: a.t('cName'), required: true }, { name: 'rif', label: a.t('cRif') }, { name: 'email', label: a.t('cEmail'), type: 'email' }], onSubmit: (v) => { a.db.clients.push({ id: a.uid(), ...v }); a.save(); a.toast(a.t('cSaved')); a.rerender(); } }),
+  },
+});
+function tot(i) { const s = i.lines.reduce((x, l) => x + (+l.q || 0) * (+l.p || 0), 0); return +(s * (1 + (i.tax || 0) / 100)).toFixed(2); }
+function st(a, i) { return i.status === 'paid' ? 'paid' : a.daysTo(i.due) < 0 ? 'overdue' : 'pending'; }
+function invoiceHtml(a, i) {
+  const c = a.db.clients.find((x) => x.id === i.c), sub = i.lines.reduce((x, l) => x + (+l.q || 0) * (+l.p || 0), 0), tax = sub * (i.tax || 0) / 100;
+  return `<div class="k-card" style="font-size:14px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px"><div><div style="font-weight:800;font-size:18px">Servicios Demo C.A.</div><div class="k-meta">J-50000000-0 · Caracas</div></div>
+    <div style="text-align:right"><div style="font-weight:800;color:var(--primary);font-size:20px">${a.t('invoice')}</div><div><b>${i.num}</b></div><div class="k-meta">${a.t('issued')} ${a.date(i.date, { day: 'numeric', month: 'short', year: 'numeric' })}<br>${a.t('due')} ${a.date(i.due, { day: 'numeric', month: 'short', year: 'numeric' })}</div></div></div>
+    <div class="k-meta">${a.t('billTo')}</div><div style="font-weight:700;margin-bottom:12px">${a.esc(c.name)}<div class="k-meta">${a.esc(c.rif || '')} · ${a.esc(c.email || '')}</div></div>
+    <table class="k-table"><thead><tr><th>${a.t('item')}</th><th>${a.t('qty')}</th><th>${a.t('price')}</th><th style="text-align:right">${a.t('total')}</th></tr></thead><tbody>${i.lines.map((l) => `<tr><td>${a.esc(l.d)}</td><td>${l.q}</td><td>${a.money(+l.p || 0)}</td><td style="text-align:right">${a.money((+l.q || 0) * (+l.p || 0))}</td></tr>`).join('')}</tbody></table>
+    <div class="k-total"><span>${a.t('subtotal')}</span><span>${a.money(sub)}</span></div><div class="k-total"><span>IVA ${i.tax || 0}%</span><span>${a.money(tax)}</span></div><div class="k-total big"><span>${a.t('total')}</span><span>${a.money(sub + tax)}</span></div>${i.notes ? `<p class="k-meta">${a.esc(i.notes)}</p>` : ''}</div>`;
+}
+function refreshPreview(a) { const pv = document.getElementById('pv'); if (!pv) return; const f = a.db.draft; pv.innerHTML = invoiceHtml(a, { num: 'F-' + String(1201 + a.db.invoices.length).padStart(5, '0'), c: f.c, date: a.addDays(0), due: a.addDays(f.terms), lines: f.lines.filter((l) => l.d || l.p), tax: f.tax, notes: f.notes }); }
+function showInvoice(a, i) {
+  const s = st(a, i), bg = a.modal({ title: i.num, wide: true, html: invoiceHtml(a, i) + `<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="k-btn s" data-x="print">🖨 ${a.t('print')}</button><button type="button" class="k-btn wa" data-x="send">📲 ${a.t('send')}</button>${s !== 'paid' ? `<button type="button" class="k-btn p" data-x="paid">✓ ${a.t('markPaid')}</button>` : ''}</div>` });
+  bg.querySelectorAll('[data-x]').forEach((b) => (b.onclick = () => {
+    if (b.dataset.x === 'print') { const w = window.open('', '_blank'); if (!w) return; w.document.write(`<!doctype html><html><head><title>${i.num}</title><link rel="stylesheet" href="/_kit/kit.css"><style>body{background:#fff;padding:24px}.k-card{box-shadow:none;border:0}</style></head><body>${invoiceHtml(a, i)}<script>setTimeout(()=>print(),400)<\/script></body></html>`); w.document.close(); }
+    if (b.dataset.x === 'send') a.toast(a.t('sent'));
+    if (b.dataset.x === 'paid') { i.status = 'paid'; a.save(); a.toast(a.t('paidOk')); a.closeModal(); a.rerender(); }
+  }));
+}
+</script>
+</body></html>
