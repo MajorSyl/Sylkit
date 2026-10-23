@@ -1,9 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
+import { useRef } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { Footer } from '../../src/components/Footer';
 import { Header } from '../../src/components/Header';
+import { PricingCalculator } from '../../src/components/PricingCalculator';
 import { PriceLabel } from '../../src/components/ProductCard';
 import { categories, getProduct, products } from '../../src/data/products';
 import { useProducts } from '../../src/lib/catalog';
@@ -22,6 +24,8 @@ export default function ProductPage() {
   const wide = width >= 860;
   const live = useProducts();
   const router = useRouter();
+  const scroller = useRef<ScrollView>(null);
+  const pricingY = useRef(0);
   const product = live.find((p) => p.slug === String(slug)) ?? getProduct(String(slug));
 
   if (!product) {
@@ -64,7 +68,7 @@ export default function ProductPage() {
         <meta name="description" content={t(product.short)} />
       </Head>
       <Header />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView ref={scroller} contentContainerStyle={{ flexGrow: 1 }}>
         <View style={[styles.container, { paddingTop: 20 }]}>
           <Link href="/" asChild>
             <Pressable style={styles.back} accessibilityRole="link">
@@ -103,9 +107,17 @@ export default function ProductPage() {
               <View style={[styles.buyBox, shadow]}>
                 <PriceLabel product={product} />
                 <Text style={styles.plan}>{t(ui.plan)}</Text>
-                <Pressable style={[styles.primaryBtn, { backgroundColor: colors.primary }]} onPress={() => router.push(`/quote?product=${product.slug}`)} accessibilityRole="link">
-                  <Ionicons name="document-text" size={18} color="#fff" />
-                  <Text style={styles.primaryBtnText}>{lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}</Text>
+                <Pressable style={[styles.primaryBtn, { backgroundColor: colors.primary }]} onPress={() =>
+                    product.pricing
+                      ? scroller.current?.scrollTo({ y: Math.max(pricingY.current - 12, 0), animated: true })
+                      : router.push(`/quote?product=${product.slug}`)
+                  }
+                  accessibilityRole="button"
+                >
+                  <Ionicons name={product.pricing ? 'calculator' : 'document-text'} size={18} color="#fff" />
+                  <Text style={styles.primaryBtnText}>
+                    {product.pricing ? (lang === 'es' ? 'Ver planes y calcular precio' : 'See plans and calculate price') : lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}
+                  </Text>
                 </Pressable>
                 <Pressable style={styles.secondaryBtn} onPress={() => Linking.openURL(product.demoUrl ?? msg('demo'))} accessibilityRole="link">
                   <Ionicons name={product.demoUrl ? 'play-circle' : 'logo-whatsapp'} size={18} color={colors.primary} />
@@ -120,6 +132,12 @@ export default function ProductPage() {
               </View>
             </View>
           </View>
+
+          {product.pricing ? (
+            <View style={{ marginTop: 36 }} onLayout={(e) => (pricingY.current = e.nativeEvent.layout.y)}>
+              <PricingCalculator product={product} />
+            </View>
+          ) : null}
 
           {/* Features */}
           <Text style={[styles.h2, { marginTop: 36, marginBottom: 12 }]}>{t(ui.features)}</Text>

@@ -1,7 +1,9 @@
 import type { Text } from '../i18n';
+import { pricingBySlug, type Pricing } from './pricing';
 
 // Edit this file to add products or set prices.
-// priceFrom: annual price in USD, or null to show "Price on request".
+// priceFrom: starting monthly price in USD (the cheapest plan), or null to show "Price on request".
+// Plans and add-ons live in ./pricing.ts (and in the database, editable from the admin).
 // Later this list can move to Supabase without changing the screens.
 
 export type CategoryId = 'retail' | 'health' | 'food' | 'services' | 'education' | 'management' | 'web' | 'mobile' | 'ai';
@@ -31,6 +33,7 @@ export type Product = {
   features: Text[];
   platforms: string[];
   demoUrl?: string;
+  pricing?: Pricing;
 };
 
 export const products: Product[] = [
@@ -377,5 +380,14 @@ export const products: Product[] = [
     demoUrl: 'https://portafolio.sylkit.com',
   },
 ];
+
+// Attach plans to every product and derive the "From" price from the cheapest plan.
+for (const p of products) {
+  const pr = pricingBySlug[p.slug];
+  if (pr) {
+    p.pricing = pr;
+    p.priceFrom = Math.min(...pr.plans.map((x) => x.monthly));
+  }
+}
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);

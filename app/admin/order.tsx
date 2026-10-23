@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, StyleSheet, Text, View } from 'react-native';
 import { AdminGate, adminStyles } from '../../src/components/AdminGate';
 import { Button } from '../../src/components/Button';
+import { EstimateBreakdown, ServerEstimate } from '../../src/components/EstimateBreakdown';
+import { money } from '../../src/lib/pricing';
 import { Field, formStyles } from '../../src/components/Field';
 import { formatDate, formatMoney, OrderStatus, statusColor, statusLabel } from '../../src/lib/status';
 import { supabase } from '../../src/lib/supabase';
@@ -35,9 +37,10 @@ function OrderDetail() {
     setO(order);
     setEvents(ev ?? []);
     if (order) {
-      setAmount(order.quote_amount != null ? String(order.quote_amount) : '');
-      setValidUntil(order.quote_valid_until ?? '');
-      setNotes(order.quote_notes ?? '');
+      const est = order.estimate as ServerEstimate | null;
+      setAmount(order.quote_amount != null ? String(order.quote_amount) : est ? String(Number(est.due_today)) : '');
+      setValidUntil(order.quote_valid_until ?? (est ? new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10) : ''));
+      setNotes(order.quote_notes ?? (est ? quoteText(est, order.lang) : ''));
       setAdminNotes(order.admin_notes ?? '');
     }
     setLoading(false);
@@ -156,6 +159,14 @@ function OrderDetail() {
         </View>
 
         <View style={styles.col}>
+          {o.estimate ? (
+            <View style={[adminStyles.card, shadow]}>
+              <Text style={adminStyles.h2}>Plan chosen by the customer</Text>
+              <EstimateBreakdown est={o.estimate} lang="en" />
+              <Text style={adminStyles.muted}>Calculated automatically by the database. The quote below is prefilled with it; adjust if needed.</Text>
+            </View>
+          ) : null}
+
           <View style={[adminStyles.card, shadow]}>
             <Text style={adminStyles.h2}>{o.quote_amount != null ? 'Quote' : 'Send quote'}</Text>
             {o.quote_amount != null ? <Text style={styles.amount}>{formatMoney(o.quote_amount, o.quote_currency)}</Text> : null}
@@ -205,6 +216,21 @@ function OrderDetail() {
       </View>
     </View>
   );
+}
+
+// Plain-text quote details in the customer's language, built from the estimate.
+function quoteText(e: ServerEstimate, lang: string) {
+  const es = lang === 'es';
+  const mo = es ? '/mes' : '/mo';
+  const lines = [
+    `${es ? 'Plan' : 'Plan'} ${es ? e.plan_name.es : e.plan_name.en} (${e.billing === 'yearly' ? (es ? 'anual, 2 meses gratis' : 'yearly, 2 months free') : es ? 'mensual' : 'monthly'}): ${money(Number(e.plan_monthly))}${mo}`,
+    `${es ? 'Instalación' : 'Setup'}: ${money(Number(e.plan_setup))}`,
+    ...e.lines.map((l) => `+ ${es ? l.name_es : l.name_en}${l.qty > 1 ? ` ×${l.qty}` : ''}: ${l.kind === 'monthly' ? `${money(Number(l.total))}${mo}` : money(Number(l.total))}`),
+    `${es ? 'Pago único' : 'One-time'}: ${money(Number(e.one_time))}`,
+    `${e.billing === 'yearly' ? (es ? 'Primer año' : 'First year') : es ? 'Primer mes' : 'First month'}: ${money(Number(e.recurring))}`,
+    `${es ? 'Renovación' : 'Renewal'}: ${money(Number(e.recurring))}${e.billing === 'yearly' ? (es ? '/año' : '/year') : mo}`,
+  ];
+  return lines.join('\n');
 }
 
 function Info({ label, value }: { label: string; value?: string | null }) {

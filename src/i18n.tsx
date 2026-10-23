@@ -55,6 +55,7 @@ export const ui = {
   priceOnRequest: { es: 'Precio a consultar', en: 'Price on request' },
   from: { es: 'Desde', en: 'From' },
   perYear: { es: '/año', en: '/year' },
+  perMonth: { es: '/mes', en: '/mo' },
   talk: { es: 'Hablar por WhatsApp', en: 'Chat on WhatsApp' },
   customTitle: { es: '¿Necesitas algo a medida?', en: 'Need something custom?' },
   customSub: {
@@ -70,8 +71,8 @@ export const ui = {
   },
   features: { es: 'Qué incluye', en: "What's included" },
   plan: {
-    es: 'Suscripción anual: instalación, soporte y actualizaciones incluidas.',
-    en: 'Annual subscription: setup, support and updates included.',
+    es: 'Instalación, soporte y actualizaciones incluidos. Paga anual y llévate 2 meses gratis.',
+    en: 'Setup, support and updates included. Pay yearly and get 2 months free.',
   },
   buy: { es: 'Comprar por WhatsApp', en: 'Buy via WhatsApp' },
   demo: { es: 'Pedir una demostración', en: 'Request a demo' },

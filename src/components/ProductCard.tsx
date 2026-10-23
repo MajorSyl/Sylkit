@@ -12,7 +12,7 @@ export function PriceLabel({ product }: { product: Product }) {
   return (
     <Text style={styles.price}>
       {t(ui.from)} ${product.priceFrom}
-      <Text style={styles.per}>{t(ui.perYear)}</Text>
+      <Text style={styles.per}>{t(ui.perMonth)}</Text>
     </Text>
   );
 }

@@ -15,6 +15,7 @@ type Row = {
   status: OrderStatus;
   quote_amount: number | null;
   quote_currency: string;
+  estimated_total: number | null;
   created_at: string;
   products: { name_en: string } | null;
 };
@@ -34,7 +35,7 @@ function Orders() {
   const load = useCallback(async () => {
     const { data } = await supabase
       .from('orders')
-      .select('id,order_number,customer_name,business_name,email,status,quote_amount,quote_currency,created_at,products(name_en)')
+      .select('id,order_number,customer_name,business_name,email,status,quote_amount,quote_currency,estimated_total,created_at,products(name_en)')
       .order('created_at', { ascending: false })
       .limit(500);
     setRows((data as any) ?? []);
@@ -121,7 +122,11 @@ function Orders() {
                       {r.business_name ? ` · ${r.business_name}` : ''} · {formatDate(r.created_at, 'en')}
                     </Text>
                   </View>
-                  {r.quote_amount != null ? <Text style={styles.amount}>{formatMoney(r.quote_amount, r.quote_currency)}</Text> : null}
+                  {r.quote_amount != null ? (
+                    <Text style={styles.amount}>{formatMoney(r.quote_amount, r.quote_currency)}</Text>
+                  ) : r.estimated_total != null ? (
+                    <Text style={[styles.amount, { color: colors.muted }]}>≈ {formatMoney(r.estimated_total)}</Text>
+                  ) : null}
                   <View style={[styles.pill, { backgroundColor: sc.bg }]}>
                     <Text style={[styles.pillText, { color: sc.fg }]}>{statusLabel[r.status].en}</Text>
                   </View>

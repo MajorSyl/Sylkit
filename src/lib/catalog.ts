@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { pricingBySlug } from '../data/pricing';
 import { Product, products as fallback } from '../data/products';
 import { supabase } from './supabase';
 
@@ -20,6 +21,7 @@ export const rowToProduct = (r: any): Product => ({
   features: Array.isArray(r.features) ? r.features : [],
   platforms: r.platforms ?? [],
   demoUrl: r.demo_url ?? undefined,
+  pricing: r.pricing && Array.isArray(r.pricing.plans) ? r.pricing : pricingBySlug[r.slug],
 });
 
 export async function fetchProducts(): Promise<Product[]> {

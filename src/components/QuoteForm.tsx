@@ -2,12 +2,13 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLang } from '../i18n';
+import type { Config } from '../lib/pricing';
 import { friendlyError, supabase } from '../lib/supabase';
 import { colors, shadow } from '../theme';
 import { Button } from './Button';
 import { Field, formStyles } from './Field';
 
-export function QuoteForm({ productSlug, productName }: { productSlug?: string; productName?: string }) {
+export function QuoteForm({ productSlug, productName, config }: { productSlug?: string; productName?: string; config?: Config | null }) {
   const { lang } = useLang();
   const es = lang === 'es';
   const router = useRouter();
@@ -34,6 +35,7 @@ export function QuoteForm({ productSlug, productName }: { productSlug?: string; 
       p_product_slug: productSlug ?? null,
       p_lang: lang,
       p_source: source,
+      p_config: config ?? null,
     });
     setBusy(false);
     if (err || !data) return setError(friendlyError(err, lang));

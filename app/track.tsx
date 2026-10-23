@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { EstimateBreakdown, ServerEstimate } from '../src/components/EstimateBreakdown';
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { useCallback, useEffect, useState } from 'react';
@@ -26,6 +27,7 @@ type Order = {
   quote_valid_until: string | null;
   payment_method: string | null;
   created_at: string;
+  estimate: ServerEstimate | null;
   events: { kind: string; message: string | null; at: string }[];
 };
 
@@ -151,6 +153,16 @@ export default function TrackPage() {
             </View>
           )}
         </View>
+
+        {order.estimate && (order.status === 'new' || order.quote_amount == null) ? (
+          <View style={[styles.card, shadow]}>
+            <Text style={styles.h2}>{es ? 'Tu plan' : 'Your plan'}</Text>
+            <EstimateBreakdown est={order.estimate} lang={lang} />
+            <Text style={styles.muted}>
+              {es ? 'Revisaremos tu solicitud y te enviaremos la cotización final.' : 'We will review your request and send you the final quote.'}
+            </Text>
+          </View>
+        ) : null}
 
         {order.quote_amount != null && order.status !== 'new' && (
           <View style={[styles.card, shadow]}>
