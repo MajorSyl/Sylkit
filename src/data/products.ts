@@ -26,6 +26,7 @@ export type Product = {
   description: Text;
   features: Text[];
   platforms: string[];
+  demoUrl?: string;
 };
 
 export const products: Product[] = [
@@ -52,6 +53,7 @@ export const products: Product[] = [
       { es: 'Reportes de productos por vencer', en: 'Reports of items about to expire' },
     ],
     platforms: ['Desktop', 'iOS', 'Android'],
+    demoUrl: 'https://alertas.sylkit.com',
   },
   {
     slug: 'punto-de-venta',

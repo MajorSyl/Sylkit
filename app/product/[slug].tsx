@@ -107,9 +107,11 @@ export default function ProductPage() {
                   <Ionicons name="document-text" size={18} color="#fff" />
                   <Text style={styles.primaryBtnText}>{lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}</Text>
                 </Pressable>
-                <Pressable style={styles.secondaryBtn} onPress={() => Linking.openURL(msg('demo'))} accessibilityRole="link">
-                  <Ionicons name="logo-whatsapp" size={18} color={colors.primary} />
-                  <Text style={styles.secondaryBtnText}>{t(ui.demo)}</Text>
+                <Pressable style={styles.secondaryBtn} onPress={() => Linking.openURL(product.demoUrl ?? msg('demo'))} accessibilityRole="link">
+                  <Ionicons name={product.demoUrl ? 'play-circle' : 'logo-whatsapp'} size={18} color={colors.primary} />
+                  <Text style={styles.secondaryBtnText}>
+                    {product.demoUrl ? (lang === 'es' ? 'Probar demo en vivo' : 'Try the live demo') : t(ui.demo)}
+                  </Text>
                 </Pressable>
                 <Pressable style={styles.textBtn} onPress={() => router.push('/quote')} accessibilityRole="link">
                   <Text style={styles.textBtnText}>{t(ui.customVersion)}</Text>

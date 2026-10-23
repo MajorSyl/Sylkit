@@ -19,6 +19,7 @@ export const rowToProduct = (r: any): Product => ({
   description: { es: r.description_es, en: r.description_en },
   features: Array.isArray(r.features) ? r.features : [],
   platforms: r.platforms ?? [],
+  demoUrl: r.demo_url ?? undefined,
 });
 
 export async function fetchProducts(): Promise<Product[]> {

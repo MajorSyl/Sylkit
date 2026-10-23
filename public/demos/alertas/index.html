@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="google" content="notranslate">
+<meta name="robots" content="index,follow">
+<title>Demo · Alertas de vencimiento · Sylkit</title>
+<meta name="description" content="Prueba en vivo el sistema de alertas de vencimiento de Sylkit: escanea productos, registra lotes y recibe alertas antes de que venzan.">
+<style>
+:root{--bg:#F6F8FC;--card:#fff;--text:#0B1B3A;--muted:#5B6B88;--border:rgba(15,40,90,.09);--primary:#1D6BFF;--soft:#E8F0FF;--cyan:#19C3E6;
+--red:#D92D20;--redbg:#FEF3F2;--orange:#B54708;--orangebg:#FFF4E5;--yellow:#A15C07;--yellowbg:#FEF7C3;--green:#067647;--greenbg:#ECFDF3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+.demo-bar{background:var(--text);color:#fff;font-size:13px;padding:8px 16px;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+.demo-bar a{color:#7CC4FF;font-weight:700;text-decoration:none}
+header{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
+.hwrap{max-width:1100px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:800}
+.brand{font-weight:800;font-size:17px;line-height:1.1}.brand small{display:block;font-weight:600;color:var(--muted);font-size:12px}
+.spacer{flex:1}
+.lang{display:flex;background:var(--soft);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}
+.lang button.on{background:#fff;color:var(--primary)}
+nav{max-width:1100px;margin:0 auto;padding:0 8px;display:flex;gap:4px;overflow-x:auto}
+nav button{border:0;background:transparent;padding:12px 12px;font-weight:700;font-size:14px;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;display:flex;gap:6px;align-items:center}
+nav button.on{color:var(--primary);border-bottom-color:var(--primary)}
+.badge{background:var(--red);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;letter-spacing:-.4px;margin-bottom:4px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:transform .1s}
+.stat:active{transform:scale(.98)}
+.stat .n{font-size:30px;font-weight:800;margin-top:4px}
+.stat .l{font-size:13px;font-weight:700;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(15,40,90,.05)}
+.card h2{font-size:17px;margin-bottom:12px}
+.row{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--border)}
+.row:first-of-type{border-top:0}
+.row.alert{flex-wrap:wrap}.acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.thumb{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0;background:var(--soft)}
+.grow{flex:1;min-width:0}
+.name{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{color:var(--muted);font-size:13px;margin-top:2px}
+.pill{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.p-expired{background:var(--redbg);color:var(--red)}.p-urgent{background:var(--orangebg);color:var(--orange)}
+.p-warning{background:var(--yellowbg);color:var(--yellow)}.p-ok{background:var(--greenbg);color:var(--green)}.p-removed{background:#F2F4F7;color:#475467}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;min-height:44px}
+.btn-p{background:var(--primary);color:#fff}.btn-s{background:var(--soft);color:var(--primary)}.btn-g{background:transparent;color:var(--primary);padding:8px 10px;min-height:36px}
+.btn-sm{padding:8px 12px;min-height:36px;font-size:13px;border-radius:10px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tools input,.tools select,.field input,.field select{border:1px solid #D5DCEA;background:#fff;border-radius:12px;padding:11px 12px;font-size:15px;color:var(--text);outline:none;min-height:44px}
+.tools input{flex:1;min-width:180px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:13px;font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.scanner{position:relative;background:#0B1B3A;border-radius:18px;aspect-ratio:4/3;max-height:320px;width:100%;overflow:hidden;display:grid;place-items:center;color:#fff;margin-bottom:12px}
+.scanner video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scanframe{position:relative;width:70%;height:38%;border:3px solid rgba(255,255,255,.85);border-radius:14px;z-index:2}
+.laser{position:absolute;left:6%;right:6%;height:2px;background:#FF4D4F;box-shadow:0 0 12px #FF4D4F;top:50%;animation:scan 1.6s ease-in-out infinite}
+@keyframes scan{0%,100%{top:15%}50%{top:85%}}
+.scanner .hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:13px;opacity:.85;z-index:2}
+.empty{text-align:center;color:var(--muted);padding:24px 8px;font-size:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--text);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;transition:transform .25s;z-index:50;max-width:90vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.cta{background:var(--primary);color:#fff;border-radius:20px;padding:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.cta h3{font-size:18px}.cta p{opacity:.85;font-size:14px;margin-top:4px}
+.cta a{background:#fff;color:var(--primary);text-decoration:none;font-weight:800;padding:12px 18px;border-radius:12px;white-space:nowrap}
+.hidden{display:none!important}
+.notif{display:flex;gap:10px;align-items:flex-start;background:var(--redbg);border-radius:14px;padding:12px;margin-bottom:14px;font-size:14px}
+@media(max-width:560px){.row.alert .acts{width:100%;padding-left:54px;justify-content:flex-start}.grid2{grid-template-columns:1fr}.stat .n{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="demo-bar"><span data-t="demoBar"></span><a href="https://sylkit.com/quote?product=alertas-de-vencimiento" data-t="getIt"></a></div>
+<header>
+  <div class="hwrap">
+    <div class="logo">S</div>
+    <div class="brand">Sylkit Alertas<small data-t="store"></small></div>
+    <div class="spacer"></div>
+    <div class="lang"><button data-lang="es">ES</button><button data-lang="en">EN</button></div>
+  </div>
+  <nav>
+    <button data-tab="panel"><span data-t="tPanel"></span> <span class="badge" id="alertBadge"></span></button>
+    <button data-tab="scan" data-t="tScan"></button>
+    <button data-tab="inventory" data-t="tInventory"></button>
+    <button data-tab="products" data-t="tProducts"></button>
+  </nav>
+</header>
+
+<main>
+  <!-- PANEL -->
+  <section id="panel">
+    <h1 data-t="panelTitle"></h1>
+    <p class="sub" data-t="panelSub"></p>
+    <div class="stats" id="stats"></div>
+    <div id="pushNotif" class="notif hidden"></div>
+    <div class="card"><h2 data-t="alertsTitle"></h2><div id="alertList"></div></div>
+    <div class="cta">
+      <div style="flex:1;min-width:220px"><h3 data-t="ctaTitle"></h3><p data-t="ctaSub"></p></div>
+      <a href="https://sylkit.com/quote?product=alertas-de-vencimiento" data-t="getIt"></a>
+    </div>
+  </section>
+
+  <!-- SCAN -->
+  <section id="scan" class="hidden">
+    <h1 data-t="scanTitle"></h1>
+    <p class="sub" data-t="scanSub"></p>
+    <div class="card">
+      <div class="scanner" id="scanner">
+        <video id="video" playsinline muted class="hidden"></video>
+        <div class="scanframe"><div class="laser"></div></div>
+        <div class="hint" data-t="scanHint"></div>
+      </div>
+      <div class="tools">
+        <button class="btn btn-p" id="simScan" data-t="simulate"></button>
+        <button class="btn btn-s" id="camBtn" data-t="useCamera"></button>
+      </div>
+      <div class="field"><label data-t="orType"></label>
+        <div style="display:flex;gap:8px"><input id="codeInput" inputmode="numeric" placeholder="7591234500017" style="flex:1"><button class="btn btn-s" id="codeGo" data-t="search"></button></div>
+      </div>
+    </div>
+
+    <div class="card hidden" id="batchForm">
+      <h2 id="bfTitle"></h2>
+      <p class="meta" id="bfMeta" style="margin-bottom:12px"></p>
+      <div id="newProductFields" class="hidden">
+        <div class="field"><label data-t="pName"></label><input id="npName"></div>
+        <div class="grid2">
+          <div class="field"><label data-t="pCategory"></label><select id="npCat"></select></div>
+          <div class="field"><label data-t="pUnit"></label><select id="npUnit"><option>unidad</option><option>caja</option><option>kg</option><option>litro</option></select></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label data-t="qty"></label><input id="bfQty" type="number" min="1" value="24"></div>
+        <div class="field"><label data-t="expiry"></label><input id="bfExp" type="date"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label data-t="batchNo"></label><input id="bfBatch" placeholder="L-2611"></div>
+        <div class="field"><label data-t="storeLbl"></label><select id="bfStore"></select></div>
+      </div>
+      <div class="tools"><button class="btn btn-p" id="bfSave" data-t="saveBatch"></button><button class="btn btn-g" id="bfCancel" data-t="cancel"></button></div>
+    </div>
+  </section>
+
+  <!-- INVENTORY -->
+  <section id="inventory" class="hidden">
+    <h1 data-t="invTitle"></h1>
+    <p class="sub" data-t="invSub"></p>
+    <div class="tools">
+      <input id="invSearch" data-ph="searchPh">
+      <select id="invStore"></select>
+      <select id="invStatus"></select>
+    </div>
+    <div class="card"><div id="invList"></div></div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="hidden">
+    <h1 data-t="prodTitle"></h1>
+    <p class="sub" data-t="prodSub"></p>
+    <div class="card"><div id="prodList"></div></div>
+    <button class="btn btn-s" id="resetBtn" data-t="reset"></button>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+const I18N={
+es:{demoBar:'Demo en vivo con datos de ejemplo · Pruébalo libremente, se reinicia solo.',getIt:'Quiero este sistema →',store:'Supermercado Demo',
+tPanel:'Panel',tScan:'Escanear',tInventory:'Inventario',tProducts:'Productos',
+panelTitle:'Panel de vencimientos',panelSub:'Así ve el gerente el estado de todos los productos, en tiempo real.',
+sExpired:'Vencidos',sUrgent:'Urgente (≤ 7 días)',sWarning:'Advertencia (≤ 30 días)',sOk:'En buen estado',
+alertsTitle:'Alertas pendientes',noAlerts:'Sin alertas pendientes. ¡Todo en orden!',
+ack:'Revisado',remove:'Retirar',daysLeft:d=>d<0?`Venció hace ${-d} día${d===-1?'':'s'}`:d===0?'Vence hoy':`Vence en ${d} día${d===1?'':'s'}`,
+ctaTitle:'¿Lo quieres para tu negocio?',ctaSub:'Instalación, capacitación y soporte incluidos. Apps para escritorio, iOS y Android.',
+scanTitle:'Registrar lote',scanSub:'El personal escanea el código de barras con el teléfono y registra cantidad y fecha de vencimiento.',
+scanHint:'Apunta al código de barras',simulate:'Simular escaneo',useCamera:'Usar cámara',orType:'O escribe el código de barras',search:'Buscar',
+newProduct:'Producto nuevo',knownProduct:'Producto encontrado',pName:'Nombre del producto',pCategory:'Categoría',pUnit:'Unidad',
+qty:'Cantidad',expiry:'Fecha de vencimiento',batchNo:'Número de lote',storeLbl:'Tienda',saveBatch:'Guardar lote',cancel:'Cancelar',
+invTitle:'Inventario por lotes',invSub:'Cada lote con su cantidad, tienda y fecha de vencimiento.',searchPh:'Buscar producto o código…',
+allStores:'Todas las tiendas',allStatus:'Todos los estados',stExpired:'Vencido',stUrgent:'Urgente',stWarning:'Advertencia',stOk:'Bien',stRemoved:'Retirado',
+units:'uds',prodTitle:'Catálogo de productos',prodSub:'Productos registrados por código de barras.',batches:n=>`${n} lote${n===1?'':'s'}`,
+reset:'Reiniciar demo',resetDone:'Demo reiniciada con datos de ejemplo.',saved:'Lote guardado. Las alertas se actualizaron.',
+ackDone:'Alerta marcada como revisada.',removed:'Lote retirado del inventario.',needName:'Escribe el nombre del producto.',needDate:'Elige la fecha de vencimiento.',
+noCam:'Tu navegador no permite escanear con cámara aquí. Usa "Simular escaneo".',camOn:'Cámara activa: apunta a un código de barras.',
+notFoundCode:'Código nuevo: regístralo como producto.',push:n=>`📲 Notificación enviada al gerente: ${n} producto${n===1?'':'s'} requiere${n===1?'':'n'} atención hoy.`,
+cats:['Lácteos','Panadería','Bebidas','Carnes','Farmacia','Limpieza','Snacks'],noResults:'Sin resultados.'},
+en:{demoBar:'Live demo with sample data · Try it freely, it resets itself.',getIt:'I want this system →',store:'Demo Supermarket',
+tPanel:'Dashboard',tScan:'Scan',tInventory:'Inventory',tProducts:'Products',
+panelTitle:'Expiry dashboard',panelSub:'This is how the manager sees the status of every product, in real time.',
+sExpired:'Expired',sUrgent:'Urgent (≤ 7 days)',sWarning:'Warning (≤ 30 days)',sOk:'In good shape',
+alertsTitle:'Pending alerts',noAlerts:'No pending alerts. All good!',
+ack:'Reviewed',remove:'Remove',daysLeft:d=>d<0?`Expired ${-d} day${d===-1?'':'s'} ago`:d===0?'Expires today':`Expires in ${d} day${d===1?'':'s'}`,
+ctaTitle:'Want it for your business?',ctaSub:'Setup, training and support included. Desktop, iOS and Android apps.',
+scanTitle:'Register a batch',scanSub:'Staff scan the barcode with a phone and record quantity and expiry date.',
+scanHint:'Point at the barcode',simulate:'Simulate scan',useCamera:'Use camera',orType:'Or type the barcode',search:'Search',
+newProduct:'New product',knownProduct:'Product found',pName:'Product name',pCategory:'Category',pUnit:'Unit',
+qty:'Quantity',expiry:'Expiry date',batchNo:'Batch number',storeLbl:'Store',saveBatch:'Save batch',cancel:'Cancel',
+invTitle:'Inventory by batch',invSub:'Every batch with its quantity, store and expiry date.',searchPh:'Search product or barcode…',
+allStores:'All stores',allStatus:'All statuses',stExpired:'Expired',stUrgent:'Urgent',stWarning:'Warning',stOk:'Good',stRemoved:'Removed',
+units:'units',prodTitle:'Product catalog',prodSub:'Products registered by barcode.',batches:n=>`${n} batch${n===1?'':'es'}`,
+reset:'Reset demo',resetDone:'Demo reset with sample data.',saved:'Batch saved. Alerts updated.',
+ackDone:'Alert marked as reviewed.',removed:'Batch removed from inventory.',needName:'Enter the product name.',needDate:'Pick the expiry date.',
+noCam:'Your browser does not allow camera scanning here. Use "Simulate scan".',camOn:'Camera on: point at a barcode.',
+notFoundCode:'New barcode: register it as a product.',push:n=>`📲 Notification sent to the manager: ${n} product${n===1?' needs':'s need'} attention today.`,
+cats:['Dairy','Bakery','Drinks','Meat','Pharmacy','Cleaning','Snacks'],noResults:'No results.'}};
+
+const KEY='sylkit_demo_alertas_v1';
+const STORES=['Sucursal Centro','Sucursal Este'];
+const ICON={0:'🥛',1:'🥖',2:'🥤',3:'🥩',4:'💊',5:'🧴',6:'🍪'};
+let lang=(navigator.language||'es').startsWith('en')?'en':'es';
+let tab='panel', pending=null, stream=null, detector=null;
+const T=k=>I18N[lang][k];
+const $=s=>document.querySelector(s);
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const addDays=n=>{const d=today();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+const daysTo=iso=>Math.round((new Date(iso+'T00:00:00')-today())/864e5);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function seed(){
+  const P=[['7591234500017','Leche entera 1L',0,'litro'],['7591234500024','Yogurt de fresa 150g',0,'unidad'],['7591234500031','Queso blanco 500g',0,'kg'],
+  ['7591234500048','Pan de sándwich',1,'unidad'],['7591234500055','Jugo de naranja 1L',2,'litro'],['7591234500062','Refresco cola 2L',2,'unidad'],
+  ['7591234500079','Pechuga de pollo 1kg',3,'kg'],['7591234500086','Acetaminofén 500mg x10',4,'caja'],['7591234500093','Jarabe para la tos',4,'unidad'],
+  ['7591234500109','Detergente líquido 1L',5,'litro'],['7591234500116','Galletas de chocolate',6,'unidad'],['7591234500123','Papas fritas 150g',6,'unidad']];
+  const products=P.map(([barcode,name,cat,unit])=>({barcode,name,cat,unit}));
+  const B=[[0,-2,18,0],[1,1,30,0],[2,5,12,1],[3,3,20,0],[4,9,24,1],[5,60,48,0],[6,-1,8,1],[7,14,40,0],[8,26,15,1],[9,120,30,0],[10,6,36,0],[11,22,50,1],[0,12,40,1],[4,45,24,0],[2,33,10,0]];
+  const batches=B.map(([p,d,q,s],i)=>({id:'b'+(i+1),barcode:products[p].barcode,qty:q,expiry:addDays(d),batch:'L-'+(2601+i),store:STORES[s],ack:false,removed:false}));
+  return {products,batches,seededAt:Date.now()};
+}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Date.now()-s.seededAt<864e5)return s}catch(e){}return seed()}
+let db=load();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}};
+const prod=bc=>db.products.find(p=>p.barcode===bc);
+const status=b=>{if(b.removed)return'removed';const d=daysTo(b.expiry);return d<0?'expired':d<=7?'urgent':d<=30?'warning':'ok'};
+const pill=s=>`<span class="pill p-${s}">${T({expired:'stExpired',urgent:'stUrgent',warning:'stWarning',ok:'stOk',removed:'stRemoved'}[s])}</span>`;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2600)}
+
+function renderStatic(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(el=>{const v=T(el.dataset.t);if(typeof v==='string')el.textContent=v});
+  document.querySelectorAll('[data-ph]').forEach(el=>el.placeholder=T(el.dataset.ph));
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));
+  $('#npCat').innerHTML=T('cats').map((c,i)=>`<option value="${i}">${c}</option>`).join('');
+  $('#bfStore').innerHTML=STORES.map(s=>`<option>${s}</option>`).join('');
+  $('#invStore').innerHTML=`<option value="">${T('allStores')}</option>`+STORES.map(s=>`<option>${s}</option>`).join('');
+  const st=$('#invStatus').value;
+  $('#invStatus').innerHTML=`<option value="">${T('allStatus')}</option>`+['expired','urgent','warning','ok','removed'].map(s=>`<option value="${s}">${T({expired:'stExpired',urgent:'stUrgent',warning:'stWarning',ok:'stOk',removed:'stRemoved'}[s])}</option>`).join('');
+  $('#invStatus').value=st;
+}
+function batchRow(b,actions){
+  const p=prod(b.barcode),s=status(b),d=daysTo(b.expiry);
+  return `<div class="row${actions?' alert':''}"><div class="thumb">${ICON[p.cat]}</div><div class="grow"><div class="name">${esc(p.name)}</div>
+  <div class="meta">${b.removed?'':esc(T('daysLeft')(d))+' · '}${b.qty} ${T('units')} · ${esc(b.store)} · ${esc(b.batch)}</div></div>
+  ${actions?`<div class="acts">${pill(s)}<button class="btn btn-s btn-sm" data-ack="${b.id}">${T('ack')}</button>${s==='expired'?`<button class="btn btn-g btn-sm" data-remove="${b.id}">${T('remove')}</button>`:''}</div>`:pill(s)}</div>`;
+}
+function renderPanel(){
+  const live=db.batches.filter(b=>!b.removed);
+  const c={expired:0,urgent:0,warning:0,ok:0};live.forEach(b=>c[status(b)]++);
+  const cards=[['expired','sExpired','var(--red)'],['urgent','sUrgent','var(--orange)'],['warning','sWarning','var(--yellow)'],['ok','sOk','var(--green)']];
+  $('#stats').innerHTML=cards.map(([k,l,col])=>`<div class="stat" data-goto="${k}"><div class="l">${T(l)}</div><div class="n" style="color:${col}">${c[k]}</div></div>`).join('');
+  const alerts=live.filter(b=>status(b)!=='ok'&&!b.ack).sort((a,b)=>daysTo(a.expiry)-daysTo(b.expiry));
+  $('#alertList').innerHTML=alerts.length?alerts.map(b=>batchRow(b,true)).join(''):`<div class="empty">${T('noAlerts')}</div>`;
+  const urgentN=live.filter(b=>['expired','urgent'].includes(status(b))&&!b.ack).length;
+  $('#alertBadge').textContent=alerts.length||'';$('#alertBadge').classList.toggle('hidden',!alerts.length);
+  const n=$('#pushNotif');n.textContent=T('push')(urgentN);n.classList.toggle('hidden',!urgentN);
+}
+function renderInventory(){
+  const q=$('#invSearch').value.trim().toLowerCase(),st=$('#invStore').value,ss=$('#invStatus').value;
+  const rows=db.batches.filter(b=>{const p=prod(b.barcode);if(st&&b.store!==st)return false;if(ss&&status(b)!==ss)return false;
+    if(!ss&&b.removed)return false;return !q||(p.name+' '+b.barcode+' '+b.batch).toLowerCase().includes(q)}).sort((a,b)=>daysTo(a.expiry)-daysTo(b.expiry));
+  $('#invList').innerHTML=rows.length?rows.map(b=>batchRow(b,false)).join(''):`<div class="empty">${T('noResults')}</div>`;
+}
+function renderProducts(){
+  $('#prodList').innerHTML=db.products.map(p=>{const n=db.batches.filter(b=>b.barcode===p.barcode&&!b.removed).length;
+    return `<div class="row"><div class="thumb">${ICON[p.cat]}</div><div class="grow"><div class="name">${esc(p.name)}</div><div class="meta">${esc(p.barcode)} · ${esc(T('cats')[p.cat])} · ${esc(p.unit)}</div></div><span class="meta">${T('batches')(n)}</span></div>`}).join('');
+}
+function render(){renderStatic();renderPanel();renderInventory();renderProducts();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  ['panel','scan','inventory','products'].forEach(id=>$('#'+id).classList.toggle('hidden',id!==tab));}
+function go(t){tab=t;if(t!=='scan')stopCam();render();window.scrollTo(0,0)}
+
+function openBatch(code){
+  code=String(code).trim();if(!code)return;
+  const p=prod(code);pending=code;
+  $('#batchForm').classList.remove('hidden');
+  $('#newProductFields').classList.toggle('hidden',!!p);
+  $('#bfTitle').textContent=p?`${T('knownProduct')}: ${p.name}`:T('newProduct');
+  $('#bfMeta').textContent=p?`${code} · ${T('cats')[p.cat]}`:`${code} · ${T('notFoundCode')}`;
+  $('#bfExp').value=addDays(10+Math.floor(Math.random()*60));$('#bfBatch').value='L-'+(2700+db.batches.length);$('#npName').value='';
+  $('#batchForm').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function saveBatch(){
+  if(!pending)return;
+  if(!prod(pending)){const name=$('#npName').value.trim();if(name.length<2)return toast(T('needName'));
+    db.products.push({barcode:pending,name,cat:+$('#npCat').value,unit:$('#npUnit').value})}
+  if(!$('#bfExp').value)return toast(T('needDate'));
+  db.batches.push({id:'b'+Date.now(),barcode:pending,qty:Math.max(1,+$('#bfQty').value||1),expiry:$('#bfExp').value,batch:$('#bfBatch').value||'—',store:$('#bfStore').value,ack:false,removed:false});
+  save();pending=null;$('#batchForm').classList.add('hidden');$('#codeInput').value='';toast(T('saved'));go('panel');
+}
+async function startCam(){
+  if(!('BarcodeDetector' in window)||!navigator.mediaDevices){return toast(T('noCam'))}
+  try{
+    detector=new BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128','code_39','qr_code']});
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    const v=$('#video');v.srcObject=stream;v.classList.remove('hidden');await v.play();toast(T('camOn'));
+    const tick=async()=>{if(!stream)return;try{const r=await detector.detect(v);if(r.length){const code=r[0].rawValue;stopCam();openBatch(code);return}}catch(e){}requestAnimationFrame(tick)};tick();
+  }catch(e){stopCam();toast(T('noCam'))}
+}
+function stopCam(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const v=$('#video');if(v)v.classList.add('hidden')}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button,[data-goto]');if(!t)return;
+  if(t.dataset.tab)go(t.dataset.tab);
+  if(t.dataset.lang){lang=t.dataset.lang;render()}
+  if(t.dataset.ack){const b=db.batches.find(x=>x.id===t.dataset.ack);b.ack=true;save();toast(T('ackDone'));render()}
+  if(t.dataset.remove){const b=db.batches.find(x=>x.id===t.dataset.remove);b.removed=true;save();toast(T('removed'));render()}
+  if(t.dataset.goto){tab='inventory';$('#invStatus').value=t.dataset.goto;render();window.scrollTo(0,0)}
+  if(t.id==='simScan'){const known=Math.random()<.7;openBatch(known?db.products[Math.floor(Math.random()*db.products.length)].barcode:'75999'+String(Math.floor(Math.random()*1e8)).padStart(8,'0'))}
+  if(t.id==='camBtn')startCam();
+  if(t.id==='codeGo')openBatch($('#codeInput').value);
+  if(t.id==='bfSave')saveBatch();
+  if(t.id==='bfCancel'){pending=null;$('#batchForm').classList.add('hidden')}
+  if(t.id==='resetBtn'){db=seed();save();toast(T('resetDone'));go('panel')}
+});
+['#invSearch','#invStore','#invStatus'].forEach(s=>$(s).addEventListener('input',renderInventory));
+$('#codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')openBatch(e.target.value)});
+save();render();
+})();
+</script>
+</body>
+</html>

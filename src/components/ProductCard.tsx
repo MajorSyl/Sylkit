@@ -42,6 +42,7 @@ export function ProductCard({ product }: { product: Product }) {
             {t(product.short)}
           </Text>
           <View style={styles.platforms}>
+            {product.demoUrl ? <Text style={[styles.platform, { backgroundColor: colors.softCyan, color: '#0E7F98', fontWeight: '700' }]}>▶ Demo</Text> : null}
             {product.platforms.map((p) => (
               <Text key={p} style={styles.platform}>
                 {p}
