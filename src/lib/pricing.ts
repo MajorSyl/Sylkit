@@ -13,7 +13,9 @@ import { supabase } from './supabase';
 //   care plan from year 2 (optional) = monthly × 3 per year
 
 export type Billing = 'yearly' | 'monthly' | 'once';
-export type Config = { plan: string; billing: Billing; addons: Record<string, number> };
+export type DomainMode = 'sub' | 'new' | 'own';
+export type DomainChoice = { mode: DomainMode; name: string };
+export type Config = { plan: string; billing: Billing; addons: Record<string, number>; domain?: DomainChoice };
 export type Line = { id: string; name: Text; kind: Addon['kind']; qty: number; unit: number; total: number };
 export type Estimate = {
   plan: Plan;
@@ -75,17 +77,31 @@ export function configToQuery(cfg: Config) {
     .filter(([, q]) => q > 0)
     .map(([id, q]) => (q > 1 ? `${id}*${q}` : id))
     .join(',');
-  return `plan=${encodeURIComponent(cfg.plan)}&billing=${cfg.billing}${add ? `&add=${encodeURIComponent(add)}` : ''}`;
+  const dom = cfg.domain?.name ? `&domain=${encodeURIComponent(`${cfg.domain.mode}:${cfg.domain.name}`)}` : '';
+  return `plan=${encodeURIComponent(cfg.plan)}&billing=${cfg.billing}${add ? `&add=${encodeURIComponent(add)}` : ''}${dom}`;
 }
 
-export function configFromQuery(q: { plan?: string; billing?: string; add?: string }): Config | null {
+export function configFromQuery(q: { plan?: string; billing?: string; add?: string; domain?: string }): Config | null {
   if (!q.plan) return null;
   const addons: Record<string, number> = {};
   for (const part of (q.add ?? '').split(',')) {
     const [id, n] = part.split('*');
     if (/^[a-z_]{2,40}$/.test(id ?? '')) addons[id] = Math.min(Math.max(parseInt(n ?? '1', 10) || 1, 1), MAX_QTY);
   }
-  return { plan: String(q.plan), billing: q.billing === 'monthly' || q.billing === 'once' ? q.billing : 'yearly', addons };
+  const [mode, ...rest] = String(q.domain ?? '').split(':');
+  const name = rest.join(':').toLowerCase().replace(/[^a-z0-9.-]/g, '').slice(0, 80);
+  const domain = (mode === 'sub' || mode === 'new' || mode === 'own') && name.length >= 2 ? { mode: mode as DomainMode, name } : undefined;
+  return { plan: String(q.plan), billing: q.billing === 'monthly' || q.billing === 'once' ? q.billing : 'yearly', addons, domain };
+}
+
+// How a client's web address is written for people.
+export const domainLabel = (d: DomainChoice) => (d.mode === 'sub' ? `${d.name}.sylkit.com` : d.name);
+
+export type DomainResult = { domain: string; status: 'available' | 'taken' | 'unknown' };
+export async function checkDomain(name: string): Promise<{ label: string; subdomain: string; results: DomainResult[] }> {
+  const r = await fetch(`/api/domain?name=${encodeURIComponent(name)}`);
+  if (!r.ok) throw new Error('invalid_name');
+  return r.json();
 }
 
 export const money = (n: number) => `$${Number.isInteger(n) ? n.toLocaleString('en-US') : n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;

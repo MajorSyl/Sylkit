@@ -2,6 +2,7 @@
 // - sylkit.com / www: serves the static site (dist/)
 // - <demo>.sylkit.com: serves that product's live demo from /demos/<demo>/
 // - sets a country cookie so pages can pick Spanish/English when the browser language is neither
+// - /api/domain?name=mybusiness checks if a domain is free (public RDAP registry lookup, no API key)
 // - daily cron keeps the free Supabase database from pausing
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -11,8 +12,42 @@ const DEMOS = Object.fromEntries(
   ['alertas', 'pos', 'inventario', 'farmacia', 'clinica', 'restaurante', 'salon', 'taller', 'servicios', 'escuela', 'nomina', 'facturas', 'tienda', 'portafolio', 'asistente'].map((d) => [d, d]),
 );
 
+// Extensions we register for clients at a price the "Your own domain" add-on covers.
+const TLDS = ['com', 'net', 'org'];
+
+async function checkOne(domain) {
+  try {
+    const r = await fetch(`https://rdap.org/domain/${domain}`, {
+      redirect: 'follow',
+      headers: { accept: 'application/rdap+json' },
+      cf: { cacheTtl: 600, cacheEverything: true },
+    });
+    if (r.status === 404) return 'available';
+    if (r.ok) return 'taken';
+    return 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
+async function domainApi(url) {
+  const raw = (url.searchParams.get('name') || '').toLowerCase().trim();
+  const label = raw
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('.')[0]
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 63);
+  const headers = { 'content-type': 'application/json', 'cache-control': 'public, max-age=300', 'access-control-allow-origin': '*' };
+  if (label.length < 2) return new Response(JSON.stringify({ error: 'invalid_name' }), { status: 400, headers });
+  const results = await Promise.all(TLDS.map(async (t) => ({ domain: `${label}.${t}`, status: await checkOne(`${label}.${t}`) })));
+  return new Response(JSON.stringify({ label, subdomain: `${label}.sylkit.com`, results }), { headers });
+}
+
 async function route(request, env) {
   const url = new URL(request.url);
+  if (url.pathname === '/api/domain') return domainApi(url);
   const sub = url.hostname.split('.')[0];
   const demo = url.hostname.endsWith('sylkit.com') ? DEMOS[sub] : undefined;
 

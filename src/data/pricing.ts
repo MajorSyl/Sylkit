@@ -146,8 +146,8 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "Your own domain (.com)"
     },
     "desc": {
-      "es": "tunegocio.com registrado y renovado por nosotros.",
-      "en": "yourbusiness.com registered and renewed by us."
+      "es": "tunegocio.com registrado a tu nombre, conectado y renovado por nosotros.",
+      "en": "yourbusiness.com registered in your name, connected and renewed by us."
     },
     "kind": "monthly",
     "price": 2,
@@ -380,6 +380,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -482,6 +483,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -583,6 +585,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -685,6 +688,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -786,6 +790,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -888,6 +893,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -989,6 +995,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -1090,6 +1097,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -1191,6 +1199,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -1292,6 +1301,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -1393,6 +1403,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -1494,6 +1505,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "custom_report",
       "api_integration",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   },
@@ -1977,6 +1989,7 @@ export const pricingBySlug: Record<string, Pricing> = {
       "api_integration",
       "extra_conversations",
       "custom_branding",
+      "custom_domain",
       "priority_support"
     ]
   }

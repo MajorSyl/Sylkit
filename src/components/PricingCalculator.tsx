@@ -5,8 +5,9 @@ import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-na
 import { ANNUAL_MONTHS, CARE_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
 import { useLang } from '../i18n';
-import { Billing, Config, configToQuery, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
+import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { colors, shadow } from '../theme';
+import { DomainPicker } from './DomainPicker';
 
 const L = {
   title: { es: 'Planes y precios', en: 'Plans and pricing' },
@@ -62,7 +63,16 @@ export function PricingCalculator({ product }: { product: Product }) {
   const defaultPlan = pricing.plans.find((p) => p.popular)?.id ?? pricing.plans[0].id;
   const [cfg, setCfg] = useState<Config>({ plan: defaultPlan, billing: 'yearly', addons: {} });
   const est = useMemo(() => estimate(pricing, catalog, cfg), [pricing, catalog, cfg]);
-  const addons = pricing.addons.map((id) => catalog[id]).filter(Boolean);
+  const hasDomain = pricing.addons.includes('custom_domain') && !!catalog.custom_domain;
+  // The domain extra is chosen in the web-address picker, not in the list.
+  const addons = pricing.addons.filter((id) => !(hasDomain && id === 'custom_domain')).map((id) => catalog[id]).filter(Boolean);
+  const setDomain = (d?: DomainChoice) =>
+    setCfg((c) => {
+      const next = { ...c.addons };
+      if (d?.mode === 'new') next.custom_domain = 1;
+      else delete next.custom_domain;
+      return { ...c, domain: d, addons: next };
+    });
 
   const setBilling = (billing: Billing) => setCfg((c) => ({ ...c, billing }));
   const setQty = (id: string, qty: number) =>
@@ -95,6 +105,7 @@ export function PricingCalculator({ product }: { product: Product }) {
           muted
         />
       ))}
+      {cfg.domain ? <Row label={lang === 'es' ? 'Dirección web' : 'Web address'} value={domainLabel(cfg.domain)} muted /> : null}
       <View style={styles.divider} />
       <Row label={t(L.setupTotal)} value={money(est.oneTime)} />
       <Row
@@ -207,6 +218,8 @@ export function PricingCalculator({ product }: { product: Product }) {
               );
             })}
           </View>
+
+          {hasDomain ? <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={catalog.custom_domain.price} /> : null}
 
           {addons.length ? (
             <View style={[styles.addonsBox, shadow]}>

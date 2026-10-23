@@ -132,6 +132,18 @@ function OrderDetail() {
             <Info label="WhatsApp" value={o.whatsapp} />
             <Info label="Country" value={o.country} />
             <Info label="Details" value={o.details} />
+            <Info
+              label="Web address"
+              value={
+                o.config?.domain
+                  ? o.config.domain.mode === 'sub'
+                    ? `${o.config.domain.name}.sylkit.com (free subdomain)`
+                    : o.config.domain.mode === 'new'
+                      ? `${o.config.domain.name} (NEW: register in the customer's name after payment)`
+                      : `${o.config.domain.name} (customer already owns it: ask for DNS access)`
+                  : null
+              }
+            />
             <Info label="Source" value={o.source} />
             <View style={styles.actions}>
               {wa ? <Button label="WhatsApp" icon="logo-whatsapp" variant="whatsapp" onPress={() => Linking.openURL(`https://wa.me/${wa}`)} /> : null}

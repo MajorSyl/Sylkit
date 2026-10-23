@@ -6,17 +6,17 @@ import { Header } from '../src/components/Header';
 import { QuoteForm } from '../src/components/QuoteForm';
 import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
-import { configFromQuery, estimate, money, useAddons } from '../src/lib/pricing';
+import { configFromQuery, domainLabel, estimate, money, useAddons } from '../src/lib/pricing';
 import { colors } from '../src/theme';
 
 export default function QuotePage() {
-  const { product, plan, billing, add } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string }>();
+  const { product, plan, billing, add, domain } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string }>();
   const { t, lang } = useLang();
   const list = useProducts();
   const catalog = useAddons();
   const p = product ? list.find((x) => x.slug === product) : undefined;
   const es = lang === 'es';
-  const cfg = p?.pricing ? configFromQuery({ plan, billing, add }) : null;
+  const cfg = p?.pricing ? configFromQuery({ plan, billing, add, domain }) : null;
   const est = cfg && p?.pricing ? estimate(p.pricing, catalog, cfg) : null;
 
   return (
@@ -44,6 +44,12 @@ export default function QuotePage() {
                   {l.qty > 1 ? ` ×${l.qty}` : ''}
                 </Text>
               ))}
+              {cfg.domain ? (
+                <Text style={styles.sumLine}>
+                  {es ? 'Dirección web' : 'Web address'}: {domainLabel(cfg.domain)}
+                  {cfg.domain.mode === 'own' ? (es ? ' (ya es tuyo)' : ' (you already own it)') : ''}
+                </Text>
+              ) : null}
               <View style={styles.sumRow}>
                 <Text style={styles.sumLine}>{es ? 'Total estimado a pagar hoy' : 'Estimated total due today'}</Text>
                 <Text style={styles.sumTotal}>{money(est.dueToday)}</Text>
