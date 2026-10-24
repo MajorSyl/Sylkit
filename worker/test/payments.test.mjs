@@ -27,6 +27,8 @@ globalThis.fetch = async (url, init = {}) => {
   url = String(url); calls.push({ url, init });
   const H = init.headers || {};
   if (url.endsWith('/v1/status')) return new Response(JSON.stringify({ message: 'OK' }));
+  if (url.endsWith('/v1/merchant/coins')) return H['x-api-key'] === 'np_key' ? new Response(JSON.stringify({ selectedCurrencies: ['USDTTRC20', 'USDTBSC'] })) : new Response(JSON.stringify({ message: 'Invalid api key' }), { status: 403 });
+  if (url.includes('/v1/min-amount')) return new Response(JSON.stringify({ min_amount: 5, fiat_equivalent: 5 }));
   if (url.endsWith('/v1/currencies')) return H['x-api-key'] === 'np_key' ? new Response(JSON.stringify({ currencies: ['btc', 'usdttrc20'] })) : new Response(JSON.stringify({ message: 'Invalid api key' }), { status: 403 });
   if (url.includes('/v1/payment/')) { assert.equal(H['x-api-key'], 'np_key'); return new Response(JSON.stringify({ payment_id: 5524759814, order_id: 'SK-1003', payment_status: npStatus, pay_address: 'TXYZ', pay_amount: 450.12, actually_paid: npStatus === 'finished' ? 450.12 : 0, pay_currency: 'usdttrc20', price_amount: 450, price_currency: 'usd' })); }
   if (url.endsWith('/v1/payment')) {
