@@ -2,6 +2,7 @@
 //
 //   POST /api/pay/create   { token, currency? }  -> creates a NOWPayments payment for an accepted quote
 //   POST /api/pay/ipn      NOWPayments webhook   -> verifies x-nowpayments-sig, then updates the order
+//   GET  /api/pay/status?t=<token>             -> current crypto payment for the order (polled by the tracking page)
 //   GET  /api/pay/health                         -> says which secrets are bound and whether NOWPayments answers (never returns secret values)
 //
 // Runtime secrets (Worker > Settings > Variables and Secrets, type "Secret"):
@@ -77,12 +78,69 @@ async function sb(env, path, init = {}) {
 }
 
 const getOrderByToken = (env, token) =>
-  sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,order_number,status,quote_amount,quote_currency,payment_reference,lang`).then((r) => r[0]);
+  sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,order_number,status,quote_amount,quote_currency,payment_method,payment_reference,lang`).then((r) => r[0]);
 const getOrderByNumber = (env, n) =>
-  sb(env, `orders?order_number=eq.${encodeURIComponent(n)}&select=id,order_number,status,quote_amount,quote_currency,payment_reference,lang`).then((r) => r[0]);
+  sb(env, `orders?order_number=eq.${encodeURIComponent(n)}&select=id,order_number,status,quote_amount,quote_currency,payment_method,payment_reference,lang`).then((r) => r[0]);
 const patchOrder = (env, id, patch) => sb(env, `orders?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(patch), headers: { prefer: 'return=minimal' } });
 const addEvent = (env, order_id, kind, message, isPublic = true) =>
   sb(env, 'order_events', { method: 'POST', body: JSON.stringify({ order_id, kind, message, public: isPublic }), headers: { prefer: 'return=minimal' } });
+
+// ---------- NOWPayments helpers ----------
+
+const OPEN = new Set(['waiting', 'confirming', 'confirmed', 'sending', 'partially_paid']);
+const isCrypto = (order) => String(order.payment_method || '').startsWith('crypto:') && /^\d+$/.test(String(order.payment_reference || ''));
+
+async function getPayment(env, id) {
+  const r = await fetch(`${NOWPAYMENTS}/payment/${encodeURIComponent(id)}`, { headers: { 'x-api-key': env.NOWPAYMENTS_API_KEY } });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+// What the tracking page needs (no secrets, no internal fields).
+const publicPayment = (p, extra = {}) => ({
+  payment_id: p.payment_id,
+  payment_status: p.payment_status,
+  pay_address: p.pay_address,
+  pay_amount: p.pay_amount,
+  actually_paid: p.actually_paid ?? 0,
+  pay_currency: p.pay_currency,
+  price_amount: p.price_amount,
+  price_currency: p.price_currency,
+  network: p.network ?? null,
+  payin_extra_id: p.payin_extra_id ?? null,
+  expiration_estimate_date: p.expiration_estimate_date ?? null,
+  ...extra,
+});
+
+// Apply a NOWPayments status to the order. Used by the signed webhook and by the
+// status check (which reads straight from NOWPayments with our API key, so it is trusted too).
+async function applyPayment(env, order, p, { fromPoll = false } = {}) {
+  if (order.status === 'paid' || order.status === 'in_progress' || order.status === 'delivered') return { already: order.status };
+  const status = String(p.payment_status || '');
+  const quote = Number(order.quote_amount);
+  const priced = Number(p.price_amount);
+  const amountOk = !quote || (priced && Math.abs(priced - quote) < 0.01);
+  const ref = { payment_method: `crypto:${p.pay_currency}`, payment_reference: String(p.payment_id) };
+
+  if (status === 'finished' && amountOk) {
+    await patchOrder(env, order.id, { status: 'paid', ...ref });
+    await addEvent(env, order.id, 'update', `Crypto payment confirmed: ${p.actually_paid ?? p.pay_amount} ${String(p.pay_currency).toUpperCase()}.`);
+    return { status: 'paid' };
+  }
+  if (['confirming', 'confirmed', 'sending'].includes(status) && order.status === 'accepted') {
+    await patchOrder(env, order.id, { status: 'payment_submitted', ...ref });
+    return { status: 'payment_submitted' };
+  }
+  if (status === 'partially_paid' && !fromPoll) {
+    await addEvent(env, order.id, 'update', `Partial payment received: ${p.actually_paid} of ${p.pay_amount} ${String(p.pay_currency).toUpperCase()}. Please send the rest or contact us.`);
+  } else if (['failed', 'expired', 'refunded'].includes(status)) {
+    await addEvent(env, order.id, 'update', `Crypto payment ${status}. You can start a new payment from this page.`);
+    await patchOrder(env, order.id, { payment_reference: null, ...(order.status === 'payment_submitted' ? { status: 'accepted' } : {}) });
+  } else if (status === 'finished' && !amountOk && !fromPoll) {
+    await addEvent(env, order.id, 'update', `Payment ${p.payment_id} finished but the amount (${priced}) does not match the quote (${quote}). Check manually.`, false);
+  }
+  return { status: order.status };
+}
 
 // ---------- handlers ----------
 
@@ -101,6 +159,11 @@ async function create(request, env) {
 
   const order = await getOrderByToken(env, token);
   if (!order) return json({ error: 'order_not_found' }, 404);
+  // Reuse an open payment instead of creating a second address.
+  if (isCrypto(order) && (order.status === 'accepted' || order.status === 'payment_submitted')) {
+    const existing = await getPayment(env, order.payment_reference);
+    if (existing && OPEN.has(existing.payment_status)) return json(publicPayment(existing, { reused: true }));
+  }
   if (order.status !== 'accepted') return json({ error: 'order_not_payable', status: order.status }, 409);
   const amount = Number(order.quote_amount);
   if (!amount || amount <= 0) return json({ error: 'no_quote_amount' }, 409);
@@ -124,18 +187,21 @@ async function create(request, env) {
   await patchOrder(env, order.id, { payment_method: `crypto:${p.pay_currency}`, payment_reference: String(p.payment_id) });
   await addEvent(env, order.id, 'update', `Crypto payment created (${String(p.pay_currency).toUpperCase()}). Waiting for the transfer.`);
 
-  return json({
-    payment_id: p.payment_id,
-    payment_status: p.payment_status,
-    pay_address: p.pay_address,
-    pay_amount: p.pay_amount,
-    pay_currency: p.pay_currency,
-    price_amount: p.price_amount,
-    price_currency: p.price_currency,
-    network: p.network,
-    payin_extra_id: p.payin_extra_id ?? null,
-    expiration_estimate_date: p.expiration_estimate_date ?? null,
-  });
+  return json(publicPayment(p));
+}
+
+async function statusCheck(url, env) {
+  if (!env.NOWPAYMENTS_API_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) return json({ error: 'payments_not_configured' }, 503);
+  const token = url.searchParams.get('t') || '';
+  if (!/^[0-9a-f-]{36}$/i.test(token)) return json({ error: 'invalid_token' }, 400);
+  const order = await getOrderByToken(env, token);
+  if (!order) return json({ error: 'order_not_found' }, 404);
+  if (!isCrypto(order)) return json({ order_status: order.status, payment: null });
+  const p = await getPayment(env, order.payment_reference);
+  if (!p) return json({ order_status: order.status, payment: null });
+  if (String(p.order_id) !== order.order_number) return json({ order_status: order.status, payment: null });
+  const applied = await applyPayment(env, order, p, { fromPoll: true }); // catches up if a webhook was missed
+  return json({ order_status: applied.status ?? applied.already ?? order.status, payment: publicPayment(p) });
 }
 
 async function ipn(request, env) {
@@ -151,26 +217,9 @@ async function ipn(request, env) {
     await addEvent(env, order.id, 'update', `Ignored notification for a different payment (${p.payment_id}).`, false);
     return json({ ok: true, ignored: 'other_payment' });
   }
-  if (order.status === 'paid' || order.status === 'in_progress' || order.status === 'delivered') return json({ ok: true, already: order.status });
-
+  const applied = await applyPayment(env, order, p);
+  if (applied.already) return json({ ok: true, already: applied.already });
   const status = String(p.payment_status || '');
-  const quote = Number(order.quote_amount);
-  const priced = Number(p.price_amount);
-  const amountOk = !quote || (priced && Math.abs(priced - quote) < 0.01);
-
-  if (status === 'finished' && amountOk) {
-    await patchOrder(env, order.id, { status: 'paid', payment_method: `crypto:${p.pay_currency}`, payment_reference: String(p.payment_id) });
-    await addEvent(env, order.id, 'update', `Crypto payment confirmed: ${p.actually_paid ?? p.pay_amount} ${String(p.pay_currency).toUpperCase()}.`);
-  } else if (['confirming', 'confirmed', 'sending'].includes(status) && order.status === 'accepted') {
-    await patchOrder(env, order.id, { status: 'payment_submitted', payment_method: `crypto:${p.pay_currency}`, payment_reference: String(p.payment_id) });
-  } else if (status === 'partially_paid') {
-    await addEvent(env, order.id, 'update', `Partial payment received: ${p.actually_paid} of ${p.pay_amount} ${String(p.pay_currency).toUpperCase()}. Please send the rest or contact us.`);
-  } else if (['failed', 'expired', 'refunded'].includes(status)) {
-    await addEvent(env, order.id, 'update', `Crypto payment ${status}. You can start a new payment from this page.`);
-    await patchOrder(env, order.id, { payment_reference: null });
-  } else if (status === 'finished' && !amountOk) {
-    await addEvent(env, order.id, 'update', `Payment ${p.payment_id} finished but the amount (${priced}) does not match the quote (${quote}). Check manually.`, false);
-  }
   return json({ ok: true, status });
 }
 
@@ -204,6 +253,7 @@ async function health(env) {
 export async function handlePayments(request, env, url) {
   try {
     if (url.pathname === '/api/pay/health' && request.method === 'GET') return await health(env);
+    if (url.pathname === '/api/pay/status' && request.method === 'GET') return await statusCheck(url, env);
     if (url.pathname === '/api/pay/create' && request.method === 'POST') return await create(request, env);
     if (url.pathname === '/api/pay/ipn' && request.method === 'POST') return await ipn(request, env);
     return json({ error: 'not_found' }, 404);

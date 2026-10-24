@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { CryptoPay } from '../src/components/CryptoPay';
 import { EstimateBreakdown, ServerEstimate } from '../src/components/EstimateBreakdown';
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
@@ -183,6 +184,11 @@ export default function TrackPage() {
         {(order.status === 'accepted' || order.status === 'payment_submitted') && (
           <View style={[styles.card, shadow]}>
             <Text style={styles.h2}>{es ? 'Pago' : 'Payment'}</Text>
+            {order.status === 'accepted' || String(order.payment_method ?? '').startsWith('crypto:') ? (
+              <CryptoPay token={String(token)} lang={lang} onChanged={load} />
+            ) : null}
+            {String(order.payment_method ?? '').startsWith('crypto:') && order.status === 'payment_submitted' ? null : (
+            <>
             {order.status === 'payment_submitted' ? (
               <Text style={formStyles.success}>
                 {es
@@ -190,7 +196,14 @@ export default function TrackPage() {
                   : `We received your payment report (${order.payment_method ?? ''}). We are verifying it.`}
               </Text>
             ) : null}
-            <Text style={styles.muted}>{es ? 'Elige cómo vas a pagar:' : 'Choose how you will pay:'}</Text>
+            {order.status === 'accepted' ? (
+              <View style={styles.orRow}>
+                <View style={styles.orLine} />
+                <Text style={styles.orText}>{es ? 'o paga de otra forma' : 'or pay another way'}</Text>
+                <View style={styles.orLine} />
+              </View>
+            ) : null}
+            <Text style={styles.muted}>{es ? 'Elige cómo vas a pagar y luego reporta tu pago:' : 'Choose how you will pay, then report your payment:'}</Text>
             <View style={{ gap: 8 }}>
               {methods.map((m) => {
                 const on = method === m.name;
@@ -210,7 +223,9 @@ export default function TrackPage() {
               value={reference}
               onChangeText={setReference}
             />
-            <Button label={es ? 'Reportar pago' : 'Report payment'} icon="cash" onPress={pay} loading={busy} />
+            <Button label={es ? 'Reportar pago' : 'Report payment'} icon="cash" onPress={pay} loading={busy} variant="secondary" />
+            </>
+            )}
           </View>
         )}
 
@@ -276,6 +291,9 @@ const styles = StyleSheet.create({
   methodOn: { borderColor: colors.primary, backgroundColor: colors.softBlue },
   methodName: { fontSize: 15, fontWeight: '800', color: colors.text },
   event: { flexDirection: 'row', gap: 12 },
+  orRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 4 },
+  orLine: { flex: 1, height: 1, backgroundColor: colors.border },
+  orText: { fontSize: 12, fontWeight: '800', color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
   eventDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.cyan, marginTop: 5 },
   eventTitle: { fontSize: 15, fontWeight: '700', color: colors.text },
   eventDate: { fontSize: 12, color: colors.muted },
