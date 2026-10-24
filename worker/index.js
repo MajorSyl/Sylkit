@@ -3,7 +3,10 @@
 // - <demo>.sylkit.com: serves that product's live demo from /demos/<demo>/
 // - sets a country cookie so pages can pick Spanish/English when the browser language is neither
 // - /api/domain?name=mybusiness checks if a domain is free (public RDAP registry lookup, no API key)
+// - /api/pay/* NOWPayments crypto checkout, webhook and health check (see payments.js)
 // - daily cron keeps the free Supabase database from pausing
+import { handlePayments } from './payments.js';
+
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
 
@@ -50,6 +53,7 @@ async function domainApi(url) {
 async function route(request, env) {
   const url = new URL(request.url);
   if (url.pathname === '/api/domain') return domainApi(url);
+  if (url.pathname.startsWith('/api/pay/')) return handlePayments(request, env, url);
   const sub = url.hostname.split('.')[0];
   const demo = url.hostname.endsWith('sylkit.com') ? DEMOS[sub] : undefined;
 
