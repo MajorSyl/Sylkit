@@ -183,7 +183,10 @@ async function create(request, env) {
     }),
   });
   const p = await r.json().catch(() => ({}));
-  if (!r.ok) return json({ error: 'nowpayments_error', status: r.status, message: p.message || p.code || 'unknown' }, 502);
+  if (!r.ok) {
+    console.error('nowpayments create failed', r.status, JSON.stringify(p));
+    return json({ error: 'nowpayments_error', status: r.status, message: p.message || p.code || 'unknown' }, 502);
+  }
 
   await patchOrder(env, order.id, { payment_method: `crypto:${p.pay_currency}`, payment_reference: String(p.payment_id) });
   await addEvent(env, order.id, 'update', `Crypto payment created (${String(p.pay_currency).toUpperCase()}). Waiting for the transfer.`);
@@ -293,6 +296,28 @@ async function health(env) {
       out.api_key_check = { http: c.status, ok: c.ok, currencies: Array.isArray(b.currencies) ? b.currencies.length : undefined, message: c.ok ? undefined : b.message };
     } catch (e) {
       out.api_key_check = { error: String(e) };
+    }
+  }
+  // Which coins this NOWPayments account accepts, and the minimum for each checkout network.
+  if (env.NOWPAYMENTS_API_KEY) {
+    const h = { 'x-api-key': env.NOWPAYMENTS_API_KEY };
+    try {
+      const m = await fetch(`${NOWPAYMENTS}/merchant/coins`, { headers: h });
+      const b = await m.json().catch(() => ({}));
+      const coins = (b.selectedCurrencies || []).map((c) => String(c).toLowerCase());
+      out.merchant_coins = { http: m.status, total: coins.length, usdttrc20: coins.includes('usdttrc20'), usdtbsc: coins.includes('usdtbsc'), message: m.ok ? undefined : b.message };
+    } catch (e) {
+      out.merchant_coins = { error: String(e) };
+    }
+    out.min_amounts = {};
+    for (const c of ['usdttrc20', 'usdtbsc']) {
+      try {
+        const m = await fetch(`${NOWPAYMENTS}/min-amount?currency_from=${c}&currency_to=${c}&fiat_equivalent=usd`, { headers: h });
+        const b = await m.json().catch(() => ({}));
+        out.min_amounts[c] = m.ok ? { min: b.min_amount, usd: b.fiat_equivalent } : { http: m.status, message: b.message };
+      } catch (e) {
+        out.min_amounts[c] = { error: String(e) };
+      }
     }
   }
   out.ready = configured.NOWPAYMENTS_API_KEY && configured.NOWPAYMENTS_IPN_SECRET && configured.SUPABASE_SERVICE_ROLE_KEY && !!out.api_key_check?.ok;

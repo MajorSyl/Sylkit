@@ -116,7 +116,7 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
         body: JSON.stringify({ token, currency: network }),
       });
       const j = await r.json().catch(() => ({}));
-      if (!r.ok) return setError(errorText(j.error, es));
+      if (!r.ok) return setError(errorText(j.error, es) + (j.message ? ` (${j.message})` : ''));
       setPayment(j);
       lastStatus.current = j.payment_status;
       onChanged();
