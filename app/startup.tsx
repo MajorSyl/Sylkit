@@ -119,7 +119,7 @@ export default function StartupPage() {
               </Section>
             ) : null}
             {l.reason_for_selling ? (
-              <Section title={es ? 'Por qué se vende' : 'Why it is for sale'}>
+              <Section title={es ? 'Ideal para' : 'Ideal for'}>
                 <Text style={styles.body}>{l.reason_for_selling}</Text>
               </Section>
             ) : null}
@@ -136,10 +136,10 @@ export default function StartupPage() {
               <View style={[styles.box, shadow]}>
                 <Text style={styles.boxTitle}>{es ? 'Este negocio ya se vendió' : 'This business has been sold'}</Text>
                 <Text style={styles.body}>
-                  {es ? '¿Tienes uno parecido? Publícalo y te conectamos con compradores.' : 'Have a similar one? List it and we connect you with buyers.'}
+                  {es ? '¿Quieres uno parecido? Mira los negocios disponibles o pídenos uno a medida.' : 'Want a similar one? See what is available or ask us to build one for you.'}
                 </Text>
-                <Link href="/sell" style={styles.back}>
-                  {es ? 'Vender mi negocio →' : 'Sell my business →'}
+                <Link href="/startups" style={styles.back}>
+                  {es ? 'Ver negocios disponibles →' : 'See available businesses →'}
                 </Link>
               </View>
             ) : (
@@ -213,8 +213,8 @@ function InquiryBox({ listing }: { listing: Listing }) {
       <Button label={kind === 'offer' ? (es ? 'Enviar oferta' : 'Send offer') : es ? 'Pedir detalles' : 'Request details'} icon="send" onPress={submit} loading={busy} />
       <Text style={styles.fine}>
         {es
-          ? 'Sylkit revisa cada contacto y te presenta al vendedor. Los datos privados del negocio se comparten solo con compradores serios.'
-          : 'Sylkit reviews every inquiry and introduces you to the seller. Private business data is shared only with serious buyers.'}
+          ? 'Sylkit te responde directamente. Los datos privados del negocio se comparten solo con compradores serios.'
+          : 'Sylkit replies to you directly. Private business data is shared only with serious buyers.'}
       </Text>
     </View>
   );

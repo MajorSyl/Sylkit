@@ -2,13 +2,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
 import { ListingCard } from '../src/components/ListingCard';
 import { useLang } from '../src/i18n';
-import { budgets, feeTiers, listingCategories, ListingCategory, useListings } from '../src/lib/listings';
-import { colors, shadow } from '../src/theme';
+import { budgets, listingCategories, ListingCategory, useListings } from '../src/lib/listings';
+import { colors, shadow, waLink } from '../src/theme';
 
 // Marketplace of small online businesses for sale (apps, SaaS, stores, content sites).
 
@@ -56,8 +56,8 @@ export default function StartupsPage() {
           name="description"
           content={
             es
-              ? 'Compra y vende apps, SaaS, tiendas online y sitios web con ingresos. Comisión solo si se vende.'
-              : 'Buy and sell apps, SaaS, online stores and websites. Sellers pay only when the sale closes.'
+              ? 'Apps, SaaS, tiendas online y sitios web creados por Sylkit, listos para un nuevo dueño.'
+              : 'Apps, SaaS, online stores and websites built by Sylkit, ready for a new owner.'
           }
         />
       </Head>
@@ -67,23 +67,20 @@ export default function StartupsPage() {
           <View style={[styles.sphere, { width: 340, height: 340, top: -140, right: -90 }]} />
           <View style={[styles.sphere, { width: 220, height: 220, bottom: -110, left: -70, backgroundColor: colors.cyan }]} />
           <View style={styles.container}>
-            <Text style={styles.kicker}>{es ? 'MERCADO DE NEGOCIOS DIGITALES' : 'DIGITAL BUSINESS MARKETPLACE'}</Text>
-            <Text style={styles.h1}>{es ? 'Compra y vende negocios online' : 'Buy and sell online businesses'}</Text>
+            <Text style={styles.kicker}>{es ? 'NEGOCIOS EN VENTA POR SYLKIT' : 'STARTUPS FOR SALE BY SYLKIT'}</Text>
+            <Text style={styles.h1}>{es ? 'Negocios online listos para tener dueño' : 'Online businesses ready for a new owner'}</Text>
             <Text style={styles.sub}>
               {es
-                ? 'Apps, SaaS, tiendas online y sitios web listos para tener nuevo dueño. Paga con USDT, Pago Móvil u Orange Money.'
-                : 'Apps, SaaS, online stores and websites ready for a new owner. Pay with USDT, Pago Móvil or Orange Money.'}
+                ? 'Apps, SaaS, tiendas online y sitios web creados por Sylkit. Te entregamos todo funcionando. Paga con USDT, Pago Móvil u Orange Money.'
+                : 'Apps, SaaS, online stores and websites built by Sylkit. We hand everything over up and running. Pay with USDT, Pago Móvil or Orange Money.'}
             </Text>
             <View style={styles.heroBtns}>
-              <Pressable style={styles.primary} onPress={() => router.push('/sell')} accessibilityRole="link">
-                <Ionicons name="pricetag" size={18} color="#fff" />
-                <Text style={styles.primaryText}>{es ? 'Vender mi negocio' : 'Sell my business'}</Text>
+              <Pressable style={[styles.primary, { backgroundColor: colors.whatsapp }]} onPress={() => Linking.openURL(waLink(es ? 'Hola, me interesa comprar un negocio de Sylkit.' : "Hi, I'm interested in buying a business from Sylkit."))} accessibilityRole="link">
+                <Ionicons name="logo-whatsapp" size={18} color="#fff" />
+                <Text style={styles.primaryText}>{es ? 'Preguntar por WhatsApp' : 'Ask on WhatsApp'}</Text>
               </Pressable>
               <View style={styles.feeNote}>
-                <Text style={styles.feeText}>
-                  {es ? 'Publicar es gratis. Comisión solo al vender: ' : 'Listing is free. Fee only when it sells: '}
-                  {feeTiers.map((f) => `${f.rate}%`).join(' → ')}
-                </Text>
+                <Text style={styles.feeText}>{es ? 'Incluye código, marca y dominio + 30 días de soporte' : 'Includes code, brand and domain + 30 days of support'}</Text>
               </View>
             </View>
           </View>
@@ -126,16 +123,21 @@ export default function StartupsPage() {
                     ? 'Nada con esos filtros'
                     : 'Nothing matches those filters'
                   : es
-                    ? 'Sé el primero en publicar'
-                    : 'Be the first to list'}
+                    ? 'Nuevos negocios muy pronto'
+                    : 'New startups coming soon'}
               </Text>
               <Text style={styles.emptyText}>
                 {es
-                  ? '¿Tienes una app, web o tienda online que ya no puedes atender? Publícala gratis y te conectamos con compradores.'
-                  : 'Have an app, website or store you no longer have time for? List it free and we connect you with buyers.'}
+                  ? 'Dinos qué tipo de negocio quieres tener y te avisamos apenas tengamos uno para ti.'
+                  : 'Tell us what kind of business you want to own and we will let you know as soon as we have one for you.'}
               </Text>
-              <Pressable style={styles.primary} onPress={() => router.push('/sell')} accessibilityRole="link">
-                <Text style={styles.primaryText}>{es ? 'Publicar mi negocio' : 'List my business'}</Text>
+              <Pressable
+                style={[styles.primary, { backgroundColor: colors.whatsapp }]}
+                onPress={() => Linking.openURL(waLink(es ? 'Hola, quiero comprar un negocio online. Busco:' : 'Hi, I want to buy an online business. I am looking for:'))}
+                accessibilityRole="link"
+              >
+                <Ionicons name="logo-whatsapp" size={18} color="#fff" />
+                <Text style={styles.primaryText}>{es ? 'Avísame por WhatsApp' : 'Notify me on WhatsApp'}</Text>
               </Pressable>
             </View>
           )}
@@ -152,21 +154,21 @@ export default function StartupsPage() {
           <View style={styles.howGrid}>
             {[
               {
-                icon: 'create',
-                t: es ? '1. Publica gratis' : '1. List for free',
-                d: es ? 'Cuéntanos de tu negocio, ingresos y precio. Revisamos y publicamos en 48 horas.' : 'Tell us about your business, revenue and price. We review and publish within 48 hours.',
+                icon: 'search',
+                t: es ? '1. Elige un negocio' : '1. Pick a business',
+                d: es ? 'Mira los números, prueba la demo y revisa qué incluye.' : 'Check the numbers, try the demo and see what is included.',
               },
               {
                 icon: 'chatbubbles',
-                t: es ? '2. Recibe compradores' : '2. Meet buyers',
-                d: es ? 'Los compradores piden detalles o hacen ofertas. Te presentamos a los serios.' : 'Buyers ask for details or make offers. We introduce you to the serious ones.',
+                t: es ? '2. Pide detalles u oferta' : '2. Ask or make an offer',
+                d: es ? 'Te respondemos en menos de 24 horas con la información completa.' : 'We reply within 24 hours with the full details.',
               },
               {
                 icon: 'shield-checkmark',
-                t: es ? '3. Cierra la venta' : '3. Close the deal',
+                t: es ? '3. Recibe tu negocio' : '3. Take it over',
                 d: es
-                  ? 'Te ayudamos con el acuerdo y la entrega del código, dominio y cuentas. Pagas la comisión solo al vender.'
-                  : 'We help with the agreement and the handover of code, domain and accounts. You pay the fee only when it sells.',
+                  ? 'Firmamos el acuerdo, pagas y te entregamos código, dominio y cuentas, con 30 días de soporte.'
+                  : 'We sign the agreement, you pay, and we hand over the code, domain and accounts, with 30 days of support.',
               },
             ].map((s) => (
               <View key={s.icon} style={[styles.how, shadow]}>

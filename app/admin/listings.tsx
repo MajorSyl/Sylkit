@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking, Pressable, StyleSheet, Switch, Text, TextIn
 import { AdminGate, adminStyles } from '../../src/components/AdminGate';
 import { Button } from '../../src/components/Button';
 import { formStyles } from '../../src/components/Field';
-import { categoryOf, feeFor, ListingStatus, usd } from '../../src/lib/listings';
+import { categoryOf, listingCategories, ListingCategory, ListingStatus, usd } from '../../src/lib/listings';
 import { supabase } from '../../src/lib/supabase';
 import { colors, shadow } from '../../src/theme';
 
@@ -90,6 +90,12 @@ function Listings() {
         <Tile label="Sold" value={rows.filter((r) => r.status === 'sold').length} />
       </View>
       {msg ? <Text style={msg.ok ? formStyles.success : formStyles.error}>{msg.text}</Text> : null}
+      <NewListing
+        onCreated={(text, ok = true) => {
+          setMsg({ ok, text });
+          load();
+        }}
+      />
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {(['all', ...STATUSES] as const).map((s) => (
           <Pressable key={s} onPress={() => setFilter(s)} style={[styles.chip, filter === s && styles.chipOn]}>
@@ -99,7 +105,7 @@ function Listings() {
       </View>
       {shown.length === 0 ? (
         <View style={[adminStyles.card, shadow, { alignItems: 'center' }]}>
-          <Text style={adminStyles.muted}>No listings here yet. Sellers submit them at sylkit.com/sell.</Text>
+          <Text style={adminStyles.muted}>No listings here yet. Create your first one with "New listing" above.</Text>
         </View>
       ) : (
         shown.map((r) => (
@@ -144,7 +150,6 @@ function ListingRow({
   });
   const [busy, setBusy] = useState(false);
   const cat = categoryOf(row.category);
-  const fee = feeFor(Number(d.sold_price || d.asking_price) || 0);
 
   const save = async (patch?: Partial<typeof d>) => {
     const v = { ...d, ...patch };
@@ -182,7 +187,7 @@ function ListingRow({
             {open ? '▾' : '▸'} {row.title}
           </Text>
           <Text style={adminStyles.muted}>
-            {cat.name.en} · asking {usd(row.asking_price)} · revenue {usd(row.annual_revenue)}/yr · {row.seller_name}
+            {cat.name.en} · asking {usd(row.asking_price)} · revenue {usd(row.annual_revenue)}/yr
           </Text>
         </View>
         {inquiries.length ? <Text style={styles.count}>{inquiries.length} inquiries</Text> : null}
@@ -193,11 +198,7 @@ function ListingRow({
         <View style={{ gap: 12 }}>
           <Text style={adminStyles.value}>{row.tagline}</Text>
           <View style={styles.contact}>
-            <Text style={adminStyles.label}>Seller (private)</Text>
-            <Text style={adminStyles.value}>
-              {row.seller_name} · {row.seller_email}
-              {row.seller_whatsapp ? ` · ${row.seller_whatsapp}` : ''}
-            </Text>
+            <Text style={adminStyles.label}>Private website link</Text>
             {row.website_url ? (
               <Text style={styles.link} onPress={() => Linking.openURL(row.website_url!)}>
                 {row.website_url}
@@ -224,9 +225,6 @@ function ListingRow({
             <Switch value={d.featured} onValueChange={(v) => setD((x) => ({ ...x, featured: v }))} />
             <Text style={adminStyles.value}>Featured (shown first)</Text>
           </View>
-          <Text style={adminStyles.muted}>
-            Your success fee at this price: {fee.rate}% = {usd(fee.amount)}.
-          </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             <Button label="Save" onPress={() => save()} loading={busy} />
             {row.status === 'pending' ? <Button label="Approve and publish" variant="secondary" onPress={() => save({ status: 'active' })} /> : null}
@@ -255,6 +253,109 @@ function ListingRow({
           ))}
         </View>
       ) : null}
+    </View>
+  );
+}
+
+const EMPTY = {
+  title: '',
+  tagline: '',
+  description: '',
+  asking_price: '',
+  annual_revenue: '',
+  monthly_profit: '',
+  monthly_users: '',
+  age_months: '',
+  tech_stack: '',
+  included: 'Source code, Domain, Brand and designs, 30 days of support',
+  ideal_for: '',
+  image_url: '',
+  demo_url: '',
+  website_url: '',
+};
+
+// Only Sylkit sells: listings are created here, by the admin.
+function NewListing({ onCreated }: { onCreated: (text: string, ok?: boolean) => void }) {
+  const [open, setOpen] = useState(false);
+  const [f, setF] = useState(EMPTY);
+  const [cat, setCat] = useState<ListingCategory>('saas');
+  const [publish, setPublish] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const set = (k: keyof typeof EMPTY) => (v: string) => setF((s) => ({ ...s, [k]: v }));
+  const n = (v: string) => (v.trim() === '' ? null : Number(v.replace(/[^\d.]/g, '')));
+  const list = (v: string) => v.split(',').map((x) => x.trim()).filter(Boolean);
+
+  const create = async () => {
+    if (f.title.trim().length < 3) return onCreated('Enter a title.', false);
+    if (f.tagline.trim().length < 10) return onCreated('Enter a one-line pitch (10+ characters).', false);
+    const price = n(f.asking_price);
+    if (!price) return onCreated('Enter the asking price.', false);
+    const slug = `${f.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'startup'}-${Math.random().toString(36).slice(2, 6)}`;
+    setBusy(true);
+    const { error } = await supabase.from('listings').insert({
+      slug,
+      title: f.title.trim(),
+      tagline: f.tagline.trim(),
+      description: f.description.trim() || null,
+      category: cat,
+      status: publish ? 'active' : 'pending',
+      asking_price: price,
+      annual_revenue: n(f.annual_revenue) ?? 0,
+      monthly_profit: n(f.monthly_profit) ?? 0,
+      monthly_users: n(f.monthly_users),
+      age_months: n(f.age_months),
+      tech_stack: list(f.tech_stack),
+      included: list(f.included),
+      reason_for_selling: f.ideal_for.trim() || null,
+      image_url: f.image_url.trim() || null,
+      demo_url: f.demo_url.trim() || null,
+      website_url: f.website_url.trim() || null,
+      seller_name: 'Sylkit',
+      seller_email: 'sylvanus@sylkit.com',
+    });
+    setBusy(false);
+    if (error) return onCreated(error.message, false);
+    setF(EMPTY);
+    setOpen(false);
+    onCreated(publish ? `"${f.title}" is live on the marketplace.` : `"${f.title}" saved as a draft (Pending review).`);
+  };
+
+  if (!open) return <Button label="New listing" icon="add-circle" onPress={() => setOpen(true)} style={{ alignSelf: 'flex-start' }} />;
+  return (
+    <View style={[adminStyles.card, shadow]}>
+      <Text style={adminStyles.h2}>New listing</Text>
+      <Input label="Title *" value={f.title} onChange={set('title')} wide />
+      <Input label="One-line pitch *" value={f.tagline} onChange={set('tagline')} wide />
+      <Text style={adminStyles.label}>Category</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        {listingCategories.map((c) => (
+          <Pressable key={c.id} onPress={() => setCat(c.id)} style={[styles.chip, cat === c.id && styles.chipOn]}>
+            <Text style={[styles.chipText, cat === c.id && { color: '#fff' }]}>{c.name.en}</Text>
+          </Pressable>
+        ))}
+      </View>
+      <Input label="Description" value={f.description} onChange={set('description')} wide multiline />
+      <View style={styles.grid}>
+        <Input label="Asking price (USD) *" value={f.asking_price} onChange={set('asking_price')} />
+        <Input label="Annual revenue (USD)" value={f.annual_revenue} onChange={set('annual_revenue')} />
+        <Input label="Monthly profit (USD)" value={f.monthly_profit} onChange={set('monthly_profit')} />
+        <Input label="Monthly users" value={f.monthly_users} onChange={set('monthly_users')} />
+        <Input label="Age (months)" value={f.age_months} onChange={set('age_months')} />
+      </View>
+      <Input label="What's included (comma separated)" value={f.included} onChange={set('included')} wide />
+      <Input label="Tech stack (comma separated)" value={f.tech_stack} onChange={set('tech_stack')} wide />
+      <Input label="Ideal for (who should buy it)" value={f.ideal_for} onChange={set('ideal_for')} wide multiline />
+      <Input label="Image URL (e.g. /shots/pos.webp or https://…)" value={f.image_url} onChange={set('image_url')} wide />
+      <Input label="Demo URL (public)" value={f.demo_url} onChange={set('demo_url')} wide />
+      <Input label="Website URL (private, admin only)" value={f.website_url} onChange={set('website_url')} wide />
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Switch value={publish} onValueChange={setPublish} />
+        <Text style={adminStyles.value}>{publish ? 'Publish now' : 'Save as draft'}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        <Button label={publish ? 'Create and publish' : 'Save draft'} onPress={create} loading={busy} />
+        <Button label="Cancel" variant="secondary" onPress={() => setOpen(false)} />
+      </View>
     </View>
   );
 }

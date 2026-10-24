@@ -58,17 +58,6 @@ export const budgets: { id: string; max: number | null; min?: number; name: Text
   { id: 'big', max: null, min: 100000, name: { es: '$100K+', en: '$100K+' } },
 ];
 
-// Success fee charged to the seller only when the sale closes.
-export const feeTiers = [
-  { from: 1000, rate: 10 },
-  { from: 10000, rate: 8 },
-  { from: 100000, rate: 6 },
-];
-export const feeFor = (price: number) => {
-  const tier = [...feeTiers].reverse().find((t) => price >= t.from) ?? feeTiers[0];
-  return { rate: tier.rate, amount: Math.round((price * tier.rate) / 100) };
-};
-
 export const usd = (n: number | null | undefined) =>
   n == null ? '—' : `$${Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 
