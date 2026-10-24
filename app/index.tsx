@@ -91,6 +91,7 @@ export default function Home() {
             <Text style={styles.h2}>{t(ui.featured)}</Text>
             <Text style={styles.count}>{filtered.length}</Text>
           </View>
+          <Text style={styles.sectionSub}>{t(ui.featuredSub)}</Text>
 
           {filtered.length === 0 ? (
             <View style={[styles.empty, shadow]}>
@@ -132,11 +133,11 @@ export default function Home() {
           <View style={[styles.banner, { backgroundColor: '#0F172A', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
             <View style={[styles.sphere, { width: 220, height: 220, top: -90, right: 40, backgroundColor: '#2563EB', opacity: 0.35 }]} />
             <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
-              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Compra un negocio online listo' : 'Buy a ready-made online business'}</Text>
+              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Sé dueño de un negocio online' : 'Own an online business'}</Text>
               <Text style={styles.bannerSub}>
                 {lang === 'es'
-                  ? 'Apps, SaaS, tiendas y sitios web creados por Sylkit, listos para un nuevo dueño. Te entregamos todo funcionando.'
-                  : 'Apps, SaaS, stores and websites built by Sylkit, ready for a new owner. We hand everything over up and running.'}
+                  ? 'No es software para usar: compras el negocio completo, con su marca, usuarios e ingresos. Pasa a ser tuyo.'
+                  : 'Not software to use: you buy the whole business, with its brand, users and revenue. It becomes yours.'}
               </Text>
             </View>
             <Pressable style={styles.bannerBtn} onPress={() => router.push('/startups')} accessibilityRole="link">
@@ -275,6 +276,7 @@ const styles = StyleSheet.create({
   chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
   chipText: { fontSize: 14, fontWeight: '600', color: colors.text },
   sectionHead: { flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 28, marginBottom: 8 },
+  sectionSub: { fontSize: 15, lineHeight: 22, color: colors.muted, marginTop: -6, marginBottom: 12, maxWidth: 720 },
   h2: { fontSize: 24, fontWeight: '800', color: colors.text, letterSpacing: -0.4 },
   count: { fontSize: 14, color: colors.muted, fontWeight: '600' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -8 },

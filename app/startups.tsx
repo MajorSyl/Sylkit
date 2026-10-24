@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
@@ -68,12 +68,15 @@ export default function StartupsPage() {
           <View style={[styles.sphere, { width: 220, height: 220, bottom: -110, left: -70, backgroundColor: colors.cyan }]} />
           <View style={styles.container}>
             <Text style={styles.kicker}>{es ? 'NEGOCIOS EN VENTA POR SYLKIT' : 'STARTUPS FOR SALE BY SYLKIT'}</Text>
-            <Text style={styles.h1}>{es ? 'Negocios online listos para tener dueño' : 'Online businesses ready for a new owner'}</Text>
+            <Text style={styles.h1}>{es ? 'Sé dueño de un negocio online' : 'Own an online business'}</Text>
             <Text style={styles.sub}>
               {es
-                ? 'Apps, SaaS, tiendas online y sitios web creados por Sylkit. Te entregamos todo funcionando. Paga con USDT, Pago Móvil u Orange Money.'
-                : 'Apps, SaaS, online stores and websites built by Sylkit. We hand everything over up and running. Pay with USDT, Pago Móvil or Orange Money.'}
+                ? 'Compras el negocio completo, con su marca, usuarios e ingresos, y pasa a ser tuyo. Apps, SaaS, tiendas y sitios web creados por Sylkit. Paga con USDT, Pago Móvil u Orange Money.'
+                : 'You buy the whole business, with its brand, users and revenue, and it becomes yours. Apps, SaaS, stores and websites built by Sylkit. Pay with USDT, Pago Móvil or Orange Money.'}
             </Text>
+            <Link href="/" style={styles.crossLink}>
+              {es ? '¿Buscas software para usar en tu negocio? Ver el catálogo →' : 'Looking for software to use in your business? See the catalog →'}
+            </Link>
             <View style={styles.heroBtns}>
               <Pressable style={[styles.primary, { backgroundColor: colors.whatsapp }]} onPress={() => Linking.openURL(waLink(es ? 'Hola, me interesa comprar un negocio de Sylkit.' : "Hi, I'm interested in buying a business from Sylkit."))} accessibilityRole="link">
                 <Ionicons name="logo-whatsapp" size={18} color="#fff" />
@@ -199,6 +202,7 @@ const styles = StyleSheet.create({
   sphere: { position: 'absolute', borderRadius: 999, backgroundColor: colors.primary, opacity: 0.08 },
   kicker: { fontSize: 12, fontWeight: '800', color: colors.primary, letterSpacing: 1.2 },
   h1: { fontSize: 40, lineHeight: 46, fontWeight: '800', color: colors.text, letterSpacing: -1, marginTop: 8, maxWidth: 760 },
+  crossLink: { fontSize: 14, fontWeight: '700', color: colors.primary, marginTop: 10 },
   sub: { fontSize: 17, lineHeight: 25, color: colors.muted, marginTop: 12, maxWidth: 680 },
   heroBtns: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginTop: 22 },
   primary: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.primary, paddingHorizontal: 20, paddingVertical: 14, borderRadius: 14, minHeight: 48, alignSelf: 'flex-start' },

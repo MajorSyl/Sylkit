@@ -49,7 +49,11 @@ export const ui = {
   },
   search: { es: 'Buscar sistemas, apps, sitios web…', en: 'Search systems, apps, websites…' },
   all: { es: 'Todos', en: 'All' },
-  featured: { es: 'Productos', en: 'Products' },
+  featured: { es: 'Software para tu negocio', en: 'Software for your business' },
+  featuredSub: {
+    es: 'Úsalo en tu negocio con instalación y soporte. El sistema sigue siendo nuestro y lo mantenemos por ti.',
+    en: 'Use it in your business, with setup and support. We own and maintain the software for you.',
+  },
   noResults: { es: 'No encontramos resultados. Escríbenos y lo construimos.', en: 'No results. Message us and we will build it.' },
   view: { es: 'Ver detalles', en: 'View details' },
   priceOnRequest: { es: 'Precio a consultar', en: 'Price on request' },
