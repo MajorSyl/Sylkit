@@ -22,16 +22,21 @@ export default function QuotePage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{es ? 'Solicitar cotización · Sylkit' : 'Request a quote · Sylkit'}</title>
+        <title>{est ? (es ? 'Pagar · Sylkit' : 'Checkout · Sylkit') : es ? 'Solicitar cotización · Sylkit' : 'Request a quote · Sylkit'}</title>
       </Head>
       <Header />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
+          {est ? <Text style={styles.kicker}>{es ? 'PAGO · PASO 1 DE 2' : 'CHECKOUT · STEP 1 OF 2'}</Text> : null}
           <Text style={styles.h1}>{p ? t(p.name) : es ? 'Sistema a medida' : 'Custom system'}</Text>
           <Text style={styles.sub}>
-            {es
-              ? 'Completa el formulario. Recibirás un número de pedido y un enlace para seguirlo.'
-              : 'Fill in the form. You will get an order number and a link to track it.'}
+            {est
+              ? es
+                ? 'Revisa tu pedido, escribe tus datos y paga en el siguiente paso.'
+                : 'Review your order, enter your details and pay in the next step.'
+              : es
+                ? 'Cuéntanos qué necesitas. Te enviamos una cotización y un enlace para seguir tu pedido.'
+                : 'Tell us what you need. We send you a quote and a link to track your order.'}
           </Text>
           {est && cfg ? (
             <View style={styles.sum}>
@@ -74,6 +79,7 @@ export default function QuotePage() {
 
 const styles = StyleSheet.create({
   container: { width: '100%', maxWidth: 760, alignSelf: 'center', paddingHorizontal: 16, paddingTop: 28, gap: 12 },
+  kicker: { fontSize: 12, fontWeight: '800', color: colors.primary, letterSpacing: 1 },
   h1: { fontSize: 32, fontWeight: '800', color: colors.text, letterSpacing: -0.6 },
   sub: { fontSize: 15, lineHeight: 22, color: colors.muted, marginBottom: 8 },
   sum: { backgroundColor: colors.softBlue, borderRadius: 16, padding: 16, gap: 6 },

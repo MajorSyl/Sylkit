@@ -77,4 +77,19 @@ npStatus = 'finished'; r = await worker.fetch(req('/api/pay/status?t=' + T), env
 r = await worker.fetch(req('/api/pay/status?t=bad'), env); assert.equal(r.status, 400); ok('status: rejects bad token');
 Object.assign(order, { status: 'accepted', payment_method: 'crypto:usdttrc20', payment_reference: '5524759814' }); npStatus = 'expired';
 await worker.fetch(req('/api/pay/status?t=' + T), env); assert.equal(order.payment_reference, null); ok('status: expired payment is cleared so a new one can be created');
+// ---- checkout (fixed-price plans) ----
+const est = { plan: 'business', plan_name: { en: 'Business', es: 'Negocio' }, billing: 'yearly', plan_monthly: 29, plan_setup: 100, monthly: 29, one_time: 100, recurring: 290, license: 0, due_today: 390, lines: [] };
+const co = { id: 'o2', status: 'new', estimate: est, estimated_total: 390, lang: 'en', created_at: new Date().toISOString() };
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (url, init = {}) => {
+  url = String(url);
+  if (url.includes('/rest/v1/orders?token=') && url.includes('estimate')) return new Response(JSON.stringify([co]));
+  if (url.includes('/rest/v1/orders?id=eq.o2')) { Object.assign(co, JSON.parse(init.body)); return new Response(null, { status: 204 }); }
+  return realFetch(url, init);
+};
+r = await worker.fetch(req('/api/pay/checkout', { method: 'POST', body: JSON.stringify({ token: T }) }), env); j = await r.json();
+assert.equal(r.status, 200); assert.equal(co.status, 'accepted'); assert.equal(co.quote_amount, 390); assert.ok(co.quote_notes.includes('Total: $390')); ok('checkout: fixed-price order confirmed at the server total ($390)');
+r = await worker.fetch(req('/api/pay/checkout', { method: 'POST', body: JSON.stringify({ token: T }) }), env); j = await r.json(); assert.equal(j.already, true); ok('checkout: calling twice is harmless');
+Object.assign(co, { status: 'new', estimate: null, estimated_total: null });
+r = await worker.fetch(req('/api/pay/checkout', { method: 'POST', body: JSON.stringify({ token: T }) }), env); assert.equal(r.status, 409); assert.equal(co.status, 'new'); ok('checkout: custom requests (no price) stay as quote requests');
 console.log(`\n${pass} checks passed`);

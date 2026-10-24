@@ -37,16 +37,32 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
       p_source: source,
       p_config: config ?? null,
     });
+    if (err || !data) {
+      setBusy(false);
+      return setError(friendlyError(err, lang));
+    }
+    const token = (data as any).token as string;
+    // Fixed-price plan: confirm it at the server-calculated total so the client can pay right away.
+    if (config) {
+      try {
+        await fetch('/api/pay/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) });
+      } catch {
+        /* if this fails, the order stays as a request and we send the quote manually */
+      }
+    }
     setBusy(false);
-    if (err || !data) return setError(friendlyError(err, lang));
-    router.push(`/track?t=${(data as any).token}&new=1`);
+    router.push(`/track?t=${token}&new=1${config ? '&pay=1' : ''}`);
   };
 
   return (
     <View style={[styles.card, shadow]}>
-      <Text style={styles.title}>{es ? 'Solicitar cotización' : 'Request a quote'}</Text>
+      <Text style={styles.title}>{config ? (es ? 'Tus datos' : 'Your details') : es ? 'Solicitar cotización' : 'Request a quote'}</Text>
       <Text style={styles.sub}>
-        {productName
+        {config
+          ? es
+            ? 'Te enviaremos el recibo y el enlace de tu pedido a este correo.'
+            : 'We will send your receipt and order link to this email.'
+          : productName
           ? es
             ? `Para: ${productName}. Te respondemos con un precio y te avisamos por correo.`
             : `For: ${productName}. We reply with a price and notify you by email.`
@@ -86,9 +102,20 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
         placeholder={es ? 'Tipo de negocio, número de sucursales, funciones que necesitas…' : 'Type of business, number of locations, features you need…'}
       />
       {error ? <Text style={formStyles.error}>{error}</Text> : null}
-      <Button label={es ? 'Enviar solicitud' : 'Send request'} icon="send" onPress={submit} loading={busy} />
+      <Button
+        label={config ? (es ? 'Continuar al pago' : 'Continue to payment') : es ? 'Enviar solicitud' : 'Send request'}
+        icon={config ? 'lock-closed' : 'send'}
+        onPress={submit}
+        loading={busy}
+      />
       <Text style={styles.fine}>
-        {es ? 'Sin compromiso. Respondemos normalmente en menos de 24 horas.' : 'No commitment. We usually reply within 24 hours.'}
+        {config
+          ? es
+            ? 'En el siguiente paso eliges cómo pagar: USDT u otro método.'
+            : 'Next you choose how to pay: USDT or another method.'
+          : es
+            ? 'Sin compromiso. Respondemos normalmente en menos de 24 horas.'
+            : 'No commitment. We usually reply within 24 hours.'}
       </Text>
     </View>
   );

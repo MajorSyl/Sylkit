@@ -117,12 +117,70 @@ export default function TrackPage() {
           <View style={[formStyles.success as object, { flexDirection: 'row', gap: 10, alignItems: 'center' }]}>
             <Ionicons name="checkmark-circle" size={22} color="#067647" />
             <Text style={{ color: '#067647', flex: 1, fontSize: 14 }}>
-              {es
-                ? 'Solicitud enviada. Guarda esta página: aquí verás tu cotización. También te enviaremos el enlace por correo.'
-                : 'Request sent. Save this page: your quote will appear here. We will also email you the link.'}
+              {order.status === 'accepted'
+                ? es
+                  ? `Pedido ${order.order_number} confirmado. Último paso: paga abajo y empezamos.`
+                  : `Order ${order.order_number} confirmed. Last step: pay below and we get started.`
+                : es
+                  ? 'Solicitud enviada. Guarda esta página: aquí verás tu cotización. También te enviaremos el enlace por correo.'
+                  : 'Request sent. Save this page: your quote will appear here. We will also email you the link.'}
             </Text>
           </View>
         ) : null}
+
+        {(order.status === 'accepted' || order.status === 'payment_submitted') && (
+          <View style={[styles.card, shadow]}>
+            <Text style={styles.h2}>{es ? 'Pago' : 'Payment'}</Text>
+            {order.quote_amount != null ? (
+              <Text style={styles.payTotal}>
+                {es ? 'Total a pagar: ' : 'Total to pay: '}
+                <Text style={{ color: colors.primary }}>{formatMoney(order.quote_amount, order.quote_currency)}</Text>
+              </Text>
+            ) : null}
+            {order.status === 'accepted' || String(order.payment_method ?? '').startsWith('crypto:') ? (
+              <CryptoPay token={String(token)} lang={lang} onChanged={load} />
+            ) : null}
+            {String(order.payment_method ?? '').startsWith('crypto:') && order.status === 'payment_submitted' ? null : (
+            <>
+            {order.status === 'payment_submitted' ? (
+              <Text style={formStyles.success}>
+                {es
+                  ? `Recibimos tu reporte de pago (${order.payment_method ?? ''}). Lo estamos verificando.`
+                  : `We received your payment report (${order.payment_method ?? ''}). We are verifying it.`}
+              </Text>
+            ) : null}
+            {order.status === 'accepted' ? (
+              <View style={styles.orRow}>
+                <View style={styles.orLine} />
+                <Text style={styles.orText}>{es ? 'o paga de otra forma' : 'or pay another way'}</Text>
+                <View style={styles.orLine} />
+              </View>
+            ) : null}
+            <Text style={styles.muted}>{es ? 'Elige cómo vas a pagar y luego reporta tu pago:' : 'Choose how you will pay, then report your payment:'}</Text>
+            <View style={{ gap: 8 }}>
+              {methods.map((m) => {
+                const on = method === m.name;
+                return (
+                  <Pressable key={m.id} onPress={() => setMethod(m.name)} style={[styles.method, on && styles.methodOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
+                    <Ionicons name={on ? 'radio-button-on' : 'radio-button-off'} size={20} color={on ? colors.primary : colors.muted} />
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={styles.methodName}>{m.name}</Text>
+                      <Text style={styles.muted}>{es ? m.details_es : m.details_en}</Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Field
+              label={es ? 'Referencia o número de confirmación' : 'Reference or confirmation number'}
+              value={reference}
+              onChangeText={setReference}
+            />
+            <Button label={es ? 'Reportar pago' : 'Report payment'} icon="cash" onPress={pay} loading={busy} variant="secondary" />
+            </>
+            )}
+          </View>
+        )}
 
         <View style={[styles.card, shadow]}>
           <View style={styles.headRow}>
@@ -167,7 +225,7 @@ export default function TrackPage() {
 
         {order.quote_amount != null && order.status !== 'new' && (
           <View style={[styles.card, shadow]}>
-            <Text style={styles.h2}>{es ? 'Tu cotización' : 'Your quote'}</Text>
+            <Text style={styles.h2}>{order.status === 'quoted' ? (es ? 'Tu cotización' : 'Your quote') : es ? 'Resumen del pedido' : 'Order summary'}</Text>
             <Text style={styles.amount}>{formatMoney(order.quote_amount, order.quote_currency)}</Text>
             {order.quote_valid_until ? (
               <Text style={styles.muted}>
@@ -177,54 +235,6 @@ export default function TrackPage() {
             {order.quote_notes ? <Text style={styles.notes}>{order.quote_notes}</Text> : null}
             {order.status === 'quoted' && (
               <Button label={es ? 'Aceptar cotización' : 'Accept quote'} icon="checkmark-circle" onPress={accept} loading={busy} />
-            )}
-          </View>
-        )}
-
-        {(order.status === 'accepted' || order.status === 'payment_submitted') && (
-          <View style={[styles.card, shadow]}>
-            <Text style={styles.h2}>{es ? 'Pago' : 'Payment'}</Text>
-            {order.status === 'accepted' || String(order.payment_method ?? '').startsWith('crypto:') ? (
-              <CryptoPay token={String(token)} lang={lang} onChanged={load} />
-            ) : null}
-            {String(order.payment_method ?? '').startsWith('crypto:') && order.status === 'payment_submitted' ? null : (
-            <>
-            {order.status === 'payment_submitted' ? (
-              <Text style={formStyles.success}>
-                {es
-                  ? `Recibimos tu reporte de pago (${order.payment_method ?? ''}). Lo estamos verificando.`
-                  : `We received your payment report (${order.payment_method ?? ''}). We are verifying it.`}
-              </Text>
-            ) : null}
-            {order.status === 'accepted' ? (
-              <View style={styles.orRow}>
-                <View style={styles.orLine} />
-                <Text style={styles.orText}>{es ? 'o paga de otra forma' : 'or pay another way'}</Text>
-                <View style={styles.orLine} />
-              </View>
-            ) : null}
-            <Text style={styles.muted}>{es ? 'Elige cómo vas a pagar y luego reporta tu pago:' : 'Choose how you will pay, then report your payment:'}</Text>
-            <View style={{ gap: 8 }}>
-              {methods.map((m) => {
-                const on = method === m.name;
-                return (
-                  <Pressable key={m.id} onPress={() => setMethod(m.name)} style={[styles.method, on && styles.methodOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
-                    <Ionicons name={on ? 'radio-button-on' : 'radio-button-off'} size={20} color={on ? colors.primary : colors.muted} />
-                    <View style={{ flex: 1, gap: 2 }}>
-                      <Text style={styles.methodName}>{m.name}</Text>
-                      <Text style={styles.muted}>{es ? m.details_es : m.details_en}</Text>
-                    </View>
-                  </Pressable>
-                );
-              })}
-            </View>
-            <Field
-              label={es ? 'Referencia o número de confirmación' : 'Reference or confirmation number'}
-              value={reference}
-              onChangeText={setReference}
-            />
-            <Button label={es ? 'Reportar pago' : 'Report payment'} icon="cash" onPress={pay} loading={busy} variant="secondary" />
-            </>
             )}
           </View>
         )}
@@ -291,6 +301,7 @@ const styles = StyleSheet.create({
   methodOn: { borderColor: colors.primary, backgroundColor: colors.softBlue },
   methodName: { fontSize: 15, fontWeight: '800', color: colors.text },
   event: { flexDirection: 'row', gap: 12 },
+  payTotal: { fontSize: 22, fontWeight: '800', color: colors.text },
   orRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 4 },
   orLine: { flex: 1, height: 1, backgroundColor: colors.border },
   orText: { fontSize: 12, fontWeight: '800', color: colors.muted, textTransform: 'uppercase', letterSpacing: 0.5 },

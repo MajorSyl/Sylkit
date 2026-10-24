@@ -2,6 +2,7 @@
 //
 //   POST /api/pay/create   { token, currency? }  -> creates a NOWPayments payment for an accepted quote
 //   POST /api/pay/ipn      NOWPayments webhook   -> verifies x-nowpayments-sig, then updates the order
+//   POST /api/pay/checkout { token }           -> fixed-price plan: confirms the order at the server-calculated total so it can be paid right away
 //   GET  /api/pay/status?t=<token>             -> current crypto payment for the order (polled by the tracking page)
 //   GET  /api/pay/health                         -> says which secrets are bound and whether NOWPayments answers (never returns secret values)
 //
@@ -190,6 +191,54 @@ async function create(request, env) {
   return json(publicPayment(p));
 }
 
+// Plans have fixed prices calculated by the database at order time (orders.estimate),
+// so there is nothing to quote: confirm the order at that total and let the client pay now.
+const money2 = (n) => `$${Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
+function checkoutNotes(e, es) {
+  const name = (x) => (es ? x.name_es : x.name_en);
+  const per = es ? '/mes' : '/mo';
+  const once = e.billing === 'once';
+  const lines = [
+    `${es ? 'Plan' : 'Plan'} ${es ? e.plan_name?.es : e.plan_name?.en} · ${once ? (es ? 'pago único' : 'buy once') : e.billing === 'yearly' ? (es ? 'anual' : 'yearly') : es ? 'mensual' : 'monthly'}`,
+    ...(e.lines || []).map((l) => `+ ${name(l)}${l.qty > 1 ? ` ×${l.qty}` : ''}: ${l.kind === 'monthly' && !once ? `${money2(l.total)}${per}` : money2(once && l.kind === 'monthly' ? l.total * 30 : l.total)}`),
+    `${es ? 'Pago único (instalación y extras)' : 'One-time (setup and extras)'}: ${money2(e.one_time)}`,
+    once ? `${es ? 'Licencia' : 'License'}: ${money2(e.license)}` : `${e.billing === 'yearly' ? (es ? 'Primer año' : 'First year') : es ? 'Primer mes' : 'First month'}: ${money2(e.recurring)}`,
+    `${es ? 'Total' : 'Total'}: ${money2(e.due_today)}`,
+  ];
+  return lines.join('\n');
+}
+
+async function checkout(request, env) {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return json({ error: 'database_not_configured' }, 503);
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: 'bad_request' }, 400);
+  }
+  const token = String(body.token || '');
+  if (!/^[0-9a-f-]{36}$/i.test(token)) return json({ error: 'invalid_token' }, 400);
+  const rows = await sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,status,estimate,estimated_total,lang,created_at`);
+  const order = rows[0];
+  if (!order) return json({ error: 'order_not_found' }, 404);
+  if (order.status === 'accepted') return json({ ok: true, already: true });
+  if (order.status !== 'new') return json({ error: 'order_not_open', status: order.status }, 409);
+  const total = Number(order.estimated_total);
+  if (!order.estimate || !total || total <= 0) return json({ error: 'needs_quote' }, 409); // custom request: we send a quote
+  if (Date.now() - new Date(order.created_at).getTime() > 24 * 3600 * 1000) return json({ error: 'needs_quote' }, 409);
+  const es = order.lang === 'es';
+  const validUntil = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+  await patchOrder(env, order.id, {
+    status: 'accepted',
+    quote_amount: total,
+    quote_currency: 'USD',
+    quote_valid_until: validUntil,
+    quote_notes: checkoutNotes(order.estimate, es),
+  });
+  await addEvent(env, order.id, 'update', es ? `Pedido confirmado. Total a pagar: ${money2(total)}.` : `Order confirmed. Total to pay: ${money2(total)}.`);
+  return json({ ok: true, total });
+}
+
 async function statusCheck(url, env) {
   if (!env.NOWPAYMENTS_API_KEY || !env.SUPABASE_SERVICE_ROLE_KEY) return json({ error: 'payments_not_configured' }, 503);
   const token = url.searchParams.get('t') || '';
@@ -254,6 +303,7 @@ export async function handlePayments(request, env, url) {
   try {
     if (url.pathname === '/api/pay/health' && request.method === 'GET') return await health(env);
     if (url.pathname === '/api/pay/status' && request.method === 'GET') return await statusCheck(url, env);
+    if (url.pathname === '/api/pay/checkout' && request.method === 'POST') return await checkout(request, env);
     if (url.pathname === '/api/pay/create' && request.method === 'POST') return await create(request, env);
     if (url.pathname === '/api/pay/ipn' && request.method === 'POST') return await ipn(request, env);
     return json({ error: 'not_found' }, 404);

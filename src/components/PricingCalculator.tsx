@@ -49,10 +49,10 @@ const L = {
   renews: { es: 'Luego', en: 'Then' },
   perYear: { es: '/año', en: '/year' },
   save: { es: 'Ahorras', en: 'You save' },
-  cta: { es: 'Solicitar este plan', en: 'Request this plan' },
+  cta: { es: 'Comprar ahora', en: 'Buy now' },
   fine: {
-    es: 'Sin compromiso: confirmamos el precio final antes de que pagues.',
-    en: 'No commitment: we confirm the final price before you pay.',
+    es: 'Pagas en el siguiente paso con USDT, Pago Móvil u otro método.',
+    en: 'You pay in the next step with USDT, Pago Móvil or another method.',
   },
 };
 
