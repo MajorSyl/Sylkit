@@ -289,7 +289,7 @@ async function health(env) {
     out.api_status = { error: String(e) };
   }
   if (env.NOWPAYMENTS_API_KEY) {
-    // /v1/currencies requires a valid key: 200 = key accepted, 401/403 = key rejected.
+    // First contact with the API using the key (the merchant check below is the strict one).
     try {
       const c = await fetch(`${NOWPAYMENTS}/currencies`, { headers: { 'x-api-key': env.NOWPAYMENTS_API_KEY } });
       const b = await c.json().catch(() => ({}));
@@ -320,6 +320,8 @@ async function health(env) {
       }
     }
   }
+  // /v1/currencies answers even with a bad key, so the real test is a merchant endpoint.
+  if (out.api_key_check) out.api_key_check.ok = out.api_key_check.ok && out.merchant_coins?.http === 200;
   out.ready = configured.NOWPAYMENTS_API_KEY && configured.NOWPAYMENTS_IPN_SECRET && configured.SUPABASE_SERVICE_ROLE_KEY && !!out.api_key_check?.ok;
   return json(out);
 }
