@@ -35,6 +35,7 @@ export type Product = {
   platforms: string[];
   demoUrl?: string;
   pricing?: Pricing;
+  image?: string; // screenshot or cover in /public/shots
 };
 
 export const products: Product[] = [
@@ -466,8 +467,32 @@ export const products: Product[] = [
 }
 ];
 
+// Real screenshots of the live demos, plus designed covers for products without a demo.
+export const productImages: Record<string, string> = {
+  'alertas-de-vencimiento': '/shots/alertas.webp',
+  'punto-de-venta': '/shots/pos.webp',
+  'control-de-inventario': '/shots/inventario.webp',
+  'sitio-web-para-negocios': '/shots/sitio-web.webp',
+  'app-movil-a-medida': '/shots/app-movil.webp',
+  'asistente-ia-para-negocios': '/shots/asistente.webp',
+  'farmacia-pos': '/shots/farmacia.webp',
+  'clinica-citas-historias': '/shots/clinica.webp',
+  'restaurante-menu-qr': '/shots/restaurante.webp',
+  'salon-barberia-reservas': '/shots/salon.webp',
+  'taller-mecanico': '/shots/taller.webp',
+  'servicios-a-domicilio': '/shots/servicios.webp',
+  'gestion-escolar': '/shots/escuela.webp',
+  'nomina-asistencia': '/shots/nomina.webp',
+  facturacion: '/shots/facturas.webp',
+  'tienda-online-whatsapp': '/shots/tienda.webp',
+  'sitio-web-personal': '/shots/portafolio.webp',
+  'dominio-y-correo': '/shots/dominio.webp',
+  'hosting-web': '/shots/hosting.webp',
+};
+
 // Attach plans to every product and derive the "From" price from the cheapest plan.
 for (const p of products) {
+  p.image = productImages[p.slug];
   const pr = pricingBySlug[p.slug];
   if (pr) {
     p.pricing = pr;

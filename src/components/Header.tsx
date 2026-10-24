@@ -22,10 +22,16 @@ export function Header() {
         </Link>
 
         <View style={styles.right}>
+          <Link href="/startups" asChild>
+            <Pressable style={styles.navLink} accessibilityRole="link">
+              <Ionicons name="rocket-outline" size={18} color={colors.primary} />
+              {!compact && <Text style={styles.navText}>{lang === 'es' ? 'Negocios en venta' : 'Startups for sale'}</Text>}
+            </Pressable>
+          </Link>
           <Link href="/domains" asChild>
             <Pressable style={styles.navLink} accessibilityRole="link">
               <Ionicons name="globe-outline" size={18} color={colors.primary} />
-              <Text style={styles.navText}>{lang === 'es' ? 'Dominios' : 'Domains'}</Text>
+              {!compact && <Text style={styles.navText}>{lang === 'es' ? 'Dominios' : 'Domains'}</Text>}
             </Pressable>
           </Link>
           <Pressable

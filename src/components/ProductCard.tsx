@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Product } from '../data/products';
 import { categories } from '../data/products';
 import { useLang, ui } from '../i18n';
@@ -29,8 +29,14 @@ export function ProductCard({ product }: { product: Product }) {
     <Link href={`/product/${product.slug}`} asChild>
       <Pressable style={({ pressed }) => [styles.card, shadow, pressed && { opacity: 0.9 }]} accessibilityRole="link">
         <View style={[styles.thumb, { backgroundColor: tintBg }]}>
-          <View style={[styles.orb, { backgroundColor: tintFg, opacity: 0.12 }]} />
-          <Ionicons name={product.icon as any} size={44} color={tintFg} />
+          {product.image ? (
+            <Image source={{ uri: product.image }} style={styles.img} resizeMode="cover" accessibilityLabel={t(product.name)} />
+          ) : (
+            <>
+              <View style={[styles.orb, { backgroundColor: tintFg, opacity: 0.12 }]} />
+              <Ionicons name={product.icon as any} size={44} color={tintFg} />
+            </>
+          )}
           {(product.badge || product.demoUrl) && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{product.badge ? t(product.badge) : t({ es: '✓ Listo para usar', en: '✓ Ready to use' })}</Text>
@@ -73,7 +79,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flex: 1,
   },
-  thumb: { height: 130, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  thumb: { aspectRatio: 16 / 10, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderBottomWidth: 1, borderBottomColor: colors.border },
+  img: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' },
   orb: { position: 'absolute', width: 180, height: 180, borderRadius: 90, top: -60, right: -50 },
   badge: {
     position: 'absolute',

@@ -24,6 +24,11 @@ export const friendlyError = (e: unknown, lang: 'es' | 'en') => {
     invalid_reference: ['Escribe la referencia del pago.', 'Please enter the payment reference.'],
     cannot_accept: ['Esta cotización ya no se puede aceptar. Escríbenos.', 'This quote can no longer be accepted. Please contact us.'],
     cannot_submit_payment: ['No se pudo registrar el pago en este estado.', 'Payment cannot be registered at this stage.'],
+    invalid_title: ['Escribe un nombre para tu negocio (3 a 90 caracteres).', 'Enter a name for your business (3 to 90 characters).'],
+    invalid_tagline: ['Escribe una descripción corta (10 a 200 caracteres).', 'Write a short description (10 to 200 characters).'],
+    invalid_price: ['El precio debe ser de al menos $100.', 'The asking price must be at least $100.'],
+    invalid_offer: ['Escribe el monto de tu oferta.', 'Enter your offer amount.'],
+    invalid_listing: ['Este negocio ya no está disponible.', 'This business is no longer available.'],
     'Invalid login credentials': ['Correo o contraseña incorrectos.', 'Wrong email or password.'],
   };
   const hit = Object.keys(map).find((k) => msg.includes(k));

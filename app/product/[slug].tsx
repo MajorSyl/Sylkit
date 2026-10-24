@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useRef } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Image, Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { Footer } from '../../src/components/Footer';
 import { Header } from '../../src/components/Header';
 import { PricingCalculator } from '../../src/components/PricingCalculator';
@@ -80,11 +80,27 @@ export default function ProductPage() {
 
           <View style={[styles.layout, wide && { flexDirection: 'row', alignItems: 'flex-start' }]}>
             {/* Visual */}
-            <View style={[styles.visual, { backgroundColor: tintBg }, wide && { flex: 1, height: 380 }]}>
-              <View style={[styles.sphere, { width: 260, height: 260, top: -80, right: -60, backgroundColor: tintFg, opacity: 0.12 }]} />
-              <View style={[styles.sphere, { width: 160, height: 160, bottom: -50, left: -30, backgroundColor: '#fff', opacity: 0.5 }]} />
-              <Ionicons name={product.icon as any} size={96} color={tintFg} />
-            </View>
+            {product.image ? (
+              <Pressable
+                style={[styles.visual, styles.shot, wide && { flex: 1, height: 'auto' as any }]}
+                onPress={() => product.demoUrl && Linking.openURL(product.demoUrl)}
+                accessibilityRole={product.demoUrl ? 'link' : undefined}
+              >
+                <Image source={{ uri: product.image }} style={{ width: '100%', aspectRatio: 16 / 10 }} resizeMode="cover" accessibilityLabel={name} />
+                {product.demoUrl ? (
+                  <View style={styles.playTag}>
+                    <Ionicons name="play-circle" size={16} color="#fff" />
+                    <Text style={styles.playText}>{lang === 'es' ? 'Probar demo en vivo' : 'Try the live demo'}</Text>
+                  </View>
+                ) : null}
+              </Pressable>
+            ) : (
+              <View style={[styles.visual, { backgroundColor: tintBg }, wide && { flex: 1, height: 380 }]}>
+                <View style={[styles.sphere, { width: 260, height: 260, top: -80, right: -60, backgroundColor: tintFg, opacity: 0.12 }]} />
+                <View style={[styles.sphere, { width: 160, height: 160, bottom: -50, left: -30, backgroundColor: '#fff', opacity: 0.5 }]} />
+                <Ionicons name={product.icon as any} size={96} color={tintFg} />
+              </View>
+            )}
 
             {/* Info */}
             <View style={[styles.info, wide && { flex: 1 }]}>
@@ -174,6 +190,9 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   sphere: { position: 'absolute', borderRadius: 999 },
+  shot: { height: 'auto' as any, backgroundColor: '#fff', borderWidth: 1, borderColor: colors.border, alignItems: 'stretch' },
+  playTag: { position: 'absolute', left: 12, bottom: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(15,23,42,0.82)', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999 },
+  playText: { color: '#fff', fontWeight: '700', fontSize: 13 },
   info: { gap: 10 },
   cat: { fontSize: 12, fontWeight: '700', color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.6 },
   h1: { fontSize: 34, lineHeight: 40, fontWeight: '800', color: colors.text, letterSpacing: -0.8 },

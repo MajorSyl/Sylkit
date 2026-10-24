@@ -128,6 +128,23 @@ export default function Home() {
             </Pressable>
           </View>
 
+          {/* Startup marketplace banner */}
+          <View style={[styles.banner, { backgroundColor: '#0F172A', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
+            <View style={[styles.sphere, { width: 220, height: 220, top: -90, right: 40, backgroundColor: '#2563EB', opacity: 0.35 }]} />
+            <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
+              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Compra y vende negocios online' : 'Buy and sell online businesses'}</Text>
+              <Text style={styles.bannerSub}>
+                {lang === 'es'
+                  ? 'Apps, SaaS, tiendas y sitios web listos para un nuevo dueño. Publicar es gratis: comisión solo si se vende.'
+                  : 'Apps, SaaS, stores and websites ready for a new owner. Listing is free: a fee only if it sells.'}
+              </Text>
+            </View>
+            <Pressable style={styles.bannerBtn} onPress={() => router.push('/startups')} accessibilityRole="link">
+              <Text style={[styles.bannerBtnText, { color: '#0F172A' }]}>{lang === 'es' ? 'Ver negocios en venta' : 'See startups for sale'}</Text>
+              <Ionicons name="rocket" size={16} color="#0F172A" />
+            </Pressable>
+          </View>
+
           {/* Domains banner */}
           <View style={[styles.banner, { backgroundColor: '#0E7F98', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
             <View style={[styles.sphere, { width: 200, height: 200, bottom: -90, right: 60, backgroundColor: '#fff', opacity: 0.1 }]} />

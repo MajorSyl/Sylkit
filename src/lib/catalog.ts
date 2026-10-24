@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { pricingBySlug } from '../data/pricing';
-import { Product, products as fallback } from '../data/products';
+import { Product, productImages, products as fallback } from '../data/products';
 import { supabase } from './supabase';
 
 // Products come from the database. The bundled list is a fallback so the
@@ -21,6 +21,7 @@ export const rowToProduct = (r: any): Product => ({
   features: Array.isArray(r.features) ? r.features : [],
   platforms: r.platforms ?? [],
   demoUrl: r.demo_url ?? undefined,
+  image: r.image_url ?? productImages[r.slug],
   pricing: r.pricing && Array.isArray(r.pricing.plans) ? r.pricing : pricingBySlug[r.slug],
 });
 
