@@ -40,7 +40,7 @@ const L = {
   extras: { es: 'Funciones extra', en: 'Extra features' },
   extrasSub: { es: 'Opcionales. Se suman a tu total automáticamente.', en: 'Optional. They are added to your total automatically.' },
   oneTime: { es: 'pago único', en: 'one-time' },
-  summary: { es: 'Tu cotización', en: 'Your quote' },
+  summary: { es: 'Tu pedido', en: 'Your order' },
   plan: { es: 'Plan', en: 'Plan' },
   setupTotal: { es: 'Instalación y extras (pago único)', en: 'Setup and extras (one-time)' },
   subYear: { es: 'Suscripción del primer año', en: 'First-year subscription' },
