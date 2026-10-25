@@ -10,7 +10,10 @@
 //   NOWPAYMENTS_API_KEY, NOWPAYMENTS_IPN_SECRET, SUPABASE_SERVICE_ROLE_KEY
 // No imports needed: HMAC uses the Web Crypto API built into Workers (crypto.subtle).
 
-const NOWPAYMENTS = 'https://api.nowpayments.io/v1';
+const NOWPAYMENTS_LIVE = 'https://api.nowpayments.io/v1';
+const NOWPAYMENTS_SANDBOX = 'https://api-sandbox.nowpayments.io/v1';
+// Set the plain variable NOWPAYMENTS_SANDBOX = "true" in Cloudflare to use a sandbox (test) key.
+let NOWPAYMENTS = NOWPAYMENTS_LIVE;
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SITE = 'https://sylkit.com';
 const DEFAULT_CURRENCY = 'usdttrc20';
@@ -298,6 +301,7 @@ async function health(env) {
       out.api_key_check = { error: String(e) };
     }
   }
+  out.mode = NOWPAYMENTS === NOWPAYMENTS_SANDBOX ? 'sandbox' : 'live';
   // Which coins this NOWPayments account accepts, and the minimum for each checkout network.
   if (env.NOWPAYMENTS_API_KEY) {
     const h = { 'x-api-key': env.NOWPAYMENTS_API_KEY };
@@ -320,6 +324,18 @@ async function health(env) {
       }
     }
   }
+  // If the key is refused, see whether it is a sandbox (test) key.
+  if (env.NOWPAYMENTS_API_KEY && out.merchant_coins?.http !== 200) {
+    const other = NOWPAYMENTS === NOWPAYMENTS_LIVE ? NOWPAYMENTS_SANDBOX : NOWPAYMENTS_LIVE;
+    try {
+      const m = await fetch(`${other}/merchant/coins`, { headers: { 'x-api-key': env.NOWPAYMENTS_API_KEY } });
+      const b = await m.json().catch(() => ({}));
+      out.key_works_on = m.ok ? (other === NOWPAYMENTS_SANDBOX ? 'sandbox' : 'live') : 'neither';
+      out.other_server = { http: m.status, message: m.ok ? undefined : b.message };
+    } catch (e) {
+      out.other_server = { error: String(e) };
+    }
+  }
   // /v1/currencies answers even with a bad key, so the real test is a merchant endpoint.
   if (out.api_key_check) out.api_key_check.ok = out.api_key_check.ok && out.merchant_coins?.http === 200;
   out.ready = configured.NOWPAYMENTS_API_KEY && configured.NOWPAYMENTS_IPN_SECRET && configured.SUPABASE_SERVICE_ROLE_KEY && !!out.api_key_check?.ok;
@@ -327,6 +343,7 @@ async function health(env) {
 }
 
 export async function handlePayments(request, env, url) {
+  NOWPAYMENTS = String(env.NOWPAYMENTS_SANDBOX || '').toLowerCase() === 'true' ? NOWPAYMENTS_SANDBOX : NOWPAYMENTS_LIVE;
   try {
     if (url.pathname === '/api/pay/health' && request.method === 'GET') return await health(env);
     if (url.pathname === '/api/pay/status' && request.method === 'GET') return await statusCheck(url, env);
