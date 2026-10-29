@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { CardPay, ManageCard } from '../src/components/CardPay';
 import { CryptoPay } from '../src/components/CryptoPay';
 import { EstimateBreakdown, ServerEstimate } from '../src/components/EstimateBreakdown';
 import { useLocalSearchParams } from 'expo-router';
@@ -35,7 +36,7 @@ type Order = {
 type Method = { id: string; name: string; kind: string; details_es: string; details_en: string };
 
 export default function TrackPage() {
-  const { t: token, new: isNew } = useLocalSearchParams<{ t?: string; new?: string }>();
+  const { t: token, new: isNew, paid: paidVia } = useLocalSearchParams<{ t?: string; new?: string; paid?: string }>();
   const { t, lang } = useLang();
   const es = lang === 'es';
   const [order, setOrder] = useState<Order | null>(null);
@@ -137,6 +138,9 @@ export default function TrackPage() {
                 <Text style={{ color: colors.primary }}>{formatMoney(order.quote_amount, order.quote_currency)}</Text>
               </Text>
             ) : null}
+            {order.status === 'accepted' ? (
+              <CardPay token={String(token)} lang={lang} billing={order.estimate?.billing} returned={paidVia === 'card'} onChanged={load} />
+            ) : null}
             {order.status === 'accepted' || String(order.payment_method ?? '').startsWith('crypto:') ? (
               <CryptoPay token={String(token)} lang={lang} onChanged={load} />
             ) : null}
@@ -181,6 +185,13 @@ export default function TrackPage() {
             )}
           </View>
         )}
+
+        {['paid', 'in_progress', 'delivered'].includes(order.status) && String(order.payment_method ?? '').startsWith('card') ? (
+          <View style={[styles.card, shadow]}>
+            <Text style={styles.h2}>{es ? 'Pago con tarjeta' : 'Card payment'}</Text>
+            <ManageCard token={String(token)} lang={lang} subscription={order.payment_method === 'card:subscription'} />
+          </View>
+        ) : null}
 
         <View style={[styles.card, shadow]}>
           <View style={styles.headRow}>
