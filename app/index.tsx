@@ -20,6 +20,13 @@ import { useRouter } from 'expo-router';
 import { steps, ui, useLang } from '../src/i18n';
 import { colors, glass, shadow, waLink } from '../src/theme';
 
+const doors: { href: string; icon: string; title: { es: string; en: string }; sub: { es: string; en: string } }[] = [
+  { href: '#catalog', icon: 'apps-outline', title: { en: 'Software', es: 'Software' }, sub: { en: 'Ready-made or custom systems', es: 'Sistemas listos o a medida' } },
+  { href: '/domains', icon: 'globe-outline', title: { en: 'Domains & hosting', es: 'Dominios y hosting' }, sub: { en: 'Your .com, email and hosting', es: 'Tu .com, correo y hosting' } },
+  { href: '/security', icon: 'shield-checkmark-outline', title: { en: 'Security', es: 'Seguridad' }, sub: { en: 'Check and protect your app', es: 'Revisa y protege tu app' } },
+  { href: '/startups', icon: 'rocket-outline', title: { en: 'Own a business', es: 'Compra un negocio' }, sub: { en: 'Startups for sale', es: 'Negocios en venta' } },
+];
+
 export default function Home() {
   const { t, lang } = useLang();
   const { width } = useWindowDimensions();
@@ -77,8 +84,31 @@ export default function Home() {
           </View>
         </View>
 
-        {/* Categories */}
+        {/* Four clear doors */}
         <View style={styles.container}>
+          <View style={styles.doors}>
+            {doors.map((d) => (
+              <View key={d.href} style={{ width: wide ? '25%' : '50%', padding: 6 }}>
+                <Pressable style={[styles.door, shadow]} onPress={() => {
+                    if (d.href === '#catalog') {
+                      try {
+                        document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      } catch {}
+                    } else router.push(d.href as any);
+                  }} accessibilityRole="link">
+                  <View style={styles.doorIcon}>
+                    <Ionicons name={d.icon as any} size={22} color={colors.primary} />
+                  </View>
+                  <Text style={styles.doorTitle}>{t(d.title)}</Text>
+                  <Text style={styles.doorSub}>{t(d.sub)}</Text>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Categories */}
+        <View style={styles.container} nativeID="catalog">
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
             <Chip label={t(ui.all)} icon="apps" active={cat === 'all'} onPress={() => setCat('all')} />
             {categories.map((c) => (
@@ -105,8 +135,8 @@ export default function Home() {
           ) : (
             <View style={styles.grid}>
               {filtered.map((p) => (
-                <View key={p.slug} style={{ width: `${100 / cols}%`, padding: 8 }}>
-                  <ProductCard product={p} />
+                <View key={p.slug} style={{ width: `${100 / cols}%`, padding: cols === 1 ? 5 : 8 }}>
+                  <ProductCard product={p} compact={cols === 1} />
                 </View>
               ))}
             </View>
@@ -126,57 +156,6 @@ export default function Home() {
             >
               <Text style={styles.bannerBtnText}>{t(ui.customCta)}</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.primary} />
-            </Pressable>
-          </View>
-
-          {/* Startup marketplace banner */}
-          <View style={[styles.banner, { backgroundColor: '#0F172A', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
-            <View style={[styles.sphere, { width: 220, height: 220, top: -90, right: 40, backgroundColor: '#2563EB', opacity: 0.35 }]} />
-            <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
-              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Sé dueño de un negocio online' : 'Own an online business'}</Text>
-              <Text style={styles.bannerSub}>
-                {lang === 'es'
-                  ? 'No es software para usar: compras el negocio completo, con su marca, usuarios e ingresos. Pasa a ser tuyo.'
-                  : 'Not software to use: you buy the whole business, with its brand, users and revenue. It becomes yours.'}
-              </Text>
-            </View>
-            <Pressable style={styles.bannerBtn} onPress={() => router.push('/startups')} accessibilityRole="link">
-              <Text style={[styles.bannerBtnText, { color: '#0F172A' }]}>{lang === 'es' ? 'Ver negocios en venta' : 'See startups for sale'}</Text>
-              <Ionicons name="rocket" size={16} color="#0F172A" />
-            </Pressable>
-          </View>
-
-          {/* Sylkit Shield banner */}
-          <View style={[styles.banner, { backgroundColor: '#0B1B3A', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
-            <View style={[styles.sphere, { width: 220, height: 220, top: -90, right: 40, backgroundColor: '#19C3E6', opacity: 0.25 }]} />
-            <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
-              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Tu app funciona. ¿Es segura?' : 'Your app works. Is it safe?'}</Text>
-              <Text style={styles.bannerSub}>
-                {lang === 'es'
-                  ? 'Sylkit Shield revisa tu sitio, app o sistema, encuentra los huecos de seguridad y los corrige. Empieza con un diagnóstico gratis.'
-                  : 'Sylkit Shield checks your website, app or system, finds the security holes and fixes them. Start with a free Snapshot.'}
-              </Text>
-            </View>
-            <Pressable style={styles.bannerBtn} onPress={() => router.push('/security')} accessibilityRole="link">
-              <Text style={[styles.bannerBtnText, { color: '#0B1B3A' }]}>{lang === 'es' ? 'Revisar mi seguridad' : 'Check my security'}</Text>
-              <Ionicons name="shield-checkmark" size={16} color="#0B1B3A" />
-            </Pressable>
-          </View>
-
-          {/* Domains banner */}
-          <View style={[styles.banner, { backgroundColor: '#0E7F98', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
-            <View style={[styles.sphere, { width: 200, height: 200, bottom: -90, right: 60, backgroundColor: '#fff', opacity: 0.1 }]} />
-            <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
-              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Tu .com y correo profesional' : 'Your own .com and business email'}</Text>
-              <Text style={styles.bannerSub}>
-                {lang === 'es'
-                  ? 'Busca tu dominio, lo registramos a tu nombre y pagas con Pago Móvil, USDT u Orange Money. Desde $15/año.'
-                  : 'Find your domain, we register it in your name and you pay with Pago Móvil, USDT or Orange Money. From $15/year.'}
-              </Text>
-            </View>
-            <Pressable style={styles.bannerBtn} onPress={() => router.push('/domains')} accessibilityRole="link">
-              <Text style={[styles.bannerBtnText, { color: '#0E7F98' }]}>{lang === 'es' ? 'Buscar dominio' : 'Search a domain'}</Text>
-              <Ionicons name="search" size={16} color="#0E7F98" />
             </Pressable>
           </View>
 
@@ -240,6 +219,11 @@ function WhatsAppButton({ label, message }: { label: string; message: string }) 
 
 const styles = StyleSheet.create({
   container: { width: '100%', maxWidth: 1180, alignSelf: 'center', paddingHorizontal: 16 },
+  doors: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6, marginBottom: 8 },
+  door: { backgroundColor: colors.surface, borderRadius: 16, padding: 14, gap: 6, borderWidth: 1, borderColor: colors.border, minHeight: 122 },
+  doorIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.softBlue, alignItems: 'center', justifyContent: 'center' },
+  doorTitle: { fontSize: 16, fontWeight: '800', color: colors.text },
+  doorSub: { fontSize: 13, color: colors.muted, lineHeight: 18 },
   hero: { paddingTop: 48, paddingBottom: 36, overflow: 'hidden', position: 'relative' },
   sphere: { position: 'absolute', borderRadius: 999 },
   h1: {

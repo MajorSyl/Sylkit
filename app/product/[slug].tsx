@@ -5,11 +5,10 @@ import { useRef } from 'react';
 import { Image, Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { Footer } from '../../src/components/Footer';
 import { Header } from '../../src/components/Header';
-import { PricingCalculator } from '../../src/components/PricingCalculator';
+import { PlanCards } from '../../src/components/PlanCards';
 import { PriceLabel } from '../../src/components/ProductCard';
 import { categories, getProduct, products } from '../../src/data/products';
 import { useProducts } from '../../src/lib/catalog';
-import { configFromQuery } from '../../src/lib/pricing';
 import { ui, useLang } from '../../src/i18n';
 import { colors, shadow, waLink } from '../../src/theme';
 
@@ -19,14 +18,13 @@ export async function generateStaticParams(): Promise<Record<string, string>[]> 
 }
 
 export default function ProductPage() {
-  const { slug, plan, billing, add, domain } = useLocalSearchParams<{ slug: string; plan?: string; billing?: string; add?: string; domain?: string }>();
+  const { slug, billing } = useLocalSearchParams<{ slug: string; billing?: string }>();
   const { t, lang } = useLang();
   const { width } = useWindowDimensions();
   const wide = width >= 860;
   const live = useProducts();
   const router = useRouter();
   const scroller = useRef<ScrollView>(null);
-  const pricingY = useRef(0);
   const product = live.find((p) => p.slug === String(slug)) ?? getProduct(String(slug));
 
   if (!product) {
@@ -70,7 +68,7 @@ export default function ProductPage() {
       </Head>
       <Header />
       <ScrollView ref={scroller} contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={[styles.container, { paddingTop: 20 }]}>
+        <View style={[styles.container, { paddingTop: 16 }]}>
           <Link href="/" asChild>
             <Pressable style={styles.back} accessibilityRole="link">
               <Ionicons name="arrow-back" size={16} color={colors.primary} />
@@ -78,11 +76,43 @@ export default function ProductPage() {
             </Pressable>
           </Link>
 
+          {/* Title */}
+          <View style={styles.titleBlock}>
+            {cat && <Text style={styles.cat}>{t(cat.name)}</Text>}
+            <Text style={[styles.h1, wide && { fontSize: 42, lineHeight: 48 }]}>{name}</Text>
+            <Text style={styles.lead}>{t(product.short)}</Text>
+            <View style={styles.links}>
+              <Pressable style={styles.linkBtn} onPress={() => Linking.openURL(product.demoUrl ?? msg('demo'))} accessibilityRole="link">
+                <Ionicons name={product.demoUrl ? 'play-circle-outline' : 'logo-whatsapp'} size={16} color={colors.primary} />
+                <Text style={styles.linkText}>{product.demoUrl ? (lang === 'es' ? 'Probar demo en vivo' : 'Try the live demo') : t(ui.demo)}</Text>
+              </Pressable>
+              <Pressable style={styles.linkBtn} onPress={() => router.push(product.pricing ? '/quote' : `/quote?product=${product.slug}`)} accessibilityRole="link">
+                <Ionicons name="construct-outline" size={16} color={colors.primary} />
+                <Text style={styles.linkText}>{t(ui.customVersion)}</Text>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Plans first: the decision people came to make */}
+          {product.pricing ? (
+            <PlanCards product={product} initialBilling={billing} />
+          ) : (
+            <View style={[styles.buyBox, shadow]}>
+              <PriceLabel product={product} />
+              <Text style={styles.plan}>{lang === 'es' ? 'Precio según lo que necesites. Te enviamos una cotización en menos de 24 horas.' : 'Priced to what you need. We send you a quote within 24 hours.'}</Text>
+              <Pressable style={[styles.primaryBtn, { backgroundColor: colors.primary }]} onPress={() => router.push(`/quote?product=${product.slug}`)} accessibilityRole="button">
+                <Ionicons name="document-text" size={18} color="#fff" />
+                <Text style={styles.primaryBtnText}>{lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* About the product */}
+          <Text style={[styles.h2, { marginTop: 44, marginBottom: 12 }]}>{lang === 'es' ? 'Sobre este producto' : 'About this product'}</Text>
           <View style={[styles.layout, wide && { flexDirection: 'row', alignItems: 'flex-start' }]}>
-            {/* Visual */}
             {product.image ? (
               <Pressable
-                style={[styles.visual, styles.shot, wide && { flex: 1, height: 'auto' as any }]}
+                style={[styles.visual, styles.shot, wide && { flex: 1 }]}
                 onPress={() => product.demoUrl && Linking.openURL(product.demoUrl)}
                 accessibilityRole={product.demoUrl ? 'link' : undefined}
               >
@@ -95,24 +125,18 @@ export default function ProductPage() {
                 ) : null}
               </Pressable>
             ) : (
-              <View style={[styles.visual, { backgroundColor: tintBg }, wide && { flex: 1, height: 380 }]}>
+              <View style={[styles.visual, { backgroundColor: tintBg }, wide && { flex: 1, height: 300 }]}>
                 <View style={[styles.sphere, { width: 260, height: 260, top: -80, right: -60, backgroundColor: tintFg, opacity: 0.12 }]} />
-                <View style={[styles.sphere, { width: 160, height: 160, bottom: -50, left: -30, backgroundColor: '#fff', opacity: 0.5 }]} />
-                <Ionicons name={product.icon as any} size={96} color={tintFg} />
+                <Ionicons name={product.icon as any} size={80} color={tintFg} />
               </View>
             )}
-
-            {/* Info */}
             <View style={[styles.info, wide && { flex: 1 }]}>
-              {cat && <Text style={styles.cat}>{t(cat.name)}</Text>}
-              <Text style={styles.h1}>{name}</Text>
               {product.badge && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>{t(product.badge)}</Text>
                 </View>
               )}
               <Text style={styles.desc}>{t(product.description)}</Text>
-
               <View style={styles.platforms}>
                 {product.platforms.map((p) => (
                   <Text key={p} style={styles.platform}>
@@ -120,41 +144,8 @@ export default function ProductPage() {
                   </Text>
                 ))}
               </View>
-
-              <View style={[styles.buyBox, shadow]}>
-                <PriceLabel product={product} />
-                <Text style={styles.plan}>{t(ui.plan)}</Text>
-                <Pressable style={[styles.primaryBtn, { backgroundColor: colors.primary }]} onPress={() =>
-                    product.pricing
-                      ? scroller.current?.scrollTo({ y: Math.max(pricingY.current - 12, 0), animated: true })
-                      : router.push(`/quote?product=${product.slug}`)
-                  }
-                  accessibilityRole="button"
-                >
-                  <Ionicons name={product.pricing ? 'calculator' : 'document-text'} size={18} color="#fff" />
-                  <Text style={styles.primaryBtnText}>
-                    {product.pricing ? (lang === 'es' ? 'Ver planes y calcular precio' : 'See plans and calculate price') : lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}
-                  </Text>
-                </Pressable>
-                <Pressable style={styles.secondaryBtn} onPress={() => Linking.openURL(product.demoUrl ?? msg('demo'))} accessibilityRole="link">
-                  <Ionicons name={product.demoUrl ? 'play-circle' : 'logo-whatsapp'} size={18} color={colors.primary} />
-                  <Text style={styles.secondaryBtnText}>
-                    {product.demoUrl ? (lang === 'es' ? 'Probar demo en vivo' : 'Try the live demo') : t(ui.demo)}
-                  </Text>
-                </Pressable>
-                <Pressable style={styles.textBtn} onPress={() => router.push('/quote')} accessibilityRole="link">
-                  <Text style={styles.textBtnText}>{t(ui.customVersion)}</Text>
-                  <Ionicons name="arrow-forward" size={14} color={colors.primary} />
-                </Pressable>
-              </View>
             </View>
           </View>
-
-          {product.pricing ? (
-            <View style={{ marginTop: 36 }} onLayout={(e) => (pricingY.current = e.nativeEvent.layout.y)}>
-              <PricingCalculator key={`${plan ?? ""}-${domain ?? ""}`} product={product} initial={configFromQuery({ plan: plan ?? 'x', billing, add, domain })} />
-            </View>
-          ) : null}
 
           {/* Features */}
           <Text style={[styles.h2, { marginTop: 36, marginBottom: 12 }]}>{t(ui.features)}</Text>
@@ -180,7 +171,12 @@ const styles = StyleSheet.create({
   back: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', minHeight: 40 },
   backText: { fontSize: 14, fontWeight: '700', color: colors.primary },
   backLink: { fontSize: 15, fontWeight: '700', color: colors.primary },
-  layout: { marginTop: 12, gap: 24 },
+  layout: { gap: 24 },
+  titleBlock: { gap: 8, marginTop: 8, marginBottom: 24 },
+  lead: { fontSize: 17, lineHeight: 26, color: colors.muted, maxWidth: 720 },
+  links: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 4 },
+  linkBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.softBlue, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 999, minHeight: 38 },
+  linkText: { fontSize: 13, fontWeight: '700', color: colors.primary },
   visual: {
     height: 240,
     borderRadius: 24,

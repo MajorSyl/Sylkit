@@ -19,11 +19,41 @@ export function PriceLabel({ product }: { product: Product }) {
   );
 }
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, compact }: { product: Product; compact?: boolean }) {
   const { t } = useLang();
   const cat = categories.find((c) => c.id === product.category);
   const tintBg = product.tint === 'cyan' ? colors.softCyan : colors.softBlue;
   const tintFg = product.tint === 'cyan' ? '#0E9DBB' : colors.primary;
+
+  // Phones: a short row (small picture + name + price) so several products fit on one screen.
+  if (compact) {
+    return (
+      <Link href={`/product/${product.slug}`} asChild>
+        <Pressable style={({ pressed }) => [styles.row, shadow, pressed && { opacity: 0.9 }]} accessibilityRole="link">
+          <View style={[styles.rowThumb, { backgroundColor: tintBg }]}>
+            {product.image ? (
+              <Image source={{ uri: product.image }} style={styles.img} resizeMode="cover" accessibilityLabel={t(product.name)} />
+            ) : (
+              <Ionicons name={product.icon as any} size={30} color={tintFg} />
+            )}
+          </View>
+          <View style={{ flex: 1, gap: 3 }}>
+            <Text style={styles.rowName} numberOfLines={1}>
+              {t(product.name)}
+            </Text>
+            <Text style={styles.rowShort} numberOfLines={2}>
+              {t(product.short)}
+            </Text>
+            <View style={styles.rowFoot}>
+              <PriceLabel product={product} />
+              {product.demoUrl ? <Text style={styles.demoTag}>▶ Demo</Text> : null}
+            </View>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+        </Pressable>
+      </Link>
+    );
+  }
 
   return (
     <Link href={`/product/${product.slug}`} asChild>
@@ -71,6 +101,12 @@ export function ProductCard({ product }: { product: Product }) {
 }
 
 const styles = StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surface, borderRadius: 16, borderWidth: 1, borderColor: colors.border, padding: 10 },
+  rowThumb: { width: 84, height: 84, borderRadius: 12, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+  rowName: { fontSize: 16, fontWeight: '800', color: colors.text },
+  rowShort: { fontSize: 13, color: colors.muted, lineHeight: 18 },
+  rowFoot: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 },
+  demoTag: { fontSize: 11, fontWeight: '700', color: '#0E7F98', backgroundColor: colors.softCyan, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 6, overflow: 'hidden' },
   card: {
     backgroundColor: colors.surface,
     borderRadius: 18,
