@@ -12,6 +12,13 @@ Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other man
 
 ---
 
+## Brand (chosen 30 Oct 2026)
+
+- **Logo:** the kit, a cube whose blue lid lifts off, plus the lowercase wordmark **sylkit**. The cube is the symbol, so it is never shown as an "S" next to the name. Component: `src/components/Logo.tsx`.
+- **Files:** `public/brand/` (mark SVGs, 512px icon, WhatsApp/Instagram profile pictures in light and dark), `public/favicon.svg`, `public/apple-touch-icon.png`.
+- **Colors:** graphite #1D1D1F, silver #F5F5F7, white, and Sylkit Blue #2558E8 only on the lid and main actions.
+- Design canvas with all explored directions: Claude artifact "Sylkit Tech Logos".
+
 ## 1. What is live
 
 | Area | Status |

@@ -3,6 +3,7 @@ import { Link } from 'expo-router';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLang, ui } from '../i18n';
 import { colors, waLink } from '../theme';
+import { Logo } from './Logo';
 
 export function Footer() {
   const { t, lang } = useLang();
@@ -10,7 +11,7 @@ export function Footer() {
     <View style={styles.wrap}>
       <View style={styles.inner}>
         <View style={{ gap: 4, flexShrink: 1 }}>
-          <Text style={styles.brand}>Sylkit</Text>
+          <Logo size={26} />
           <Text style={styles.text}>{t(ui.footer)}</Text>
         </View>
         <Pressable

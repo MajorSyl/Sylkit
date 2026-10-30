@@ -6,6 +6,7 @@ import { Linking, Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimen
 import type { Text as T } from '../i18n';
 import { useLang } from '../i18n';
 import { colors, glass, waLink } from '../theme';
+import { Logo } from './Logo';
 
 // Site navigation. Wide screens show labeled links; phones show a "Menu" button that opens
 // a full-screen list with an icon and a clear name for every section.
@@ -70,10 +71,7 @@ export function Header() {
       <View style={styles.inner}>
         <Link href="/" asChild>
           <Pressable style={styles.brand} accessibilityRole="link">
-            <View style={styles.logo}>
-              <Text style={styles.logoText}>S</Text>
-            </View>
-            <Text style={styles.brandText}>Sylkit</Text>
+            <Logo />
           </Pressable>
         </Link>
 
@@ -112,10 +110,7 @@ export function Header() {
         <View style={styles.sheet}>
           <View style={styles.sheetHead}>
             <View style={styles.brand}>
-              <View style={styles.logo}>
-                <Text style={styles.logoText}>S</Text>
-              </View>
-              <Text style={styles.brandText}>Sylkit</Text>
+              <Logo />
             </View>
             <Pressable onPress={() => setOpen(false)} style={styles.menuBtn} accessibilityRole="button" accessibilityLabel={es ? 'Cerrar menú' : 'Close menu'}>
               <Ionicons name="close" size={28} color={colors.text} />
