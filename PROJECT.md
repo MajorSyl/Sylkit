@@ -120,20 +120,23 @@ Request a quote → admin sends price → client accepts → pays (same payment 
 - Domains are yearly only; hosting is yearly or monthly.
 
 ### Plans (monthly / one-time setup, USD)
+
+The 15 systems with a live demo were raised 3% on 30 Oct 2026 (`supabase/price_raise_2026-10-30.sql`). Business website, custom mobile app, domains, hosting, extras and Shield were not changed.
+
 | Product | Starter | Business | Pro |
 |---|---|---|---|
-| Expiry Alerts, POS, Inventory, Car workshop, Payroll | 15 / 50 | 29 / 100 | 49 / 150 |
-| Pharmacy | 25 / 80 | 45 / 150 | 69 / 250 |
-| Clinic | 25 / 80 | 45 / 150 | 79 / 250 |
-| Restaurant, Home services | 19 / 60 | 35 / 120 | 59 / 200 |
-| Salon & barbershop | 12 / 40 | 25 / 80 | 39 / 120 |
-| School management | 29 / 100 | 59 / 200 | 99 / 350 |
-| Invoicing | 9 / 30 | 19 / 60 | 35 / 100 |
-| Online store | 12 / 80 | 25 / 150 | 45 / 250 |
-| Personal website | 8 / 120 | 12 / 200 | 19 / 350 |
+| Expiry Alerts, POS, Inventory, Car workshop, Payroll | 15.45 / 51.50 | 29.87 / 103 | 50.47 / 154.50 |
+| Pharmacy | 25.75 / 82.40 | 46.35 / 154.50 | 71.07 / 257.50 |
+| Clinic | 25.75 / 82.40 | 46.35 / 154.50 | 81.37 / 257.50 |
+| Restaurant, Home services | 19.57 / 61.80 | 36.05 / 123.60 | 60.77 / 206 |
+| Salon & barbershop | 12.36 / 41.20 | 25.75 / 82.40 | 40.17 / 123.60 |
+| School management | 29.87 / 103 | 60.77 / 206 | 101.97 / 360.50 |
+| Invoicing | 9.27 / 30.90 | 19.57 / 61.80 | 36.05 / 103 |
+| Online store | 12.36 / 82.40 | 25.75 / 154.50 | 46.35 / 257.50 |
+| Personal website | 8.24 / 123.60 | 12.36 / 206 | 19.57 / 360.50 |
 | Business website | 10 / 150 | 15 / 300 | 25 / 500 |
 | Custom mobile app | 25 / 900 | 45 / 1,800 | 79 / 3,500 |
-| AI assistant | 29 / 100 | 59 / 200 | 99 / 350 |
+| AI assistant | 29.87 / 103 | 60.77 / 206 | 101.97 / 360.50 |
 | **Domain & business email** (yearly) | **$15/yr**, no setup | **$50/yr** + $30 | **$90/yr** + $100 |
 | **Website hosting** | 5 / 30 | 10 / 50 | 20 / 80 |
 

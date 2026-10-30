@@ -296,8 +296,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 15,
-        "setup": 50,
+        "monthly": 15.45,
+        "setup": 51.5,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -324,8 +324,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -352,8 +352,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 49,
-        "setup": 150,
+        "monthly": 50.47,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -398,8 +398,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 15,
-        "setup": 50,
+        "monthly": 15.45,
+        "setup": 51.5,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -426,8 +426,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -454,8 +454,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 49,
-        "setup": 150,
+        "monthly": 50.47,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -501,8 +501,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 15,
-        "setup": 50,
+        "monthly": 15.45,
+        "setup": 51.5,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -529,8 +529,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -557,8 +557,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 49,
-        "setup": 150,
+        "monthly": 50.47,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -603,8 +603,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 25,
-        "setup": 80,
+        "monthly": 25.75,
+        "setup": 82.4,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -631,8 +631,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 45,
-        "setup": 150,
+        "monthly": 46.35,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -659,8 +659,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 69,
-        "setup": 250,
+        "monthly": 71.07,
+        "setup": 257.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -706,8 +706,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 25,
-        "setup": 80,
+        "monthly": 25.75,
+        "setup": 82.4,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -734,8 +734,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 45,
-        "setup": 150,
+        "monthly": 46.35,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -762,8 +762,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 79,
-        "setup": 250,
+        "monthly": 81.37,
+        "setup": 257.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -808,8 +808,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 19,
-        "setup": 60,
+        "monthly": 19.57,
+        "setup": 61.8,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -836,8 +836,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 35,
-        "setup": 120,
+        "monthly": 36.05,
+        "setup": 123.6,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -864,8 +864,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 59,
-        "setup": 200,
+        "monthly": 60.77,
+        "setup": 206,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -911,8 +911,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 12,
-        "setup": 40,
+        "monthly": 12.36,
+        "setup": 41.2,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -939,8 +939,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 25,
-        "setup": 80,
+        "monthly": 25.75,
+        "setup": 82.4,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -967,8 +967,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 39,
-        "setup": 120,
+        "monthly": 40.17,
+        "setup": 123.6,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1013,8 +1013,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 15,
-        "setup": 50,
+        "monthly": 15.45,
+        "setup": 51.5,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1041,8 +1041,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1069,8 +1069,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 49,
-        "setup": 150,
+        "monthly": 50.47,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1115,8 +1115,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 19,
-        "setup": 60,
+        "monthly": 19.57,
+        "setup": 61.8,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1143,8 +1143,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 35,
-        "setup": 120,
+        "monthly": 36.05,
+        "setup": 123.6,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1171,8 +1171,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 59,
-        "setup": 200,
+        "monthly": 60.77,
+        "setup": 206,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1217,8 +1217,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1245,8 +1245,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 59,
-        "setup": 200,
+        "monthly": 60.77,
+        "setup": 206,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1273,8 +1273,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 99,
-        "setup": 350,
+        "monthly": 101.97,
+        "setup": 360.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1319,8 +1319,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 15,
-        "setup": 50,
+        "monthly": 15.45,
+        "setup": 51.5,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1347,8 +1347,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1375,8 +1375,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 49,
-        "setup": 150,
+        "monthly": 50.47,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1421,8 +1421,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 9,
-        "setup": 30,
+        "monthly": 9.27,
+        "setup": 30.9,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1449,8 +1449,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 19,
-        "setup": 60,
+        "monthly": 19.57,
+        "setup": 61.8,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1477,8 +1477,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 35,
-        "setup": 100,
+        "monthly": 36.05,
+        "setup": 103,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1523,8 +1523,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 12,
-        "setup": 80,
+        "monthly": 12.36,
+        "setup": 82.4,
         "includes": [
           {
             "es": "Hasta 50 productos",
@@ -1551,8 +1551,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 25,
-        "setup": 150,
+        "monthly": 25.75,
+        "setup": 154.5,
         "includes": [
           {
             "es": "Hasta 500 productos",
@@ -1579,8 +1579,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 45,
-        "setup": 250,
+        "monthly": 46.35,
+        "setup": 257.5,
         "includes": [
           {
             "es": "Productos ilimitados",
@@ -1621,8 +1621,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 8,
-        "setup": 120,
+        "monthly": 8.24,
+        "setup": 123.6,
         "includes": [
           {
             "es": "Sitio de 1 página",
@@ -1649,8 +1649,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 12,
-        "setup": 200,
+        "monthly": 12.36,
+        "setup": 206,
         "includes": [
           {
             "es": "Hasta 5 páginas",
@@ -1677,8 +1677,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 19,
-        "setup": 350,
+        "monthly": 19.57,
+        "setup": 360.5,
         "includes": [
           {
             "es": "Hasta 10 páginas, tienda o reservas",
@@ -1910,8 +1910,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter"
         },
-        "monthly": 29,
-        "setup": 100,
+        "monthly": 29.87,
+        "setup": 103,
         "includes": [
           {
             "es": "Hasta 500 conversaciones al mes",
@@ -1938,8 +1938,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business"
         },
-        "monthly": 59,
-        "setup": 200,
+        "monthly": 60.77,
+        "setup": 206,
         "includes": [
           {
             "es": "Hasta 2.000 conversaciones al mes",
@@ -1966,8 +1966,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro"
         },
-        "monthly": 99,
-        "setup": 350,
+        "monthly": 101.97,
+        "setup": 360.5,
         "includes": [
           {
             "es": "Hasta 5.000 conversaciones al mes",
