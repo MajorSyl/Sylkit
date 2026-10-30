@@ -23,6 +23,7 @@ export function Footer() {
         </Pressable>
       </View>
       <View style={styles.legal}>
+        <Link href="/security" style={styles.legalLink}>{lang === 'es' ? 'Seguridad (Sylkit Shield)' : 'Security (Sylkit Shield)'}</Link>
         <Link href="/terms" style={styles.legalLink}>{lang === 'es' ? 'Términos' : 'Terms'}</Link>
         <Link href="/privacy" style={styles.legalLink}>{lang === 'es' ? 'Privacidad' : 'Privacy'}</Link>
         <Link href="/refunds" style={styles.legalLink}>{lang === 'es' ? 'Reembolsos y cancelación' : 'Refunds and cancellation'}</Link>

@@ -146,6 +146,23 @@ export default function Home() {
             </Pressable>
           </View>
 
+          {/* Sylkit Shield banner */}
+          <View style={[styles.banner, { backgroundColor: '#0B1B3A', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
+            <View style={[styles.sphere, { width: 220, height: 220, top: -90, right: 40, backgroundColor: '#19C3E6', opacity: 0.25 }]} />
+            <View style={{ flex: wide ? 1 : undefined, gap: 8 }}>
+              <Text style={styles.bannerTitle}>{lang === 'es' ? 'Tu app funciona. ¿Es segura?' : 'Your app works. Is it safe?'}</Text>
+              <Text style={styles.bannerSub}>
+                {lang === 'es'
+                  ? 'Sylkit Shield revisa tu sitio, app o sistema, encuentra los huecos de seguridad y los corrige. Empieza con un diagnóstico gratis.'
+                  : 'Sylkit Shield checks your website, app or system, finds the security holes and fixes them. Start with a free Snapshot.'}
+              </Text>
+            </View>
+            <Pressable style={styles.bannerBtn} onPress={() => router.push('/security')} accessibilityRole="link">
+              <Text style={[styles.bannerBtnText, { color: '#0B1B3A' }]}>{lang === 'es' ? 'Revisar mi seguridad' : 'Check my security'}</Text>
+              <Ionicons name="shield-checkmark" size={16} color="#0B1B3A" />
+            </Pressable>
+          </View>
+
           {/* Domains banner */}
           <View style={[styles.banner, { backgroundColor: '#0E7F98', marginTop: 16 }, wide && { flexDirection: 'row', alignItems: 'center' }]}>
             <View style={[styles.sphere, { width: 200, height: 200, bottom: -90, right: 60, backgroundColor: '#fff', opacity: 0.1 }]} />

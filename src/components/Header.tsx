@@ -28,6 +28,12 @@ export function Header() {
               {!compact && <Text style={styles.navText}>{lang === 'es' ? 'Negocios en venta' : 'Startups for sale'}</Text>}
             </Pressable>
           </Link>
+          <Link href="/security" asChild>
+            <Pressable style={styles.navLink} accessibilityRole="link" accessibilityLabel={lang === 'es' ? 'Seguridad' : 'Security'}>
+              <Ionicons name="shield-checkmark-outline" size={18} color={colors.primary} />
+              {!compact && <Text style={styles.navText}>{lang === 'es' ? 'Seguridad' : 'Security'}</Text>}
+            </Pressable>
+          </Link>
           <Link href="/domains" asChild>
             <Pressable style={styles.navLink} accessibilityRole="link">
               <Ionicons name="globe-outline" size={18} color={colors.primary} />

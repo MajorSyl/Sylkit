@@ -2,10 +2,11 @@
 
 **Owner:** Sylvanus Fannah · **Site:** https://sylkit.com · **Business email:** sylvanus@sylkit.com · **Last updated:** 25 October 2026
 
-Sylkit sells three things:
+Sylkit sells four things:
 1. **Software for your business:** ready-made systems (POS, pharmacy, clinic, inventory…) used by subscription or bought once. Sylkit keeps ownership and maintains them.
 2. **Domains & websites:** domains registered in the client's name, business email, website hosting.
 3. **Own a business (startups):** whole online businesses built by Sylkit and sold outright. Only Sylkit sells there.
+4. **Sylkit Shield (security):** security checks, fixes and monitoring for websites, apps and business systems (/security).
 
 Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other manual methods.
 
@@ -24,6 +25,7 @@ Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other man
 | **Crypto payments (USDT)** | ✅ NOWPayments, live mode, TRC20 and BEP20; confirmed automatically |
 | Manual payments | ✅ Client chooses a method and reports the reference; admin confirms |
 | Domains & hosting (/domains) | ✅ Live availability check for .com/.net/.org |
+| Sylkit Shield (/security) | ✅ Security page, global price ladder, booking form → saved as a quote request (source `shield:<plan>`) |
 | Startups (/startups) | ⚠️ Pages built; needs its database tables (see Pending) |
 | Admin (/admin) | ✅ Orders, quotes, statuses, prices, extras, payment methods, marketplace |
 | Business email | ✅ Zoho Mail on sylkit.com (MX, SPF, DKIM, DMARC set) |
@@ -165,7 +167,14 @@ All prices are editable in **Admin → Products**.
 
 ---
 
-## 7. Responsibilities (put in the client agreement)
+## 7. Sylkit Shield (security service)
+
+- **Page:** `/security` (`app/security.tsx`); prices and plans in `src/data/shield.ts`.
+- **Booking:** the form calls `create_order` with no product; details start with `[Sylkit Shield] Plan: …` and `p_source` is `shield:<plan id>`. Bookings appear in **Admin** with the other quotes; send the price and the client pays on the order page as usual.
+- **Rule:** never test a system before the client signs the scope agreement (the form only records that they claim authorization).
+- **Prices (USD, one list for everyone):** Snapshot free · Starter Scan $49 · Essential Audit $199 · Pro Audit $499 · Business Audit from $999 · Single Fix from $29 · Critical Fix Bundle $149 · Full Hardening quoted · Care Basic $19/mo · Care Standard $49/mo · Care Pro $99/mo (yearly = 10 months).
+
+## 8. Responsibilities (put in the client agreement)
 
 | Area | Sylkit | Client |
 |---|---|---|
@@ -180,7 +189,7 @@ Response time: Starter next business day · Business same day · Pro 2 hours. Up
 
 ---
 
-## 8. Email and DNS (sylkit.com on Cloudflare)
+## 9. Email and DNS (sylkit.com on Cloudflare)
 
 | Record | Value |
 |---|---|
@@ -194,7 +203,7 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 
 ---
 
-## 9. Pending
+## 10. Pending
 
 | Task | Who |
 |---|---|
@@ -212,7 +221,7 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 
 ---
 
-## 10. Focus (next 90 days)
+## 11. Focus (next 90 days)
 - Sell before building more. Goal: **3 paying clients**.
 - One niche first: **pharmacies in Caracas**, with the "Farmacia Sin Pérdidas" offer (free import + training, 60-day guarantee, 10 founding spots).
 - 20 outreach actions a day; follow up 3–5 times.
