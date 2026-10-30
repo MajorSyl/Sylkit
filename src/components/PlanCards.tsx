@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { Product } from '../data/products';
 import { useLang } from '../i18n';
 import { allowedBilling, billingName, planQuote } from '../lib/planText';
@@ -15,7 +15,10 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
   const { t, lang } = useLang();
   const es = lang === 'es';
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  // Measure the real space after the page loads. The page is pre-rendered without a screen size,
+  // so sizes must never come from the first render (that made the cards collapse to thin strips).
+  const [boxW, setBoxW] = useState(0);
+  const scrollRef = useRef<ScrollView>(null);
   const pricing = product.pricing!;
   const allowed = allowedBilling(pricing);
   const [billing, setBilling] = useState<Billing>(allowed.includes(initialBilling as Billing) ? (initialBilling as Billing) : allowed[0]);
@@ -23,16 +26,23 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
   const popularIdx = Math.max(plans.findIndex((p) => p.popular), 0);
 
   // Phones: swipe between cards. Wide screens: side by side.
-  const swipe = width < 760;
-  const cardW = swipe ? Math.min(width * 0.84, 360) : undefined;
   const gap = 12;
+  const measured = boxW > 0;
+  const swipe = measured && boxW < 760;
+  const cardW = swipe ? Math.min(boxW * 0.86, 360) : undefined;
+  useEffect(() => {
+    if (!swipe || !cardW) return;
+    const x = Math.max(popularIdx * (cardW + gap) - (boxW - cardW) / 2 + 16, 0);
+    const id = setTimeout(() => scrollRef.current?.scrollTo({ x, animated: false }), 50);
+    return () => clearTimeout(id);
+  }, [swipe, cardW, boxW, popularIdx]);
 
   const choose = (planId: string) => router.push(`/quote?product=${product.slug}&plan=${encodeURIComponent(planId)}&billing=${billing}`);
 
   const cards = plans.map((p, i) => {
     const q = planQuote(p, billing, pricing, lang);
     return (
-      <View key={p.id} style={[styles.card, shadow, p.popular && styles.cardPopular, swipe ? { width: cardW } : { flex: 1 }, i < plans.length - 1 && swipe && { marginRight: gap }]}>
+      <View key={p.id} style={[styles.card, shadow, p.popular && styles.cardPopular, swipe ? { width: cardW } : measured ? { flex: 1 } : { width: '100%' }, i < plans.length - 1 && swipe && { marginRight: gap }]}>
         <View style={styles.tagRow}>{p.popular ? <Text style={styles.popular}>{es ? 'Más elegido' : 'Most popular'}</Text> : <View style={{ height: 22 }} />}</View>
         <Text style={styles.name}>{t(p.name)}</Text>
         <View style={styles.priceRow}>
@@ -59,7 +69,7 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
   });
 
   return (
-    <View style={{ gap: 18 }} nativeID="plans">
+    <View style={{ gap: 18 }} nativeID="plans" onLayout={(e) => setBoxW(Math.round(e.nativeEvent.layout.width))}>
       {allowed.length > 1 ? (
         <View style={styles.toggle} accessibilityRole="radiogroup">
           {allowed.map((b) => {
@@ -76,18 +86,20 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
 
       {swipe ? (
         <ScrollView
+          ref={scrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
           snapToInterval={(cardW ?? 0) + gap}
           decelerationRate="fast"
-          contentOffset={{ x: Math.max(popularIdx * ((cardW ?? 0) + gap) - (width - (cardW ?? 0)) / 2 + 16, 0), y: 0 }}
           contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 6 }}
           style={{ marginHorizontal: -16 }}
         >
           {cards}
         </ScrollView>
-      ) : (
+      ) : measured ? (
         <View style={{ flexDirection: 'row', gap, alignItems: 'stretch' }}>{cards}</View>
+      ) : (
+        <View style={{ gap }}>{cards}</View>
       )}
       {swipe && plans.length > 1 ? (
         <Text style={styles.hint}>{es ? 'Desliza para ver todos los planes →' : 'Swipe to see all plans →'}</Text>

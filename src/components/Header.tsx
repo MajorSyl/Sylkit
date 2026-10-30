@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useClientWidth } from '../lib/useClientWidth';
 import { Link, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Modal, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -61,7 +62,7 @@ const top: { href: string; label: T }[] = [
 export function Header() {
   const { lang, t } = useLang();
   const es = lang === 'es';
-  const { width } = useWindowDimensions();
+  const width = useClientWidth();
   const wide = width >= 980;
   const router = useRouter();
   const [open, setOpen] = useState(false);

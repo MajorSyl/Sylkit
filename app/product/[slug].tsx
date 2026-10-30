@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useClientWidth } from '../../src/lib/useClientWidth';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useRef } from 'react';
@@ -20,7 +21,7 @@ export async function generateStaticParams(): Promise<Record<string, string>[]> 
 export default function ProductPage() {
   const { slug, billing } = useLocalSearchParams<{ slug: string; billing?: string }>();
   const { t, lang } = useLang();
-  const { width } = useWindowDimensions();
+  const width = useClientWidth();
   const wide = width >= 860;
   const live = useProducts();
   const router = useRouter();

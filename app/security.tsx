@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useClientWidth } from '../src/lib/useClientWidth';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useRef, useState } from 'react';
@@ -160,7 +161,7 @@ const codeAccess: { id: string; t: T }[] = [
 export default function SecurityPage() {
   const { t, lang } = useLang();
   const es = lang === 'es';
-  const { width } = useWindowDimensions();
+  const width = useClientWidth();
   const wide = width >= 820;
   const router = useRouter();
   const params = useLocalSearchParams<{ plan?: string }>();

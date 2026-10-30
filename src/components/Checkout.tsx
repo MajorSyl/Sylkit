@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useClientWidth } from '../lib/useClientWidth';
 import { useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { ANNUAL_MONTHS, ONCE_MONTHS } from '../data/pricing';
@@ -17,7 +18,7 @@ import { QuoteForm } from './QuoteForm';
 export function Checkout({ product, initial }: { product: Product; initial: Config | null }) {
   const { t, lang } = useLang();
   const es = lang === 'es';
-  const { width } = useWindowDimensions();
+  const width = useClientWidth();
   const wide = width >= 960;
   const catalog = useAddons();
   const pricing = product.pricing!;

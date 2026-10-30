@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useClientWidth } from '../src/lib/useClientWidth';
 import Head from 'expo-router/head';
 import { useMemo, useState } from 'react';
 import {
@@ -29,7 +30,7 @@ const doors: { href: string; icon: string; title: { es: string; en: string }; su
 
 export default function Home() {
   const { t, lang } = useLang();
-  const { width } = useWindowDimensions();
+  const width = useClientWidth();
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<CategoryId | 'all'>('all');
   const products = useProducts();
