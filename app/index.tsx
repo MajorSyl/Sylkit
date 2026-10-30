@@ -25,7 +25,7 @@ const doors: { href: string; icon: string; title: { es: string; en: string }; su
   { href: '#catalog', icon: 'apps-outline', title: { en: 'Software', es: 'Software' }, sub: { en: 'Ready-made or custom systems', es: 'Sistemas listos o a medida' } },
   { href: '/domains', icon: 'globe-outline', title: { en: 'Domains & hosting', es: 'Dominios y hosting' }, sub: { en: 'Your .com, email and hosting', es: 'Tu .com, correo y hosting' } },
   { href: '/security', icon: 'shield-checkmark-outline', title: { en: 'Security', es: 'Seguridad' }, sub: { en: 'Check and protect your app', es: 'Revisa y protege tu app' } },
-  { href: '/startups', icon: 'rocket-outline', title: { en: 'Own a business', es: 'Compra un negocio' }, sub: { en: 'Startups for sale', es: 'Negocios en venta' } },
+  { href: '/quote', icon: 'construct-outline', title: { en: 'Custom system', es: 'Sistema a medida' }, sub: { en: 'Tell us what you need, we build it', es: 'Cuéntanos qué necesitas y lo construimos' } },
 ];
 
 export default function Home() {

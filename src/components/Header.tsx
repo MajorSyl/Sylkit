@@ -38,12 +38,6 @@ const products: Item[] = [
     sub: { en: 'Check and protect your app or site', es: 'Revisa y protege tu app o sitio' },
   },
   {
-    href: '/startups',
-    icon: 'rocket-outline',
-    label: { en: 'Startups for sale', es: 'Negocios en venta' },
-    sub: { en: 'Buy a whole online business', es: 'Compra un negocio online completo' },
-  },
-  {
     href: '/quote',
     icon: 'construct-outline',
     label: { en: 'Custom system', es: 'Sistema a medida' },
@@ -56,7 +50,6 @@ const top: { href: string; label: T }[] = [
   { href: '/domains', label: { en: 'Domains', es: 'Dominios' } },
   { href: '/product/hosting-web', label: { en: 'Hosting', es: 'Hosting' } },
   { href: '/security', label: { en: 'Security', es: 'Seguridad' } },
-  { href: '/startups', label: { en: 'Startups', es: 'Negocios' } },
 ];
 
 export function Header() {

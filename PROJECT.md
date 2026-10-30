@@ -26,7 +26,7 @@ Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other man
 | Manual payments | ✅ Client chooses a method and reports the reference; admin confirms |
 | Domains & hosting (/domains) | ✅ Live availability check for .com/.net/.org |
 | Sylkit Shield (/security) | ✅ Security page, global price ladder, booking form → saved as a quote request (source `shield:<plan>`) |
-| Startups (/startups) | ⚠️ Pages built; needs its database tables (see Pending) |
+| Startups (/startups) | ⏸️ Paused 29 Oct 2026 to focus on selling. Code kept in `/paused`; /startups redirects home |
 | Admin (/admin) | ✅ Orders, quotes, statuses, prices, extras, payment methods, marketplace |
 | Business email | ✅ Zoho Mail on sylkit.com (MX, SPF, DKIM, DMARC set) |
 | Automatic emails to clients | ⏳ Built; needs a Resend API key |
@@ -157,7 +157,10 @@ All prices are editable in **Admin → Products**.
 
 ---
 
-## 6. Startups marketplace (only Sylkit sells)
+## 6. Startups marketplace (only Sylkit sells) · PAUSED
+
+Paused on 29 Oct 2026 to focus on getting paying clients. To bring it back, move `paused/startups.tsx` and `paused/startup.tsx` back into `app/` and restore the menu link.
+
 
 - **/startups:** businesses built by Sylkit, sold outright (code, brand, domain, users, revenue). Filters by category and budget, "Recently sold".
 - **/startup?s=slug:** facts (price, revenue, profit, multiple, users, age), what's included, demo, "Request details" / "Make an offer".
