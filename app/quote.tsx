@@ -1,9 +1,11 @@
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
-import { Checkout } from '../src/components/Checkout';
+import { Checkout, CheckoutBarState } from '../src/components/Checkout';
+import { CheckoutBar } from '../src/components/CheckoutBar';
 import { QuoteForm } from '../src/components/QuoteForm';
 import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
@@ -20,14 +22,33 @@ export default function QuotePage() {
   const cfg = p?.pricing ? configFromQuery({ plan, billing, add, domain }) : null;
   const est = cfg && p?.pricing ? estimate(p.pricing, catalog, cfg) : null;
 
+  // Bottom bar state, owned here so the bar renders at the screen root (outside the ScrollView).
+  const [bar, setBar] = useState<CheckoutBarState | null>(null);
+  const [barHeight, setBarHeight] = useState(0);
+  const onBarChange = useCallback((s: CheckoutBarState | null) => setBar(s), []);
+
+  // Where the details form sits inside the scroll content (native scrolling).
+  const scroll = useRef<ScrollView | null>(null);
+  const offsets = useRef({ container: 0, checkout: 0, details: 0 });
+  const goToForm = () => {
+    if (Platform.OS === 'web') {
+      try {
+        document.getElementById('checkout-details')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      } catch {}
+    }
+    const o = offsets.current;
+    scroll.current?.scrollTo({ y: Math.max(0, o.container + o.checkout + o.details - 12), animated: true });
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
         <title>{est ? (es ? 'Pagar · Sylkit' : 'Checkout · Sylkit') : es ? 'Solicitar cotización · Sylkit' : 'Request a quote · Sylkit'}</title>
       </Head>
       <Header />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={styles.container}>
+      <ScrollView ref={scroll} contentContainerStyle={{ flexGrow: 1, paddingBottom: bar ? barHeight : 0 }}>
+        <View style={styles.container} onLayout={(e) => (offsets.current.container = e.nativeEvent.layout.y)}>
           {p?.pricing ? <Text style={styles.kicker}>{es ? 'TU CARRITO · PASO 1 DE 2' : 'YOUR CART · STEP 1 OF 2'}</Text> : null}
           <Text style={styles.h1}>{p ? t(p.name) : es ? 'Sistema a medida' : 'Custom system'}</Text>
           <Text style={styles.sub}>
@@ -40,13 +61,21 @@ export default function QuotePage() {
                 : 'Tell us what you need. We send you a quote and a link to track your order.'}
           </Text>
           {p?.pricing ? (
-            <Checkout product={p} initial={cfg} />
+            <View onLayout={(e) => (offsets.current.checkout = e.nativeEvent.layout.y)}>
+              <Checkout
+                product={p}
+                initial={cfg}
+                onBarChange={onBarChange}
+                onDetailsLayout={(y) => (offsets.current.details = y)}
+              />
+            </View>
           ) : (
             <QuoteForm productSlug={p?.slug} productName={p ? t(p.name) : undefined} config={null} />
           )}
         </View>
         <Footer />
       </ScrollView>
+      {bar ? <CheckoutBar dueToday={bar.dueToday} dimmed={bar.needsDomain} onContinue={goToForm} onHeight={setBarHeight} /> : null}
     </View>
   );
 }

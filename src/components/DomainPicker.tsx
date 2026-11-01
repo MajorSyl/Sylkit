@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useLang } from '../i18n';
-import { checkDomain, DomainChoice, DomainMode, DomainResult, money } from '../lib/pricing';
+import { checkDomain, DomainChoice, DomainMode, DomainResult, isValidDomain, money } from '../lib/pricing';
 import { colors, shadow } from '../theme';
 
 // Lets the client choose their web address:
@@ -38,10 +38,13 @@ const L = {
   chosen: { es: 'Elegido', en: 'Chosen' },
   allTaken: { es: 'Esos están ocupados. Prueba otro nombre o una variación (ej. agrega tu ciudad).', en: 'Those are taken. Try another name or a variation (e.g. add your city).' },
   error: { es: 'Escribe un nombre válido (letras, números o guiones).', en: 'Enter a valid name (letters, numbers or hyphens).' },
+  errorOwn: { es: 'Escribe un dominio válido, ej. tuempresa.com', en: 'Enter a valid domain, e.g. yourbusiness.com' },
   offline: { es: 'No pudimos verificar ahora. Elige igual y lo confirmamos contigo.', en: "We couldn't check right now. Pick it anyway and we'll confirm with you." },
   subTaken: { es: 'Ese nombre está reservado. Prueba otro.', en: 'That name is reserved. Try another.' },
   saved: { es: 'Guardado', en: 'Saved' },
 };
+
+const ERROR = '#C62828';
 
 const clean = (v: string) => v.toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/[^a-z0-9.-]/g, '');
 
@@ -64,31 +67,37 @@ export function DomainPicker({
     value?.mode === 'new' ? [{ domain: value.name, status: 'available' }] : null,
   );
   const [note, setNote] = useState('');
+  const [error, setError] = useState('');
 
   const switchMode = (m: DomainMode) => {
     setMode(m);
     setResults(null);
     setNote('');
+    setError('');
     onChange(undefined);
   };
 
   const submit = async () => {
     setNote('');
+    setError('');
     setResults(null);
     const v = clean(text);
     if (mode === 'sub') {
       const label = v.split('.')[0].replace(/^-+|-+$/g, '').slice(0, 40);
-      if (label.length < 2) return setNote(t(L.error));
-      if (RESERVED.has(label)) return setNote(t(L.subTaken));
+      if (label.length < 2) return setError(t(L.error));
+      if (RESERVED.has(label)) return setError(t(L.subTaken));
       setText(label);
       return onChange({ mode: 'sub', name: label });
     }
     if (mode === 'own') {
-      if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(v)) return setNote(t(L.error));
+      if (!isValidDomain(v)) {
+        onChange(undefined);
+        return setError(t(L.errorOwn));
+      }
       setText(v);
       return onChange({ mode: 'own', name: v });
     }
-    if (v.split('.')[0].length < 2) return setNote(t(L.error));
+    if (v.split('.')[0].length < 2) return setError(t(L.error));
     setBusy(true);
     try {
       const r = await checkDomain(v);
@@ -96,7 +105,7 @@ export function DomainPicker({
       if (r.results.every((x) => x.status === 'taken')) setNote(t(L.allTaken));
       else if (r.results.every((x) => x.status === 'unknown')) setNote(t(L.offline));
     } catch {
-      setNote(t(L.error));
+      setError(t(L.error));
     }
     setBusy(false);
   };
@@ -126,11 +135,12 @@ export function DomainPicker({
       })}
 
       <View style={styles.inputRow}>
-        <View style={styles.inputWrap}>
+        <View style={[styles.inputWrap, !!error && styles.inputWrapError]}>
           <TextInput
             value={text}
             onChangeText={(v) => {
               setText(v);
+              if (error) setError('');
               if (value) onChange(undefined);
             }}
             onSubmitEditing={submit}
@@ -139,6 +149,8 @@ export function DomainPicker({
             autoCapitalize="none"
             autoCorrect={false}
             style={styles.input}
+            aria-invalid={!!error}
+            accessibilityHint={error || undefined}
           />
           {mode === 'sub' ? <Text style={styles.suffix}>.sylkit.com</Text> : null}
         </View>
@@ -182,6 +194,12 @@ export function DomainPicker({
         <View style={styles.done}>
           <Ionicons name="checkmark-circle" size={18} color="#0E7F98" />
           <Text style={styles.doneText}>{value.mode === 'sub' ? `${value.name}.sylkit.com` : value.name}</Text>
+        </View>
+      ) : null}
+      {error ? (
+        <View style={styles.errorRow} accessibilityLiveRegion="polite" role="alert">
+          <Ionicons name="alert-circle" size={16} color={ERROR} />
+          <Text style={styles.errorText}>{error}</Text>
         </View>
       ) : null}
       {note ? <Text style={styles.note}>{note}</Text> : null}
@@ -228,4 +246,7 @@ const styles = StyleSheet.create({
   done: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.softCyan, borderRadius: 10, padding: 10 },
   doneText: { fontSize: 14, fontWeight: '800', color: '#0E7F98' },
   note: { fontSize: 13, color: colors.muted },
+  inputWrapError: { borderColor: ERROR, backgroundColor: '#FFF7F7' },
+  errorRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  errorText: { flex: 1, fontSize: 13, fontWeight: '600', color: ERROR },
 });

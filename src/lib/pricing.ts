@@ -90,12 +90,25 @@ export function configFromQuery(q: { plan?: string; billing?: string; add?: stri
   }
   const [mode, ...rest] = String(q.domain ?? '').split(':');
   const name = rest.join(':').toLowerCase().replace(/[^a-z0-9.-]/g, '').slice(0, 80);
-  const domain = (mode === 'sub' || mode === 'new' || mode === 'own') && name.length >= 2 ? { mode: mode as DomainMode, name } : undefined;
+  const ok = mode === 'sub' ? name.length >= 2 : mode === 'new' || mode === 'own' ? isValidDomain(name) : false;
+  const domain = ok ? { mode: mode as DomainMode, name } : undefined;
   return { plan: String(q.plan), billing: q.billing === 'monthly' || q.billing === 'once' ? q.billing : 'yearly', addons, domain };
 }
 
 // How a client's web address is written for people.
-export const domainLabel = (d: DomainChoice) => (d.mode === 'sub' ? `${d.name}.sylkit.com` : d.name);
+// A full domain like "tuempresa.com" or "shop.tuempresa.co.ve": at least two parts, each part
+// 1–63 letters/numbers/hyphens (no hyphen at the start or end), and a real-looking ending
+// (letters only, or an "xn--" international ending).
+export function isValidDomain(v: string): boolean {
+  if (!v || v.length > 253) return false;
+  const parts = v.split('.');
+  if (parts.length < 2) return false;
+  const tld = parts[parts.length - 1];
+  if (!/^([a-z]{2,24}|xn--[a-z0-9-]{1,59})$/.test(tld)) return false;
+  return parts.every((p) => /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$/.test(p));
+}
+
+export const domainLabel =(d: DomainChoice) => (d.mode === 'sub' ? `${d.name}.sylkit.com` : d.name);
 
 export type DomainResult = { domain: string; status: 'available' | 'taken' | 'unknown' };
 export async function checkDomain(name: string): Promise<{ label: string; subdomain: string; results: DomainResult[] }> {

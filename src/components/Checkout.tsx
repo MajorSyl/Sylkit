@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useClientWidth } from '../lib/useClientWidth';
-import { useMemo, useRef, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ANNUAL_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
 import { useLang } from '../i18n';
@@ -13,9 +13,22 @@ import { QuoteForm } from './QuoteForm';
 
 // Checkout for fixed-price plans, laid out like a shopping cart:
 // 1 plan  2 billing period  3 web address  4 extras (optional, folded)  → summary → your details.
-// A bar fixed to the bottom always shows what is due today.
+// The "Today you pay" bar lives at the screen root (see CheckoutBar); this reports what it shows
+// through onBarChange, and where the details form sits through onDetailsLayout.
 
-export function Checkout({ product, initial }: { product: Product; initial: Config | null }) {
+export type CheckoutBarState = { dueToday: number; needsDomain: boolean };
+
+export function Checkout({
+  product,
+  initial,
+  onBarChange,
+  onDetailsLayout,
+}: {
+  product: Product;
+  initial: Config | null;
+  onBarChange?: (s: CheckoutBarState | null) => void;
+  onDetailsLayout?: (y: number) => void;
+}) {
   const { t, lang } = useLang();
   const es = lang === 'es';
   const width = useClientWidth();
@@ -40,8 +53,11 @@ export function Checkout({ product, initial }: { product: Product; initial: Conf
   const needsDomain = isDomainProduct && !cfg.domain;
   const extrasCount = Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length;
 
-  const scroll = useRef<ScrollView | null>(null);
-  const [formY, setFormY] = useState(0);
+  const dueToday = est?.dueToday ?? null;
+  useEffect(() => {
+    onBarChange?.(dueToday === null ? null : { dueToday, needsDomain });
+  }, [dueToday, needsDomain, onBarChange]);
+  useEffect(() => () => onBarChange?.(null), [onBarChange]);
 
   const setDomain = (d?: DomainChoice) =>
     setCfg((c) => {
@@ -74,16 +90,6 @@ export function Checkout({ product, initial }: { product: Product; initial: Conf
     else d.setFullYear(d.getFullYear() + 1);
     return d.toLocaleDateString(es ? 'es' : 'en', { day: 'numeric', month: 'short', year: 'numeric' });
   })();
-
-  const goToForm = () => {
-    if (Platform.OS === 'web') {
-      try {
-        document.getElementById('checkout-details')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      } catch {}
-    }
-    scroll.current?.scrollTo({ y: formY, animated: true });
-  };
 
   if (!est) return null;
   const plan = est.plan;
@@ -128,7 +134,7 @@ export function Checkout({ product, initial }: { product: Product; initial: Conf
   );
 
   return (
-    <View style={{ gap: 16, paddingBottom: 90 }}>
+    <View style={{ gap: 16 }}>
       <View style={[{ gap: 16 }, wide && { flexDirection: 'row', alignItems: 'flex-start' }]}>
         <View style={[{ gap: 16 }, wide && { flex: 1.5 }]}>
           {/* 1. Plan */}
@@ -264,7 +270,7 @@ export function Checkout({ product, initial }: { product: Product; initial: Conf
       </View>
 
       {/* Details and payment */}
-      <View nativeID="checkout-details" onLayout={(e) => setFormY(e.nativeEvent.layout.y)}>
+      <View nativeID="checkout-details" onLayout={(e) => onDetailsLayout?.(e.nativeEvent.layout.y)}>
         {needsDomain ? (
           <View style={[styles.box, { alignItems: 'center' }]}>
             <Ionicons name="globe-outline" size={26} color={colors.primary} />
@@ -275,19 +281,6 @@ export function Checkout({ product, initial }: { product: Product; initial: Conf
         )}
       </View>
 
-      {/* Fixed bottom bar */}
-      <View style={[styles.bar, Platform.OS === 'web' ? ({ position: 'fixed' } as any) : { position: 'absolute' }]}>
-        <View style={styles.barInner}>
-          <View style={{ flexShrink: 1 }}>
-            <Text style={styles.barLabel}>{es ? 'Hoy pagas' : 'Today you pay'}</Text>
-            <Text style={styles.barTotal}>{money(est.dueToday)}</Text>
-          </View>
-          <Pressable style={[styles.barBtn, needsDomain && { opacity: 0.5 }]} onPress={goToForm} accessibilityRole="button">
-            <Text style={styles.barBtnText}>{es ? 'Continuar' : 'Continue'}</Text>
-            <Ionicons name="arrow-forward" size={18} color="#fff" />
-          </Pressable>
-        </View>
-      </View>
     </View>
   );
 }
@@ -357,10 +350,4 @@ const styles = StyleSheet.create({
   totalLabel: { fontSize: 17, fontWeight: '800', color: colors.text },
   total: { fontSize: 30, fontWeight: '800', color: colors.primary, letterSpacing: -0.6 },
   renew: { fontSize: 13, color: colors.muted, lineHeight: 19 },
-  bar: { left: 0, right: 0, bottom: 0, backgroundColor: colors.surface, borderTopWidth: 1, borderTopColor: colors.border, zIndex: 20, boxShadow: '0 -6px 20px rgba(15,40,90,0.08)' } as any,
-  barInner: { width: '100%', maxWidth: 1180, alignSelf: 'center', paddingHorizontal: 16, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  barLabel: { fontSize: 12, color: colors.muted, fontWeight: '600' },
-  barTotal: { fontSize: 22, fontWeight: '800', color: colors.text },
-  barBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.primary, paddingHorizontal: 22, minHeight: 48, borderRadius: 12 },
-  barBtnText: { color: '#fff', fontWeight: '800', fontSize: 16 },
 });
