@@ -1,9 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useClientWidth } from '../src/lib/useClientWidth';
 import Head from 'expo-router/head';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
-  Image,
   Linking,
   Pressable,
   ScrollView,
@@ -15,14 +14,11 @@ import {
 } from 'react-native';
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
-import { ProductCard } from '../src/components/ProductCard';
-import { categories, CategoryId } from '../src/data/products';
+import { Showroom } from '../src/components/Showroom';
 import { useProducts } from '../src/lib/catalog';
 import { useRouter } from 'expo-router';
 import { steps, ui, useLang } from '../src/i18n';
 import { colors, glass, shadow, waLink } from '../src/theme';
-import { storeTemplates } from '../src/data/storeTemplates';
-import { templateShot } from '../src/lib/templateShot';
 import { tx } from '../src/i18n';
 import { tplText } from '../src/lib/names';
 
@@ -37,22 +33,12 @@ export default function Home() {
   const { t, lang } = useLang();
   const width = useClientWidth();
   const [query, setQuery] = useState('');
-  const [cat, setCat] = useState<CategoryId | 'all'>('all');
   const products = useProducts();
   const router = useRouter();
 
   const cols = width >= 1024 ? 3 : width >= 640 ? 2 : 1;
   const wide = width >= 820;
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return products.filter((p) => {
-      if (cat !== 'all' && p.category !== cat) return false;
-      if (!q) return true;
-      const hay = [p.name.es, p.name.en, p.short.es, p.short.en, ...p.platforms].join(' ').toLowerCase();
-      return hay.includes(q);
-    });
-  }, [query, cat, products]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -113,60 +99,16 @@ export default function Home() {
           </View>
         </View>
 
-        {/* Categories */}
+        {/* Catalog: systems and design templates as a showroom of screenshot cards */}
         <View style={styles.container} nativeID="catalog">
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-            <Chip label={t(ui.all)} icon="apps" active={cat === 'all'} onPress={() => setCat('all')} />
-            {categories.map((c) => (
-              <Chip key={c.id} label={t(c.name)} icon={c.icon} active={cat === c.id} onPress={() => setCat(c.id)} />
-            ))}
-          </ScrollView>
-
-          {/* Products */}
-          <View style={styles.sectionHead}>
-            <Text style={styles.h2}>{t(ui.featured)}</Text>
-            <Text style={styles.count}>{filtered.length}</Text>
-          </View>
-          <Text style={styles.sectionSub}>{t(ui.featuredSub)}</Text>
-
-          {filtered.length === 0 ? (
-            <View style={[styles.empty, shadow]}>
-              <Ionicons name="construct" size={28} color={colors.primary} />
-              <Text style={styles.emptyText}>{t(ui.noResults)}</Text>
-              <WhatsAppButton
-                label={t(ui.talk)}
-                message={tx(`Hi, I'm looking for a system for: ${query}`, `Hola, busco un sistema para: ${query}`, `Olá, estou procurando um sistema para: ${query}`)}
-              />
-            </View>
-          ) : (
-            <View style={styles.grid}>
-              {filtered.map((p) => (
-                <View key={p.slug} style={{ width: `${100 / cols}%`, padding: cols === 1 ? 5 : 8 }}>
-                  <ProductCard product={p} compact={cols === 1} />
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Store templates */}
-          <View style={[styles.sectionHead, { marginTop: 40 }]}>
-            <Text style={styles.h2}>{tx('Design templates', 'Plantillas de diseño', "Modelos de design")}</Text>
+          <View style={[styles.sectionHead, { marginTop: 8 }]}>
+            <Text style={styles.h2}>{tx('All systems and designs', 'Todos los sistemas y diseños', 'Todos os sistemas e designs')}</Text>
             <Pressable onPress={() => router.push('/templates' as any)} accessibilityRole="link">
-              <Text style={styles.tplAll}>{tx('See all →', 'Ver todas →', "Ver todos →")}</Text>
+              <Text style={styles.tplAll}>{tx('Templates →', 'Plantillas →', 'Modelos →')}</Text>
             </Pressable>
           </View>
-          <Text style={styles.sectionSub}>
-            {tx('Online stores, websites and apps ready for your business. Pick a design and we adapt it to your brand.', 'Tiendas en línea, sitios web y apps listas para tu negocio. Elige un diseño y lo adaptamos a tu marca.', "Lojas online, sites e apps prontos para o seu negócio. Escolha um design e nós o adaptamos à sua marca.")}
-          </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 6 }}>
-            {storeTemplates.map((x) => (
-              <Pressable key={x.slug} style={[styles.tplCard, shadow]} onPress={() => router.push(`/product/${x.product}?template=${x.slug}` as any)} accessibilityRole="link" accessibilityLabel={x.name}>
-                <Image source={{ uri: templateShot(x.slug, 'phone') }} style={styles.tplShot} resizeMode="cover" />
-                <Text style={styles.tplName}>{x.name}</Text>
-                <Text style={styles.tplTag} numberOfLines={1}>{tplText(x.tagline)}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
+          <Text style={[styles.sectionSub, { marginBottom: 14 }]}>{t(ui.featuredSub)}</Text>
+          <Showroom products={products} initialQuery={query} />
 
           {/* Custom banner */}
           <View style={[styles.banner, wide && { flexDirection: 'row', alignItems: 'center' }]}>
