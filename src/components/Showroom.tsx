@@ -13,6 +13,7 @@ import { colors, waLink } from '../theme';
 // The catalog as a showroom: big screenshot cards (like a website builder's "All sites" view) with
 // a toolbar to pick a category, sort, filter, search and switch between a roomy and a dense grid.
 // Shows ready-made systems and design templates (online stores, websites, apps) side by side.
+// Domains and hosting are left out on purpose: they have their own page (/domains) and menu entry.
 //   card     -> details (product page, or the template's live preview)
 //   "+"      -> straight to buying (checkout for fixed-price systems, the product with the design chosen for templates)
 
@@ -58,7 +59,7 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
   };
 
   const items: Item[] = useMemo(() => {
-    const sys: Item[] = products.map((p) => {
+    const sys: Item[] = products.filter((p) => p.category !== 'domains').map((p) => {
       const yearly = p.pricing?.billing?.length === 1 && p.pricing.billing[0] === 'yearly';
       return {
         key: p.slug,

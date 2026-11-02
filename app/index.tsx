@@ -8,7 +8,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   useWindowDimensions,
   View,
 } from 'react-native';
@@ -32,7 +31,6 @@ const doors: { href: string; icon: string; title: { es: string; en: string; pt?:
 export default function Home() {
   const { t, lang } = useLang();
   const width = useClientWidth();
-  const [query, setQuery] = useState('');
   const products = useProducts();
   const router = useRouter();
 
@@ -56,23 +54,6 @@ export default function Home() {
             <Text style={[styles.h1, wide && { fontSize: 52, lineHeight: 58 }]}>{t(ui.tagline)}</Text>
             <Text style={[styles.heroSub, wide && { fontSize: 18, lineHeight: 28 }]}>{t(ui.heroSub)}</Text>
 
-            <View style={[styles.search, shadow, glass]}>
-              <Ionicons name="search" size={20} color={colors.muted} />
-              <TextInput
-                value={query}
-                onChangeText={setQuery}
-                placeholder={t(ui.search)}
-                placeholderTextColor={colors.muted}
-                style={styles.searchInput}
-                accessibilityLabel={t(ui.search)}
-                returnKeyType="search"
-              />
-              {query.length > 0 && (
-                <Pressable onPress={() => setQuery('')} accessibilityLabel="Clear" hitSlop={10}>
-                  <Ionicons name="close-circle" size={20} color={colors.muted} />
-                </Pressable>
-              )}
-            </View>
           </View>
         </View>
 
@@ -108,7 +89,7 @@ export default function Home() {
             </Pressable>
           </View>
           <Text style={[styles.sectionSub, { marginBottom: 14 }]}>{t(ui.featuredSub)}</Text>
-          <Showroom products={products} initialQuery={query} />
+          <Showroom products={products} />
 
           {/* Custom banner */}
           <View style={[styles.banner, wide && { flexDirection: 'row', alignItems: 'center' }]}>
