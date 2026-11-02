@@ -4,6 +4,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLang } from '../i18n';
 import { categoryOf, Listing, usd } from '../lib/listings';
 import { colors, shadow } from '../theme';
+import { tx } from '../i18n';
 
 // Card for a business for sale: image, name, one-line pitch, category, and the two numbers buyers look at first.
 export function ListingCard({ listing, compact }: { listing: Listing; compact?: boolean }) {
@@ -24,9 +25,9 @@ export function ListingCard({ listing, compact }: { listing: Listing; compact?: 
               <Ionicons name={cat.icon as any} size={46} color={cat.tint} />
             </>
           )}
-          {listing.featured && !sold ? <Text style={styles.featured}>★ {es ? 'Destacado' : 'Featured'}</Text> : null}
-          {listing.status === 'under_offer' ? <Text style={[styles.flag, { backgroundColor: '#F59E0B' }]}>{es ? 'En negociación' : 'Under offer'}</Text> : null}
-          {sold ? <Text style={[styles.flag, { backgroundColor: '#16A34A' }]}>{es ? 'Vendido' : 'Sold'}</Text> : null}
+          {listing.featured && !sold ? <Text style={styles.featured}>★ {tx('Featured', 'Destacado', "Destaque")}</Text> : null}
+          {listing.status === 'under_offer' ? <Text style={[styles.flag, { backgroundColor: '#F59E0B' }]}>{tx('Under offer', 'En negociación', "Em negociação")}</Text> : null}
+          {sold ? <Text style={[styles.flag, { backgroundColor: '#16A34A' }]}>{tx('Sold', 'Vendido', "Vendido")}</Text> : null}
         </View>
 
         <View style={[styles.body, compact && { flex: 1 }]}>
@@ -43,18 +44,18 @@ export function ListingCard({ listing, compact }: { listing: Listing; compact?: 
             </View>
             {Number(listing.annual_revenue) === 0 ? (
               <View style={[styles.pill, { backgroundColor: '#F1F5F9' }]}>
-                <Text style={[styles.pillText, { color: colors.muted }]}>{es ? 'Sin ingresos aún' : 'Pre-revenue'}</Text>
+                <Text style={[styles.pillText, { color: colors.muted }]}>{tx('Pre-revenue', 'Sin ingresos aún', "Sem faturamento ainda")}</Text>
               </View>
             ) : null}
           </View>
           <View style={styles.stats}>
             <View style={styles.stat}>
               <Text style={styles.statValue}>{usd(listing.annual_revenue)}</Text>
-              <Text style={styles.statLabel}>{es ? 'Ingresos anuales' : 'Annual revenue'}</Text>
+              <Text style={styles.statLabel}>{tx('Annual revenue', 'Ingresos anuales', "Faturamento anual")}</Text>
             </View>
             <View style={styles.stat}>
               <Text style={styles.statValue}>{usd(sold ? listing.sold_price ?? listing.asking_price : listing.asking_price)}</Text>
-              <Text style={styles.statLabel}>{sold ? (es ? 'Precio de venta' : 'Exit price') : es ? 'Precio pedido' : 'Asking price'}</Text>
+              <Text style={styles.statLabel}>{sold ? (tx('Exit price', 'Precio de venta', "Preço de venda")) : tx('Asking price', 'Precio pedido', "Preço pedido")}</Text>
             </View>
           </View>
         </View>

@@ -8,6 +8,7 @@ import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
 import { configFromQuery, estimate, useAddons } from '../src/lib/pricing';
 import { colors } from '../src/theme';
+import { tx } from '../src/i18n';
 
 export default function QuotePage() {
   const { product, plan, billing, add, domain, template } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string; template?: string }>();
@@ -28,21 +29,17 @@ export default function QuotePage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{est ? (es ? 'Pagar · Sylkit' : 'Checkout · Sylkit') : es ? 'Solicitar cotización · Sylkit' : 'Request a quote · Sylkit'}</title>
+        <title>{est ? (tx('Checkout · Sylkit', 'Pagar · Sylkit', "Finalizar compra · Sylkit")) : tx('Request a quote · Sylkit', 'Solicitar cotización · Sylkit', "Pedir orçamento · Sylkit")}</title>
       </Head>
       <Header />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
-          {p?.pricing ? <Text style={styles.kicker}>{es ? 'TU CARRITO · PASO 1 DE 2' : 'YOUR CART · STEP 1 OF 2'}</Text> : null}
-          <Text style={styles.h1}>{p ? t(p.name) : es ? 'Sistema a medida' : 'Custom system'}</Text>
+          {p?.pricing ? <Text style={styles.kicker}>{tx('YOUR CART · STEP 1 OF 2', 'TU CARRITO · PASO 1 DE 2', "SEU CARRINHO · PASSO 1 DE 2")}</Text> : null}
+          <Text style={styles.h1}>{p ? t(p.name) : tx('Custom system', 'Sistema a medida', "Sistema sob medida")}</Text>
           <Text style={styles.sub}>
             {p?.pricing
-              ? es
-                ? 'Revisa tu plan, agrega lo que necesites y escribe tus datos. Pagas en el siguiente paso.'
-                : 'Review your plan, add what you need and enter your details. You pay in the next step.'
-              : es
-                ? 'Cuéntanos qué necesitas. Te enviamos una cotización y un enlace para seguir tu pedido.'
-                : 'Tell us what you need. We send you a quote and a link to track your order.'}
+              ? tx('Review your plan, add what you need and enter your details. You pay in the next step.', 'Revisa tu plan, agrega lo que necesites y escribe tus datos. Pagas en el siguiente paso.', "Revise seu plano, adicione o que precisar e preencha seus dados. Você paga no próximo passo.")
+              : tx('Tell us what you need. We send you a quote and a link to track your order.', 'Cuéntanos qué necesitas. Te enviamos una cotización y un enlace para seguir tu pedido.', "Conte o que você precisa. Enviamos um orçamento e um link para acompanhar seu pedido.")}
           </Text>
           <QuoteForm productSlug={p?.slug} productName={p ? t(p.name) : undefined} config={null} />
         </View>

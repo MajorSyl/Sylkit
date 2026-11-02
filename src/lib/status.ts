@@ -1,4 +1,5 @@
 import type { Text } from '../i18n';
+import { tx } from '../i18n';
 
 export type OrderStatus =
   | 'new'
@@ -11,14 +12,14 @@ export type OrderStatus =
   | 'cancelled';
 
 export const statusLabel: Record<OrderStatus, Text> = {
-  new: { es: 'Solicitud recibida', en: 'Request received' },
-  quoted: { es: 'Cotización enviada', en: 'Quote sent' },
-  accepted: { es: 'Cotización aceptada', en: 'Quote accepted' },
-  payment_submitted: { es: 'Pago en verificación', en: 'Payment being verified' },
-  paid: { es: 'Pago confirmado', en: 'Payment confirmed' },
-  in_progress: { es: 'En desarrollo', en: 'In progress' },
-  delivered: { es: 'Entregado', en: 'Delivered' },
-  cancelled: { es: 'Cancelado', en: 'Cancelled' },
+  new: { es: 'Solicitud recibida', en: 'Request received', pt: "Solicitação recebida" },
+  quoted: { es: 'Cotización enviada', en: 'Quote sent', pt: "Orçamento enviado" },
+  accepted: { es: 'Cotización aceptada', en: 'Quote accepted', pt: "Orçamento aceito" },
+  payment_submitted: { es: 'Pago en verificación', en: 'Payment being verified', pt: "Pagamento em verificação" },
+  paid: { es: 'Pago confirmado', en: 'Payment confirmed', pt: "Pagamento confirmado" },
+  in_progress: { es: 'En desarrollo', en: 'In progress', pt: "Em andamento" },
+  delivered: { es: 'Entregado', en: 'Delivered', pt: "Entregue" },
+  cancelled: { es: 'Cancelado', en: 'Cancelled', pt: "Cancelado" },
 };
 
 export const statusColor: Record<OrderStatus, { bg: string; fg: string }> = {
@@ -46,7 +47,7 @@ export const formatMoney = (amount: number | null | undefined, currency = 'USD')
 export const formatDate = (iso: string | null | undefined, lang: 'es' | 'en') => {
   if (!iso) return '';
   try {
-    return new Date(iso).toLocaleDateString(lang === 'es' ? 'es-VE' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString(tx('en-US', 'es-VE', "pt-BR"), { day: 'numeric', month: 'short', year: 'numeric' });
   } catch {
     return iso;
   }

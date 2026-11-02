@@ -11,12 +11,14 @@ import { CryptoPay } from '../src/components/CryptoPay';
 import type { ServerEstimate } from '../src/components/EstimateBreakdown';
 import { Field, formStyles } from '../src/components/Field';
 import { useLang } from '../src/i18n';
+import { productName } from '../src/lib/names';
 import { orderLines } from '../src/lib/orderLines';
 import { PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
 import { money } from '../src/lib/pricing';
 import { formatDate, formatMoney, OrderStatus, statusLabel } from '../src/lib/status';
 import { friendlyError, supabase } from '../src/lib/supabase';
 import { colors, shadow, waLink } from '../src/theme';
+import { tx } from '../src/i18n';
 
 // The order page: where the client lands after checkout, after paying, and from the email link.
 // Top to bottom: what is happening now → how to pay (only the method they chose) → what happens next
@@ -99,7 +101,7 @@ export default function OrderPage() {
 
   const report = async (method: PayOption) => {
     setActionError('');
-    if (reference.trim().length < 3) return setActionError(es ? 'Escribe la referencia del pago.' : 'Please enter the payment reference.');
+    if (reference.trim().length < 3) return setActionError(tx('Please enter the payment reference.', 'Escribe la referencia del pago.', "Digite a referência do pagamento."));
     setBusy(true);
     const { error: err } = await supabase.rpc('submit_payment', { p_token: token, p_method: method.name, p_reference: reference.trim() });
     setBusy(false);
@@ -108,7 +110,7 @@ export default function OrderPage() {
     load();
   };
 
-  const help = () => Linking.openURL(waLink(es ? `Hola, tengo una pregunta sobre mi pedido ${order?.order_number ?? ''}.` : `Hi, I have a question about my order ${order?.order_number ?? ''}.`));
+  const help = () => Linking.openURL(waLink(tx(`Hi, I have a question about my order ${order?.order_number ?? ''}.`, `Hola, tengo una pregunta sobre mi pedido ${order?.order_number ?? ''}.`, `Olá, tenho uma pergunta sobre meu pedido ${order?.order_number ?? ''}.`)));
 
   const body = () => {
     if (loading) return <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 60 }} />;
@@ -116,12 +118,12 @@ export default function OrderPage() {
       return (
         <View style={[styles.card, shadow, { alignItems: 'center' }]}>
           <Ionicons name="receipt-outline" size={34} color={colors.primary} />
-          <Text style={styles.h2}>{es ? 'Busca tu pedido' : 'Find your order'}</Text>
+          <Text style={styles.h2}>{tx('Find your order', 'Busca tu pedido', "Encontre seu pedido")}</Text>
           <Text style={[styles.muted, { textAlign: 'center' }]}>
-            {es ? 'Abre el enlace que te enviamos por correo después de comprar.' : 'Open the link we emailed you after you ordered.'}
+            {tx('Open the link we emailed you after you ordered.', 'Abre el enlace que te enviamos por correo después de comprar.', "Abra o link que enviamos por e-mail depois da sua compra.")}
           </Text>
           {lastToken ? (
-            <Button label={es ? 'Abrir mi último pedido' : 'Open my last order'} icon="arrow-forward" onPress={() => setToken(lastToken)} />
+            <Button label={tx('Open my last order', 'Abrir mi último pedido', "Abrir meu último pedido")} icon="arrow-forward" onPress={() => setToken(lastToken)} />
           ) : null}
         </View>
       );
@@ -129,7 +131,7 @@ export default function OrderPage() {
     if (error || !order) return <Text style={formStyles.error}>{error}</Text>;
 
     const first = (order.customer_name || '').trim().split(/\s+/)[0] || '';
-    const product = (es ? order.product_name_es : order.product_name_en) ?? (es ? 'Sistema a medida' : 'Custom system');
+    const product = (order.product_name_en ? productName(order.product_name_en, order.product_name_es ?? order.product_name_en) : null) ?? (tx('Custom system', 'Sistema a medida', "Sistema sob medida"));
     const amount = order.quote_amount != null ? formatMoney(order.quote_amount, order.quote_currency) : '';
     const paid = PAID.includes(order.status);
     const cardReturn = params.paid === 'card' && order.status === 'accepted';
@@ -144,45 +146,39 @@ export default function OrderPage() {
         return {
           icon: 'checkmark-circle',
           color: '#12B76A',
-          title: es ? `¡Gracias${first ? `, ${first}` : ''}! Tu pago está confirmado.` : `Thank you${first ? `, ${first}` : ''}! Your payment is confirmed.`,
+          title: tx(`Thank you${first ? `, ${first}` : ''}! Your payment is confirmed.`, `¡Gracias${first ? `, ${first}` : ''}! Tu pago está confirmado.`, `Obrigado${first ? `, ${first}` : ''}! Seu pagamento foi confirmado.`),
           sub:
             order.status === 'delivered'
-              ? es
-                ? 'Tu sistema está listo. Revisa tu correo para entrar.'
-                : 'Your system is ready. Check your email to sign in.'
+              ? tx('Your system is ready. Check your email to sign in.', 'Tu sistema está listo. Revisa tu correo para entrar.', "Seu sistema está pronto. Confira seu e-mail para entrar.")
               : order.status === 'in_progress'
-                ? es
-                  ? 'Estamos preparando tu sistema. Te avisamos apenas esté listo.'
-                  : "We're setting up your system. We'll tell you as soon as it's ready."
-                : es
-                  ? 'Te escribiremos por WhatsApp o correo en menos de 24 horas para empezar la instalación.'
-                  : "We'll message you on WhatsApp or email within 24 hours to start the setup.",
+                ? tx("We're setting up your system. We'll tell you as soon as it's ready.", 'Estamos preparando tu sistema. Te avisamos apenas esté listo.', "Estamos preparando seu sistema. Avisaremos assim que estiver pronto.")
+                : tx("We'll message you on WhatsApp or email within 24 hours to start the setup.", 'Te escribiremos por WhatsApp o correo en menos de 24 horas para empezar la instalación.', "Vamos falar com você por WhatsApp ou e-mail em até 24 horas para começar a instalação."),
         };
       if (order.status === 'payment_submitted' && !cryptoStarted)
         return {
           icon: 'time',
           color: '#F79009',
-          title: es ? 'Estamos verificando tu pago' : "We're checking your payment",
-          sub: es ? 'Normalmente lo confirmamos en pocas horas. Te avisamos por correo.' : 'We usually confirm it within a few hours. We will email you.',
+          title: tx("We're checking your payment", 'Estamos verificando tu pago', "Estamos verificando seu pagamento"),
+          sub: tx('We usually confirm it within a few hours. We will email you.', 'Normalmente lo confirmamos en pocas horas. Te avisamos por correo.', "Normalmente confirmamos em poucas horas. Avisaremos por e-mail."),
         };
       if (cardReturn)
-        return { icon: 'card', color: colors.primary, title: es ? 'Confirmando tu pago…' : 'Confirming your payment…', sub: es ? 'Esto toma unos segundos.' : 'This takes a few seconds.' };
+        return { icon: 'card', color: colors.primary, title: tx('Confirming your payment…', 'Confirmando tu pago…', "Confirmando seu pagamento…"), sub: tx('This takes a few seconds.', 'Esto toma unos segundos.', "Isso leva alguns segundos.") };
       if (payable)
         return {
           icon: 'bag-check',
           color: colors.primary,
-          title: es ? `Casi listo${first ? `, ${first}` : ''}. Completa tu pago.` : `Almost done${first ? `, ${first}` : ''}. Complete your payment.`,
-          sub: es ? `Tu pedido está guardado. Paga ${amount} para empezar.` : `Your order is saved. Pay ${amount} to get started.`,
+          title: tx(`Almost done${first ? `, ${first}` : ''}. Complete your payment.`, `Casi listo${first ? `, ${first}` : ''}. Completa tu pago.`, `Quase pronto${first ? `, ${first}` : ''}. Conclua seu pagamento.`),
+          sub: tx(`Your order is saved. Pay ${amount} to get started.`, `Tu pedido está guardado. Paga ${amount} para empezar.`, `Seu pedido está salvo. Pague ${amount} para começar.`),
         };
       if (order.status === 'quoted')
-        return { icon: 'document-text', color: colors.primary, title: es ? 'Tu cotización está lista' : 'Your quote is ready', sub: es ? 'Revísala abajo y acéptala para pagar.' : 'Review it below and accept it to pay.' };
+        return { icon: 'document-text', color: colors.primary, title: tx('Your quote is ready', 'Tu cotización está lista', "Seu orçamento está pronto"), sub: tx('Review it below and accept it to pay.', 'Revísala abajo y acéptala para pagar.', "Confira abaixo e aceite para pagar.") };
       if (order.status === 'cancelled')
-        return { icon: 'close-circle', color: '#667085', title: es ? 'Este pedido fue cancelado' : 'This order was cancelled', sub: es ? 'Escríbenos si fue un error.' : 'Message us if this was a mistake.' };
+        return { icon: 'close-circle', color: '#667085', title: tx('This order was cancelled', 'Este pedido fue cancelado', "Este pedido foi cancelado"), sub: tx('Message us if this was a mistake.', 'Escríbenos si fue un error.', "Fale conosco se foi um engano.") };
       return {
         icon: 'mail-open',
         color: colors.primary,
-        title: es ? 'Recibimos tu solicitud' : 'We received your request',
-        sub: es ? 'Te enviaremos un precio en menos de 24 horas a tu correo.' : "We'll email you a price within 24 hours.",
+        title: tx('We received your request', 'Recibimos tu solicitud', "Recebemos sua solicitação"),
+        sub: tx("We'll email you a price within 24 hours.", 'Te enviaremos un precio en menos de 24 horas a tu correo.', "Enviaremos um preço por e-mail em até 24 horas."),
       };
     })();
 
@@ -193,7 +189,7 @@ export default function OrderPage() {
             <Ionicons name={hero.icon as any} size={34} color={hero.color} />
           </View>
           <Text style={styles.kicker}>
-            {es ? 'Pedido' : 'Order'} {order.order_number}
+            {tx('Order', 'Pedido', "Pedido")} {order.order_number}
           </Text>
           <Text style={styles.h1}>{hero.title}</Text>
           <Text style={[styles.muted, { textAlign: 'center' }]}>{hero.sub}</Text>
@@ -203,7 +199,7 @@ export default function OrderPage() {
         {payable && !(order.status === 'payment_submitted' && !cryptoStarted) ? (
           <View style={[styles.card, shadow]}>
             <View style={styles.payHead}>
-              <Text style={styles.h2}>{es ? 'Pago' : 'Payment'}</Text>
+              <Text style={styles.h2}>{tx('Payment', 'Pago', "Pagamento")}</Text>
               {amount ? <Text style={styles.payAmount}>{amount}</Text> : null}
             </View>
 
@@ -236,17 +232,17 @@ export default function OrderPage() {
                 ) : (
                   <View style={styles.manual}>
                     <Text style={styles.manualTitle}>{payTitle(chosen, lang)}</Text>
-                    <Text style={styles.manualStep}>{es ? `1. Envía exactamente ${amount} usando estos datos:` : `1. Send exactly ${amount} using these details:`}</Text>
+                    <Text style={styles.manualStep}>{tx(`1. Send exactly ${amount} using these details:`, `1. Envía exactamente ${amount} usando estos datos:`, `1. Envie exatamente ${amount} usando estes dados:`)}</Text>
                     {chosen.details ? <Text style={styles.manualDetails}>{t(chosen.details)}</Text> : null}
-                    <Text style={styles.manualStep}>{es ? '2. Escribe la referencia o número de confirmación:' : '2. Enter the reference or confirmation number:'}</Text>
-                    <Field label={es ? 'Referencia' : 'Reference'} value={reference} onChangeText={setReference} placeholder={es ? 'Ej. 0012345678' : 'e.g. 0012345678'} />
-                    <Button label={es ? 'Ya pagué' : "I've paid"} icon="checkmark-circle" onPress={() => report(chosen)} loading={busy} />
+                    <Text style={styles.manualStep}>{tx('2. Enter the reference or confirmation number:', '2. Escribe la referencia o número de confirmación:', "2. Digite a referência ou número de confirmação:")}</Text>
+                    <Field label={tx('Reference', 'Referencia', "Referência")} value={reference} onChangeText={setReference} placeholder={tx('e.g. 0012345678', 'Ej. 0012345678', "ex.: 0012345678")} />
+                    <Button label={tx("I've paid", 'Ya pagué', "Já paguei")} icon="checkmark-circle" onPress={() => report(chosen)} loading={busy} />
                   </View>
                 )}
                 {order.status === 'accepted' && !cardReturn ? (
                   <Pressable onPress={() => setChoosing(true)} style={styles.switch} accessibilityRole="button">
                     <Ionicons name="swap-horizontal" size={16} color={colors.primary} />
-                    <Text style={styles.switchText}>{es ? 'Usar otro método de pago' : 'Use a different payment method'}</Text>
+                    <Text style={styles.switchText}>{tx('Use a different payment method', 'Usar otro método de pago', "Usar outra forma de pagamento")}</Text>
                   </Pressable>
                 ) : null}
               </View>
@@ -259,40 +255,40 @@ export default function OrderPage() {
         {/* ---------- quote to accept (custom projects) ---------- */}
         {order.status === 'quoted' && order.quote_amount != null ? (
           <View style={[styles.card, shadow]}>
-            <Text style={styles.h2}>{es ? 'Tu cotización' : 'Your quote'}</Text>
+            <Text style={styles.h2}>{tx('Your quote', 'Tu cotización', "Seu orçamento")}</Text>
             <Text style={styles.payAmount}>{amount}</Text>
             {order.quote_valid_until ? (
               <Text style={styles.muted}>
-                {es ? 'Válida hasta' : 'Valid until'} {formatDate(order.quote_valid_until, lang)}
+                {tx('Valid until', 'Válida hasta', "Válido até")} {formatDate(order.quote_valid_until, lang)}
               </Text>
             ) : null}
             {order.quote_notes ? <Text style={styles.notes}>{order.quote_notes}</Text> : null}
-            <Button label={es ? 'Aceptar y pagar' : 'Accept and pay'} icon="checkmark-circle" onPress={accept} loading={busy} />
+            <Button label={tx('Accept and pay', 'Aceptar y pagar', "Aceitar e pagar")} icon="checkmark-circle" onPress={accept} loading={busy} />
           </View>
         ) : null}
 
         {/* ---------- what happens next ---------- */}
         {order.status !== 'cancelled' && order.status !== 'new' && order.status !== 'quoted' ? (
           <View style={[styles.card, shadow]}>
-            <Text style={styles.h2}>{es ? 'Qué sigue' : "What's next"}</Text>
+            <Text style={styles.h2}>{tx("What's next", 'Qué sigue', "Próximos passos")}</Text>
             <Next
               done={paid}
               active={!paid}
-              title={es ? 'Pago' : 'Payment'}
-              text={paid ? (es ? 'Confirmado' : 'Confirmed') : order.status === 'payment_submitted' ? (es ? 'En verificación' : 'Being checked') : es ? 'Pendiente' : 'Waiting'}
+              title={tx('Payment', 'Pago', "Pagamento")}
+              text={paid ? (tx('Confirmed', 'Confirmado', "Confirmado")) : order.status === 'payment_submitted' ? (tx('Being checked', 'En verificación', "Em verificação")) : tx('Waiting', 'Pendiente', "Pendente")}
             />
             <Next
               done={order.status === 'delivered'}
               active={order.status === 'paid' || order.status === 'in_progress'}
-              title={es ? 'Instalación' : 'Setup'}
-              text={es ? 'Configuramos tu sistema y cargamos tus datos (24–48 h).' : 'We set up your system and load your data (24–48 h).'}
+              title={tx('Setup', 'Instalación', "Instalação")}
+              text={tx('We set up your system and load your data (24–48 h).', 'Configuramos tu sistema y cargamos tus datos (24–48 h).', "Configuramos seu sistema e carregamos seus dados (24–48 h).")}
             />
             <Next
               done={order.status === 'delivered'}
               active={false}
               last
-              title={es ? 'Listo para usar' : 'Ready to use'}
-              text={es ? 'Te enviamos tu acceso y te enseñamos a usarlo.' : 'We send your login and show you how to use it.'}
+              title={tx('Ready to use', 'Listo para usar', "Pronto para usar")}
+              text={tx('We send your login and show you how to use it.', 'Te enviamos tu acceso y te enseñamos a usarlo.', "Enviamos seu acesso e mostramos como usar.")}
             />
           </View>
         ) : null}
@@ -301,7 +297,7 @@ export default function OrderPage() {
         <View style={[styles.card, shadow]}>
           <View style={styles.sumHead}>
             <View style={{ flex: 1, gap: 2 }}>
-              <Text style={styles.h2}>{es ? 'Resumen del pedido' : 'Order summary'}</Text>
+              <Text style={styles.h2}>{tx('Order summary', 'Resumen del pedido', "Resumo do pedido")}</Text>
               <Text style={styles.muted}>
                 {product} · {formatDate(order.created_at, lang)}
               </Text>
@@ -309,19 +305,15 @@ export default function OrderPage() {
             <View style={[styles.pill, paid ? styles.pillPaid : styles.pillOpen]}>
               <Text style={[styles.pillText, { color: paid ? '#067647' : '#B54708' }]}>
                 {paid
-                  ? es
-                    ? 'Pagado'
-                    : 'Paid'
+                  ? tx('Paid', 'Pagado', "Pago")
                   : order.status === 'accepted'
-                    ? es
-                      ? 'Pendiente de pago'
-                      : 'Awaiting payment'
+                    ? tx('Awaiting payment', 'Pendiente de pago', "Aguardando pagamento")
                     : t(statusLabel[order.status])}
               </Text>
             </View>
           </View>
           {order.quote_amount != null && order.status !== 'quoted'
-            ? orderLines({ estimate: order.estimate, amount: order.quote_amount, notes: order.quote_notes, product: { en: order.product_name_en ?? 'Custom project', es: order.product_name_es ?? 'Proyecto a medida' } }, es).map((l, i) => (
+            ? orderLines({ estimate: order.estimate, amount: order.quote_amount, notes: order.quote_notes, product: order.product_name_en ? { en: order.product_name_en, es: order.product_name_es ?? order.product_name_en, pt: productName(order.product_name_en, order.product_name_es ?? order.product_name_en, 'pt') } : null }, es).map((l, i) => (
                 <View key={i} style={styles.lineRow}>
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={styles.lineLabel}>{l.label}</Text>
@@ -331,11 +323,11 @@ export default function OrderPage() {
                 </View>
               ))
             : order.estimate
-              ? <Text style={styles.muted}>{es ? 'Revisaremos tu solicitud y te enviaremos el precio final.' : "We'll review your request and send you the final price."}</Text>
+              ? <Text style={styles.muted}>{tx("We'll review your request and send you the final price.", 'Revisaremos tu solicitud y te enviaremos el precio final.', "Vamos analisar sua solicitação e enviar o preço final.")}</Text>
               : null}
           {order.quote_amount != null && order.status !== 'quoted' ? (
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>{paid ? (es ? 'Total pagado' : 'Total paid') : es ? 'Total a pagar' : 'Total to pay'}</Text>
+              <Text style={styles.totalLabel}>{paid ? (tx('Total paid', 'Total pagado', "Total pago")) : tx('Total to pay', 'Total a pagar', "Total a pagar")}</Text>
               <Text style={styles.total}>{amount}</Text>
             </View>
           ) : null}
@@ -344,7 +336,7 @@ export default function OrderPage() {
               <Link href={`/invoice?t=${token}`} asChild>
                 <Pressable style={styles.invoiceBtn} accessibilityRole="link">
                   <Ionicons name="document-text-outline" size={18} color={colors.primary} />
-                  <Text style={styles.invoiceText}>{paid ? (es ? 'Ver factura' : 'View invoice') : es ? 'Ver factura (pendiente)' : 'View invoice (unpaid)'}</Text>
+                  <Text style={styles.invoiceText}>{paid ? (tx('View invoice', 'Ver factura', "Ver fatura")) : tx('View invoice (unpaid)', 'Ver factura (pendiente)', "Ver fatura (pendente)")}</Text>
                 </Pressable>
               </Link>
             </View>
@@ -358,7 +350,7 @@ export default function OrderPage() {
         {order.events.length > 0 ? (
           <View style={[styles.card, shadow]}>
             <Pressable style={styles.actHead} onPress={() => setShowActivity((v) => !v)} accessibilityRole="button" accessibilityState={{ expanded: showActivity }}>
-              <Text style={[styles.h2, { flex: 1 }]}>{es ? 'Actividad' : 'Activity'}</Text>
+              <Text style={[styles.h2, { flex: 1 }]}>{tx('Activity', 'Actividad', "Atividade")}</Text>
               <Ionicons name={showActivity ? 'chevron-up' : 'chevron-down'} size={20} color={colors.muted} />
             </Pressable>
             {showActivity
@@ -369,7 +361,7 @@ export default function OrderPage() {
                     <View key={i} style={styles.event}>
                       <View style={styles.eventDot} />
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.eventTitle}>{statusLabel[e.kind as OrderStatus] ? t(statusLabel[e.kind as OrderStatus]) : es ? 'Actualización' : 'Update'}</Text>
+                        <Text style={styles.eventTitle}>{statusLabel[e.kind as OrderStatus] ? t(statusLabel[e.kind as OrderStatus]) : tx('Update', 'Actualización', "Atualização")}</Text>
                         {e.message ? <Text style={styles.muted}>{e.message}</Text> : null}
                         <Text style={styles.eventDate}>{formatDate(e.at, lang)}</Text>
                       </View>
@@ -379,7 +371,7 @@ export default function OrderPage() {
           </View>
         ) : null}
 
-        <Button label={es ? '¿Preguntas? Escríbenos por WhatsApp' : 'Questions? Message us on WhatsApp'} icon="logo-whatsapp" variant="secondary" onPress={help} />
+        <Button label={tx('Questions? Message us on WhatsApp', '¿Preguntas? Escríbenos por WhatsApp', "Dúvidas? Fale conosco no WhatsApp")} icon="logo-whatsapp" variant="secondary" onPress={help} />
       </View>
     );
   };
@@ -389,7 +381,7 @@ export default function OrderPage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{es ? 'Mi pedido · Sylkit' : 'My order · Sylkit'}</title>
+        <title>{tx('My order · Sylkit', 'Mi pedido · Sylkit', "Meu pedido · Sylkit")}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <CheckoutHeader step={order ? step : undefined} />

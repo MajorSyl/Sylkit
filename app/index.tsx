@@ -23,12 +23,14 @@ import { steps, ui, useLang } from '../src/i18n';
 import { colors, glass, shadow, waLink } from '../src/theme';
 import { storeTemplates } from '../src/data/storeTemplates';
 import { templateShot } from '../src/lib/templateShot';
+import { tx } from '../src/i18n';
+import { tplText } from '../src/lib/names';
 
-const doors: { href: string; icon: string; title: { es: string; en: string }; sub: { es: string; en: string } }[] = [
-  { href: '#catalog', icon: 'apps-outline', title: { en: 'Software', es: 'Software' }, sub: { en: 'Ready-made or custom systems', es: 'Sistemas listos o a medida' } },
-  { href: '/domains', icon: 'globe-outline', title: { en: 'Domains & hosting', es: 'Dominios y hosting' }, sub: { en: 'Your .com, email and hosting', es: 'Tu .com, correo y hosting' } },
-  { href: '/security', icon: 'shield-checkmark-outline', title: { en: 'Security', es: 'Seguridad' }, sub: { en: 'Check and protect your app', es: 'Revisa y protege tu app' } },
-  { href: '/quote', icon: 'construct-outline', title: { en: 'Custom system', es: 'Sistema a medida' }, sub: { en: 'Tell us what you need, we build it', es: 'Cuéntanos qué necesitas y lo construimos' } },
+const doors: { href: string; icon: string; title: { es: string; en: string; pt?: string }; sub: { es: string; en: string; pt?: string } }[] = [
+  { href: '#catalog', icon: 'apps-outline', title: { en: 'Software', pt: "Software", es: 'Software' }, sub: { en: 'Ready-made or custom systems', pt: "Sistemas prontos ou sob medida", es: 'Sistemas listos o a medida' } },
+  { href: '/domains', icon: 'globe-outline', title: { en: 'Domains & hosting', pt: "Domínios e hospedagem", es: 'Dominios y hosting' }, sub: { en: 'Your .com, email and hosting', pt: "Seu .com, e-mail e hospedagem", es: 'Tu .com, correo y hosting' } },
+  { href: '/security', icon: 'shield-checkmark-outline', title: { en: 'Security', pt: "Segurança", es: 'Seguridad' }, sub: { en: 'Check and protect your app', pt: "Verifique e proteja seu app", es: 'Revisa y protege tu app' } },
+  { href: '/quote', icon: 'construct-outline', title: { en: 'Custom system', pt: "Sistema sob medida", es: 'Sistema a medida' }, sub: { en: 'Tell us what you need, we build it', pt: "Conte o que você precisa, nós construímos", es: 'Cuéntanos qué necesitas y lo construimos' } },
 ];
 
 export default function Home() {
@@ -133,7 +135,7 @@ export default function Home() {
               <Text style={styles.emptyText}>{t(ui.noResults)}</Text>
               <WhatsAppButton
                 label={t(ui.talk)}
-                message={lang === 'es' ? `Hola, busco un sistema para: ${query}` : `Hi, I'm looking for a system for: ${query}`}
+                message={tx(`Hi, I'm looking for a system for: ${query}`, `Hola, busco un sistema para: ${query}`, `Olá, estou procurando um sistema para: ${query}`)}
               />
             </View>
           ) : (
@@ -148,20 +150,20 @@ export default function Home() {
 
           {/* Store templates */}
           <View style={[styles.sectionHead, { marginTop: 40 }]}>
-            <Text style={styles.h2}>{lang === 'es' ? 'Plantillas de diseño' : 'Design templates'}</Text>
+            <Text style={styles.h2}>{tx('Design templates', 'Plantillas de diseño', "Modelos de design")}</Text>
             <Pressable onPress={() => router.push('/templates' as any)} accessibilityRole="link">
-              <Text style={styles.tplAll}>{lang === 'es' ? 'Ver todas →' : 'See all →'}</Text>
+              <Text style={styles.tplAll}>{tx('See all →', 'Ver todas →', "Ver todos →")}</Text>
             </Pressable>
           </View>
           <Text style={styles.sectionSub}>
-            {lang === 'es' ? 'Tiendas en línea, sitios web y apps listas para tu negocio. Elige un diseño y lo adaptamos a tu marca.' : 'Online stores, websites and apps ready for your business. Pick a design and we adapt it to your brand.'}
+            {tx('Online stores, websites and apps ready for your business. Pick a design and we adapt it to your brand.', 'Tiendas en línea, sitios web y apps listas para tu negocio. Elige un diseño y lo adaptamos a tu marca.', "Lojas online, sites e apps prontos para o seu negócio. Escolha um design e nós o adaptamos à sua marca.")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 6 }}>
             {storeTemplates.map((x) => (
               <Pressable key={x.slug} style={[styles.tplCard, shadow]} onPress={() => router.push(`/product/${x.product}?template=${x.slug}` as any)} accessibilityRole="link" accessibilityLabel={x.name}>
                 <Image source={{ uri: templateShot(x.slug, 'phone') }} style={styles.tplShot} resizeMode="cover" />
                 <Text style={styles.tplName}>{x.name}</Text>
-                <Text style={styles.tplTag} numberOfLines={1}>{lang === 'es' ? x.tagline[0] : x.tagline[1]}</Text>
+                <Text style={styles.tplTag} numberOfLines={1}>{tplText(x.tagline)}</Text>
               </Pressable>
             ))}
           </ScrollView>

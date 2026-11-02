@@ -7,6 +7,7 @@ import type { Text as T } from '../i18n';
 import { useLang } from '../i18n';
 import { colors, glass, waLink } from '../theme';
 import { Logo } from './Logo';
+import { tx } from '../i18n';
 
 // Site navigation. Wide screens show labeled links; phones show a "Menu" button that opens
 // a full-screen list with an icon and a clear name for every section.
@@ -17,47 +18,47 @@ const products: Item[] = [
   {
     href: '/',
     icon: 'apps-outline',
-    label: { en: 'Software for your business', es: 'Software para tu negocio' },
-    sub: { en: 'POS, inventory, pharmacy, clinic and more', es: 'Punto de venta, inventario, farmacia, clínica y más' },
+    label: { en: 'Software for your business', pt: "Software para o seu negócio", es: 'Software para tu negocio' },
+    sub: { en: 'POS, inventory, pharmacy, clinic and more', pt: "PDV, estoque, farmácia, clínica e mais", es: 'Punto de venta, inventario, farmacia, clínica y más' },
   },
   {
     href: '/templates',
     icon: 'color-palette-outline',
-    label: { en: 'Design templates', es: 'Plantillas de diseño' },
-    sub: { en: 'Online stores, websites and mobile apps', es: 'Tiendas en línea, sitios web y apps móviles' },
+    label: { en: 'Design templates', pt: "Modelos de design", es: 'Plantillas de diseño' },
+    sub: { en: 'Online stores, websites and mobile apps', pt: "Lojas online, sites e apps para celular", es: 'Tiendas en línea, sitios web y apps móviles' },
   },
   {
     href: '/domains',
     icon: 'globe-outline',
-    label: { en: 'Domains and email', es: 'Dominios y correo' },
-    sub: { en: 'Your .com and business email', es: 'Tu .com y correo profesional' },
+    label: { en: 'Domains and email', pt: "Domínios e e-mail", es: 'Dominios y correo' },
+    sub: { en: 'Your .com and business email', pt: "Seu .com e e-mail profissional", es: 'Tu .com y correo profesional' },
   },
   {
     href: '/product/hosting-web',
     icon: 'server-outline',
-    label: { en: 'Website hosting', es: 'Hosting para tu sitio' },
-    sub: { en: 'Fast, secure hosting with backups', es: 'Hosting rápido y seguro con respaldos' },
+    label: { en: 'Website hosting', pt: "Hospedagem de sites", es: 'Hosting para tu sitio' },
+    sub: { en: 'Fast, secure hosting with backups', pt: "Hospedagem rápida e segura com backups", es: 'Hosting rápido y seguro con respaldos' },
   },
   {
     href: '/security',
     icon: 'shield-checkmark-outline',
-    label: { en: 'Security (Sylkit Shield)', es: 'Seguridad (Sylkit Shield)' },
-    sub: { en: 'Check and protect your app or site', es: 'Revisa y protege tu app o sitio' },
+    label: { en: 'Security (Sylkit Shield)', pt: "Segurança (Sylkit Shield)", es: 'Seguridad (Sylkit Shield)' },
+    sub: { en: 'Check and protect your app or site', pt: "Verifique e proteja seu app ou site", es: 'Revisa y protege tu app o sitio' },
   },
   {
     href: '/quote',
     icon: 'construct-outline',
-    label: { en: 'Custom system', es: 'Sistema a medida' },
-    sub: { en: 'Tell us what you need, we build it', es: 'Cuéntanos qué necesitas y lo construimos' },
+    label: { en: 'Custom system', pt: "Sistema sob medida", es: 'Sistema a medida' },
+    sub: { en: 'Tell us what you need, we build it', pt: "Conte o que você precisa, nós construímos", es: 'Cuéntanos qué necesitas y lo construimos' },
   },
 ];
 
 const top: { href: string; label: T }[] = [
-  { href: '/', label: { en: 'Software', es: 'Software' } },
-  { href: '/templates', label: { en: 'Templates', es: 'Plantillas' } },
-  { href: '/domains', label: { en: 'Domains', es: 'Dominios' } },
-  { href: '/product/hosting-web', label: { en: 'Hosting', es: 'Hosting' } },
-  { href: '/security', label: { en: 'Security', es: 'Seguridad' } },
+  { href: '/', label: { en: 'Software', pt: "Software", es: 'Software' } },
+  { href: '/templates', label: { en: 'Templates', pt: "Modelos", es: 'Plantillas' } },
+  { href: '/domains', label: { en: 'Domains', pt: "Domínios", es: 'Dominios' } },
+  { href: '/product/hosting-web', label: { en: 'Hosting', pt: "Hospedagem", es: 'Hosting' } },
+  { href: '/security', label: { en: 'Security', pt: "Segurança", es: 'Seguridad' } },
 ];
 
 export function Header() {
@@ -71,7 +72,7 @@ export function Header() {
     setOpen(false);
     router.push(href as any);
   };
-  const wa = () => Linking.openURL(waLink(es ? 'Hola, vi Sylkit y quiero información.' : 'Hi, I saw Sylkit and want more info.'));
+  const wa = () => Linking.openURL(waLink(tx('Hi, I saw Sylkit and want more info.', 'Hola, vi Sylkit y quiero información.', "Olá, vi a Sylkit e quero mais informações.")));
 
   return (
     <View style={[styles.wrap, glass]}>
@@ -93,7 +94,7 @@ export function Header() {
             ))}
             <Link href="/order" asChild>
               <Pressable style={styles.navLink} accessibilityRole="link">
-                <Text style={styles.navText}>{es ? 'Mi pedido' : 'My order'}</Text>
+                <Text style={styles.navText}>{tx('My order', 'Mi pedido', "Meu pedido")}</Text>
               </Pressable>
             </Link>
             <Pressable style={styles.wa} onPress={wa} accessibilityRole="link">
@@ -106,7 +107,7 @@ export function Header() {
             <Pressable style={styles.waIcon} onPress={wa} accessibilityRole="link" accessibilityLabel="WhatsApp">
               <Ionicons name="logo-whatsapp" size={18} color="#fff" />
             </Pressable>
-            <Pressable style={styles.menuBtn} onPress={() => setOpen(true)} accessibilityRole="button" accessibilityLabel={es ? 'Abrir menú' : 'Open menu'}>
+            <Pressable style={styles.menuBtn} onPress={() => setOpen(true)} accessibilityRole="button" accessibilityLabel={tx('Open menu', 'Abrir menú', "Abrir menu")}>
               <Ionicons name="menu" size={24} color={colors.text} />
             </Pressable>
           </View>
@@ -119,12 +120,12 @@ export function Header() {
             <View style={styles.brand}>
               <Logo />
             </View>
-            <Pressable onPress={() => setOpen(false)} style={styles.menuBtn} accessibilityRole="button" accessibilityLabel={es ? 'Cerrar menú' : 'Close menu'}>
+            <Pressable onPress={() => setOpen(false)} style={styles.menuBtn} accessibilityRole="button" accessibilityLabel={tx('Close menu', 'Cerrar menú', "Fechar menu")}>
               <Ionicons name="close" size={28} color={colors.text} />
             </Pressable>
           </View>
           <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
-            <Text style={styles.section}>{es ? 'PRODUCTOS' : 'PRODUCTS'}</Text>
+            <Text style={styles.section}>{tx('PRODUCTS', 'PRODUCTOS', "PRODUTOS")}</Text>
             {products.map((x) => (
               <Pressable key={x.href} style={styles.item} onPress={() => go(x.href)} accessibilityRole="link">
                 <View style={styles.itemIcon}>
@@ -142,13 +143,13 @@ export function Header() {
               <View style={styles.itemIcon}>
                 <Ionicons name="receipt-outline" size={22} color={colors.primary} />
               </View>
-              <Text style={[styles.itemLabel, { flex: 1 }]}>{es ? 'Seguir mi pedido' : 'Track my order'}</Text>
+              <Text style={[styles.itemLabel, { flex: 1 }]}>{tx('Track my order', 'Seguir mi pedido', "Acompanhar meu pedido")}</Text>
               <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>
           </ScrollView>
           <Pressable style={styles.sheetWa} onPress={wa} accessibilityRole="link">
             <Ionicons name="logo-whatsapp" size={20} color="#fff" />
-            <Text style={styles.waText}>{es ? 'Hablar por WhatsApp' : 'Chat on WhatsApp'}</Text>
+            <Text style={styles.waText}>{tx('Chat on WhatsApp', 'Hablar por WhatsApp', "Conversar no WhatsApp")}</Text>
           </Pressable>
         </View>
       </Modal>

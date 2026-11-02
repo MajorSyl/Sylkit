@@ -179,7 +179,7 @@ async function createCheckout(request, env) {
     client_reference_id: order.order_number,
     success_url: `${track}&paid=card`,
     cancel_url: `${track}&pay=card`,
-    locale: es ? 'es' : 'en',
+    locale: 'auto', // Stripe shows its page in the visitor's browser language (Portuguese, Spanish, English…)
     metadata: meta,
     billing_address_collection: 'auto',
     ...(order.email ? { customer_email: order.email } : {}),
@@ -339,7 +339,7 @@ async function portal(request, env) {
   if (ref.startsWith('sub_')) customer = (await stripe(env, 'GET', `/subscriptions/${encodeURIComponent(ref)}`)).customer;
   else if (ref.startsWith('pi_')) customer = (await stripe(env, 'GET', `/payment_intents/${encodeURIComponent(ref)}`)).customer;
   if (!customer) return json({ error: 'no_card_customer' }, 409);
-  const s = await stripe(env, 'POST', '/billing_portal/sessions', { customer, return_url: `${SITE}/order?t=${token}`, locale: order.lang === 'es' ? 'es' : 'en' });
+  const s = await stripe(env, 'POST', '/billing_portal/sessions', { customer, return_url: `${SITE}/order?t=${token}`, locale: 'auto' });
   return json({ url: s.url });
 }
 

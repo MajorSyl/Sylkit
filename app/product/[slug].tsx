@@ -14,6 +14,8 @@ import { ui, useLang } from '../../src/i18n';
 import { colors, shadow, waLink } from '../../src/theme';
 import { getTemplate, templatesFor } from '../../src/data/storeTemplates';
 import { templatePreview, templateShot } from '../../src/lib/templateShot';
+import { tx } from '../../src/i18n';
+import { tplText } from '../../src/lib/names';
 
 // Pre-render one static HTML page per product (good for Google).
 export async function generateStaticParams(): Promise<Record<string, string>[]> {
@@ -62,7 +64,13 @@ export default function ProductPage() {
       demo: `Hi, I'd like a demo of "${product.name.en}".`,
       custom: `Hi, I want a custom version of "${product.name.en}" for my business.`,
     };
-    return waLink((lang === 'es' ? es : en)[kind]);
+    const pname = (product.name as { pt?: string }).pt ?? product.name.es;
+    const pt = {
+      buy: `Olá, quero comprar "${pname}" da Sylkit.`,
+      demo: `Olá, quero uma demonstração de "${pname}".`,
+      custom: `Olá, quero uma versão personalizada de "${pname}" para o meu negócio.`,
+    };
+    return waLink((lang === 'es' ? es : lang === 'pt' ? pt : en)[kind]);
   };
 
   return (
@@ -89,7 +97,7 @@ export default function ProductPage() {
             <View style={styles.links}>
               <Pressable style={styles.linkBtn} onPress={() => Linking.openURL(product.demoUrl ?? msg('demo'))} accessibilityRole="link">
                 <Ionicons name={product.demoUrl ? 'play-circle-outline' : 'logo-whatsapp'} size={16} color={colors.primary} />
-                <Text style={styles.linkText}>{product.demoUrl ? (lang === 'es' ? 'Probar demo en vivo' : 'Try the live demo') : t(ui.demo)}</Text>
+                <Text style={styles.linkText}>{product.demoUrl ? (tx('Try the live demo', 'Probar demo en vivo', "Testar a demo ao vivo")) : t(ui.demo)}</Text>
               </Pressable>
               <Pressable style={styles.linkBtn} onPress={() => router.push(product.pricing ? '/quote' : `/quote?product=${product.slug}`)} accessibilityRole="link">
                 <Ionicons name="construct-outline" size={16} color={colors.primary} />
@@ -105,19 +113,15 @@ export default function ProductPage() {
                 <View style={styles.designBox}>
                   <View style={styles.designHead}>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.h2}>{lang === 'es' ? '1. Elige tu diseño' : '1. Pick your design'}</Text>
+                      <Text style={styles.h2}>{tx('1. Pick your design', '1. Elige tu diseño', "1. Escolha seu design")}</Text>
                       <Text style={styles.designSub}>
                         {getTemplate(design)
-                          ? lang === 'es'
-                            ? `Elegiste ${getTemplate(design)!.name}. Ahora elige tu plan.`
-                            : `You picked ${getTemplate(design)!.name}. Now choose your plan.`
-                          : lang === 'es'
-                            ? 'Gratis con cualquier plan. Puedes cambiarlo después.'
-                            : 'Free with any plan. You can change it later.'}
+                          ? tx(`You picked ${getTemplate(design)!.name}. Now choose your plan.`, `Elegiste ${getTemplate(design)!.name}. Ahora elige tu plan.`, `Você escolheu ${getTemplate(design)!.name}. Agora escolha seu plano.`)
+                          : tx('Free with any plan. You can change it later.', 'Gratis con cualquier plan. Puedes cambiarlo después.', "Grátis com qualquer plano. Você pode mudar depois.")}
                       </Text>
                     </View>
                     <Link href={`/templates?kind=${designs[0].kind}` as any} style={styles.backLink}>
-                      {lang === 'es' ? 'Ver todas →' : 'See all →'}
+                      {tx('See all →', 'Ver todas →', "Ver todos →")}
                     </Link>
                   </View>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
@@ -129,17 +133,17 @@ export default function ProductPage() {
                             <Image source={{ uri: templateShot(x.slug, 'phone') }} style={styles.designShot} resizeMode="cover" />
                             <View style={styles.designMeta}>
                               <Text style={styles.designName}>{on ? '✓ ' : ''}{x.name}</Text>
-                              <Text style={styles.designTag} numberOfLines={1}>{lang === 'es' ? x.tagline[0] : x.tagline[1]}</Text>
+                              <Text style={styles.designTag} numberOfLines={1}>{tplText(x.tagline)}</Text>
                             </View>
                           </Pressable>
                           <Pressable onPress={() => Linking.openURL(templatePreview(x.slug))} style={styles.designPrev} accessibilityRole="link">
-                            <Text style={styles.designPrevText}>{lang === 'es' ? 'Ver en vivo' : 'Preview'}</Text>
+                            <Text style={styles.designPrevText}>{tx('Preview', 'Ver en vivo', "Visualizar")}</Text>
                           </Pressable>
                         </View>
                       );
                     })}
                   </ScrollView>
-                  <Text style={[styles.h2, { marginTop: 18 }]}>{lang === 'es' ? '2. Elige tu plan' : '2. Choose your plan'}</Text>
+                  <Text style={[styles.h2, { marginTop: 18 }]}>{tx('2. Choose your plan', '2. Elige tu plan', "2. Escolha seu plano")}</Text>
                 </View>
               ) : null}
               <PlanCards product={product} initialBilling={billing} template={designs.length ? design : undefined} />
@@ -147,16 +151,16 @@ export default function ProductPage() {
           ) : (
             <View style={[styles.buyBox, shadow]}>
               <PriceLabel product={product} />
-              <Text style={styles.plan}>{lang === 'es' ? 'Precio según lo que necesites. Te enviamos una cotización en menos de 24 horas.' : 'Priced to what you need. We send you a quote within 24 hours.'}</Text>
+              <Text style={styles.plan}>{tx('Priced to what you need. We send you a quote within 24 hours.', 'Precio según lo que necesites. Te enviamos una cotización en menos de 24 horas.', "Preço de acordo com o que você precisa. Enviamos um orçamento em até 24 horas.")}</Text>
               <Pressable style={[styles.primaryBtn, { backgroundColor: colors.primary }]} onPress={() => router.push(`/quote?product=${product.slug}`)} accessibilityRole="button">
                 <Ionicons name="document-text" size={18} color="#fff" />
-                <Text style={styles.primaryBtnText}>{lang === 'es' ? 'Solicitar cotización' : 'Request a quote'}</Text>
+                <Text style={styles.primaryBtnText}>{tx('Request a quote', 'Solicitar cotización', "Pedir orçamento")}</Text>
               </Pressable>
             </View>
           )}
 
           {/* About the product */}
-          <Text style={[styles.h2, { marginTop: 44, marginBottom: 12 }]}>{lang === 'es' ? 'Sobre este producto' : 'About this product'}</Text>
+          <Text style={[styles.h2, { marginTop: 44, marginBottom: 12 }]}>{tx('About this product', 'Sobre este producto', "Sobre este produto")}</Text>
           <View style={[styles.layout, wide && { flexDirection: 'row', alignItems: 'flex-start' }]}>
             {product.image ? (
               <Pressable
@@ -168,7 +172,7 @@ export default function ProductPage() {
                 {product.demoUrl ? (
                   <View style={styles.playTag}>
                     <Ionicons name="play-circle" size={16} color="#fff" />
-                    <Text style={styles.playText}>{lang === 'es' ? 'Probar demo en vivo' : 'Try the live demo'}</Text>
+                    <Text style={styles.playText}>{tx('Try the live demo', 'Probar demo en vivo', "Testar a demo ao vivo")}</Text>
                   </View>
                 ) : null}
               </Pressable>

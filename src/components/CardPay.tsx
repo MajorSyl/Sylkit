@@ -4,6 +4,7 @@ import { Linking, Platform, StyleSheet, Text, View } from 'react-native';
 import type { Lang } from '../i18n';
 import { colors } from '../theme';
 import { Button } from './Button';
+import { tx } from '../i18n';
 
 // "Pay with card" on the order tracking page (Stripe Checkout).
 // Talks to the Sylkit worker: POST /api/stripe/checkout, GET /api/stripe/status, POST /api/stripe/portal.
@@ -15,12 +16,12 @@ const go = (url: string) => {
 
 const errorText = (code: string, es: boolean) =>
   ({
-    order_not_payable: es ? 'Este pedido no está listo para pagar. Acepta la cotización primero.' : 'This order is not ready for payment. Accept the quote first.',
-    already_paid: es ? 'Este pedido ya está pagado.' : 'This order is already paid.',
-    no_quote_amount: es ? 'Este pedido todavía no tiene monto. Escríbenos.' : 'This order has no amount yet. Please contact us.',
-    payments_not_configured: es ? 'El pago con tarjeta no está disponible ahora. Usa otro método o escríbenos.' : 'Card payment is not available right now. Use another method or contact us.',
-    no_card_customer: es ? 'No encontramos un pago con tarjeta para este pedido.' : 'We could not find a card payment for this order.',
-  })[code] ?? (es ? 'No se pudo abrir el pago. Intenta de nuevo.' : 'Could not open the payment. Please try again.');
+    order_not_payable: tx('This order is not ready for payment. Accept the quote first.', 'Este pedido no está listo para pagar. Acepta la cotización primero.', "Este pedido ainda não está pronto para pagamento. Aceite o orçamento primeiro."),
+    already_paid: tx('This order is already paid.', 'Este pedido ya está pagado.', "Este pedido já está pago."),
+    no_quote_amount: tx('This order has no amount yet. Please contact us.', 'Este pedido todavía no tiene monto. Escríbenos.', "Este pedido ainda não tem valor. Fale conosco."),
+    payments_not_configured: tx('Card payment is not available right now. Use another method or contact us.', 'El pago con tarjeta no está disponible ahora. Usa otro método o escríbenos.', "O pagamento com cartão não está disponível agora. Use outro método ou fale conosco."),
+    no_card_customer: tx('We could not find a card payment for this order.', 'No encontramos un pago con tarjeta para este pedido.', "Não encontramos um pagamento com cartão para este pedido."),
+  })[code] ?? (tx('Could not open the payment. Please try again.', 'No se pudo abrir el pago. Intenta de nuevo.', "Não foi possível abrir o pagamento. Tente de novo."));
 
 type Billing = 'yearly' | 'monthly' | 'once' | undefined;
 
@@ -83,29 +84,25 @@ export function CardPay({ token, lang, billing, returned, onChanged }: { token: 
 
   const renews =
     billing === 'yearly'
-      ? es
-        ? 'Se renueva automáticamente cada año. Cancela cuando quieras.'
-        : 'Renews automatically every year. Cancel anytime.'
+      ? tx('Renews automatically every year. Cancel anytime.', 'Se renueva automáticamente cada año. Cancela cuando quieras.', "Renova automaticamente todo ano. Cancele quando quiser.")
       : billing === 'monthly'
-        ? es
-          ? 'Se renueva automáticamente cada mes. Cancela cuando quieras.'
-          : 'Renews automatically every month. Cancel anytime.'
+        ? tx('Renews automatically every month. Cancel anytime.', 'Se renueva automáticamente cada mes. Cancela cuando quieras.', "Renova automaticamente todo mês. Cancele quando quiser.")
         : null;
 
   return (
     <View style={styles.box}>
       <View style={styles.titleRow}>
         <Ionicons name="card" size={20} color={colors.primary} />
-        <Text style={styles.title}>{es ? 'Pagar con tarjeta' : 'Pay with card'}</Text>
+        <Text style={styles.title}>{tx('Pay with card', 'Pagar con tarjeta', "Pagar com cartão")}</Text>
       </View>
       <Text style={styles.muted}>
-        {es ? 'Visa, Mastercard y más. Pago seguro con Stripe; tu pedido se marca como pagado al instante.' : 'Visa, Mastercard and more. Secure payment by Stripe; your order is marked as paid instantly.'}
+        {tx('Visa, Mastercard and more. Secure payment by Stripe; your order is marked as paid instantly.', 'Visa, Mastercard y más. Pago seguro con Stripe; tu pedido se marca como pagado al instante.', "Visa, Mastercard e mais. Pagamento seguro pela Stripe; seu pedido é marcado como pago na hora.")}
       </Text>
       {renews ? <Text style={styles.muted}>{renews}</Text> : null}
       {checking ? (
-        <Text style={styles.muted}>{es ? 'Confirmando tu pago…' : 'Confirming your payment…'}</Text>
+        <Text style={styles.muted}>{tx('Confirming your payment…', 'Confirmando tu pago…', "Confirmando seu pagamento…")}</Text>
       ) : (
-        <Button label={es ? 'Pagar con tarjeta' : 'Pay with card'} icon="lock-closed" onPress={pay} loading={busy || ready === null} />
+        <Button label={tx('Pay with card', 'Pagar con tarjeta', "Pagar com cartão")} icon="lock-closed" onPress={pay} loading={busy || ready === null} />
       )}
       {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
@@ -134,7 +131,7 @@ export function ManageCard({ token, lang, subscription }: { token: string; lang:
   return (
     <View style={{ gap: 8 }}>
       <Button
-        label={subscription ? (es ? 'Gestionar suscripción y tarjeta' : 'Manage subscription and card') : es ? 'Ver recibo' : 'View receipt'}
+        label={subscription ? (tx('Manage subscription and card', 'Gestionar suscripción y tarjeta', "Gerenciar assinatura e cartão")) : tx('View receipt', 'Ver recibo', "Ver recibo")}
         icon="card"
         variant="secondary"
         onPress={open}

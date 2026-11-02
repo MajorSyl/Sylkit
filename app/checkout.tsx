@@ -7,6 +7,7 @@ import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
 import { configFromQuery } from '../src/lib/pricing';
 import { colors } from '../src/theme';
+import { tx } from '../src/i18n';
 
 // Step 2 of buying: one page with contact details, payment choice and the order summary.
 // Reached from a product page's "Choose plan" (?product=…&plan=…&billing=…).
@@ -22,7 +23,7 @@ export default function CheckoutPage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{es ? 'Pagar · Sylkit' : 'Checkout · Sylkit'}</title>
+        <title>{tx('Checkout · Sylkit', 'Pagar · Sylkit', "Finalizar compra · Sylkit")}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <CheckoutHeader step={1} />
@@ -32,10 +33,10 @@ export default function CheckoutPage() {
             <CheckoutFlow product={p} initial={cfg} />
           ) : (
             <View style={styles.empty}>
-              <Text style={styles.h1}>{es ? 'Tu carrito está vacío' : 'Your cart is empty'}</Text>
-              <Text style={styles.sub}>{es ? 'Elige un sistema y un plan para continuar.' : 'Choose a system and a plan to continue.'}</Text>
+              <Text style={styles.h1}>{tx('Your cart is empty', 'Tu carrito está vacío', "Seu carrinho está vazio")}</Text>
+              <Text style={styles.sub}>{tx('Choose a system and a plan to continue.', 'Elige un sistema y un plan para continuar.', "Escolha um sistema e um plano para continuar.")}</Text>
               <Link href="/" style={styles.link}>
-                {es ? 'Ver sistemas' : 'Browse systems'}
+                {tx('Browse systems', 'Ver sistemas', "Ver sistemas")}
               </Link>
             </View>
           )}

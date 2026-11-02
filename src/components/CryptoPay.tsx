@@ -4,6 +4,7 @@ import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from '
 import type { Lang } from '../i18n';
 import { colors } from '../theme';
 import { Button } from './Button';
+import { tx } from '../i18n';
 
 // "Pay with crypto (USDT)" on the order tracking page.
 // Talks to the Sylkit worker: POST /api/pay/create and GET /api/pay/status (polled while a payment is open).
@@ -23,54 +24,54 @@ type Payment = {
 };
 
 const NETWORKS = [
-  { id: 'usdttrc20', label: 'USDT · TRC20 (Tron)', note: { es: 'Comisión más baja. Recomendado.', en: 'Lowest fees. Recommended.' } },
-  { id: 'usdtbsc', label: 'USDT · BEP20 (BNB Chain)', note: { es: 'Binance y la mayoría de billeteras.', en: 'Binance and most wallets.' } },
+  { id: 'usdttrc20', label: 'USDT · TRC20 (Tron)', note: { es: 'Comisión más baja. Recomendado.', en: 'Lowest fees. Recommended.', pt: "Menores taxas. Recomendado." } },
+  { id: 'usdtbsc', label: 'USDT · BEP20 (BNB Chain)', note: { es: 'Binance y la mayoría de billeteras.', en: 'Binance and most wallets.', pt: "Binance e a maioria das carteiras." } },
 ];
 const NETWORK_NAME: Record<string, string> = { usdttrc20: 'TRC20 (Tron)', usdtbsc: 'BEP20 (BNB Chain)', usdterc20: 'ERC20 (Ethereum)' };
 const OPEN = ['waiting', 'confirming', 'confirmed', 'sending', 'partially_paid'];
 
 const L = {
-  title: { es: 'Pagar con cripto (USDT)', en: 'Pay with crypto (USDT)' },
+  title: { es: 'Pagar con cripto (USDT)', en: 'Pay with crypto (USDT)', pt: "Pagar com cripto (USDT)" },
   intro: {
     es: 'Pago automático: apenas llegue tu transferencia, tu pedido se marca como pagado.',
-    en: 'Automatic: as soon as your transfer arrives, your order is marked as paid.',
+    en: 'Automatic: as soon as your transfer arrives, your order is marked as paid.', pt: "Automático: assim que sua transferência chegar, seu pedido é marcado como pago.",
   },
-  network: { es: 'Red', en: 'Network' },
-  pay: { es: 'Pagar con cripto', en: 'Pay with crypto' },
-  send: { es: 'Envía exactamente', en: 'Send exactly' },
-  to: { es: 'a esta dirección', en: 'to this address' },
-  copy: { es: 'Copiar', en: 'Copy' },
-  copied: { es: '¡Copiado!', en: 'Copied!' },
-  memo: { es: 'Memo / Tag (obligatorio)', en: 'Memo / Tag (required)' },
+  network: { es: 'Red', en: 'Network', pt: "Rede" },
+  pay: { es: 'Pagar con cripto', en: 'Pay with crypto', pt: "Pagar com cripto" },
+  send: { es: 'Envía exactamente', en: 'Send exactly', pt: "Envie exatamente" },
+  to: { es: 'a esta dirección', en: 'to this address', pt: "para este endereço" },
+  copy: { es: 'Copiar', en: 'Copy', pt: "Copiar" },
+  copied: { es: '¡Copiado!', en: 'Copied!', pt: "Copiado!" },
+  memo: { es: 'Memo / Tag (obligatorio)', en: 'Memo / Tag (required)', pt: "Memo / Tag (obrigatório)" },
   warn: {
     es: 'Usa solo la red indicada. Si envías por otra red, los fondos se pueden perder.',
-    en: 'Use only the network shown. Sending on another network can lose the funds.',
+    en: 'Use only the network shown. Sending on another network can lose the funds.', pt: "Use só a rede indicada. Enviar por outra rede pode fazer você perder os fundos.",
   },
-  expires: { es: 'La dirección vence', en: 'Address expires' },
-  checking: { es: 'Revisamos el estado automáticamente cada 15 segundos.', en: 'We check the status automatically every 15 seconds.' },
-  refresh: { es: 'Revisar ahora', en: 'Check now' },
-  newPay: { es: 'Crear un nuevo pago', en: 'Create a new payment' },
-  received: { es: 'Recibido', en: 'Received' },
+  expires: { es: 'La dirección vence', en: 'Address expires', pt: "O endereço expira" },
+  checking: { es: 'Revisamos el estado automáticamente cada 15 segundos.', en: 'We check the status automatically every 15 seconds.', pt: "Verificamos o status automaticamente a cada 15 segundos." },
+  refresh: { es: 'Revisar ahora', en: 'Check now', pt: "Verificar agora" },
+  newPay: { es: 'Crear un nuevo pago', en: 'Create a new payment', pt: "Criar um novo pagamento" },
+  received: { es: 'Recibido', en: 'Received', pt: "Recebido" },
 };
 
 const STEPS = [
-  { key: 'waiting', es: 'Esperando tu transferencia', en: 'Waiting for your transfer' },
-  { key: 'confirming', es: 'Confirmando en la blockchain', en: 'Confirming on the blockchain' },
-  { key: 'finished', es: 'Pago confirmado', en: 'Payment confirmed' },
+  { key: 'waiting', es: 'Esperando tu transferencia', en: 'Waiting for your transfer', pt: "Aguardando sua transferência" },
+  { key: 'confirming', es: 'Confirmando en la blockchain', en: 'Confirming on the blockchain', pt: "Confirmando na blockchain" },
+  { key: 'finished', es: 'Pago confirmado', en: 'Payment confirmed', pt: "Pagamento confirmado" },
 ];
 const stepOf = (s: string) => (s === 'finished' ? 2 : ['confirming', 'confirmed', 'sending'].includes(s) ? 1 : 0);
 
 const errorText = (code: string, es: boolean) =>
   ({
-    order_not_payable: es ? 'Este pedido no está listo para pagar. Acepta la cotización primero.' : 'This order is not ready for payment. Accept the quote first.',
-    no_quote_amount: es ? 'Este pedido todavía no tiene monto. Escríbenos.' : 'This order has no amount yet. Please contact us.',
-    payments_not_configured: es ? 'El pago con cripto no está disponible ahora. Usa otro método o escríbenos.' : 'Crypto payment is not available right now. Use another method or contact us.',
-    nowpayments_error: es ? 'El procesador de pagos no respondió. Intenta de nuevo en un minuto.' : 'The payment processor did not respond. Try again in a minute.',
-  })[code] ?? (es ? 'No se pudo crear el pago. Intenta de nuevo.' : 'Could not create the payment. Please try again.');
+    order_not_payable: tx('This order is not ready for payment. Accept the quote first.', 'Este pedido no está listo para pagar. Acepta la cotización primero.', "Este pedido ainda não está pronto para pagamento. Aceite o orçamento primeiro."),
+    no_quote_amount: tx('This order has no amount yet. Please contact us.', 'Este pedido todavía no tiene monto. Escríbenos.', "Este pedido ainda não tem valor. Fale conosco."),
+    payments_not_configured: tx('Crypto payment is not available right now. Use another method or contact us.', 'El pago con cripto no está disponible ahora. Usa otro método o escríbenos.', "O pagamento com cripto não está disponível agora. Use outro método ou fale conosco."),
+    nowpayments_error: tx('The payment processor did not respond. Try again in a minute.', 'El procesador de pagos no respondió. Intenta de nuevo en un minuto.', "O processador de pagamentos não respondeu. Tente de novo em um minuto."),
+  })[code] ?? (tx('Could not create the payment. Please try again.', 'No se pudo crear el pago. Intenta de nuevo.', "Não foi possível criar o pagamento. Tente de novo."));
 
 export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lang; onChanged: () => void }) {
   const es = lang === 'es';
-  const t = (x: { es: string; en: string }) => x[lang];
+  const t = (x: { es: string; en: string; pt?: string }) => (lang === 'pt' ? x.pt ?? x.es : x[lang]);
   const [network, setNetwork] = useState('usdttrc20');
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -161,7 +162,7 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
         <>
           {ended ? (
             <Text style={styles.warnBox}>
-              {es ? `El pago anterior ${status === 'expired' ? 'venció' : 'no se completó'}. Puedes crear uno nuevo.` : `The previous payment ${status === 'expired' ? 'expired' : 'did not complete'}. You can create a new one.`}
+              {tx(`The previous payment ${status === 'expired' ? 'expired' : 'did not complete'}. You can create a new one.`, `El pago anterior ${status === 'expired' ? 'venció' : 'no se completó'}. Puedes crear uno nuevo.`, `O pagamento anterior ${status === 'expired' ? 'expirou' : 'não foi concluído'}. Você pode criar um novo.`)}
             </Text>
           ) : null}
           <Text style={styles.label}>{t(L.network)}</Text>
@@ -192,7 +193,7 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
                   <View style={[styles.dot, reached && styles.dotOn]}>
                     {reached && !current ? <Ionicons name="checkmark" size={14} color="#fff" /> : current ? <ActivityIndicator size="small" color="#fff" /> : null}
                   </View>
-                  <Text style={[styles.stepText, reached && { color: colors.text, fontWeight: '700' }]}>{s[lang]}</Text>
+                  <Text style={[styles.stepText, reached && { color: colors.text, fontWeight: '700' }]}>{t(s)}</Text>
                 </View>
               );
             })}
@@ -202,9 +203,7 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
             <View style={styles.okBox}>
               <Ionicons name="checkmark-circle" size={22} color="#067647" />
               <Text style={styles.okText}>
-                {es
-                  ? `Pago confirmado: ${payment.actually_paid || payment.pay_amount} ${currency}. ¡Gracias! Empezamos con tu pedido.`
-                  : `Payment confirmed: ${payment.actually_paid || payment.pay_amount} ${currency}. Thank you! We are starting on your order.`}
+                {tx(`Payment confirmed: ${payment.actually_paid || payment.pay_amount} ${currency}. Thank you! We are starting on your order.`, `Pago confirmado: ${payment.actually_paid || payment.pay_amount} ${currency}. ¡Gracias! Empezamos con tu pedido.`, `Pagamento confirmado: ${payment.actually_paid || payment.pay_amount} ${currency}. Obrigado! Já estamos começando seu pedido.`)}
               </Text>
             </View>
           ) : null}
@@ -213,9 +212,7 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
             <>
               {status === 'partially_paid' ? (
                 <Text style={styles.warnBox}>
-                  {es
-                    ? `Recibimos ${payment.actually_paid} de ${payment.pay_amount} ${currency}. Envía el resto (${(payment.pay_amount - payment.actually_paid).toFixed(2)} ${currency}) a la misma dirección.`
-                    : `We received ${payment.actually_paid} of ${payment.pay_amount} ${currency}. Send the rest (${(payment.pay_amount - payment.actually_paid).toFixed(2)} ${currency}) to the same address.`}
+                  {tx(`We received ${payment.actually_paid} of ${payment.pay_amount} ${currency}. Send the rest (${(payment.pay_amount - payment.actually_paid).toFixed(2)} ${currency}) to the same address.`, `Recibimos ${payment.actually_paid} de ${payment.pay_amount} ${currency}. Envía el resto (${(payment.pay_amount - payment.actually_paid).toFixed(2)} ${currency}) a la misma dirección.`, `Recebemos ${payment.actually_paid} de ${payment.pay_amount} ${currency}. Envie o restante (${(payment.pay_amount - payment.actually_paid).toFixed(2)} ${currency}) para o mesmo endereço.`)}
                 </Text>
               ) : null}
 
@@ -253,15 +250,13 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
                   <Text style={styles.warnBox}>⚠️ {t(L.warn)}</Text>
                   {payment.expiration_estimate_date ? (
                     <Text style={styles.muted}>
-                      {t(L.expires)}: {new Date(payment.expiration_estimate_date).toLocaleString(es ? 'es-VE' : 'en-US', { dateStyle: 'medium', timeStyle: 'short' })}
+                      {t(L.expires)}: {new Date(payment.expiration_estimate_date).toLocaleString(tx('en-US', 'es-VE', "pt-BR"), { dateStyle: 'medium', timeStyle: 'short' })}
                     </Text>
                   ) : null}
                 </>
               ) : (
                 <Text style={styles.muted}>
-                  {es
-                    ? `Tu transferencia llegó (${payment.actually_paid || payment.pay_amount} ${currency}). Esperando las confirmaciones de la red; normalmente toma pocos minutos.`
-                    : `Your transfer arrived (${payment.actually_paid || payment.pay_amount} ${currency}). Waiting for network confirmations; this usually takes a few minutes.`}
+                  {tx(`Your transfer arrived (${payment.actually_paid || payment.pay_amount} ${currency}). Waiting for network confirmations; this usually takes a few minutes.`, `Tu transferencia llegó (${payment.actually_paid || payment.pay_amount} ${currency}). Esperando las confirmaciones de la red; normalmente toma pocos minutos.`, `Sua transferência chegou (${payment.actually_paid || payment.pay_amount} ${currency}). Aguardando as confirmações da rede; isso costuma levar alguns minutos.`)}
                 </Text>
               )}
               <View style={styles.footRow}>

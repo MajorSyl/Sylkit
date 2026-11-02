@@ -10,44 +10,46 @@ import { useLang } from '../src/i18n';
 import { templatePreview, templateShot } from '../src/lib/templateShot';
 import { useClientWidth } from '../src/lib/useClientWidth';
 import { colors, shadow } from '../src/theme';
+import { tx } from '../src/i18n';
+import { tplText } from '../src/lib/names';
 
 // Design templates gallery, organized like a theme store: online stores, websites and mobile apps,
 // filtered by business type. "Live preview" opens the working template; "Use this design" carries
 // the choice to that template's product (store, business website or mobile app).
 // Arriving from checkout (?product=&plan=&billing=…) sends the visitor straight back with the design chosen.
 
-type Inc = { icon: string; es: string; en: string };
+type Inc = { icon: string; es: string; en: string; pt?: string };
 const INCLUDED: Record<TemplateKind, Inc[]> = {
   store: [
-    { icon: 'logo-whatsapp', es: 'Pedidos completos directo a tu WhatsApp', en: 'Complete orders straight to your WhatsApp' },
-    { icon: 'cart-outline', es: 'Carrito, tallas, colores y cantidades', en: 'Cart, sizes, colors and quantities' },
-    { icon: 'card-outline', es: 'Pago Móvil, Zelle, USDT, efectivo o tarjeta', en: 'Pago Móvil, Zelle, USDT, cash or card' },
-    { icon: 'phone-portrait-outline', es: 'Hecha para el teléfono primero', en: 'Built for phones first' },
-    { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English' },
-    { icon: 'globe-outline', es: 'Tu propio dominio o tunegocio.sylkit.com', en: 'Your own domain or yourbusiness.sylkit.com' },
+    { icon: 'logo-whatsapp', es: 'Pedidos completos directo a tu WhatsApp', en: 'Complete orders straight to your WhatsApp', pt: "Pedidos completos direto no seu WhatsApp" },
+    { icon: 'cart-outline', es: 'Carrito, tallas, colores y cantidades', en: 'Cart, sizes, colors and quantities', pt: "Carrinho, tamanhos, cores e quantidades" },
+    { icon: 'card-outline', es: 'Pago Móvil, Zelle, USDT, efectivo o tarjeta', en: 'Pago Móvil, Zelle, USDT, cash or card', pt: "Pix, cartão, USDT, dinheiro e outros métodos" },
+    { icon: 'phone-portrait-outline', es: 'Hecha para el teléfono primero', en: 'Built for phones first', pt: "Feito primeiro para celular" },
+    { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English', pt: "Espanhol e inglês automáticos" },
+    { icon: 'globe-outline', es: 'Tu propio dominio o tunegocio.sylkit.com', en: 'Your own domain or yourbusiness.sylkit.com', pt: "Seu próprio domínio ou seunegocio.sylkit.com" },
   ],
   website: [
-    { icon: 'images-outline', es: 'Portafolio o listado de propiedades con filtros', en: 'Portfolio or property listings with filters' },
-    { icon: 'logo-whatsapp', es: 'Formularios y visitas que llegan a tu WhatsApp', en: 'Forms and visit requests sent to your WhatsApp' },
-    { icon: 'search-outline', es: 'Optimizado para Google', en: 'Optimized for Google' },
-    { icon: 'phone-portrait-outline', es: 'Se ve perfecto en teléfono y computadora', en: 'Looks great on phones and computers' },
-    { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English' },
-    { icon: 'globe-outline', es: 'Tu propio dominio y correo profesional', en: 'Your own domain and business email' },
+    { icon: 'images-outline', es: 'Portafolio o listado de propiedades con filtros', en: 'Portfolio or property listings with filters', pt: "Portfólio ou anúncios de imóveis com filtros" },
+    { icon: 'logo-whatsapp', es: 'Formularios y visitas que llegan a tu WhatsApp', en: 'Forms and visit requests sent to your WhatsApp', pt: "Formulários e pedidos de visita enviados ao seu WhatsApp" },
+    { icon: 'search-outline', es: 'Optimizado para Google', en: 'Optimized for Google', pt: "Otimizado para o Google" },
+    { icon: 'phone-portrait-outline', es: 'Se ve perfecto en teléfono y computadora', en: 'Looks great on phones and computers', pt: "Fica ótimo no celular e no computador" },
+    { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English', pt: "Espanhol e inglês automáticos" },
+    { icon: 'globe-outline', es: 'Tu propio dominio y correo profesional', en: 'Your own domain and business email', pt: "Seu próprio domínio e e-mail profissional" },
   ],
   app: [
-    { icon: 'logo-apple', es: 'Para iPhone y Android', en: 'For iPhone and Android' },
-    { icon: 'notifications-outline', es: 'Avisos a tus clientes en el teléfono', en: 'Notifications on your clients’ phones' },
-    { icon: 'logo-whatsapp', es: 'Solicitudes y visitas directo a tu WhatsApp', en: 'Requests and visits straight to your WhatsApp' },
-    { icon: 'cloud-upload-outline', es: 'La publicamos en las tiendas de apps', en: 'We publish it on the app stores' },
-    { icon: 'sync-outline', es: 'Combina con tu sitio web del mismo diseño', en: 'Matches your website in the same design' },
-    { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English' },
+    { icon: 'logo-apple', es: 'Para iPhone y Android', en: 'For iPhone and Android', pt: "Para iPhone e Android" },
+    { icon: 'notifications-outline', es: 'Avisos a tus clientes en el teléfono', en: 'Notifications on your clients’ phones', pt: "Notificações no celular dos seus clientes" },
+    { icon: 'logo-whatsapp', es: 'Solicitudes y visitas directo a tu WhatsApp', en: 'Requests and visits straight to your WhatsApp', pt: "Pedidos e visitas direto no seu WhatsApp" },
+    { icon: 'cloud-upload-outline', es: 'La publicamos en las tiendas de apps', en: 'We publish it on the app stores', pt: "Publicamos nas lojas de apps" },
+    { icon: 'sync-outline', es: 'Combina con tu sitio web del mismo diseño', en: 'Matches your website in the same design', pt: "Combina com seu site no mesmo design" },
+    { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English', pt: "Espanhol e inglês automáticos" },
   ],
 };
 
 export default function TemplatesPage() {
-  const { lang } = useLang();
+  const { lang, t } = useLang();
   const es = lang === 'es';
-  const L = (v: [string, string]) => (es ? v[0] : v[1]);
+  const L = tplText;
   const router = useRouter();
   const width = useClientWidth();
   const cols = width >= 1040 ? 3 : width >= 680 ? 2 : 1;
@@ -85,38 +87,34 @@ export default function TemplatesPage() {
         : `/product/${tpl.product}?template=${slug}`) as any,
     );
   };
-  const pairLabel = (k: TemplateKind) => (k === 'app' ? (es ? 'También como sitio web' : 'Also as a website') : es ? 'También como app' : 'Also as an app');
+  const pairLabel = (k: TemplateKind) => (k === 'app' ? (tx('Also as a website', 'También como sitio web', "Também como site")) : tx('Also as an app', 'También como app', "Também como app"));
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{es ? 'Plantillas de diseño: tiendas, sitios web y apps · Sylkit' : 'Design templates: stores, websites and apps · Sylkit'}</title>
+        <title>{tx('Design templates: stores, websites and apps · Sylkit', 'Plantillas de diseño: tiendas, sitios web y apps · Sylkit', "Modelos de design: lojas, sites e apps · Sylkit")}</title>
         <meta
           name="description"
           content={
-            es
-              ? 'Diseños originales listos para tu negocio: tiendas en línea con WhatsApp, sitios web de arquitectura e inmobiliaria, y apps móviles.'
-              : 'Original designs ready for your business: online stores with WhatsApp, architecture and real estate websites, and mobile apps.'
+            tx('Original designs ready for your business: online stores with WhatsApp, architecture and real estate websites, and mobile apps.', 'Diseños originales listos para tu negocio: tiendas en línea con WhatsApp, sitios web de arquitectura e inmobiliaria, y apps móviles.', "Designs originais prontos para o seu negócio: lojas online com WhatsApp, sites de arquitetura e imobiliárias, e apps para celular.")
           }
         />
       </Head>
       <Header />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
-          <Text style={styles.kicker}>{es ? 'PLANTILLAS DE DISEÑO' : 'DESIGN TEMPLATES'}</Text>
+          <Text style={styles.kicker}>{tx('DESIGN TEMPLATES', 'PLANTILLAS DE DISEÑO', "MODELOS DE DESIGN")}</Text>
           <Text style={[styles.h1, width >= 860 && { fontSize: 44, lineHeight: 50 }]}>
-            {es ? 'Elige un diseño y lo adaptamos a tu negocio' : 'Pick a design and we adapt it to your business'}
+            {tx('Pick a design and we adapt it to your business', 'Elige un diseño y lo adaptamos a tu negocio', "Escolha um design e nós o adaptamos ao seu negócio")}
           </Text>
           <Text style={styles.lead}>
-            {es
-              ? 'Tiendas en línea, sitios web y apps móviles con diseños originales. Incluidos gratis en tu plan: los armamos con tu logo, tus colores y tu contenido.'
-              : 'Online stores, websites and mobile apps with original designs. Included free with your plan: we set them up with your logo, colors and content.'}
+            {tx('Online stores, websites and mobile apps with original designs. Included free with your plan: we set them up with your logo, colors and content.', 'Tiendas en línea, sitios web y apps móviles con diseños originales. Incluidos gratis en tu plan: los armamos con tu logo, tus colores y tu contenido.', "Lojas online, sites e apps para celular com designs originais. Incluído grátis no seu plano: configuramos com seu logo, cores e conteúdo.")}
           </Text>
 
           {q.plan ? (
             <View style={styles.notice}>
               <Ionicons name="information-circle" size={18} color={colors.primary} />
-              <Text style={styles.noticeText}>{es ? 'Elige un diseño y volverás a tu carrito.' : "Pick a design and you'll go back to your cart."}</Text>
+              <Text style={styles.noticeText}>{tx("Pick a design and you'll go back to your cart.", 'Elige un diseño y volverás a tu carrito.', "Escolha um design e você volta ao seu carrinho.")}</Text>
             </View>
           ) : null}
 
@@ -153,7 +151,7 @@ export default function TemplatesPage() {
           <View style={styles.grid}>
             {list.map((x) => (
               <View key={x.slug} style={[styles.card, shadow, { width: cols === 1 ? '100%' : cols === 2 ? '48.6%' : '31.8%' }]}>
-                <Pressable onPress={() => preview(x.slug)} style={[styles.shotWrap, { backgroundColor: x.colors.bg }]} accessibilityRole="link" accessibilityLabel={`${x.name}: ${es ? 'vista previa' : 'preview'}`}>
+                <Pressable onPress={() => preview(x.slug)} style={[styles.shotWrap, { backgroundColor: x.colors.bg }]} accessibilityRole="link" accessibilityLabel={`${x.name}: ${tx('preview', 'vista previa', "visualizar")}`}>
                   <Image source={{ uri: templateShot(x.slug, 'desktop') }} style={styles.shot} resizeMode="cover" />
                   {x.kind !== 'app' ? (
                     <View style={styles.phone}>
@@ -177,10 +175,10 @@ export default function TemplatesPage() {
                   <View style={styles.actions}>
                     <Pressable onPress={() => preview(x.slug)} style={[styles.btn, styles.btnGhost]} accessibilityRole="link">
                       <Ionicons name="eye-outline" size={17} color={colors.primary} />
-                      <Text style={[styles.btnText, { color: colors.primary }]}>{es ? 'Ver en vivo' : 'Live preview'}</Text>
+                      <Text style={[styles.btnText, { color: colors.primary }]}>{tx('Live preview', 'Ver en vivo', "Visualização ao vivo")}</Text>
                     </Pressable>
                     <Pressable onPress={() => use(x.slug)} style={[styles.btn, styles.btnPrimary]} accessibilityRole="button">
-                      <Text style={[styles.btnText, { color: '#fff' }]}>{es ? 'Usar este diseño' : 'Use this design'}</Text>
+                      <Text style={[styles.btnText, { color: '#fff' }]}>{tx('Use this design', 'Usar este diseño', "Usar este design")}</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -190,26 +188,26 @@ export default function TemplatesPage() {
 
           {/* What every template of this kind includes */}
           <View style={[styles.included, shadow]}>
-            <Text style={styles.h2}>{es ? 'Todas incluyen' : 'Every one includes'}</Text>
+            <Text style={styles.h2}>{tx('Every one includes', 'Todas incluyen', "Todos incluem")}</Text>
             <View style={styles.incGrid}>
               {INCLUDED[kind].map((i) => (
                 <View key={i.icon} style={[styles.incItem, { width: cols === 1 ? '100%' : '48%' }]}>
                   <View style={styles.incIcon}>
                     <Ionicons name={i.icon as any} size={20} color={colors.primary} />
                   </View>
-                  <Text style={styles.incText}>{es ? i.es : i.en}</Text>
+                  <Text style={styles.incText}>{t(i)}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           <View style={styles.custom}>
-            <Text style={[styles.h2, { textAlign: 'center' }]}>{es ? '¿Quieres un diseño único?' : 'Want a one-of-a-kind design?'}</Text>
+            <Text style={[styles.h2, { textAlign: 'center' }]}>{tx('Want a one-of-a-kind design?', '¿Quieres un diseño único?', "Quer um design exclusivo?")}</Text>
             <Text style={[styles.lead, { textAlign: 'center', alignSelf: 'center' }]}>
-              {es ? 'Diseñamos tu tienda, sitio web o app desde cero con tu marca.' : 'We design your store, website or app from scratch around your brand.'}
+              {tx('We design your store, website or app from scratch around your brand.', 'Diseñamos tu tienda, sitio web o app desde cero con tu marca.', "Criamos sua loja, site ou app do zero com a sua marca.")}
             </Text>
             <Pressable onPress={() => router.push('/quote' as any)} style={[styles.btn, styles.btnGhost, { alignSelf: 'center', paddingHorizontal: 22, flex: 0 }]} accessibilityRole="link">
-              <Text style={[styles.btnText, { color: colors.primary }]}>{es ? 'Pedir diseño a medida' : 'Request a custom design'}</Text>
+              <Text style={[styles.btnText, { color: colors.primary }]}>{tx('Request a custom design', 'Pedir diseño a medida', "Pedir um design personalizado")}</Text>
             </Pressable>
           </View>
         </View>

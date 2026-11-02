@@ -4,6 +4,7 @@ import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLang, ui } from '../i18n';
 import { colors, waLink } from '../theme';
 import { Logo } from './Logo';
+import { tx } from '../i18n';
 
 export function Footer() {
   const { t, lang } = useLang();
@@ -16,7 +17,7 @@ export function Footer() {
         </View>
         <Pressable
           style={styles.link}
-          onPress={() => Linking.openURL(waLink(lang === 'es' ? 'Hola, vi Sylkit y quiero información.' : 'Hi, I saw Sylkit and want more info.'))}
+          onPress={() => Linking.openURL(waLink(tx('Hi, I saw Sylkit and want more info.', 'Hola, vi Sylkit y quiero información.', "Olá, vi a Sylkit e quero mais informações.")))}
           accessibilityRole="link"
         >
           <Ionicons name="logo-whatsapp" size={18} color={colors.whatsapp} />
@@ -24,10 +25,10 @@ export function Footer() {
         </Pressable>
       </View>
       <View style={styles.legal}>
-        <Link href="/security" style={styles.legalLink}>{lang === 'es' ? 'Seguridad (Sylkit Shield)' : 'Security (Sylkit Shield)'}</Link>
-        <Link href="/terms" style={styles.legalLink}>{lang === 'es' ? 'Términos' : 'Terms'}</Link>
-        <Link href="/privacy" style={styles.legalLink}>{lang === 'es' ? 'Privacidad' : 'Privacy'}</Link>
-        <Link href="/refunds" style={styles.legalLink}>{lang === 'es' ? 'Reembolsos y cancelación' : 'Refunds and cancellation'}</Link>
+        <Link href="/security" style={styles.legalLink}>{tx('Security (Sylkit Shield)', 'Seguridad (Sylkit Shield)', "Segurança (Sylkit Shield)")}</Link>
+        <Link href="/terms" style={styles.legalLink}>{tx('Terms', 'Términos', "Termos")}</Link>
+        <Link href="/privacy" style={styles.legalLink}>{tx('Privacy', 'Privacidad', "Privacidade")}</Link>
+        <Link href="/refunds" style={styles.legalLink}>{tx('Refunds and cancellation', 'Reembolsos y cancelación', "Reembolsos e cancelamento")}</Link>
       </View>
       <Text style={styles.copy}>© {new Date().getFullYear()} Sylkit</Text>
     </View>

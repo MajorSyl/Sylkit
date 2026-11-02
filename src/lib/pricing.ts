@@ -124,10 +124,11 @@ export const money = (n: number) => `$${Number.isInteger(n) ? n.toLocaleString('
 
 // Live add-on prices from the database, with the bundled list as a fallback.
 let cache: Record<string, Addon> | null = null;
+const ptOf = (db: { es: string; en: string; pt?: string }, local?: { en: string; pt?: string }) => (local?.pt && local.en === db.en ? { ...db, pt: local.pt } : db);
 export const rowToAddon = (r: any): Addon => ({
   id: r.id,
-  name: { es: r.name_es, en: r.name_en },
-  desc: { es: r.desc_es, en: r.desc_en },
+  name: ptOf({ es: r.name_es, en: r.name_en }, addonCatalog[r.id]?.name),
+  desc: ptOf({ es: r.desc_es, en: r.desc_en }, addonCatalog[r.id]?.desc),
   kind: r.kind,
   price: Number(r.price),
   perUnit: !!r.per_unit,

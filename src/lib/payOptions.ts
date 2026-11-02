@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Lang } from '../i18n';
 import { supabase } from './supabase';
+import { tx } from '../i18n';
 
 // Every way a client can pay, in one list used by both the checkout and the order page.
 //   card   -> Stripe Checkout (automatic, renews by itself)
@@ -11,7 +12,7 @@ export type PayOption = {
   id: string; // 'card' | 'crypto' | manual method id
   kind: 'card' | 'crypto' | 'manual';
   name: string;
-  details?: { es: string; en: string };
+  details?: { es: string; en: string; pt?: string };
 };
 
 type Manual = { id: string; name: string; kind: string; details_es: string; details_en: string };
@@ -54,16 +55,16 @@ export function usePayOptions() {
 
 export function payTitle(o: PayOption, lang: Lang) {
   const es = lang === 'es';
-  if (o.kind === 'card') return es ? 'Tarjeta de crédito o débito' : 'Credit or debit card';
-  if (o.kind === 'crypto') return es ? 'Cripto (USDT)' : 'Crypto (USDT)';
+  if (o.kind === 'card') return tx('Credit or debit card', 'Tarjeta de crédito o débito', "Cartão de crédito ou débito");
+  if (o.kind === 'crypto') return tx('Crypto (USDT)', 'Cripto (USDT)', "Cripto (USDT)");
   return o.name;
 }
 
 export function paySub(o: PayOption, lang: Lang) {
   const es = lang === 'es';
-  if (o.kind === 'card') return es ? 'Visa, Mastercard, Apple Pay. Pago seguro con Stripe.' : 'Visa, Mastercard, Apple Pay. Secure payment by Stripe.';
-  if (o.kind === 'crypto') return es ? 'TRC20 o BEP20. Se confirma automáticamente.' : 'TRC20 or BEP20. Confirmed automatically.';
-  return es ? 'Pagas y nos envías la referencia. Lo confirmamos en pocas horas.' : 'You pay and send us the reference. We confirm it within hours.';
+  if (o.kind === 'card') return tx('Visa, Mastercard, Apple Pay. Secure payment by Stripe.', 'Visa, Mastercard, Apple Pay. Pago seguro con Stripe.', "Visa, Mastercard, Apple Pay. Pagamento seguro pela Stripe.");
+  if (o.kind === 'crypto') return tx('TRC20 or BEP20. Confirmed automatically.', 'TRC20 o BEP20. Se confirma automáticamente.', "TRC20 ou BEP20. Confirmado automaticamente.");
+  return tx('You pay and send us the reference. We confirm it within hours.', 'Pagas y nos envías la referencia. Lo confirmamos en pocas horas.', "Você paga e nos envia a referência. Confirmamos em poucas horas.");
 }
 
 export const payIcon = (o: PayOption) => (o.kind === 'card' ? 'card' : o.kind === 'crypto' ? 'logo-bitcoin' : 'swap-horizontal');

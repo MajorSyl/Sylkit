@@ -8,51 +8,52 @@ import { useLang } from '../i18n';
 import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { colors, shadow } from '../theme';
 import { DomainPicker } from './DomainPicker';
+import { tx } from '../i18n';
 
 const L = {
-  title: { es: 'Planes y precios', en: 'Plans and pricing' },
+  title: { es: 'Planes y precios', en: 'Plans and pricing', pt: "Planos e preços" },
   sub: {
     es: 'Elige un plan y agrega lo que necesites. El total se calcula al instante.',
-    en: 'Pick a plan and add what you need. The total updates instantly.',
+    en: 'Pick a plan and add what you need. The total updates instantly.', pt: "Escolha um plano e adicione o que precisar. O total se atualiza na hora.",
   },
-  yearly: { es: 'Anual', en: 'Yearly' },
-  monthly: { es: 'Mensual', en: 'Monthly' },
-  once: { es: 'Pago único', en: 'Buy once' },
-  ownIt: { es: 'Sin suscripción', en: 'No subscription' },
-  onceLabel: { es: 'una sola vez', en: 'once' },
-  onceIncl: { es: 'Incluye instalación y 12 meses de soporte y actualizaciones', en: 'Includes setup and 12 months of support and updates' },
-  license: { es: 'Licencia de por vida', en: 'Lifetime license' },
-  yearlyFee: { es: 'Cuota anual', en: 'Yearly fee' },
-  noSetup: { es: 'Sin costo de instalación', en: 'No setup fee' },
-  pickDomain: { es: 'Primero elige tu dominio', en: 'Choose your domain first' },
+  yearly: { es: 'Anual', en: 'Yearly', pt: "Anual" },
+  monthly: { es: 'Mensual', en: 'Monthly', pt: "Mensal" },
+  once: { es: 'Pago único', en: 'Buy once', pt: "Pagamento único" },
+  ownIt: { es: 'Sin suscripción', en: 'No subscription', pt: "Sem assinatura" },
+  onceLabel: { es: 'una sola vez', en: 'once', pt: "uma vez" },
+  onceIncl: { es: 'Incluye instalación y 12 meses de soporte y actualizaciones', en: 'Includes setup and 12 months of support and updates', pt: "Inclui instalação e 12 meses de suporte e atualizações" },
+  license: { es: 'Licencia de por vida', en: 'Lifetime license', pt: "Licença vitalícia" },
+  yearlyFee: { es: 'Cuota anual', en: 'Yearly fee', pt: "Valor anual" },
+  noSetup: { es: 'Sin costo de instalación', en: 'No setup fee', pt: "Sem taxa de instalação" },
+  pickDomain: { es: 'Primero elige tu dominio', en: 'Choose your domain first', pt: "Escolha seu domínio primeiro" },
   careAfter: {
     es: 'Desde el segundo año, plan de mantenimiento opcional (hosting, actualizaciones y soporte):',
-    en: 'From year 2, optional care plan (hosting, updates and support):',
+    en: 'From year 2, optional care plan (hosting, updates and support):', pt: "A partir do 2º ano, plano de manutenção opcional (hospedagem, atualizações e suporte):",
   },
-  free2: { es: '2 meses gratis', en: '2 months free' },
-  popular: { es: 'Más elegido', en: 'Most popular' },
-  perMo: { es: '/mes', en: '/mo' },
-  billedYearly: { es: 'facturado anual', en: 'billed yearly' },
-  billedMonthly: { es: 'facturado mensual', en: 'billed monthly' },
-  setup: { es: 'instalación única', en: 'one-time setup' },
-  selected: { es: 'Seleccionado', en: 'Selected' },
-  choose: { es: 'Elegir', en: 'Choose' },
-  extras: { es: 'Funciones extra', en: 'Extra features' },
-  extrasSub: { es: 'Opcionales. Se suman a tu total automáticamente.', en: 'Optional. They are added to your total automatically.' },
-  oneTime: { es: 'pago único', en: 'one-time' },
-  summary: { es: 'Tu pedido', en: 'Your order' },
-  plan: { es: 'Plan', en: 'Plan' },
-  setupTotal: { es: 'Instalación y extras (pago único)', en: 'Setup and extras (one-time)' },
-  subYear: { es: 'Suscripción del primer año', en: 'First-year subscription' },
-  subMonth: { es: 'Suscripción del primer mes', en: 'First-month subscription' },
-  dueToday: { es: 'Total a pagar hoy', en: 'Due today' },
-  renews: { es: 'Luego', en: 'Then' },
-  perYear: { es: '/año', en: '/year' },
-  save: { es: 'Ahorras', en: 'You save' },
-  cta: { es: 'Comprar ahora', en: 'Buy now' },
+  free2: { es: '2 meses gratis', en: '2 months free', pt: "2 meses grátis" },
+  popular: { es: 'Más elegido', en: 'Most popular', pt: "Mais escolhido" },
+  perMo: { es: '/mes', en: '/mo', pt: "/mês" },
+  billedYearly: { es: 'facturado anual', en: 'billed yearly', pt: "cobrado anualmente" },
+  billedMonthly: { es: 'facturado mensual', en: 'billed monthly', pt: "cobrado mensalmente" },
+  setup: { es: 'instalación única', en: 'one-time setup', pt: "instalação única" },
+  selected: { es: 'Seleccionado', en: 'Selected', pt: "Selecionado" },
+  choose: { es: 'Elegir', en: 'Choose', pt: "Escolher" },
+  extras: { es: 'Funciones extra', en: 'Extra features', pt: "Funções extras" },
+  extrasSub: { es: 'Opcionales. Se suman a tu total automáticamente.', en: 'Optional. They are added to your total automatically.', pt: "Opcional. São somadas ao seu total automaticamente." },
+  oneTime: { es: 'pago único', en: 'one-time', pt: "pagamento único" },
+  summary: { es: 'Tu pedido', en: 'Your order', pt: "Seu pedido" },
+  plan: { es: 'Plan', en: 'Plan', pt: "Plano" },
+  setupTotal: { es: 'Instalación y extras (pago único)', en: 'Setup and extras (one-time)', pt: "Instalação e extras (pagamento único)" },
+  subYear: { es: 'Suscripción del primer año', en: 'First-year subscription', pt: "Assinatura do primeiro ano" },
+  subMonth: { es: 'Suscripción del primer mes', en: 'First-month subscription', pt: "Assinatura do primeiro mês" },
+  dueToday: { es: 'Total a pagar hoy', en: 'Due today', pt: "A pagar hoje" },
+  renews: { es: 'Luego', en: 'Then', pt: "Depois" },
+  perYear: { es: '/año', en: '/year', pt: "/ano" },
+  save: { es: 'Ahorras', en: 'You save', pt: "Você economiza" },
+  cta: { es: 'Comprar ahora', en: 'Buy now', pt: "Comprar agora" },
   fine: {
     es: 'Pagas en el siguiente paso con USDT, Pago Móvil u otro método.',
-    en: 'You pay in the next step with USDT, Pago Móvil or another method.',
+    en: 'You pay in the next step with USDT, Pago Móvil or another method.', pt: "Você paga no próximo passo com cartão, USDT ou outro método.",
   },
 };
 
@@ -133,7 +134,7 @@ export function PricingCalculator({ product, initial }: { product: Product; init
           muted
         />
       ))}
-      {cfg.domain ? <Row label={lang === 'es' ? 'Dirección web' : 'Web address'} value={domainLabel(cfg.domain)} muted /> : null}
+      {cfg.domain ? <Row label={tx('Web address', 'Dirección web', "Endereço web")} value={domainLabel(cfg.domain)} muted /> : null}
       <View style={styles.divider} />
       <Row label={t(L.setupTotal)} value={money(est.oneTime)} />
       <Row
@@ -148,7 +149,7 @@ export function PricingCalculator({ product, initial }: { product: Product; init
         }
         value={money(est.billing === 'once' ? est.license : est.recurring)}
       />
-      {est.savings > 0 && !yearlyOnly ? <Text style={styles.save}>{`${t(L.save)} ${money(est.savings)} ${lang === 'es' ? 'al año' : 'per year'}`}</Text> : null}
+      {est.savings > 0 && !yearlyOnly ? <Text style={styles.save}>{`${t(L.save)} ${money(est.savings)} ${tx('per year', 'al año', "por ano")}`}</Text> : null}
       <View style={styles.divider} />
       <View style={styles.dueRow}>
         <Text style={styles.dueLabel}>{t(L.dueToday)}</Text>
@@ -220,7 +221,7 @@ export function PricingCalculator({ product, initial }: { product: Product; init
                         <Text style={styles.planPer}> {t(L.onceLabel)}</Text>
                       </Text>
                       <Text style={styles.planBilled}>{t(L.onceIncl)}</Text>
-                      <Text style={styles.planSetup}>{`${lang === 'es' ? 'Luego opcional' : 'Then optional'} ${money(p.monthly * CARE_MONTHS)}${t(L.perYear)}`}</Text>
+                      <Text style={styles.planSetup}>{`${tx('Then optional', 'Luego opcional', "Depois, opcional")} ${money(p.monthly * CARE_MONTHS)}${t(L.perYear)}`}</Text>
                     </>
                   ) : yearlyOnly ? (
                     <>
@@ -239,7 +240,7 @@ export function PricingCalculator({ product, initial }: { product: Product; init
                       </Text>
                       <Text style={styles.planBilled}>
                         {cfg.billing === 'yearly'
-                          ? `${money(p.monthly * ANNUAL_MONTHS)}${t(L.perYear)} ${t(L.billedYearly)} · ${lang === 'es' ? 'ahorras' : 'save'} ${money(p.monthly * (12 - ANNUAL_MONTHS))}`
+                          ? `${money(p.monthly * ANNUAL_MONTHS)}${t(L.perYear)} ${t(L.billedYearly)} · ${tx('save', 'ahorras', "economize")} ${money(p.monthly * (12 - ANNUAL_MONTHS))}`
                           : t(L.billedMonthly)}
                       </Text>
                       <Text style={styles.planSetup}>{`+ ${money(p.setup)} ${t(L.setup)}`}</Text>

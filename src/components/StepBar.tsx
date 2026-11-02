@@ -8,10 +8,10 @@ import { colors } from '../theme';
 // Plan › Details › Payment › Done. Finished steps get a check mark.
 
 const STEPS = [
-  { es: 'Plan', en: 'Plan' },
-  { es: 'Tus datos', en: 'Details' },
-  { es: 'Pago', en: 'Payment' },
-  { es: 'Listo', en: 'Done' },
+  { es: 'Plan', en: 'Plan', pt: "Plano" },
+  { es: 'Tus datos', en: 'Details', pt: "Seus dados" },
+  { es: 'Pago', en: 'Payment', pt: "Pagamento" },
+  { es: 'Listo', en: 'Done', pt: "Pronto" },
 ];
 
 export function StepBar({ current }: { current: 0 | 1 | 2 | 3 }) {

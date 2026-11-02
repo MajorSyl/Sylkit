@@ -69,7 +69,7 @@ export function ProductCard({ product, compact }: { product: Product; compact?: 
           )}
           {(product.badge || product.demoUrl) && (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{product.badge ? t(product.badge) : t({ es: '✓ Listo para usar', en: '✓ Ready to use' })}</Text>
+              <Text style={styles.badgeText}>{product.badge ? t(product.badge) : t({ es: '✓ Listo para usar', en: '✓ Ready to use', pt: "✓ Pronto para usar" })}</Text>
             </View>
           )}
         </View>

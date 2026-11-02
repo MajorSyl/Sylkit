@@ -9,6 +9,7 @@ import { useLang } from '../src/i18n';
 import { orderLines } from '../src/lib/orderLines';
 import { money } from '../src/lib/pricing';
 import { colors } from '../src/theme';
+import { tx } from '../src/i18n';
 
 // Printable invoice for an order, opened from the order page (/invoice?t=<token>).
 // "Print / Save as PDF" uses the browser's print dialog; the toolbar is hidden on paper.
@@ -41,7 +42,7 @@ const PRINT_CSS = `
 
 function methodName(m: string | null, es: boolean) {
   const v = String(m ?? '');
-  if (v.startsWith('card')) return es ? 'Tarjeta (Stripe)' : 'Card (Stripe)';
+  if (v.startsWith('card')) return tx('Card (Stripe)', 'Tarjeta (Stripe)', "Cartão (Stripe)");
   if (v.startsWith('crypto:')) return `Crypto (${v.slice(7).toUpperCase()})`;
   return v || '—';
 }
@@ -63,18 +64,18 @@ export default function InvoicePage() {
   }, []);
 
   useEffect(() => {
-    if (!token) return setError(es ? 'Falta el enlace del pedido.' : 'The order link is missing.');
+    if (!token) return setError(tx('The order link is missing.', 'Falta el enlace del pedido.', "Falta o link do pedido."));
     fetch(`/api/order/invoice?t=${encodeURIComponent(String(token))}`)
       .then(async (r) => {
         const j = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(j.error || 'error');
         setInv(j as Invoice);
       })
-      .catch(() => setError(es ? 'No pudimos cargar la factura. Intenta de nuevo o escríbenos.' : "We couldn't load the invoice. Try again or message us."));
+      .catch(() => setError(tx("We couldn't load the invoice. Try again or message us.", 'No pudimos cargar la factura. Intenta de nuevo o escríbenos.', "Não conseguimos carregar a fatura. Tente de novo ou fale conosco.")));
   }, [token, es]);
 
   const date = (iso: string | null | undefined) =>
-    iso ? new Date(iso).toLocaleDateString(es ? 'es' : 'en', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+    iso ? new Date(iso).toLocaleDateString(tx('en', 'es', "pt-BR"), { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
 
   const body = () => {
     if (error) return <Text style={styles.error}>{error}</Text>;
@@ -92,19 +93,19 @@ export default function InvoicePage() {
             <Text style={styles.small}>WhatsApp +1 (646) 934-8752</Text>
           </View>
           <View style={{ alignItems: 'flex-end', gap: 4 }}>
-            <Text style={styles.title}>{es ? 'FACTURA' : 'INVOICE'}</Text>
+            <Text style={styles.title}>{tx('INVOICE', 'FACTURA', "FATURA")}</Text>
             <Text style={styles.small}>
-              {es ? 'N.º' : 'No.'} {inv.order_number}
+              {tx('No.', 'N.º', "Nº")} {inv.order_number}
             </Text>
             <View style={[styles.stamp, inv.paid ? styles.stampPaid : styles.stampDue]}>
-              <Text style={[styles.stampText, { color: inv.paid ? '#067647' : '#B54708' }]}>{inv.paid ? (es ? 'PAGADA' : 'PAID') : es ? 'PENDIENTE' : 'UNPAID'}</Text>
+              <Text style={[styles.stampText, { color: inv.paid ? '#067647' : '#B54708' }]}>{inv.paid ? (tx('PAID', 'PAGADA', "PAGA")) : tx('UNPAID', 'PENDIENTE', "PENDENTE")}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.meta}>
           <View style={styles.metaCol}>
-            <Text style={styles.metaLabel}>{es ? 'Facturado a' : 'Billed to'}</Text>
+            <Text style={styles.metaLabel}>{tx('Billed to', 'Facturado a', "Faturado para")}</Text>
             <Text style={styles.metaStrong}>{c.business || c.name}</Text>
             {c.business ? <Text style={styles.metaText}>{c.name}</Text> : null}
             <Text style={styles.metaText}>{c.email}</Text>
@@ -112,13 +113,13 @@ export default function InvoicePage() {
             {c.country ? <Text style={styles.metaText}>{c.country}</Text> : null}
           </View>
           <View style={styles.metaCol}>
-            <Text style={styles.metaLabel}>{es ? 'Fecha de emisión' : 'Issue date'}</Text>
+            <Text style={styles.metaLabel}>{tx('Issue date', 'Fecha de emisión', "Data de emissão")}</Text>
             <Text style={styles.metaText}>{date(inv.created_at)}</Text>
-            <Text style={[styles.metaLabel, { marginTop: 10 }]}>{inv.paid ? (es ? 'Fecha de pago' : 'Payment date') : es ? 'Estado' : 'Status'}</Text>
-            <Text style={styles.metaText}>{inv.paid ? date(inv.paid_at ?? inv.created_at) : es ? 'Pendiente de pago' : 'Awaiting payment'}</Text>
+            <Text style={[styles.metaLabel, { marginTop: 10 }]}>{inv.paid ? (tx('Payment date', 'Fecha de pago', "Data do pagamento")) : tx('Status', 'Estado', "Status")}</Text>
+            <Text style={styles.metaText}>{inv.paid ? date(inv.paid_at ?? inv.created_at) : tx('Awaiting payment', 'Pendiente de pago', "Aguardando pagamento")}</Text>
             {inv.paid ? (
               <>
-                <Text style={[styles.metaLabel, { marginTop: 10 }]}>{es ? 'Método de pago' : 'Payment method'}</Text>
+                <Text style={[styles.metaLabel, { marginTop: 10 }]}>{tx('Payment method', 'Método de pago', "Forma de pagamento")}</Text>
                 <Text style={styles.metaText}>{methodName(inv.payment_method, es)}</Text>
               </>
             ) : null}
@@ -127,8 +128,8 @@ export default function InvoicePage() {
 
         <View style={styles.table}>
           <View style={[styles.tr, styles.th]}>
-            <Text style={[styles.thText, { flex: 1 }]}>{es ? 'Descripción' : 'Description'}</Text>
-            <Text style={[styles.thText, styles.amountCol]}>{es ? 'Importe' : 'Amount'}</Text>
+            <Text style={[styles.thText, { flex: 1 }]}>{tx('Description', 'Descripción', "Descrição")}</Text>
+            <Text style={[styles.thText, styles.amountCol]}>{tx('Amount', 'Importe', "Valor")}</Text>
           </View>
           {lines.map((l, i) => (
             <View key={i} style={styles.tr}>
@@ -140,7 +141,7 @@ export default function InvoicePage() {
             </View>
           ))}
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>{inv.paid ? (es ? 'Total pagado' : 'Total paid') : es ? 'Total a pagar' : 'Total due'}</Text>
+            <Text style={styles.totalLabel}>{inv.paid ? (tx('Total paid', 'Total pagado', "Total pago")) : tx('Total due', 'Total a pagar', "Total a pagar")}</Text>
             <Text style={styles.totalValue}>
               {cur} {money(total)}
             </Text>
@@ -149,12 +150,8 @@ export default function InvoicePage() {
 
         <Text style={styles.thanks}>
           {inv.paid
-            ? es
-              ? '¡Gracias por tu compra! Si tienes preguntas sobre esta factura, escríbenos a billing@sylkit.com.'
-              : 'Thank you for your business! Questions about this invoice? Email billing@sylkit.com.'
-            : es
-              ? `Paga desde la página de tu pedido. Referencia: ${inv.order_number}.`
-              : `Pay from your order page. Reference: ${inv.order_number}.`}
+            ? tx('Thank you for your business! Questions about this invoice? Email billing@sylkit.com.', '¡Gracias por tu compra! Si tienes preguntas sobre esta factura, escríbenos a billing@sylkit.com.', "Obrigado pela sua compra! Dúvidas sobre esta fatura? Escreva para billing@sylkit.com.")
+            : tx(`Pay from your order page. Reference: ${inv.order_number}.`, `Paga desde la página de tu pedido. Referencia: ${inv.order_number}.`, `Pague pela página do seu pedido. Referência: ${inv.order_number}.`)}
         </Text>
       </View>
     );
@@ -163,7 +160,7 @@ export default function InvoicePage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{inv ? `${es ? 'Factura' : 'Invoice'} ${inv.order_number} · Sylkit` : es ? 'Factura · Sylkit' : 'Invoice · Sylkit'}</title>
+        <title>{inv ? `${tx('Invoice', 'Factura', "Fatura")} ${inv.order_number} · Sylkit` : tx('Invoice · Sylkit', 'Factura · Sylkit', "Fatura · Sylkit")}</title>
         <meta name="robots" content="noindex" />
       </Head>
       <ScrollView nativeID="invoice-scroll" contentContainerStyle={{ flexGrow: 1 }}>
@@ -172,20 +169,20 @@ export default function InvoicePage() {
             <Link href={token ? `/order?t=${token}` : '/order'} asChild>
               <Pressable style={styles.back} accessibilityRole="link">
                 <Ionicons name="arrow-back" size={16} color={colors.primary} />
-                <Text style={styles.backText}>{es ? 'Volver al pedido' : 'Back to order'}</Text>
+                <Text style={styles.backText}>{tx('Back to order', 'Volver al pedido', "Voltar ao pedido")}</Text>
               </Pressable>
             </Link>
             <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
               {inv?.stripe?.pdf ? (
                 <Pressable style={styles.tool} onPress={() => Linking.openURL(inv.stripe!.pdf!)} accessibilityRole="link">
                   <Ionicons name="download-outline" size={17} color={colors.primary} />
-                  <Text style={styles.toolText}>{es ? 'Factura de Stripe (PDF)' : 'Stripe invoice (PDF)'}</Text>
+                  <Text style={styles.toolText}>{tx('Stripe invoice (PDF)', 'Factura de Stripe (PDF)', "Fatura da Stripe (PDF)")}</Text>
                 </Pressable>
               ) : null}
               {inv && Platform.OS === 'web' ? (
                 <Pressable style={[styles.tool, styles.toolPrimary]} onPress={() => window.print()} accessibilityRole="button">
                   <Ionicons name="print-outline" size={17} color="#fff" />
-                  <Text style={[styles.toolText, { color: '#fff' }]}>{es ? 'Imprimir / Guardar PDF' : 'Print / Save as PDF'}</Text>
+                  <Text style={[styles.toolText, { color: '#fff' }]}>{tx('Print / Save as PDF', 'Imprimir / Guardar PDF', "Imprimir / Salvar PDF")}</Text>
                 </Pressable>
               ) : null}
             </View>

@@ -10,11 +10,13 @@ import { useLang } from '../i18n';
 import { payIcon, PayOption, paySub, payTitle, usePayOptions } from '../lib/payOptions';
 import { allowedBilling, billingName, isYearlyOnly } from '../lib/planText';
 import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
-import { friendlyError, supabase } from '../lib/supabase';
+import { friendlyError, supabase, createOrder } from '../lib/supabase';
 import { useClientWidth } from '../lib/useClientWidth';
 import { colors } from '../theme';
 import { DomainPicker } from './DomainPicker';
 import { Field, formStyles } from './Field';
+import { tx } from '../i18n';
+import { tplText } from '../lib/names';
 
 // One-page checkout in the style of Shopify:
 //   left  = Contact · Web address · Extras (optional) · Payment · one big Pay button
@@ -84,7 +86,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
 
   if (!est) return null;
   const plan = est.plan;
-  const per = (b: Billing) => (b === 'monthly' ? (es ? '/mes' : '/mo') : es ? '/año' : '/year');
+  const per = (b: Billing) => (b === 'monthly' ? (tx('/mo', '/mes', "/mês")) : tx('/year', '/año', "/ano"));
   const addonPrice = (n: number, kind: 'monthly' | 'one_time') =>
     kind === 'one_time'
       ? `+${money(n)}`
@@ -97,35 +99,27 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     const d = new Date();
     if (cfg.billing === 'monthly') d.setMonth(d.getMonth() + 1);
     else d.setFullYear(d.getFullYear() + 1);
-    return d.toLocaleDateString(es ? 'es' : 'en', { day: 'numeric', month: 'short', year: 'numeric' });
+    return d.toLocaleDateString(tx('en', 'es', "pt-BR"), { day: 'numeric', month: 'short', year: 'numeric' });
   })();
   const total = money(est.dueToday);
   const payLabel = !chosen
-    ? es
-      ? 'Continuar'
-      : 'Continue'
+    ? tx('Continue', 'Continuar', "Continuar")
     : chosen.kind === 'card'
-      ? es
-        ? `Pagar ${total}`
-        : `Pay ${total}`
+      ? tx(`Pay ${total}`, `Pagar ${total}`, `Pagar ${total}`)
       : chosen.kind === 'crypto'
-        ? es
-          ? `Continuar al pago · ${total}`
-          : `Continue to payment · ${total}`
-        : es
-          ? `Hacer pedido · ${total}`
-          : `Place order · ${total}`;
+        ? tx(`Continue to payment · ${total}`, `Continuar al pago · ${total}`, `Continuar para o pagamento · ${total}`)
+        : tx(`Place order · ${total}`, `Hacer pedido · ${total}`, `Fazer pedido · ${total}`);
 
   const submit = async () => {
     setError('');
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim())) return setError(es ? 'Revisa tu correo electrónico.' : 'Please check your email.');
-    if (contact.name.trim().length < 2) return setError(es ? 'Escribe tu nombre.' : 'Please enter your name.');
-    if (isDomainProduct && !cfg.domain) return setError(es ? 'Elige tu dominio.' : 'Choose your domain.');
-    if (!chosen) return setError(es ? 'Elige cómo quieres pagar.' : 'Choose how you want to pay.');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim())) return setError(tx('Please check your email.', 'Revisa tu correo electrónico.', "Confira seu e-mail."));
+    if (contact.name.trim().length < 2) return setError(tx('Please enter your name.', 'Escribe tu nombre.', "Digite seu nome."));
+    if (isDomainProduct && !cfg.domain) return setError(tx('Choose your domain.', 'Elige tu dominio.', "Escolha seu domínio."));
+    if (!chosen) return setError(tx('Choose how you want to pay.', 'Elige cómo quieres pagar.', "Escolha como quer pagar."));
     setBusy(true);
     try {
       const source = typeof window !== 'undefined' ? window.location.search.slice(0, 200) || 'direct' : 'app';
-      const { data, error: err } = await supabase.rpc('create_order', {
+      const { data, error: err } = await createOrder({
         p_customer_name: contact.name.trim(),
         p_email: contact.email.trim(),
         p_whatsapp: contact.whatsapp.trim() || null,
@@ -174,10 +168,10 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         <View style={{ flex: 1, gap: 2 }}>
           <Text style={styles.itemName}>{t(product.name)}</Text>
           <Text style={styles.itemSub}>
-            {es ? 'Plan' : 'Plan'} {t(plan.name)} · {billingName(cfg.billing, lang)}
+            {tx('Plan', 'Plan', "Plano")} {t(plan.name)} · {billingName(cfg.billing, lang)}
           </Text>
           <Link href={`/product/${product.slug}?billing=${cfg.billing}`} style={styles.change}>
-            {es ? 'Cambiar plan' : 'Change plan'}
+            {tx('Change plan', 'Cambiar plan', "Mudar plano")}
           </Link>
         </View>
         <Text style={styles.itemPrice}>{money(cfg.billing === 'once' ? est.license : est.recurring)}</Text>
@@ -197,19 +191,19 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       ) : null}
 
       <View style={{ gap: 8 }}>
-        <Line label={cfg.billing === 'once' ? (es ? 'Licencia (sin suscripción)' : 'License (no subscription)') : cfg.billing === 'monthly' ? (es ? 'Primer mes' : 'First month') : es ? 'Primeros 12 meses' : 'First 12 months'} value={money(cfg.billing === 'once' ? est.license : est.recurring)} />
-        {est.oneTime > 0 ? <Line label={es ? 'Instalación y extras (una vez)' : 'Setup and extras (one-time)'} value={money(est.oneTime)} /> : null}
+        <Line label={cfg.billing === 'once' ? (tx('License (no subscription)', 'Licencia (sin suscripción)', "Licença (sem assinatura)")) : cfg.billing === 'monthly' ? (tx('First month', 'Primer mes', "Primeiro mês")) : tx('First 12 months', 'Primeros 12 meses', "Primeiros 12 meses")} value={money(cfg.billing === 'once' ? est.license : est.recurring)} />
+        {est.oneTime > 0 ? <Line label={tx('Setup and extras (one-time)', 'Instalación y extras (una vez)', "Instalação e extras (pagamento único)")} value={money(est.oneTime)} /> : null}
         {est.lines.map((l) => (
           <Line key={l.id} label={`${t(l.name)}${l.qty > 1 ? ` ×${l.qty}` : ''}`} muted />
         ))}
-        {cfg.domain ? <Line label={`${es ? 'Dirección web' : 'Web address'}: ${domainLabel(cfg.domain)}`} muted /> : null}
-        {tpl ? <Line label={`${es ? 'Diseño' : 'Design'}: ${tpl.name}`} muted /> : null}
-        {est.savings > 0 && !yearlyOnly ? <Text style={styles.save}>{es ? `Ahorras ${money(est.savings)} pagando anual` : `You save ${money(est.savings)} by paying yearly`}</Text> : null}
+        {cfg.domain ? <Line label={`${tx('Web address', 'Dirección web', "Endereço web")}: ${domainLabel(cfg.domain)}`} muted /> : null}
+        {tpl ? <Line label={`${tx('Design', 'Diseño', "Design")}: ${tpl.name}`} muted /> : null}
+        {est.savings > 0 && !yearlyOnly ? <Text style={styles.save}>{tx(`You save ${money(est.savings)} by paying yearly`, `Ahorras ${money(est.savings)} pagando anual`, `Você economiza ${money(est.savings)} pagando anualmente`)}</Text> : null}
       </View>
 
       <View style={styles.divider} />
       <View style={styles.totalRow}>
-        <Text style={styles.totalLabel}>{es ? 'Total hoy' : 'Total today'}</Text>
+        <Text style={styles.totalLabel}>{tx('Total today', 'Total hoy', "Total hoje")}</Text>
         <Text style={styles.total}>
           <Text style={styles.cur}>USD </Text>
           {total}
@@ -217,12 +211,8 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       </View>
       <Text style={styles.renew}>
         {cfg.billing === 'once'
-          ? es
-            ? `Sin suscripción. Desde el segundo año, mantenimiento opcional ${money(est.care)}/año.`
-            : `No subscription. From year 2, optional care at ${money(est.care)}/year.`
-          : es
-            ? `Se renueva el ${renewDate} a ${money(est.renewal)}${per(cfg.billing)}. Cancela cuando quieras.`
-            : `Renews on ${renewDate} at ${money(est.renewal)}${per(cfg.billing)}. Cancel anytime.`}
+          ? tx(`No subscription. From year 2, optional care at ${money(est.care)}/year.`, `Sin suscripción. Desde el segundo año, mantenimiento opcional ${money(est.care)}/año.`, `Sem assinatura. A partir do 2º ano, manutenção opcional por ${money(est.care)}/ano.`)
+          : tx(`Renews on ${renewDate} at ${money(est.renewal)}${per(cfg.billing)}. Cancel anytime.`, `Se renueva el ${renewDate} a ${money(est.renewal)}${per(cfg.billing)}. Cancela cuando quieras.`, `Renova em ${renewDate} por ${money(est.renewal)}${per(cfg.billing)}. Cancele quando quiser.`)}
       </Text>
     </View>
   );
@@ -230,11 +220,11 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   // ---------- left column ----------
   const form = (
     <View style={{ gap: 28 }}>
-      <Section title={es ? 'Contacto' : 'Contact'} note={es ? 'Te enviamos el recibo y el acceso a tu sistema aquí.' : 'We send your receipt and system access here.'}>
-        <Field label={es ? 'Correo electrónico' : 'Email'} value={contact.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" placeholder="you@business.com" />
+      <Section title={tx('Contact', 'Contacto', "Contato")} note={tx('We send your receipt and system access here.', 'Te enviamos el recibo y el acceso a tu sistema aquí.', "Enviamos seu recibo e o acesso ao sistema aqui.")}>
+        <Field label={tx('Email', 'Correo electrónico', "E-mail")} value={contact.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" placeholder="you@business.com" />
         <View style={styles.pair}>
           <View style={styles.half}>
-            <Field label={es ? 'Nombre completo' : 'Full name'} value={contact.name} onChangeText={set('name')} autoComplete="name" />
+            <Field label={tx('Full name', 'Nombre completo', "Nome completo")} value={contact.name} onChangeText={set('name')} autoComplete="name" />
           </View>
           <View style={styles.half}>
             <Field label="WhatsApp" value={contact.whatsapp} onChangeText={set('whatsapp')} keyboardType="phone-pad" placeholder="+58 412 …" autoComplete="tel" />
@@ -242,16 +232,16 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         </View>
         <View style={styles.pair}>
           <View style={styles.half}>
-            <Field label={es ? 'Negocio (opcional)' : 'Business (optional)'} value={contact.business} onChangeText={set('business')} autoComplete="organization" />
+            <Field label={tx('Business (optional)', 'Negocio (opcional)', "Negócio (opcional)")} value={contact.business} onChangeText={set('business')} autoComplete="organization" />
           </View>
           <View style={styles.half}>
-            <Field label={es ? 'País (opcional)' : 'Country (optional)'} value={contact.country} onChangeText={set('country')} autoComplete="country-name" />
+            <Field label={tx('Country (optional)', 'País (opcional)', "País (opcional)")} value={contact.country} onChangeText={set('country')} autoComplete="country-name" />
           </View>
         </View>
       </Section>
 
       {designs.length ? (
-        <Section title={designs[0].kind === 'app' ? (es ? 'Diseño de tu app' : 'App design') : designs[0].kind === 'website' ? (es ? 'Diseño de tu sitio web' : 'Website design') : es ? 'Diseño de tu tienda' : 'Store design'} note={es ? 'Incluido gratis. Lo adaptamos a tu marca.' : 'Included free. We adapt it to your brand.'}>
+        <Section title={designs[0].kind === 'app' ? (tx('App design', 'Diseño de tu app', "Design do app")) : designs[0].kind === 'website' ? (tx('Website design', 'Diseño de tu sitio web', "Design do site")) : tx('Store design', 'Diseño de tu tienda', "Design da loja")} note={tx('Included free. We adapt it to your brand.', 'Incluido gratis. Lo adaptamos a tu marca.', "Incluído grátis. Nós o adaptamos à sua marca.")}>
           <View style={styles.tplBox}>
             {tpl ? (
               <Image source={{ uri: templateShot(tpl.slug, 'phone') }} style={styles.tplThumb} resizeMode="cover" accessibilityLabel={tpl.name} />
@@ -261,11 +251,11 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
               </View>
             )}
             <View style={{ flex: 1, gap: 2 }}>
-              <Text style={styles.tplName}>{tpl ? tpl.name : es ? 'Aún no elegido' : 'Not chosen yet'}</Text>
-              <Text style={styles.note}>{tpl ? t({ es: tpl.tagline[0], en: tpl.tagline[1] }) : es ? 'Opcional. Puedes elegirlo después.' : 'Optional. You can pick it later.'}</Text>
+              <Text style={styles.tplName}>{tpl ? tpl.name : tx('Not chosen yet', 'Aún no elegido', "Ainda não escolhido")}</Text>
+              <Text style={styles.note}>{tpl ? tplText(tpl.tagline) : tx('Optional. You can pick it later.', 'Opcional. Puedes elegirlo después.', "Opcional. Você pode escolher depois.")}</Text>
             </View>
             <Pressable onPress={() => router.push(`/templates?product=${product.slug}&${configToQuery({ ...cfg, template: undefined })}` as any)} style={styles.tplBtn} accessibilityRole="link">
-              <Text style={styles.tplBtnText}>{tpl ? (es ? 'Cambiar' : 'Change') : es ? 'Elegir' : 'Choose'}</Text>
+              <Text style={styles.tplBtnText}>{tpl ? (tx('Change', 'Cambiar', "Mudar")) : tx('Choose', 'Elegir', "Escolher")}</Text>
             </Pressable>
           </View>
         </Section>
@@ -280,15 +270,11 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
           <Pressable style={styles.extrasHead} onPress={() => setShowExtras((v) => !v)} accessibilityRole="button" accessibilityState={{ expanded: showExtras }}>
             <Ionicons name="add-circle-outline" size={22} color={colors.primary} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.extrasTitle}>{es ? 'Agregar funciones extra (opcional)' : 'Add extras (optional)'}</Text>
+              <Text style={styles.extrasTitle}>{tx('Add extras (optional)', 'Agregar funciones extra (opcional)', "Adicionar extras (opcional)")}</Text>
               <Text style={styles.note}>
                 {Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length > 0
-                  ? es
-                    ? `${Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length} agregada(s)`
-                    : `${Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length} added`
-                  : es
-                    ? 'También puedes agregarlas más adelante.'
-                    : 'You can also add them later.'}
+                  ? tx(`${Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length} added`, `${Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length} agregada(s)`, `${Object.keys(cfg.addons).filter((id) => id !== 'custom_domain').length} adicionado(s)`)
+                  : tx('You can also add them later.', 'También puedes agregarlas más adelante.', "Você também pode adicioná-los depois.")}
               </Text>
             </View>
             <Ionicons name={showExtras ? 'chevron-up' : 'chevron-down'} size={20} color={colors.muted} />
@@ -310,11 +296,11 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
                       <Text style={styles.addonPrice}>{addonPrice(a.price, a.kind)}</Text>
                       {on && a.perUnit ? (
                         <View style={styles.stepper}>
-                          <Pressable onPress={() => setQty(a.id, qty - 1)} style={styles.stepBtn} accessibilityLabel={es ? 'Menos' : 'Less'}>
+                          <Pressable onPress={() => setQty(a.id, qty - 1)} style={styles.stepBtn} accessibilityLabel={tx('Less', 'Menos', "Menos")}>
                             <Ionicons name="remove" size={16} color={colors.primary} />
                           </Pressable>
                           <Text style={styles.qty}>{qty}</Text>
-                          <Pressable onPress={() => setQty(a.id, qty + 1)} style={styles.stepBtn} accessibilityLabel={es ? 'Más' : 'More'}>
+                          <Pressable onPress={() => setQty(a.id, qty + 1)} style={styles.stepBtn} accessibilityLabel={tx('More', 'Más', "Mais")}>
                             <Ionicons name="add" size={16} color={colors.primary} />
                           </Pressable>
                         </View>
@@ -327,7 +313,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         </View>
       ) : null}
 
-      <Section title={es ? 'Pago' : 'Payment'} note={es ? 'Todas las transacciones son seguras.' : 'All transactions are secure.'}>
+      <Section title={tx('Payment', 'Pago', "Pagamento")} note={tx('All transactions are secure.', 'Todas las transacciones son seguras.', "Todas as transações são seguras.")}>
         {payOptions === null ? (
           <ActivityIndicator color={colors.primary} style={{ marginVertical: 12 }} />
         ) : (
@@ -352,18 +338,18 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         )}
       </Pressable>
       <View style={styles.trust}>
-        <Trust icon="shield-checkmark-outline" text={es ? 'Garantía de 14 días' : '14-day money-back guarantee'} />
-        <Trust icon="refresh-outline" text={es ? 'Cancela cuando quieras' : 'Cancel anytime'} />
-        <Trust icon="logo-whatsapp" text={es ? 'Soporte por WhatsApp' : 'WhatsApp support'} />
+        <Trust icon="shield-checkmark-outline" text={tx('14-day money-back guarantee', 'Garantía de 14 días', "Garantia de 14 dias")} />
+        <Trust icon="refresh-outline" text={tx('Cancel anytime', 'Cancela cuando quieras', "Cancele quando quiser")} />
+        <Trust icon="logo-whatsapp" text={tx('WhatsApp support', 'Soporte por WhatsApp', "Suporte por WhatsApp")} />
       </View>
       <Text style={styles.legal}>
-        {es ? 'Al pagar aceptas los ' : 'By paying you agree to the '}
+        {tx('By paying you agree to the ', 'Al pagar aceptas los ', "Ao pagar, você aceita os ")}
         <Link href="/terms" style={styles.legalLink}>
-          {es ? 'Términos' : 'Terms'}
+          {tx('Terms', 'Términos', "Termos")}
         </Link>
-        {es ? ' y la ' : ' and the '}
+        {tx(' and the ', ' y la ', " e a ")}
         <Link href="/refunds" style={styles.legalLink}>
-          {es ? 'política de reembolsos' : 'Refund policy'}
+          {tx('Refund policy', 'política de reembolsos', "Política de reembolso")}
         </Link>
         .
       </Text>
@@ -386,7 +372,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       <View style={styles.foldBox}>
         <Pressable style={styles.foldHead} onPress={() => setShowSummary((v) => !v)} accessibilityRole="button" accessibilityState={{ expanded: showSummary }}>
           <Ionicons name="cart-outline" size={18} color={colors.primary} />
-          <Text style={styles.foldText}>{showSummary ? (es ? 'Ocultar resumen' : 'Hide order summary') : es ? 'Ver resumen del pedido' : 'Show order summary'}</Text>
+          <Text style={styles.foldText}>{showSummary ? (tx('Hide order summary', 'Ocultar resumen', "Ocultar resumo do pedido")) : tx('Show order summary', 'Ver resumen del pedido', "Ver resumo do pedido")}</Text>
           <Ionicons name={showSummary ? 'chevron-up' : 'chevron-down'} size={16} color={colors.primary} />
           <Text style={styles.foldTotal}>{total}</Text>
         </Pressable>
@@ -431,14 +417,14 @@ export function PayRow({ option, on, first, last, onPress }: { option: PayOption
       {on && option.kind === 'card' ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>
-            {lang === 'es' ? 'Te llevamos a la página segura de Stripe para escribir tu tarjeta y luego vuelves aquí.' : "We take you to Stripe's secure page to enter your card, then bring you back here."}
+            {tx("We take you to Stripe's secure page to enter your card, then bring you back here.", 'Te llevamos a la página segura de Stripe para escribir tu tarjeta y luego vuelves aquí.', "Levamos você à página segura da Stripe para digitar seu cartão e depois voltamos para cá.")}
           </Text>
         </View>
       ) : null}
       {on && option.kind === 'crypto' ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>
-            {lang === 'es' ? 'En el siguiente paso te mostramos el monto exacto y la dirección para enviar USDT.' : 'Next we show you the exact amount and the address to send USDT to.'}
+            {tx('Next we show you the exact amount and the address to send USDT to.', 'En el siguiente paso te mostramos el monto exacto y la dirección para enviar USDT.', "Em seguida mostramos o valor exato e o endereço para enviar USDT.")}
           </Text>
         </View>
       ) : null}

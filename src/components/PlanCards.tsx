@@ -7,6 +7,7 @@ import { useLang } from '../i18n';
 import { allowedBilling, billingName, planQuote } from '../lib/planText';
 import type { Billing } from '../lib/pricing';
 import { colors, shadow } from '../theme';
+import { tx } from '../i18n';
 
 // Plan cards in the style of big hosting companies: each card shows one price, one
 // "Choose plan" button and an honest "Today you pay … Renews at …" line. Extras are chosen at checkout.
@@ -44,14 +45,14 @@ export function PlanCards({ product, initialBilling, template }: { product: Prod
     const q = planQuote(p, billing, pricing, lang);
     return (
       <View key={p.id} style={[styles.card, shadow, p.popular && styles.cardPopular, swipe ? { width: cardW } : measured ? { flex: 1 } : { width: '100%' }, i < plans.length - 1 && swipe && { marginRight: gap }]}>
-        <View style={styles.tagRow}>{p.popular ? <Text style={styles.popular}>{es ? 'Más elegido' : 'Most popular'}</Text> : <View style={{ height: 22 }} />}</View>
+        <View style={styles.tagRow}>{p.popular ? <Text style={styles.popular}>{tx('Most popular', 'Más elegido', "Mais escolhido")}</Text> : <View style={{ height: 22 }} />}</View>
         <Text style={styles.name}>{t(p.name)}</Text>
         <View style={styles.priceRow}>
           <Text style={styles.price}>{q.price}</Text>
           <Text style={styles.per}>{q.per}</Text>
         </View>
         <Pressable style={[styles.btn, p.popular ? styles.btnPrimary : styles.btnOutline]} onPress={() => choose(p.id)} accessibilityRole="button">
-          <Text style={[styles.btnText, p.popular && { color: '#fff' }]}>{es ? 'Elegir plan' : 'Choose plan'}</Text>
+          <Text style={[styles.btnText, p.popular && { color: '#fff' }]}>{tx('Choose plan', 'Elegir plan', "Escolher plano")}</Text>
         </Pressable>
         <Text style={styles.today}>
           {q.todayText} {q.renewText}
@@ -78,7 +79,7 @@ export function PlanCards({ product, initialBilling, template }: { product: Prod
             return (
               <Pressable key={b} onPress={() => setBilling(b)} style={[styles.toggleBtn, on && styles.toggleOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
                 <Text style={[styles.toggleText, on && { color: colors.text }]}>{billingName(b, lang)}</Text>
-                {b === 'yearly' ? <Text style={styles.free}>{es ? '2 meses gratis' : '2 months free'}</Text> : null}
+                {b === 'yearly' ? <Text style={styles.free}>{tx('2 months free', '2 meses gratis', "2 meses grátis")}</Text> : null}
               </Pressable>
             );
           })}
@@ -103,12 +104,10 @@ export function PlanCards({ product, initialBilling, template }: { product: Prod
         <View style={{ gap }}>{cards}</View>
       )}
       {swipe && plans.length > 1 ? (
-        <Text style={styles.hint}>{es ? 'Desliza para ver todos los planes →' : 'Swipe to see all plans →'}</Text>
+        <Text style={styles.hint}>{tx('Swipe to see all plans →', 'Desliza para ver todos los planes →', "Deslize para ver todos os planos →")}</Text>
       ) : null}
       <Text style={styles.fine}>
-        {es
-          ? 'Las funciones extra y tu dirección web se eligen en el siguiente paso. Paga con tarjeta, USDT, Pago Móvil u otro método.'
-          : 'Extras and your web address are chosen in the next step. Pay by card, USDT, Pago Móvil or another method.'}
+        {tx('Extras and your web address are chosen in the next step. Pay by card, USDT, Pago Móvil or another method.', 'Las funciones extra y tu dirección web se eligen en el siguiente paso. Paga con tarjeta, USDT, Pago Móvil u otro método.', "Os extras e seu endereço web são escolhidos no próximo passo. Pague com cartão, USDT ou outro método.")}
       </Text>
     </View>
   );

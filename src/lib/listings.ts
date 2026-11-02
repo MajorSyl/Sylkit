@@ -37,25 +37,25 @@ export const LISTING_COLUMNS =
   'id,slug,title,tagline,description,category,status,asking_price,annual_revenue,monthly_profit,monthly_users,age_months,tech_stack,included,reason_for_selling,image_url,demo_url,country,featured,sold_price,sold_at,created_at';
 
 export const listingCategories: { id: ListingCategory; icon: string; name: Text; tint: string }[] = [
-  { id: 'saas', icon: 'cloud', name: { es: 'SaaS', en: 'SaaS' }, tint: '#2563EB' },
-  { id: 'mobile_app', icon: 'phone-portrait', name: { es: 'App móvil', en: 'Mobile app' }, tint: '#7C3AED' },
-  { id: 'web_app', icon: 'browsers', name: { es: 'App web', en: 'Web app' }, tint: '#0EA5E9' },
-  { id: 'ecommerce', icon: 'cart', name: { es: 'Tienda online', en: 'E-commerce' }, tint: '#EA580C' },
-  { id: 'marketplace', icon: 'storefront', name: { es: 'Marketplace', en: 'Marketplace' }, tint: '#DB2777' },
-  { id: 'content', icon: 'newspaper', name: { es: 'Contenido', en: 'Content' }, tint: '#16A34A' },
-  { id: 'ai', icon: 'sparkles', name: { es: 'IA', en: 'AI' }, tint: '#0E7F98' },
-  { id: 'agency', icon: 'briefcase', name: { es: 'Agencia', en: 'Agency' }, tint: '#475569' },
-  { id: 'other', icon: 'apps', name: { es: 'Otro', en: 'Other' }, tint: '#64748B' },
+  { id: 'saas', icon: 'cloud', name: { es: 'SaaS', en: 'SaaS', pt: "SaaS" }, tint: '#2563EB' },
+  { id: 'mobile_app', icon: 'phone-portrait', name: { es: 'App móvil', en: 'Mobile app', pt: "App para celular" }, tint: '#7C3AED' },
+  { id: 'web_app', icon: 'browsers', name: { es: 'App web', en: 'Web app', pt: "App web" }, tint: '#0EA5E9' },
+  { id: 'ecommerce', icon: 'cart', name: { es: 'Tienda online', en: 'E-commerce', pt: "E-commerce" }, tint: '#EA580C' },
+  { id: 'marketplace', icon: 'storefront', name: { es: 'Marketplace', en: 'Marketplace', pt: "Marketplace" }, tint: '#DB2777' },
+  { id: 'content', icon: 'newspaper', name: { es: 'Contenido', en: 'Content', pt: "Conteúdo" }, tint: '#16A34A' },
+  { id: 'ai', icon: 'sparkles', name: { es: 'IA', en: 'AI', pt: "IA" }, tint: '#0E7F98' },
+  { id: 'agency', icon: 'briefcase', name: { es: 'Agencia', en: 'Agency', pt: "Agência" }, tint: '#475569' },
+  { id: 'other', icon: 'apps', name: { es: 'Otro', en: 'Other', pt: "Outro" }, tint: '#64748B' },
 ];
 export const categoryOf = (id: ListingCategory) => listingCategories.find((c) => c.id === id) ?? listingCategories[listingCategories.length - 1];
 
 export const budgets: { id: string; max: number | null; min?: number; name: Text }[] = [
-  { id: 'all', max: null, name: { es: 'Todos', en: 'All' } },
-  { id: '5k', max: 5000, name: { es: 'Hasta $5K', en: 'Under $5K' } },
-  { id: '10k', max: 10000, name: { es: 'Hasta $10K', en: 'Under $10K' } },
-  { id: '30k', max: 30000, name: { es: 'Hasta $30K', en: 'Under $30K' } },
-  { id: '100k', max: 100000, name: { es: 'Hasta $100K', en: 'Under $100K' } },
-  { id: 'big', max: null, min: 100000, name: { es: '$100K+', en: '$100K+' } },
+  { id: 'all', max: null, name: { es: 'Todos', en: 'All', pt: "Todos" } },
+  { id: '5k', max: 5000, name: { es: 'Hasta $5K', en: 'Under $5K', pt: "Menos de $5 mil" } },
+  { id: '10k', max: 10000, name: { es: 'Hasta $10K', en: 'Under $10K', pt: "Menos de $10 mil" } },
+  { id: '30k', max: 30000, name: { es: 'Hasta $30K', en: 'Under $30K', pt: "Menos de $30 mil" } },
+  { id: '100k', max: 100000, name: { es: 'Hasta $100K', en: 'Under $100K', pt: "Menos de $100 mil" } },
+  { id: 'big', max: null, min: 100000, name: { es: '$100K+', en: '$100K+', pt: "$100 mil+" } },
 ];
 
 export const usd = (n: number | null | undefined) =>

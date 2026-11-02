@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { tx } from '../i18n';
 
 // Public values: safe to ship in the app. Access is controlled by database rules (RLS).
 export const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
@@ -14,7 +15,23 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   },
 });
 
-export const friendlyError = (e: unknown, lang: 'es' | 'en') => {
+const PT_ERR: Record<string, string> = {
+  invalid_name: 'Digite seu nome.',
+  invalid_email: 'Confira seu e-mail.',
+  too_long: 'Algum campo está longo demais.',
+  rate_limited: 'Recebemos vários pedidos seus. Tente de novo em uma hora.',
+  invalid_reference: 'Digite a referência do pagamento.',
+  cannot_accept: 'Este orçamento não pode mais ser aceito. Fale conosco.',
+  cannot_submit_payment: 'Não é possível registrar o pagamento nesta etapa.',
+  invalid_title: 'Digite um nome para o seu negócio (3 a 90 caracteres).',
+  invalid_tagline: 'Escreva uma descrição curta (10 a 200 caracteres).',
+  invalid_price: 'O preço deve ser de pelo menos $100.',
+  invalid_offer: 'Digite o valor da sua oferta.',
+  invalid_listing: 'Este negócio não está mais disponível.',
+  'Invalid login credentials': 'E-mail ou senha incorretos.',
+};
+
+export const friendlyError = (e: unknown, lang: 'es' | 'en' | 'pt') => {
   const msg = String((e as any)?.message ?? e ?? '');
   const map: Record<string, [string, string]> = {
     invalid_name: ['Escribe tu nombre.', 'Please enter your name.'],
@@ -32,6 +49,14 @@ export const friendlyError = (e: unknown, lang: 'es' | 'en') => {
     'Invalid login credentials': ['Correo o contraseña incorrectos.', 'Wrong email or password.'],
   };
   const hit = Object.keys(map).find((k) => msg.includes(k));
-  if (hit) return map[hit][lang === 'es' ? 0 : 1];
-  return lang === 'es' ? 'Algo salió mal. Intenta de nuevo.' : 'Something went wrong. Please try again.';
+  if (hit) return lang === 'pt' ? PT_ERR[hit] ?? map[hit][0] : map[hit][lang === 'es' ? 0 : 1];
+  return tx('Something went wrong. Please try again.', 'Algo salió mal. Intenta de nuevo.', "Algo deu errado. Tente de novo.");
 };
+
+// Creates an order in the visitor's language. If the database only accepts 'es' or 'en' for the
+// language column, a Portuguese order is saved as Spanish (closest language) instead of failing.
+export async function createOrder(args: Record<string, unknown>) {
+  const first = await supabase.rpc('create_order', args);
+  if (first.error && args.p_lang === 'pt') return supabase.rpc('create_order', { ...args, p_lang: 'es' });
+  return first;
+}

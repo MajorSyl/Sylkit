@@ -8,7 +8,7 @@ Sylkit sells four things:
 3. **Own a business (startups):** whole online businesses built by Sylkit and sold outright. Only Sylkit sells there.
 4. **Sylkit Shield (security):** security checks, fixes and monitoring for websites, apps and business systems (/security).
 
-Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other manual methods.
+Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago Móvil or other manual methods.
 
 ---
 
@@ -38,7 +38,7 @@ Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other man
 | Admin (/admin) | ✅ Orders, quotes, statuses, prices, extras, payment methods, marketplace |
 | Business email | ✅ Zoho Mail on sylkit.com (MX, SPF, DKIM, DMARC set) |
 | Automatic emails to clients | ⏳ Built; needs a Resend API key |
-| Language | ✅ English by default; Spanish automatically from browser language or country. No toggle. |
+| Language | ✅ English, Spanish and Portuguese, chosen automatically: (1) `?lang=pt|es|en` in the link (remembered on that device), (2) the visitor's browser languages in their order, (3) their country from Cloudflare (`sk_cc` cookie: BR/PT/AO/MZ… → Portuguese, Spanish-speaking countries → Spanish), (4) English. No toggle, no location permission. Stripe's pages use the browser language (`locale: auto`). Live demos are still English/Spanish only. |
 
 ---
 
@@ -243,3 +243,8 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 - 20 outreach actions a day; follow up 3–5 times.
 - Domain + email as the easy first sale, especially in Sierra Leone.
 - Protect time and health: fixed weekly Sylkit blocks.
+
+## Translations
+
+Every visible text is written as `{ en, es, pt }` (objects) or `tx(english, spanish, portuguese)` (inline). When adding text, always write all three.
+The database stores English and Spanish only: products, plans and extras get their Portuguese from the bundled copy in `src/data/` while the English still matches (see `src/lib/catalog.ts`, `rowToAddon`, `src/lib/names.ts`). If you change a product's English text in Admin, also update its Portuguese in `src/data/products.ts` or `src/data/pricing.ts`.

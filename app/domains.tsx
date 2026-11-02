@@ -10,56 +10,57 @@ import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
 import { checkDomain, DomainResult, money } from '../src/lib/pricing';
 import { colors, shadow } from '../src/theme';
+import { tx } from '../src/i18n';
 
 // Domains & hosting: search a domain, then buy it alone or with business email.
 const DOMAIN_SLUG = 'dominio-y-correo';
 
 const L = {
-  title: { es: 'Tu dominio y correo, pagando en moneda local', en: 'Your domain and email, paid in local currency' },
+  title: { es: 'Tu dominio y correo, pagando en moneda local', en: 'Your domain and email, paid in local currency', pt: "Seu domínio e e-mail, pagos em moeda local" },
   sub: {
     es: 'Busca el nombre de tu negocio. Lo registramos a tu nombre, configuramos tus correos y lo renovamos por ti.',
-    en: 'Search your business name. We register it in your name, set up your email and renew it for you.',
+    en: 'Search your business name. We register it in your name, set up your email and renew it for you.', pt: "Pesquise o nome do seu negócio. Registramos em seu nome, configuramos seu e-mail e renovamos para você.",
   },
-  placeholder: { es: 'nombre de tu negocio', en: 'your business name' },
-  search: { es: 'Buscar', en: 'Search' },
-  available: { es: 'Disponible', en: 'Available' },
-  taken: { es: 'Ocupado', en: 'Taken' },
-  unknown: { es: 'Por confirmar', en: 'To be confirmed' },
-  domainOnly: { es: 'Solo dominio', en: 'Domain only' },
-  withEmail: { es: 'Con correo', en: 'With email' },
-  allTaken: { es: 'Esos están ocupados. Prueba agregar tu ciudad o tu rubro (ej. farmaciasanrafaelcaracas).', en: 'Those are taken. Try adding your city or trade (e.g. sunrisepharmacylagos).' },
-  invalid: { es: 'Escribe un nombre válido (letras, números o guiones).', en: 'Enter a valid name (letters, numbers or hyphens).' },
-  whyTitle: { es: 'Por qué con Sylkit', en: 'Why Sylkit' },
-  packages: { es: 'Paquetes', en: 'Packages' },
-  faqTitle: { es: 'Preguntas frecuentes', en: 'Questions' },
+  placeholder: { es: 'nombre de tu negocio', en: 'your business name', pt: "nome do seu negócio" },
+  search: { es: 'Buscar', en: 'Search', pt: "Pesquisar" },
+  available: { es: 'Disponible', en: 'Available', pt: "Disponível" },
+  taken: { es: 'Ocupado', en: 'Taken', pt: "Indisponível" },
+  unknown: { es: 'Por confirmar', en: 'To be confirmed', pt: "A confirmar" },
+  domainOnly: { es: 'Solo dominio', en: 'Domain only', pt: "Só domínio" },
+  withEmail: { es: 'Con correo', en: 'With email', pt: "Com e-mail" },
+  allTaken: { es: 'Esos están ocupados. Prueba agregar tu ciudad o tu rubro (ej. farmaciasanrafaelcaracas).', en: 'Those are taken. Try adding your city or trade (e.g. sunrisepharmacylagos).', pt: "Esses já estão em uso. Tente adicionar sua cidade ou ramo (ex.: farmaciasaopaulo)." },
+  invalid: { es: 'Escribe un nombre válido (letras, números o guiones).', en: 'Enter a valid name (letters, numbers or hyphens).', pt: "Digite um nome válido (letras, números ou hífens)." },
+  whyTitle: { es: 'Por qué con Sylkit', en: 'Why Sylkit', pt: "Por que a Sylkit" },
+  packages: { es: 'Paquetes', en: 'Packages', pt: "Pacotes" },
+  faqTitle: { es: 'Preguntas frecuentes', en: 'Questions', pt: "Perguntas" },
 };
 
 const why = [
-  { icon: 'card', t: { es: 'Sin tarjeta internacional', en: 'No international card' }, d: { es: 'Paga con Pago Móvil, USDT u Orange Money.', en: 'Pay with Pago Móvil, USDT or Orange Money.' } },
-  { icon: 'person-circle', t: { es: 'Es tuyo', en: 'It is yours' }, d: { es: 'Registrado a tu nombre. Si te vas, te lo transferimos gratis.', en: 'Registered in your name. If you leave, we transfer it free.' } },
-  { icon: 'construct', t: { es: 'Lo hacemos por ti', en: 'We do it for you' }, d: { es: 'Conexión, correos y configuración en tu teléfono.', en: 'Connection, email and setup on your phone.' } },
-  { icon: 'refresh-circle', t: { es: 'Nunca se vence', en: 'Never expires' }, d: { es: 'Renovación automática y aviso 30 días antes.', en: 'Auto-renewal and a reminder 30 days before.' } },
+  { icon: 'card', t: { es: 'Sin tarjeta internacional', en: 'No international card', pt: "Sem cartão internacional" }, d: { es: 'Paga con Pago Móvil, USDT u Orange Money.', en: 'Pay with Pago Móvil, USDT or Orange Money.', pt: "Pague com Pix, cartão, USDT ou outros métodos locais." } },
+  { icon: 'person-circle', t: { es: 'Es tuyo', en: 'It is yours', pt: "É seu" }, d: { es: 'Registrado a tu nombre. Si te vas, te lo transferimos gratis.', en: 'Registered in your name. If you leave, we transfer it free.', pt: "Registrado em seu nome. Se você sair, transferimos de graça." } },
+  { icon: 'construct', t: { es: 'Lo hacemos por ti', en: 'We do it for you', pt: "Fazemos por você" }, d: { es: 'Conexión, correos y configuración en tu teléfono.', en: 'Connection, email and setup on your phone.', pt: "Conexão, e-mail e configuração no seu celular." } },
+  { icon: 'refresh-circle', t: { es: 'Nunca se vence', en: 'Never expires', pt: "Nunca expira" }, d: { es: 'Renovación automática y aviso 30 días antes.', en: 'Auto-renewal and a reminder 30 days before.', pt: "Renovação automática e aviso 30 dias antes." } },
 ];
 
 const faq = [
   {
-    q: { es: '¿De quién es el dominio?', en: 'Who owns the domain?' },
-    a: { es: 'Tuyo. Lo registramos con tus datos como dueño; nosotros solo lo administramos.', en: 'You do. We register it with you as the owner; we only manage it.' },
+    q: { es: '¿De quién es el dominio?', en: 'Who owns the domain?', pt: "De quem é o domínio?" },
+    a: { es: 'Tuyo. Lo registramos con tus datos como dueño; nosotros solo lo administramos.', en: 'You do. We register it with you as the owner; we only manage it.', pt: "Seu. Registramos com você como titular; nós só administramos." },
   },
   {
-    q: { es: '¿Qué pasa si dejo de pagar?', en: 'What if I stop paying?' },
+    q: { es: '¿Qué pasa si dejo de pagar?', en: 'What if I stop paying?', pt: "E se eu parar de pagar?" },
     a: {
       es: 'Funciona hasta el final del periodo pagado. Te avisamos 30 días antes del vencimiento. Si quieres irte, te lo transferimos gratis.',
-      en: 'It keeps working until the end of the paid period. We remind you 30 days before it expires. If you want to leave, we transfer it free.',
+      en: 'It keeps working until the end of the paid period. We remind you 30 days before it expires. If you want to leave, we transfer it free.', pt: "Continua funcionando até o fim do período pago. Avisamos 30 dias antes do vencimento. Se quiser sair, transferimos de graça.",
     },
   },
   {
-    q: { es: '¿Cuánto tarda?', en: 'How long does it take?' },
-    a: { es: 'Normalmente menos de 24 horas después de confirmar tu pago.', en: 'Usually under 24 hours after your payment is confirmed.' },
+    q: { es: '¿Cuánto tarda?', en: 'How long does it take?', pt: "Quanto tempo leva?" },
+    a: { es: 'Normalmente menos de 24 horas después de confirmar tu pago.', en: 'Usually under 24 hours after your payment is confirmed.', pt: "Normalmente menos de 24 horas depois que seu pagamento é confirmado." },
   },
   {
-    q: { es: '¿Y si ya tengo un dominio?', en: 'What if I already have a domain?' },
-    a: { es: 'Lo conectamos gratis o lo traemos a nuestra gestión por un pago único.', en: 'We connect it free, or move it into our management for a one-time fee.' },
+    q: { es: '¿Y si ya tengo un dominio?', en: 'What if I already have a domain?', pt: "E se eu já tiver um domínio?" },
+    a: { es: 'Lo conectamos gratis o lo traemos a nuestra gestión por un pago único.', en: 'We connect it free, or move it into our management for a one-time fee.', pt: "Conectamos de graça, ou passamos para nossa gestão por uma taxa única." },
   },
 ];
 
@@ -99,7 +100,7 @@ export default function DomainsPage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>{lang === 'es' ? 'Dominios, correo y hosting · Sylkit' : 'Domains, email and hosting · Sylkit'}</title>
+        <title>{tx('Domains, email and hosting · Sylkit', 'Dominios, correo y hosting · Sylkit', "Domínios, e-mail e hospedagem · Sylkit")}</title>
         <meta name="description" content={t(L.sub)} />
       </Head>
       <Header />
@@ -127,7 +128,7 @@ export default function DomainsPage() {
                 {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.searchBtnText}>{t(L.search)}</Text>}
               </Pressable>
             </View>
-            <Text style={styles.hint}>.com · .net · .org — {lang === 'es' ? 'desde' : 'from'} {money(yearOf('starter') || 15)}{lang === 'es' ? '/año' : '/year'}</Text>
+            <Text style={styles.hint}>.com · .net · .org — {tx('from', 'desde', "a partir de")} {money(yearOf('starter') || 15)}{tx('/year', '/año', "/ano")}</Text>
 
             {results ? (
               <View style={[styles.results, shadow]}>
@@ -143,13 +144,13 @@ export default function DomainsPage() {
                       <View style={styles.buyRow}>
                         <Pressable onPress={() => go(r.domain, 'starter')} style={styles.buyGhost} accessibilityRole="link">
                           <Text style={styles.buyGhostText}>{t(L.domainOnly)}</Text>
-                          <Text style={styles.buyGhostPrice}>{money(yearOf('starter'))}{lang === 'es' ? '/año' : '/yr'}</Text>
+                          <Text style={styles.buyGhostPrice}>{money(yearOf('starter'))}{tx('/yr', '/año', "/ano")}</Text>
                         </Pressable>
                         <Pressable onPress={() => go(r.domain, 'business')} style={styles.buy} accessibilityRole="link">
                           <Text style={styles.buyText}>{t(L.withEmail)}</Text>
                           <Text style={styles.buyPrice}>
                             {money(yearOf('business'))}
-                            {lang === 'es' ? '/año' : '/yr'}
+                            {tx('/yr', '/año', "/ano")}
                             {setupOf('business') ? ` + ${money(setupOf('business'))}` : ''}
                           </Text>
                         </Pressable>
@@ -194,7 +195,7 @@ export default function DomainsPage() {
             ))}
           </View>
           <Link href="/" style={styles.back}>
-            {lang === 'es' ? '← Ver todos los sistemas' : '← See all systems'}
+            {tx('← See all systems', '← Ver todos los sistemas', "← Ver todos os sistemas")}
           </Link>
         </View>
         <Footer />

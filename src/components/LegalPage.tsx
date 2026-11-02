@@ -5,23 +5,24 @@ import { useLang } from '../i18n';
 import { colors, shadow } from '../theme';
 import { Footer } from './Footer';
 import { Header } from './Header';
+import { tx } from '../i18n';
 
 // Shared layout for the Terms, Privacy and Refund pages. Content lives in src/data/legal.ts.
 
-type T = { es: string; en: string };
+type T = { es: string; en: string; pt?: string };
 export type LegalSection = { h: T; p: T[] };
 export type LegalDoc = { title: T; intro: T; updated: string; sections: LegalSection[] };
 
 const others = [
-  { href: '/terms', label: { es: 'Términos', en: 'Terms' } },
-  { href: '/privacy', label: { es: 'Privacidad', en: 'Privacy' } },
-  { href: '/refunds', label: { es: 'Reembolsos y cancelación', en: 'Refunds and cancellation' } },
+  { href: '/terms', label: { es: 'Términos', en: 'Terms', pt: "Termos" } },
+  { href: '/privacy', label: { es: 'Privacidad', en: 'Privacy', pt: "Privacidade" } },
+  { href: '/refunds', label: { es: 'Reembolsos y cancelación', en: 'Refunds and cancellation', pt: "Reembolsos e cancelamento" } },
 ] as const;
 
 export function LegalPage({ doc }: { doc: LegalDoc }) {
   const { t, lang } = useLang();
   const es = lang === 'es';
-  const date = new Date(`${doc.updated}T12:00:00Z`).toLocaleDateString(es ? 'es' : 'en', { year: 'numeric', month: 'long', day: 'numeric' });
+  const date = new Date(`${doc.updated}T12:00:00Z`).toLocaleDateString(tx('en', 'es', "pt-BR"), { year: 'numeric', month: 'long', day: 'numeric' });
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
@@ -35,7 +36,7 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
             <Text style={styles.h1} accessibilityRole="header">
               {t(doc.title)}
             </Text>
-            <Text style={styles.updated}>{es ? `Última actualización: ${date}` : `Last updated: ${date}`}</Text>
+            <Text style={styles.updated}>{tx(`Last updated: ${date}`, `Última actualización: ${date}`, `Última atualização: ${date}`)}</Text>
             <Text style={styles.p}>{t(doc.intro)}</Text>
             {doc.sections.map((s, i) => (
               <View key={i} style={{ gap: 8 }}>

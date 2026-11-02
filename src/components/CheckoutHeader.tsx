@@ -5,6 +5,7 @@ import { useLang } from '../i18n';
 import { colors } from '../theme';
 import { Logo } from './Logo';
 import { StepBar } from './StepBar';
+import { tx } from '../i18n';
 
 // Calm header for checkout, order and invoice pages: logo, "Secure checkout" and the step bar.
 // No menu, so nothing pulls the client away while paying.
@@ -21,7 +22,7 @@ export function CheckoutHeader({ step }: { step?: 0 | 1 | 2 | 3 }) {
         </Link>
         <View style={styles.secure}>
           <Ionicons name="lock-closed" size={14} color={colors.muted} />
-          <Text style={styles.secureText}>{lang === 'es' ? 'Pago seguro' : 'Secure checkout'}</Text>
+          <Text style={styles.secureText}>{tx('Secure checkout', 'Pago seguro', "Pagamento seguro")}</Text>
         </View>
       </View>
       {step != null ? (
@@ -39,13 +40,13 @@ export function CheckoutFooter() {
   return (
     <View style={styles.foot}>
       <Link href="/refunds" style={styles.footLink}>
-        {es ? 'Reembolsos' : 'Refunds'}
+        {tx('Refunds', 'Reembolsos', "Reembolsos")}
       </Link>
       <Link href="/privacy" style={styles.footLink}>
-        {es ? 'Privacidad' : 'Privacy'}
+        {tx('Privacy', 'Privacidad', "Privacidade")}
       </Link>
       <Link href="/terms" style={styles.footLink}>
-        {es ? 'Términos' : 'Terms'}
+        {tx('Terms', 'Términos', "Termos")}
       </Link>
     </View>
   );

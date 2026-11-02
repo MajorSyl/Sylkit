@@ -4,6 +4,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 import { useLang } from '../i18n';
 import { checkDomain, DomainChoice, DomainMode, DomainResult, isValidDomain, money } from '../lib/pricing';
 import { colors, shadow } from '../theme';
+import { tx } from '../i18n';
 
 // Lets the client choose their web address:
 //  - sub: free name.sylkit.com (included in every plan)
@@ -16,32 +17,32 @@ const RESERVED = new Set([
 ]);
 
 const L = {
-  title: { es: 'Tu dirección web', en: 'Your web address' },
-  sub: { es: 'Cómo entrarán tú y tus clientes al sistema.', en: 'How you and your customers will open the system.' },
-  modeSub: { es: 'Gratis: tunegocio.sylkit.com', en: 'Free: yourbusiness.sylkit.com' },
-  modeSubNote: { es: 'Incluido en todos los planes. Puedes cambiar a un dominio propio cuando quieras.', en: 'Included in every plan. You can move to your own domain any time.' },
-  modeNew: { es: 'Quiero mi propio dominio (.com, .net, .org)', en: 'I want my own domain (.com, .net, .org)' },
+  title: { es: 'Tu dirección web', en: 'Your web address', pt: "Seu endereço web" },
+  sub: { es: 'Cómo entrarán tú y tus clientes al sistema.', en: 'How you and your customers will open the system.', pt: "Como você e seus clientes vão abrir o sistema." },
+  modeSub: { es: 'Gratis: tunegocio.sylkit.com', en: 'Free: yourbusiness.sylkit.com', pt: "Grátis: seunegocio.sylkit.com" },
+  modeSubNote: { es: 'Incluido en todos los planes. Puedes cambiar a un dominio propio cuando quieras.', en: 'Included in every plan. You can move to your own domain any time.', pt: "Incluído em todos os planos. Você pode mudar para um domínio próprio quando quiser." },
+  modeNew: { es: 'Quiero mi propio dominio (.com, .net, .org)', en: 'I want my own domain (.com, .net, .org)', pt: "Quero meu próprio domínio (.com, .net, .org)" },
   modeNewNote: {
     es: 'Lo registramos a tu nombre: es tuyo. Nosotros lo conectamos y renovamos mientras tengas tu plan.',
-    en: 'We register it in your name, so it is yours. We connect it and renew it while your plan is active.',
+    en: 'We register it in your name, so it is yours. We connect it and renew it while your plan is active.', pt: "Registramos em seu nome, então é seu. Conectamos e renovamos enquanto seu plano estiver ativo.",
   },
-  modeOwn: { es: 'Ya tengo un dominio', en: 'I already have a domain' },
-  modeOwnNote: { es: 'Lo conectamos gratis. Solo necesitamos acceso a su configuración (DNS).', en: 'We connect it for free. We only need access to its settings (DNS).' },
-  placeholderSub: { es: 'nombre de tu negocio', en: 'your business name' },
-  placeholderNew: { es: 'nombre que quieres, ej. farmaciasanrafael', en: 'name you want, e.g. sunrisepharmacy' },
-  placeholderOwn: { es: 'tunegocio.com', en: 'yourbusiness.com' },
-  check: { es: 'Verificar', en: 'Check' },
-  available: { es: 'Disponible', en: 'Available' },
-  taken: { es: 'Ocupado', en: 'Taken' },
-  unknown: { es: 'No se pudo verificar', en: "Couldn't check" },
-  pick: { es: 'Elegir', en: 'Choose' },
-  chosen: { es: 'Elegido', en: 'Chosen' },
-  allTaken: { es: 'Esos están ocupados. Prueba otro nombre o una variación (ej. agrega tu ciudad).', en: 'Those are taken. Try another name or a variation (e.g. add your city).' },
-  error: { es: 'Escribe un nombre válido (letras, números o guiones).', en: 'Enter a valid name (letters, numbers or hyphens).' },
-  errorOwn: { es: 'Escribe un dominio válido, ej. tuempresa.com', en: 'Enter a valid domain, e.g. yourbusiness.com' },
-  offline: { es: 'No pudimos verificar ahora. Elige igual y lo confirmamos contigo.', en: "We couldn't check right now. Pick it anyway and we'll confirm with you." },
-  subTaken: { es: 'Ese nombre está reservado. Prueba otro.', en: 'That name is reserved. Try another.' },
-  saved: { es: 'Guardado', en: 'Saved' },
+  modeOwn: { es: 'Ya tengo un dominio', en: 'I already have a domain', pt: "Já tenho um domínio" },
+  modeOwnNote: { es: 'Lo conectamos gratis. Solo necesitamos acceso a su configuración (DNS).', en: 'We connect it for free. We only need access to its settings (DNS).', pt: "Conectamos de graça. Só precisamos de acesso às configurações (DNS)." },
+  placeholderSub: { es: 'nombre de tu negocio', en: 'your business name', pt: "nome do seu negócio" },
+  placeholderNew: { es: 'nombre que quieres, ej. farmaciasanrafael', en: 'name you want, e.g. sunrisepharmacy', pt: "nome que você quer, ex.: farmaciasaojose" },
+  placeholderOwn: { es: 'tunegocio.com', en: 'yourbusiness.com', pt: "seunegocio.com" },
+  check: { es: 'Verificar', en: 'Check', pt: "Verificar" },
+  available: { es: 'Disponible', en: 'Available', pt: "Disponível" },
+  taken: { es: 'Ocupado', en: 'Taken', pt: "Indisponível" },
+  unknown: { es: 'No se pudo verificar', en: "Couldn't check", pt: "Não foi possível verificar" },
+  pick: { es: 'Elegir', en: 'Choose', pt: "Escolher" },
+  chosen: { es: 'Elegido', en: 'Chosen', pt: "Escolhido" },
+  allTaken: { es: 'Esos están ocupados. Prueba otro nombre o una variación (ej. agrega tu ciudad).', en: 'Those are taken. Try another name or a variation (e.g. add your city).', pt: "Esses já estão em uso. Tente outro nome ou uma variação (ex.: adicione sua cidade)." },
+  error: { es: 'Escribe un nombre válido (letras, números o guiones).', en: 'Enter a valid name (letters, numbers or hyphens).', pt: "Digite um nome válido (letras, números ou hífens)." },
+  errorOwn: { es: 'Escribe un dominio válido, ej. tuempresa.com', en: 'Enter a valid domain, e.g. yourbusiness.com', pt: "Digite um domínio válido, ex.: seunegocio.com" },
+  offline: { es: 'No pudimos verificar ahora. Elige igual y lo confirmamos contigo.', en: "We couldn't check right now. Pick it anyway and we'll confirm with you.", pt: "Não conseguimos verificar agora. Escolha mesmo assim e confirmamos com você." },
+  subTaken: { es: 'Ese nombre está reservado. Prueba otro.', en: 'That name is reserved. Try another.', pt: "Esse nome está reservado. Tente outro." },
+  saved: { es: 'Guardado', en: 'Saved', pt: "Salvo" },
 };
 
 const ERROR = '#C62828';
@@ -112,7 +113,7 @@ export function DomainPicker({
 
   const options: { m: DomainMode; title: string; note: string; price?: string }[] = [
     { m: 'sub', title: t(L.modeSub), note: t(L.modeSubNote) },
-    { m: 'new', title: t(L.modeNew), note: t(L.modeNewNote), price: domainPrice > 0 ? `+${money(domainPrice)}${lang === 'es' ? '/mes' : '/mo'}` : undefined },
+    { m: 'new', title: t(L.modeNew), note: t(L.modeNewNote), price: domainPrice > 0 ? `+${money(domainPrice)}${tx('/mo', '/mes', "/mês")}` : undefined },
     { m: 'own', title: t(L.modeOwn), note: t(L.modeOwnNote) },
   ];
 
