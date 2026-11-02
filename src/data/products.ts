@@ -128,6 +128,7 @@ export const products: Product[] = [
       en: 'Professional website on your own domain, mobile-friendly design and a WhatsApp button so customers reach you instantly.',
     },
     features: [
+      { es: 'Plantillas: arquitectura e inmobiliaria', en: 'Templates: architecture and real estate' },
       { es: 'Diseño adaptado a móviles', en: 'Mobile-friendly design' },
       { es: 'Tu propio dominio', en: 'Your own domain' },
       { es: 'Botón de WhatsApp', en: 'WhatsApp button' },
@@ -152,6 +153,7 @@ export const products: Product[] = [
     },
     features: [
       { es: 'iOS y Android', en: 'iOS and Android' },
+      { es: 'Plantillas: inmobiliaria y obra', en: 'Templates: real estate and construction' },
       { es: 'Diseño a tu marca', en: 'Designed to your brand' },
       { es: 'Publicación en tiendas', en: 'Store publishing' },
       { es: 'Panel de administración', en: 'Admin panel' },
@@ -355,6 +357,7 @@ export const products: Product[] = [
     short: { es: "Catálogo, carrito y pedidos directo a tu WhatsApp.", en: "Catalog, cart and orders straight to your WhatsApp." },
     description: { es: "Tu tienda en internet con tu propio dominio. Los clientes arman su carrito y el pedido te llega completo por WhatsApp; tú lo gestionas desde un panel de pedidos.", en: "Your own online store on your own domain. Customers build their cart and the full order reaches you on WhatsApp; you manage it from an orders panel." },
     features: [
+      { es: "8 diseños para elegir", en: "8 designs to choose from" },
       { es: "Catálogo con categorías", en: "Catalog with categories" },
       { es: "Pedidos por WhatsApp", en: "Orders via WhatsApp" },
       { es: "Panel de pedidos", en: "Orders panel" },

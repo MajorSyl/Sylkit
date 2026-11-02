@@ -21,6 +21,12 @@ const products: Item[] = [
     sub: { en: 'POS, inventory, pharmacy, clinic and more', es: 'Punto de venta, inventario, farmacia, clínica y más' },
   },
   {
+    href: '/templates',
+    icon: 'color-palette-outline',
+    label: { en: 'Design templates', es: 'Plantillas de diseño' },
+    sub: { en: 'Online stores, websites and mobile apps', es: 'Tiendas en línea, sitios web y apps móviles' },
+  },
+  {
     href: '/domains',
     icon: 'globe-outline',
     label: { en: 'Domains and email', es: 'Dominios y correo' },
@@ -48,6 +54,7 @@ const products: Item[] = [
 
 const top: { href: string; label: T }[] = [
   { href: '/', label: { en: 'Software', es: 'Software' } },
+  { href: '/templates', label: { en: 'Templates', es: 'Plantillas' } },
   { href: '/domains', label: { en: 'Domains', es: 'Dominios' } },
   { href: '/product/hosting-web', label: { en: 'Hosting', es: 'Hosting' } },
   { href: '/security', label: { en: 'Security', es: 'Seguridad' } },

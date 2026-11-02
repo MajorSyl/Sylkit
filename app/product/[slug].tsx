@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useClientWidth } from '../../src/lib/useClientWidth';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Image, Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { Footer } from '../../src/components/Footer';
 import { Header } from '../../src/components/Header';
@@ -12,6 +12,8 @@ import { categories, getProduct, products } from '../../src/data/products';
 import { useProducts } from '../../src/lib/catalog';
 import { ui, useLang } from '../../src/i18n';
 import { colors, shadow, waLink } from '../../src/theme';
+import { getTemplate, templatesFor } from '../../src/data/storeTemplates';
+import { templatePreview, templateShot } from '../../src/lib/templateShot';
 
 // Pre-render one static HTML page per product (good for Google).
 export async function generateStaticParams(): Promise<Record<string, string>[]> {
@@ -19,7 +21,9 @@ export async function generateStaticParams(): Promise<Record<string, string>[]> 
 }
 
 export default function ProductPage() {
-  const { slug, billing } = useLocalSearchParams<{ slug: string; billing?: string }>();
+  const { slug, billing, template } = useLocalSearchParams<{ slug: string; billing?: string; template?: string }>();
+  const designs = templatesFor(String(slug));
+  const [design, setDesign] = useState<string | undefined>(designs.find((x) => x.slug === template)?.slug);
   const { t, lang } = useLang();
   const width = useClientWidth();
   const wide = width >= 860;
@@ -96,7 +100,50 @@ export default function ProductPage() {
 
           {/* Plans first: the decision people came to make */}
           {product.pricing ? (
-            <PlanCards product={product} initialBilling={billing} />
+            <>
+              {designs.length ? (
+                <View style={styles.designBox}>
+                  <View style={styles.designHead}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.h2}>{lang === 'es' ? '1. Elige tu diseño' : '1. Pick your design'}</Text>
+                      <Text style={styles.designSub}>
+                        {getTemplate(design)
+                          ? lang === 'es'
+                            ? `Elegiste ${getTemplate(design)!.name}. Ahora elige tu plan.`
+                            : `You picked ${getTemplate(design)!.name}. Now choose your plan.`
+                          : lang === 'es'
+                            ? 'Gratis con cualquier plan. Puedes cambiarlo después.'
+                            : 'Free with any plan. You can change it later.'}
+                      </Text>
+                    </View>
+                    <Link href={`/templates?kind=${designs[0].kind}` as any} style={styles.backLink}>
+                      {lang === 'es' ? 'Ver todas →' : 'See all →'}
+                    </Link>
+                  </View>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
+                    {designs.map((x) => {
+                      const on = design === x.slug;
+                      return (
+                        <View key={x.slug} style={[styles.designCard, on && styles.designOn]}>
+                          <Pressable onPress={() => setDesign(on ? undefined : x.slug)} accessibilityRole="radio" accessibilityState={{ checked: on }} accessibilityLabel={x.name}>
+                            <Image source={{ uri: templateShot(x.slug, 'phone') }} style={styles.designShot} resizeMode="cover" />
+                            <View style={styles.designMeta}>
+                              <Text style={styles.designName}>{on ? '✓ ' : ''}{x.name}</Text>
+                              <Text style={styles.designTag} numberOfLines={1}>{lang === 'es' ? x.tagline[0] : x.tagline[1]}</Text>
+                            </View>
+                          </Pressable>
+                          <Pressable onPress={() => Linking.openURL(templatePreview(x.slug))} style={styles.designPrev} accessibilityRole="link">
+                            <Text style={styles.designPrevText}>{lang === 'es' ? 'Ver en vivo' : 'Preview'}</Text>
+                          </Pressable>
+                        </View>
+                      );
+                    })}
+                  </ScrollView>
+                  <Text style={[styles.h2, { marginTop: 18 }]}>{lang === 'es' ? '2. Elige tu plan' : '2. Choose your plan'}</Text>
+                </View>
+              ) : null}
+              <PlanCards product={product} initialBilling={billing} template={designs.length ? design : undefined} />
+            </>
           ) : (
             <View style={[styles.buyBox, shadow]}>
               <PriceLabel product={product} />
@@ -194,6 +241,17 @@ const styles = StyleSheet.create({
   cat: { fontSize: 12, fontWeight: '700', color: colors.primary, textTransform: 'uppercase', letterSpacing: 0.6 },
   h1: { fontSize: 34, lineHeight: 40, fontWeight: '800', color: colors.text, letterSpacing: -0.8 },
   h2: { fontSize: 22, fontWeight: '800', color: colors.text, letterSpacing: -0.3 },
+  designBox: { marginBottom: 12, gap: 10 },
+  designHead: { flexDirection: 'row', alignItems: 'flex-end', gap: 12 },
+  designSub: { fontSize: 14, color: colors.muted, marginTop: 2 },
+  designCard: { width: 132, backgroundColor: colors.surface, borderRadius: 14, borderWidth: 2, borderColor: colors.border, overflow: 'hidden' },
+  designOn: { borderColor: colors.primary },
+  designShot: { width: '100%', height: 200 },
+  designMeta: { paddingHorizontal: 10, paddingTop: 8 },
+  designName: { fontSize: 15, fontWeight: '800', color: colors.text },
+  designTag: { fontSize: 12, color: colors.muted },
+  designPrev: { paddingHorizontal: 10, paddingVertical: 8, minHeight: 36 },
+  designPrevText: { fontSize: 13, fontWeight: '800', color: colors.primary },
   badge: {
     alignSelf: 'flex-start',
     backgroundColor: colors.softCyan,

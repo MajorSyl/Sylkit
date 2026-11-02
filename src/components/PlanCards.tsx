@@ -11,7 +11,7 @@ import { colors, shadow } from '../theme';
 // Plan cards in the style of big hosting companies: each card shows one price, one
 // "Choose plan" button and an honest "Today you pay … Renews at …" line. Extras are chosen at checkout.
 
-export function PlanCards({ product, initialBilling }: { product: Product; initialBilling?: string }) {
+export function PlanCards({ product, initialBilling, template }: { product: Product; initialBilling?: string; template?: string }) {
   const { t, lang } = useLang();
   const es = lang === 'es';
   const router = useRouter();
@@ -37,7 +37,8 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
     return () => clearTimeout(id);
   }, [swipe, cardW, boxW, popularIdx]);
 
-  const choose = (planId: string) => router.push(`/checkout?product=${product.slug}&plan=${encodeURIComponent(planId)}&billing=${billing}`);
+  const choose = (planId: string) =>
+    router.push(`/checkout?product=${product.slug}&plan=${encodeURIComponent(planId)}&billing=${billing}${template ? `&template=${encodeURIComponent(template)}` : ''}`);
 
   const cards = plans.map((p, i) => {
     const q = planQuote(p, billing, pricing, lang);

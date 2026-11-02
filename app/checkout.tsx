@@ -12,12 +12,12 @@ import { colors } from '../src/theme';
 // Reached from a product page's "Choose plan" (?product=…&plan=…&billing=…).
 
 export default function CheckoutPage() {
-  const { product, plan, billing, add, domain } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string }>();
+  const { product, plan, billing, add, domain, template } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string; template?: string }>();
   const { lang } = useLang();
   const es = lang === 'es';
   const list = useProducts();
   const p = product ? list.find((x) => x.slug === product) : undefined;
-  const cfg = p?.pricing ? configFromQuery({ plan: plan ?? p.pricing.plans.find((x) => x.popular)?.id ?? p.pricing.plans[0].id, billing, add, domain }) : null;
+  const cfg = p?.pricing ? configFromQuery({ plan: plan ?? p.pricing.plans.find((x) => x.popular)?.id ?? p.pricing.plans[0].id, billing, add, domain, template }) : null;
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>

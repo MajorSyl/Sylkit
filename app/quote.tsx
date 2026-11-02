@@ -10,18 +10,18 @@ import { configFromQuery, estimate, useAddons } from '../src/lib/pricing';
 import { colors } from '../src/theme';
 
 export default function QuotePage() {
-  const { product, plan, billing, add, domain } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string }>();
+  const { product, plan, billing, add, domain, template } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string; template?: string }>();
   const { t, lang } = useLang();
   const list = useProducts();
   const catalog = useAddons();
   const p = product ? list.find((x) => x.slug === product) : undefined;
   const es = lang === 'es';
-  const cfg = p?.pricing ? configFromQuery({ plan, billing, add, domain }) : null;
+  const cfg = p?.pricing ? configFromQuery({ plan, billing, add, domain, template }) : null;
   const est = cfg && p?.pricing ? estimate(p.pricing, catalog, cfg) : null;
 
   // Fixed-price plans are bought on the one-page checkout; this page is for custom requests.
   if (p?.pricing) {
-    const qs = [`product=${encodeURIComponent(p.slug)}`, plan && `plan=${encodeURIComponent(plan)}`, billing && `billing=${encodeURIComponent(billing)}`, add && `add=${encodeURIComponent(add)}`, domain && `domain=${encodeURIComponent(domain)}`].filter(Boolean).join('&');
+    const qs = [`product=${encodeURIComponent(p.slug)}`, plan && `plan=${encodeURIComponent(plan)}`, billing && `billing=${encodeURIComponent(billing)}`, add && `add=${encodeURIComponent(add)}`, domain && `domain=${encodeURIComponent(domain)}`, template && `template=${encodeURIComponent(template)}`].filter(Boolean).join('&');
     return <Redirect href={`/checkout?${qs}`} />;
   }
 
