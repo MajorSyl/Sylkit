@@ -296,8 +296,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 15.45,
-        "setup": 51.5,
+        "monthly": 19,
+        "setup": 59,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -324,8 +324,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -352,8 +352,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 50.47,
-        "setup": 154.5,
+        "monthly": 59,
+        "setup": 179,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -366,6 +366,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -398,8 +402,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 15.45,
-        "setup": 51.5,
+        "monthly": 19,
+        "setup": 59,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -426,8 +430,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -454,8 +458,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 50.47,
-        "setup": 154.5,
+        "monthly": 59,
+        "setup": 179,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -468,6 +472,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -501,8 +509,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 15.45,
-        "setup": 51.5,
+        "monthly": 19,
+        "setup": 59,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -529,8 +537,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -557,8 +565,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 50.47,
-        "setup": 154.5,
+        "monthly": 59,
+        "setup": 179,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -571,6 +579,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -603,8 +615,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 25.75,
-        "setup": 82.4,
+        "monthly": 29,
+        "setup": 79,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -615,8 +627,8 @@ export const pricingBySlug: Record<string, Pricing> = {
             "en": "All core features", "pt": "Todas as funções principais"
           },
           {
-            "es": "Soporte por WhatsApp en horario laboral",
-            "en": "WhatsApp support in business hours", "pt": "Suporte por WhatsApp em horário comercial"
+            "es": "Soporte: respuesta el siguiente día hábil",
+            "en": "Support: reply by the next business day", "pt": "Suporte: resposta no próximo dia útil"
           },
           {
             "es": "Actualizaciones incluidas",
@@ -631,8 +643,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 46.35,
-        "setup": 154.5,
+        "monthly": 49,
+        "setup": 129,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -647,6 +659,14 @@ export const pricingBySlug: Record<string, Pricing> = {
             "en": "Online training for your team", "pt": "Treinamento online para sua equipe"
           },
           {
+            "es": "Soporte el mismo día en horario laboral",
+            "en": "Same-day support during office hours", "pt": "Suporte no mesmo dia em horário comercial"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
+          },
+          {
             "es": "Todo lo del plan Inicial",
             "en": "Everything in Starter", "pt": "Tudo do Inicial"
           }
@@ -659,20 +679,24 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 71.07,
-        "setup": 257.5,
+        "monthly": 79,
+        "setup": 199,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
             "en": "Unlimited branches and users", "pt": "Unidades e usuários ilimitados"
           },
           {
-            "es": "Soporte prioritario",
-            "en": "Priority support", "pt": "Suporte prioritário"
+            "es": "Soporte con máxima prioridad en horario laboral",
+            "en": "Highest-priority support during office hours", "pt": "Suporte com prioridade máxima em horário comercial"
           },
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -706,8 +730,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 25.75,
-        "setup": 82.4,
+        "monthly": 29,
+        "setup": 99,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -734,8 +758,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 46.35,
-        "setup": 154.5,
+        "monthly": 49,
+        "setup": 149,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -750,6 +774,10 @@ export const pricingBySlug: Record<string, Pricing> = {
             "en": "Online training for your team", "pt": "Treinamento online para sua equipe"
           },
           {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
+          },
+          {
             "es": "Todo lo del plan Inicial",
             "en": "Everything in Starter", "pt": "Tudo do Inicial"
           }
@@ -762,8 +790,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 81.37,
-        "setup": 257.5,
+        "monthly": 89,
+        "setup": 279,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -776,6 +804,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -808,8 +840,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 19.57,
-        "setup": 61.8,
+        "monthly": 25,
+        "setup": 79,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -836,8 +868,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 36.05,
-        "setup": 123.6,
+        "monthly": 39,
+        "setup": 129,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -864,8 +896,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 60.77,
-        "setup": 206,
+        "monthly": 69,
+        "setup": 199,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -878,6 +910,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -911,8 +947,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 12.36,
-        "setup": 41.2,
+        "monthly": 19,
+        "setup": 59,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -939,8 +975,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 25.75,
-        "setup": 82.4,
+        "monthly": 29,
+        "setup": 99,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -967,8 +1003,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 40.17,
-        "setup": 123.6,
+        "monthly": 49,
+        "setup": 149,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -981,6 +1017,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -1013,8 +1053,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 15.45,
-        "setup": 51.5,
+        "monthly": 19,
+        "setup": 59,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1041,8 +1081,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1069,8 +1109,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 50.47,
-        "setup": 154.5,
+        "monthly": 59,
+        "setup": 179,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1083,6 +1123,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -1115,8 +1159,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 19.57,
-        "setup": 61.8,
+        "monthly": 25,
+        "setup": 79,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1143,8 +1187,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 36.05,
-        "setup": 123.6,
+        "monthly": 39,
+        "setup": 129,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1171,8 +1215,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 60.77,
-        "setup": 206,
+        "monthly": 69,
+        "setup": 199,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1185,6 +1229,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -1217,8 +1265,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1245,8 +1293,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 60.77,
-        "setup": 206,
+        "monthly": 69,
+        "setup": 219,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1273,8 +1321,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 101.97,
-        "setup": 360.5,
+        "monthly": 119,
+        "setup": 399,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1287,6 +1335,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -1319,8 +1371,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 15.45,
-        "setup": 51.5,
+        "monthly": 19,
+        "setup": 59,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1347,8 +1399,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1375,8 +1427,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 50.47,
-        "setup": 154.5,
+        "monthly": 59,
+        "setup": 179,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1389,6 +1441,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -1421,8 +1477,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 9.27,
-        "setup": 30.9,
+        "monthly": 15,
+        "setup": 49,
         "includes": [
           {
             "es": "1 sucursal · hasta 3 usuarios",
@@ -1449,8 +1505,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 19.57,
-        "setup": 61.8,
+        "monthly": 25,
+        "setup": 79,
         "includes": [
           {
             "es": "Hasta 3 sucursales · 10 usuarios",
@@ -1477,8 +1533,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 36.05,
-        "setup": 103,
+        "monthly": 45,
+        "setup": 129,
         "includes": [
           {
             "es": "Sucursales y usuarios ilimitados",
@@ -1491,6 +1547,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Copias de seguridad diarias",
             "en": "Daily backups", "pt": "Backups diários"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Todo lo del plan Negocio",
@@ -1523,8 +1583,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 12.36,
-        "setup": 82.4,
+        "monthly": 19,
+        "setup": 99,
         "includes": [
           {
             "es": "Hasta 50 productos",
@@ -1551,8 +1611,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 25.75,
-        "setup": 154.5,
+        "monthly": 35,
+        "setup": 179,
         "includes": [
           {
             "es": "Hasta 500 productos",
@@ -1579,8 +1639,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 46.35,
-        "setup": 257.5,
+        "monthly": 59,
+        "setup": 279,
         "includes": [
           {
             "es": "Productos ilimitados",
@@ -1621,8 +1681,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 8.24,
-        "setup": 123.6,
+        "monthly": 12,
+        "setup": 149,
         "includes": [
           {
             "es": "Sitio de 1 página",
@@ -1649,8 +1709,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 12.36,
-        "setup": 206,
+        "monthly": 19,
+        "setup": 249,
         "includes": [
           {
             "es": "Hasta 5 páginas",
@@ -1677,8 +1737,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 19.57,
-        "setup": 360.5,
+        "monthly": 29,
+        "setup": 399,
         "includes": [
           {
             "es": "Hasta 10 páginas, tienda o reservas",
@@ -1718,8 +1778,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 10,
-        "setup": 150,
+        "monthly": 15,
+        "setup": 179,
         "includes": [
           {
             "es": "Sitio de 1 página",
@@ -1746,8 +1806,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 15,
-        "setup": 300,
+        "monthly": 25,
+        "setup": 349,
         "includes": [
           {
             "es": "Hasta 5 páginas",
@@ -1774,8 +1834,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 25,
-        "setup": 500,
+        "monthly": 39,
+        "setup": 549,
         "includes": [
           {
             "es": "Hasta 10 páginas, tienda o reservas",
@@ -1815,8 +1875,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 25,
-        "setup": 900,
+        "monthly": 29,
+        "setup": 999,
         "includes": [
           {
             "es": "App sencilla (hasta 5 pantallas)",
@@ -1843,8 +1903,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 45,
-        "setup": 1800,
+        "monthly": 49,
+        "setup": 1999,
         "includes": [
           {
             "es": "Hasta 12 pantallas",
@@ -1871,8 +1931,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 79,
-        "setup": 3500,
+        "monthly": 89,
+        "setup": 3799,
         "includes": [
           {
             "es": "Pantallas ilimitadas",
@@ -1910,8 +1970,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 29.87,
-        "setup": 103,
+        "monthly": 35,
+        "setup": 119,
         "includes": [
           {
             "es": "Hasta 500 conversaciones al mes",
@@ -1938,8 +1998,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 60.77,
-        "setup": 206,
+        "monthly": 69,
+        "setup": 219,
         "includes": [
           {
             "es": "Hasta 2.000 conversaciones al mes",
@@ -1966,8 +2026,8 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 101.97,
-        "setup": 360.5,
+        "monthly": 119,
+        "setup": 399,
         "includes": [
           {
             "es": "Hasta 5.000 conversaciones al mes",
@@ -1980,6 +2040,10 @@ export const pricingBySlug: Record<string, Pricing> = {
           {
             "es": "Integración con tu sistema",
             "en": "Integration with your system", "pt": "Integração com seu sistema"
+          },
+          {
+            "es": "Conecta tu propia IA (Claude, OpenAI u otra) con tu clave de API",
+            "en": "Connect your own AI (Claude, OpenAI or other) with your API key", "pt": "Conecte sua própria IA (Claude, OpenAI ou outra) com sua chave de API"
           },
           {
             "es": "Soporte prioritario",

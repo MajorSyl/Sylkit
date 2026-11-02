@@ -142,24 +142,30 @@ Request a quote → admin sends price → client accepts → pays (same payment 
 
 ### Plans (monthly / one-time setup, USD)
 
-The 15 systems with a live demo were raised 3% on 30 Oct 2026 (`supabase/price_raise_2026-10-30.sql`). Business website, custom mobile app, domains, hosting, extras and Shield were not changed.
+Prices set on 2 Nov 2026 (`supabase/price_update_2026-11-02.sql`, replaces the 30 Oct 3% raise). Domains, hosting, extras and Shield were not changed. Yearly = monthly × 10, buy once = monthly × 30 (+ care from year 2 = monthly × 3/yr). Business is the recommended plan everywhere.
 
 | Product | Starter | Business | Pro |
 |---|---|---|---|
-| Expiry Alerts, POS, Inventory, Car workshop, Payroll | 15.45 / 51.50 | 29.87 / 103 | 50.47 / 154.50 |
-| Pharmacy | 25.75 / 82.40 | 46.35 / 154.50 | 71.07 / 257.50 |
-| Clinic | 25.75 / 82.40 | 46.35 / 154.50 | 81.37 / 257.50 |
-| Restaurant, Home services | 19.57 / 61.80 | 36.05 / 123.60 | 60.77 / 206 |
-| Salon & barbershop | 12.36 / 41.20 | 25.75 / 82.40 | 40.17 / 123.60 |
-| School management | 29.87 / 103 | 60.77 / 206 | 101.97 / 360.50 |
-| Invoicing | 9.27 / 30.90 | 19.57 / 61.80 | 36.05 / 103 |
-| Online store | 12.36 / 82.40 | 25.75 / 154.50 | 46.35 / 257.50 |
-| Personal website | 8.24 / 123.60 | 12.36 / 206 | 19.57 / 360.50 |
-| Business website | 10 / 150 | 15 / 300 | 25 / 500 |
-| Custom mobile app | 25 / 900 | 45 / 1,800 | 79 / 3,500 |
-| AI assistant | 29.87 / 103 | 60.77 / 206 | 101.97 / 360.50 |
+| **Pharmacy** | 29 / 79 | 49 / 129 | 79 / 199 |
+| Expiry Alerts, POS, Inventory, Car workshop, Payroll | 19 / 59 | 35 / 119 | 59 / 179 |
+| Clinic | 29 / 99 | 49 / 149 | 89 / 279 |
+| Restaurant, Home services | 25 / 79 | 39 / 129 | 69 / 199 |
+| Salon & barbershop | 19 / 59 | 29 / 99 | 49 / 149 |
+| School management | 35 / 119 | 69 / 219 | 119 / 399 |
+| Invoicing | 15 / 49 | 25 / 79 | 45 / 129 |
+| Online store | 19 / 99 | 35 / 179 | 59 / 279 |
+| Personal website | 12 / 149 | 19 / 249 | 29 / 399 |
+| Business website | 15 / 179 | 25 / 349 | 39 / 549 |
+| Custom mobile app | 29 / 999 | 49 / 1,999 | 89 / 3,799 |
+| AI assistant | 35 / 119 | 69 / 219 | 119 / 399 |
 | **Domain & business email** (yearly) | **$15/yr**, no setup | **$50/yr** + $30 | **$90/yr** + $100 |
 | **Website hosting** | 5 / 30 | 10 / 50 | 20 / 80 |
+
+### Pharmacy packaging (founding offer)
+- **First 10 founding pharmacies:** setup fee waived ($0), free data import + training, 60-day guarantee, price locked for 12 months. Shown on the site as the badge "10 founding pharmacies: $0 setup" and in the product description. Checkout still charges the normal setup, so for a founding pharmacy set the order total in Admin (or send a custom quote) with setup at $0.
+- **Recommended plan:** Business.
+- **Support levels:** Starter → reply by the next business day · Business → same day during office hours · Pro → highest priority during office hours. Office hours: Mon–Sat 9:00–18:00 Caracas.
+- **Bring your own AI:** Pharmacy and Clinic (Business, Pro) and the Pro plan of the other business systems say customers can connect their own AI (Claude, OpenAI or other) with their API key for advanced features.
 
 ### Extras
 Monthly: extra branch $10 · 5 extra users $5 · WhatsApp alerts $10 · staff mobile app $10 · own domain $1.50 · +1,000 AI conversations $15 · +5 email addresses $3 · priority support $15.
