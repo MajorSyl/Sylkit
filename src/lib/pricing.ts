@@ -15,7 +15,8 @@ import { supabase } from './supabase';
 export type Billing = 'yearly' | 'monthly' | 'once';
 export type DomainMode = 'sub' | 'new' | 'own';
 export type DomainChoice = { mode: DomainMode; name: string };
-export type Config = { plan: string; billing: Billing; addons: Record<string, number>; domain?: DomainChoice };
+// template: the store design the client picked (online store product only), e.g. 'lumen'.
+export type Config = { plan: string; billing: Billing; addons: Record<string, number>; domain?: DomainChoice; template?: string };
 export type Line = { id: string; name: Text; kind: Addon['kind']; qty: number; unit: number; total: number };
 export type Estimate = {
   plan: Plan;
@@ -78,10 +79,11 @@ export function configToQuery(cfg: Config) {
     .map(([id, q]) => (q > 1 ? `${id}*${q}` : id))
     .join(',');
   const dom = cfg.domain?.name ? `&domain=${encodeURIComponent(`${cfg.domain.mode}:${cfg.domain.name}`)}` : '';
-  return `plan=${encodeURIComponent(cfg.plan)}&billing=${cfg.billing}${add ? `&add=${encodeURIComponent(add)}` : ''}${dom}`;
+  const tpl = cfg.template ? `&template=${encodeURIComponent(cfg.template)}` : '';
+  return `plan=${encodeURIComponent(cfg.plan)}&billing=${cfg.billing}${add ? `&add=${encodeURIComponent(add)}` : ''}${dom}${tpl}`;
 }
 
-export function configFromQuery(q: { plan?: string; billing?: string; add?: string; domain?: string }): Config | null {
+export function configFromQuery(q: { plan?: string; billing?: string; add?: string; domain?: string; template?: string }): Config | null {
   if (!q.plan) return null;
   const addons: Record<string, number> = {};
   for (const part of (q.add ?? '').split(',')) {
@@ -92,7 +94,8 @@ export function configFromQuery(q: { plan?: string; billing?: string; add?: stri
   const name = rest.join(':').toLowerCase().replace(/[^a-z0-9.-]/g, '').slice(0, 80);
   const ok = mode === 'sub' ? name.length >= 2 : mode === 'new' || mode === 'own' ? isValidDomain(name) : false;
   const domain = ok ? { mode: mode as DomainMode, name } : undefined;
-  return { plan: String(q.plan), billing: q.billing === 'monthly' || q.billing === 'once' ? q.billing : 'yearly', addons, domain };
+  const template = /^[a-z0-9-]{2,30}$/.test(q.template ?? '') ? q.template : undefined;
+  return { plan: String(q.plan), billing: q.billing === 'monthly' || q.billing === 'once' ? q.billing : 'yearly', addons, domain, template };
 }
 
 // How a client's web address is written for people.

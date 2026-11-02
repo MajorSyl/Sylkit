@@ -1,9 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useClientWidth } from '../lib/useClientWidth';
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ANNUAL_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
+import { getTemplate, STORE_PRODUCT } from '../data/storeTemplates';
+import { templateShot } from '../lib/templateShot';
 import { useLang } from '../i18n';
 import { allowedBilling, billingName, isYearlyOnly, planQuote } from '../lib/planText';
 import { Billing, Config, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
@@ -45,7 +48,11 @@ export function Checkout({
     billing: initial?.billing && allowed.includes(initial.billing) ? initial.billing : allowed[0],
     addons: initial?.addons ?? {},
     domain: initial?.domain && (!isDomainProduct || initial.domain.mode !== 'sub') ? initial.domain : undefined,
+    template: product.slug === STORE_PRODUCT ? getTemplate(initial?.template)?.slug : undefined,
   }));
+  const router = useRouter();
+  const isStore = product.slug === STORE_PRODUCT;
+  const tpl = getTemplate(cfg.template);
   const [showExtras, setShowExtras] = useState(Object.keys(initial?.addons ?? {}).length > 0);
   const est = useMemo(() => estimate(pricing, catalog, cfg), [pricing, catalog, cfg]);
   const hasDomain = pricing.addons.includes('custom_domain') && !!catalog.custom_domain;
@@ -111,6 +118,7 @@ export function Checkout({
         <Row key={l.id} label={`• ${t(l.name)}${l.qty > 1 ? ` ×${l.qty}` : ''}`} muted />
       ))}
       {cfg.domain ? <Row label={`• ${es ? 'Dirección web' : 'Web address'}: ${domainLabel(cfg.domain)}`} muted /> : null}
+      {tpl ? <Row label={`• ${es ? 'Diseño' : 'Design'}: ${tpl.name}`} muted /> : null}
       {est.savings > 0 && !yearlyOnly ? (
         <Text style={styles.save}>{es ? `Ahorras ${money(est.savings)} pagando anual` : `You save ${money(est.savings)} by paying yearly`}</Text>
       ) : null}
@@ -137,6 +145,27 @@ export function Checkout({
     <View style={{ gap: 16 }}>
       <View style={[{ gap: 16 }, wide && { flexDirection: 'row', alignItems: 'flex-start' }]}>
         <View style={[{ gap: 16 }, wide && { flex: 1.5 }]}>
+          {/* Store design (online store only) */}
+          {isStore ? (
+            <View style={[styles.box, shadow, styles.tplBox]}>
+              {tpl ? (
+                <Image source={{ uri: templateShot(tpl.slug, 'phone') }} style={styles.tplThumb} resizeMode="cover" accessibilityLabel={tpl.name} />
+              ) : (
+                <View style={[styles.tplThumb, { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.softBlue }]}>
+                  <Ionicons name="color-palette-outline" size={26} color={colors.primary} />
+                </View>
+              )}
+              <View style={{ flex: 1, gap: 2 }}>
+                <Text style={styles.optSub}>{es ? 'Diseño de tu tienda' : 'Your store design'}</Text>
+                <Text style={styles.optTitle}>{tpl ? `${tpl.name} · ${t({ es: tpl.tagline[0], en: tpl.tagline[1] })}` : es ? 'Aún no elegido (opcional)' : 'Not chosen yet (optional)'}</Text>
+                <Text style={styles.optSub}>{es ? 'Incluido gratis. Lo adaptamos a tu marca.' : 'Included free. We adapt it to your brand.'}</Text>
+              </View>
+              <Pressable onPress={() => router.push(`/templates?plan=${cfg.plan}&billing=${cfg.billing}` as any)} style={styles.tplBtn} accessibilityRole="link">
+                <Text style={styles.tplBtnText}>{tpl ? (es ? 'Cambiar' : 'Change') : es ? 'Elegir' : 'Choose'}</Text>
+              </Pressable>
+            </View>
+          ) : null}
+
           {/* 1. Plan */}
           <View style={[styles.box, shadow]}>
             <Step n={1} title={es ? 'Tu plan' : 'Your plan'} />
@@ -346,6 +375,10 @@ const styles = StyleSheet.create({
   rowValue: { fontSize: 14, fontWeight: '800', color: colors.text },
   save: { fontSize: 13, fontWeight: '700', color: '#0E7F98' },
   divider: { height: 1, backgroundColor: colors.border },
+  tplBox: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  tplThumb: { width: 54, height: 96, borderRadius: 10, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
+  tplBtn: { borderWidth: 1.5, borderColor: colors.primary, borderRadius: 10, paddingHorizontal: 14, minHeight: 40, justifyContent: 'center' },
+  tplBtnText: { color: colors.primary, fontWeight: '800', fontSize: 14 },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   totalLabel: { fontSize: 17, fontWeight: '800', color: colors.text },
   total: { fontSize: 30, fontWeight: '800', color: colors.primary, letterSpacing: -0.6 },

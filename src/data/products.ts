@@ -355,6 +355,7 @@ export const products: Product[] = [
     short: { es: "Catálogo, carrito y pedidos directo a tu WhatsApp.", en: "Catalog, cart and orders straight to your WhatsApp." },
     description: { es: "Tu tienda en internet con tu propio dominio. Los clientes arman su carrito y el pedido te llega completo por WhatsApp; tú lo gestionas desde un panel de pedidos.", en: "Your own online store on your own domain. Customers build their cart and the full order reaches you on WhatsApp; you manage it from an orders panel." },
     features: [
+      { es: "8 diseños para elegir", en: "8 designs to choose from" },
       { es: "Catálogo con categorías", en: "Catalog with categories" },
       { es: "Pedidos por WhatsApp", en: "Orders via WhatsApp" },
       { es: "Panel de pedidos", en: "Orders panel" },

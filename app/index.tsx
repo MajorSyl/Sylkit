@@ -3,6 +3,7 @@ import { useClientWidth } from '../src/lib/useClientWidth';
 import Head from 'expo-router/head';
 import { useMemo, useState } from 'react';
 import {
+  Image,
   Linking,
   Pressable,
   ScrollView,
@@ -20,6 +21,8 @@ import { useProducts } from '../src/lib/catalog';
 import { useRouter } from 'expo-router';
 import { steps, ui, useLang } from '../src/i18n';
 import { colors, glass, shadow, waLink } from '../src/theme';
+import { storeTemplates } from '../src/data/storeTemplates';
+import { templateShot } from '../src/lib/templateShot';
 
 const doors: { href: string; icon: string; title: { es: string; en: string }; sub: { es: string; en: string } }[] = [
   { href: '#catalog', icon: 'apps-outline', title: { en: 'Software', es: 'Software' }, sub: { en: 'Ready-made or custom systems', es: 'Sistemas listos o a medida' } },
@@ -143,6 +146,26 @@ export default function Home() {
             </View>
           )}
 
+          {/* Store templates */}
+          <View style={[styles.sectionHead, { marginTop: 40 }]}>
+            <Text style={styles.h2}>{lang === 'es' ? 'Plantillas para tu tienda en línea' : 'Templates for your online store'}</Text>
+            <Pressable onPress={() => router.push('/templates' as any)} accessibilityRole="link">
+              <Text style={styles.tplAll}>{lang === 'es' ? 'Ver todas →' : 'See all →'}</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.sectionSub}>
+            {lang === 'es' ? 'Elige un diseño, nosotros la armamos con tus productos. Pedidos directo a tu WhatsApp.' : 'Pick a design and we set it up with your products. Orders go straight to your WhatsApp.'}
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 6 }}>
+            {storeTemplates.map((x) => (
+              <Pressable key={x.slug} style={[styles.tplCard, shadow]} onPress={() => router.push(`/product/tienda-online-whatsapp?template=${x.slug}` as any)} accessibilityRole="link" accessibilityLabel={x.name}>
+                <Image source={{ uri: templateShot(x.slug, 'phone') }} style={styles.tplShot} resizeMode="cover" />
+                <Text style={styles.tplName}>{x.name}</Text>
+                <Text style={styles.tplTag} numberOfLines={1}>{lang === 'es' ? x.tagline[0] : x.tagline[1]}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+
           {/* Custom banner */}
           <View style={[styles.banner, wide && { flexDirection: 'row', alignItems: 'center' }]}>
             <View style={[styles.sphere, { width: 220, height: 220, top: -90, right: -40, backgroundColor: '#fff', opacity: 0.12 }]} />
@@ -219,6 +242,11 @@ function WhatsAppButton({ label, message }: { label: string; message: string }) 
 }
 
 const styles = StyleSheet.create({
+  tplAll: { fontSize: 15, fontWeight: '700', color: colors.primary },
+  tplCard: { width: 150, backgroundColor: colors.surface, borderRadius: 16, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', paddingBottom: 10 },
+  tplShot: { width: '100%', height: 230, marginBottom: 8 },
+  tplName: { fontSize: 15, fontWeight: '800', color: colors.text, paddingHorizontal: 10 },
+  tplTag: { fontSize: 12, color: colors.muted, paddingHorizontal: 10 },
   container: { width: '100%', maxWidth: 1180, alignSelf: 'center', paddingHorizontal: 16 },
   doors: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6, marginBottom: 8 },
   door: { backgroundColor: colors.surface, borderRadius: 16, padding: 14, gap: 6, borderWidth: 1, borderColor: colors.border, minHeight: 122 },
