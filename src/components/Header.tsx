@@ -72,7 +72,15 @@ export function Header() {
     setOpen(false);
     router.push(href as any);
   };
-  const wa = () => Linking.openURL(waLink(tx('Hi, I saw Sylkit and want more info.', 'Hola, vi Sylkit y quiero información.', "Olá, vi a Sylkit e quero mais informações.")));
+  // Support goes through the help widget (chat bubble), which also offers WhatsApp.
+  const help = () => {
+    setOpen(false);
+    try {
+      window.dispatchEvent(new Event('sylkit:help'));
+    } catch {
+      Linking.openURL(waLink(tx('Hi, I saw Sylkit and want more info.', 'Hola, vi Sylkit y quiero información.', "Olá, vi a Sylkit e quero mais informações.")));
+    }
+  };
 
   return (
     <View style={[styles.wrap, glass]}>
@@ -97,16 +105,13 @@ export function Header() {
                 <Text style={styles.navText}>{tx('My order', 'Mi pedido', "Meu pedido")}</Text>
               </Pressable>
             </Link>
-            <Pressable style={styles.wa} onPress={wa} accessibilityRole="link">
-              <Ionicons name="logo-whatsapp" size={18} color="#fff" />
-              <Text style={styles.waText}>WhatsApp</Text>
+            <Pressable style={styles.helpBtn} onPress={help} accessibilityRole="button">
+              <Ionicons name="chatbubble-ellipses-outline" size={17} color={colors.primary} />
+              <Text style={styles.helpText}>{tx('Help', 'Ayuda', 'Ajuda')}</Text>
             </Pressable>
           </View>
         ) : (
           <View style={styles.right}>
-            <Pressable style={styles.waIcon} onPress={wa} accessibilityRole="link" accessibilityLabel="WhatsApp">
-              <Ionicons name="logo-whatsapp" size={18} color="#fff" />
-            </Pressable>
             <Pressable style={styles.menuBtn} onPress={() => setOpen(true)} accessibilityRole="button" accessibilityLabel={tx('Open menu', 'Abrir menú', "Abrir menu")}>
               <Ionicons name="menu" size={24} color={colors.text} />
             </Pressable>
@@ -147,9 +152,9 @@ export function Header() {
               <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>
           </ScrollView>
-          <Pressable style={styles.sheetWa} onPress={wa} accessibilityRole="link">
-            <Ionicons name="logo-whatsapp" size={20} color="#fff" />
-            <Text style={styles.waText}>{tx('Chat on WhatsApp', 'Hablar por WhatsApp', "Conversar no WhatsApp")}</Text>
+          <Pressable style={[styles.sheetWa, { backgroundColor: colors.primary }]} onPress={help} accessibilityRole="button">
+            <Ionicons name="chatbubble-ellipses" size={20} color="#fff" />
+            <Text style={styles.waText}>{tx('Help and support', 'Ayuda y soporte', 'Ajuda e suporte')}</Text>
           </Pressable>
         </View>
       </Modal>
@@ -184,6 +189,8 @@ const styles = StyleSheet.create({
   navText: { fontSize: 14, fontWeight: '700', color: colors.text },
   wa: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.whatsapp, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, minHeight: 40, marginLeft: 6 },
   waIcon: { width: 40, height: 40, borderRadius: 999, backgroundColor: colors.whatsapp, alignItems: 'center', justifyContent: 'center' },
+  helpBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1.5, borderColor: colors.primary, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, minHeight: 40, marginLeft: 6 },
+  helpText: { color: colors.primary, fontWeight: '800', fontSize: 15 },
   waText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   menuBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   sheet: { flex: 1, backgroundColor: colors.surface },

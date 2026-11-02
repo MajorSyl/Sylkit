@@ -14,6 +14,10 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none"
   },
+  // Support inbox: tickets, messages and usage limits for the help widget (worker/support.js).
+  "d1_databases": [
+    { "binding": "SUPPORT_DB", "database_name": "sylkit-support", "database_id": "63757c0b-3235-4203-a1b7-36b73dc6a5cd" }
+  ],
   "triggers": {
     "crons": ["17 9 * * *"]
   }
