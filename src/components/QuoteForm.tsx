@@ -51,7 +51,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
       }
     }
     setBusy(false);
-    router.push(`/track?t=${token}&new=1${config ? '&pay=1' : ''}`);
+    router.push(`/order?t=${token}&new=1`);
   };
 
   return (

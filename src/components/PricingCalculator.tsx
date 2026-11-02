@@ -165,7 +165,7 @@ export function PricingCalculator({ product, initial }: { product: Product; init
         style={[styles.cta, needsDomain && { opacity: 0.5 }]}
         accessibilityRole="link"
         disabled={needsDomain}
-        onPress={() => router.push(`/quote?product=${product.slug}&${configToQuery(cfg)}`)}
+        onPress={() => router.push(`/checkout?product=${product.slug}&${configToQuery(cfg)}`)}
       >
         <Ionicons name={needsDomain ? 'globe-outline' : 'document-text'} size={18} color="#fff" />
         <Text style={styles.ctaText}>{needsDomain ? t(L.pickDomain) : t(L.cta)}</Text>

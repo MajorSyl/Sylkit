@@ -94,13 +94,15 @@ supabase/           marketplace.sql (to apply)
 
 ## 3. How a client buys
 
-### Fixed-price plans (systems, domains, hosting)
-1. **Product page:** choose plan, billing, extras, web address. The total updates live. **Buy now.**
-2. **Checkout (step 1 of 2):** order summary + name, email, WhatsApp. **Continue to payment.**
-3. **Order page (step 2 of 2):** "Order SK-xxxx confirmed". Payment box on top:
-   - **Pay with crypto (USDT):** choose TRC20 or BEP20 → exact amount + deposit address (copy buttons) → status: waiting → confirming → **confirmed**. Order turns **Paid** automatically.
-   - **Or another way:** choose a manual method and report the reference; admin confirms.
-4. Client follows progress on the same page until delivery.
+### Fixed-price plans (systems, domains, hosting): Shopify-style, 4 steps
+A step bar (Plan › Details › Payment › Done) sits at the top of every buying page.
+1. **Plan** (product page): plan cards + yearly / monthly / buy-once switch → **Choose plan**.
+2. **Details** (`/checkout`): one page. Left: contact (email, name, WhatsApp, business, country), web address, extras (folded), payment method. Right: order summary with "Total today" and renewal date (folds into a bar on phones). One button: **Pay $X**.
+   - Payment methods come from `/api/order/methods` (card if `STRIPE_SECRET_KEY` is set, USDT if NOWPayments is set) plus the active rows in `payment_methods` (Pago Móvil, Zelle, Binance Pay…).
+3. **Payment**: card goes straight to Stripe's secure page; USDT and manual methods open the order page with only the chosen method (USDT address, or the method's details + a reference field). "Use a different payment method" switches.
+4. **Done** (`/order?t=…`): "Thank you, name! Your payment is confirmed", what happens next (payment → setup → ready), order summary, **View invoice**, card/subscription management, activity.
+- **Invoice** (`/invoice?t=…`): printable invoice (Print / Save as PDF), PAID or UNPAID stamp; card orders also link Stripe's official invoice PDF. Data from `GET /api/order/invoice?t=` (worker, service role, token holder only).
+- Old `/track?t=…` and `/quote?product=…&plan=…` links still work (they open the new pages).
 
 ### Custom projects
 Request a quote → admin sends price → client accepts → pays (same payment box) → delivery.

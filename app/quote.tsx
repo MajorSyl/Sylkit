@@ -1,9 +1,8 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Redirect, useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
-import { Checkout } from '../src/components/Checkout';
 import { QuoteForm } from '../src/components/QuoteForm';
 import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
@@ -19,6 +18,12 @@ export default function QuotePage() {
   const es = lang === 'es';
   const cfg = p?.pricing ? configFromQuery({ plan, billing, add, domain }) : null;
   const est = cfg && p?.pricing ? estimate(p.pricing, catalog, cfg) : null;
+
+  // Fixed-price plans are bought on the one-page checkout; this page is for custom requests.
+  if (p?.pricing) {
+    const qs = [`product=${encodeURIComponent(p.slug)}`, plan && `plan=${encodeURIComponent(plan)}`, billing && `billing=${encodeURIComponent(billing)}`, add && `add=${encodeURIComponent(add)}`, domain && `domain=${encodeURIComponent(domain)}`].filter(Boolean).join('&');
+    return <Redirect href={`/checkout?${qs}`} />;
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
@@ -39,11 +44,7 @@ export default function QuotePage() {
                 ? 'Cuéntanos qué necesitas. Te enviamos una cotización y un enlace para seguir tu pedido.'
                 : 'Tell us what you need. We send you a quote and a link to track your order.'}
           </Text>
-          {p?.pricing ? (
-            <Checkout product={p} initial={cfg} />
-          ) : (
-            <QuoteForm productSlug={p?.slug} productName={p ? t(p.name) : undefined} config={null} />
-          )}
+          <QuoteForm productSlug={p?.slug} productName={p ? t(p.name) : undefined} config={null} />
         </View>
         <Footer />
       </ScrollView>

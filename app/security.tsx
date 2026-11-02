@@ -235,7 +235,7 @@ export default function SecurityPage() {
     });
     setBusy(false);
     if (err || !res) return setError(friendlyError(err, lang));
-    router.push(`/track?t=${(res as any).token}&new=1`);
+    router.push(`/order?t=${(res as any).token}&new=1`);
   };
 
   const cols = width >= 1024 ? 3 : width >= 640 ? 2 : 1;

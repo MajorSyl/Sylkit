@@ -97,7 +97,7 @@ function OrderDetail() {
   if (!o) return <Text style={adminStyles.muted}>Order not found.</Text>;
 
   const sc = statusColor[o.status as OrderStatus];
-  const trackUrl = `https://sylkit.com/track?t=${o.token}`;
+  const trackUrl = `https://sylkit.com/order?t=${o.token}`;
   const wa = o.whatsapp ? o.whatsapp.replace(/[^\d]/g, '') : '';
 
   return (

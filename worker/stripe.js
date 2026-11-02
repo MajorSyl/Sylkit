@@ -172,17 +172,17 @@ async function createCheckout(request, env) {
   const plan = chargePlan(order);
   const product = await productFor(env, order, order.estimate);
   const meta = { sylkit_order: order.order_number, sylkit_token: token };
-  const track = `${SITE}/track?t=${token}`;
+  const track = `${SITE}/order?t=${token}`;
 
   const params = {
     mode: plan.mode,
     client_reference_id: order.order_number,
     success_url: `${track}&paid=card`,
-    cancel_url: track,
+    cancel_url: `${track}&pay=card`,
     locale: es ? 'es' : 'en',
     metadata: meta,
     billing_address_collection: 'auto',
-    ...(order.customer_email ? { customer_email: order.customer_email } : {}),
+    ...(order.email ? { customer_email: order.email } : {}),
   };
 
   if (plan.mode === 'subscription') {
@@ -339,7 +339,7 @@ async function portal(request, env) {
   if (ref.startsWith('sub_')) customer = (await stripe(env, 'GET', `/subscriptions/${encodeURIComponent(ref)}`)).customer;
   else if (ref.startsWith('pi_')) customer = (await stripe(env, 'GET', `/payment_intents/${encodeURIComponent(ref)}`)).customer;
   if (!customer) return json({ error: 'no_card_customer' }, 409);
-  const s = await stripe(env, 'POST', '/billing_portal/sessions', { customer, return_url: `${SITE}/track?t=${token}`, locale: order.lang === 'es' ? 'es' : 'en' });
+  const s = await stripe(env, 'POST', '/billing_portal/sessions', { customer, return_url: `${SITE}/order?t=${token}`, locale: order.lang === 'es' ? 'es' : 'en' });
   return json({ url: s.url });
 }
 

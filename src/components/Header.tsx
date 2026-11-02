@@ -84,7 +84,7 @@ export function Header() {
                 </Pressable>
               </Link>
             ))}
-            <Link href="/track" asChild>
+            <Link href="/order" asChild>
               <Pressable style={styles.navLink} accessibilityRole="link">
                 <Text style={styles.navText}>{es ? 'Mi pedido' : 'My order'}</Text>
               </Pressable>
@@ -131,7 +131,7 @@ export function Header() {
               </Pressable>
             ))}
             <View style={styles.divider} />
-            <Pressable style={styles.item} onPress={() => go('/track')} accessibilityRole="link">
+            <Pressable style={styles.item} onPress={() => go('/order')} accessibilityRole="link">
               <View style={styles.itemIcon}>
                 <Ionicons name="receipt-outline" size={22} color={colors.primary} />
               </View>

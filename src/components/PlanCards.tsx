@@ -37,7 +37,7 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
     return () => clearTimeout(id);
   }, [swipe, cardW, boxW, popularIdx]);
 
-  const choose = (planId: string) => router.push(`/quote?product=${product.slug}&plan=${encodeURIComponent(planId)}&billing=${billing}`);
+  const choose = (planId: string) => router.push(`/checkout?product=${product.slug}&plan=${encodeURIComponent(planId)}&billing=${billing}`);
 
   const cards = plans.map((p, i) => {
     const q = planQuote(p, billing, pricing, lang);
@@ -106,8 +106,8 @@ export function PlanCards({ product, initialBilling }: { product: Product; initi
       ) : null}
       <Text style={styles.fine}>
         {es
-          ? 'Las funciones extra y tu dirección web se eligen en el siguiente paso. Pagas con USDT, Pago Móvil u otro método.'
-          : 'Extras and your web address are chosen in the next step. Pay with USDT, Pago Móvil or another method.'}
+          ? 'Las funciones extra y tu dirección web se eligen en el siguiente paso. Paga con tarjeta, USDT, Pago Móvil u otro método.'
+          : 'Extras and your web address are chosen in the next step. Pay by card, USDT, Pago Móvil or another method.'}
       </Text>
     </View>
   );
