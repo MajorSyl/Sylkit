@@ -144,6 +144,7 @@ function OrderDetail() {
                   : null
               }
             />
+            <Info label="Store template" value={o.config?.template ? `${o.config.template} (sylkit.com/preview/${o.config.template}/)` : null} />
             <Info label="Source" value={o.source} />
             <View style={styles.actions}>
               {wa ? <Button label="WhatsApp" icon="logo-whatsapp" variant="whatsapp" onPress={() => Linking.openURL(`https://wa.me/${wa}`)} /> : null}

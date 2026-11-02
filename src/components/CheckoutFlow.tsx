@@ -1,13 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ANNUAL_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
+import { getTemplate, STORE_PRODUCT } from '../data/storeTemplates';
+import { templateShot } from '../lib/templateShot';
 import { useLang } from '../i18n';
 import { payIcon, PayOption, paySub, payTitle, usePayOptions } from '../lib/payOptions';
 import { allowedBilling, billingName, isYearlyOnly } from '../lib/planText';
-import { Billing, Config, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
+import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { friendlyError, supabase } from '../lib/supabase';
 import { useClientWidth } from '../lib/useClientWidth';
 import { colors } from '../theme';
@@ -43,7 +45,11 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     billing: initial?.billing && allowed.includes(initial.billing) ? initial.billing : allowed[0],
     addons: initial?.addons ?? {},
     domain: initial?.domain && (!isDomainProduct || initial.domain.mode !== 'sub') ? initial.domain : undefined,
+    // Online store only: the design picked on the product page or in the templates gallery.
+    template: product.slug === STORE_PRODUCT ? getTemplate(initial?.template)?.slug : undefined,
   }));
+  const isStore = product.slug === STORE_PRODUCT;
+  const tpl = getTemplate(cfg.template);
   const [contact, setContact] = useState<Contact>({ email: '', name: '', whatsapp: '', business: '', country: '' });
   const [pay, setPay] = useState('');
   const [showExtras, setShowExtras] = useState(Object.keys(initial?.addons ?? {}).length > 0);
@@ -197,6 +203,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
           <Line key={l.id} label={`${t(l.name)}${l.qty > 1 ? ` ×${l.qty}` : ''}`} muted />
         ))}
         {cfg.domain ? <Line label={`${es ? 'Dirección web' : 'Web address'}: ${domainLabel(cfg.domain)}`} muted /> : null}
+        {tpl ? <Line label={`${es ? 'Diseño' : 'Design'}: ${tpl.name}`} muted /> : null}
         {est.savings > 0 && !yearlyOnly ? <Text style={styles.save}>{es ? `Ahorras ${money(est.savings)} pagando anual` : `You save ${money(est.savings)} by paying yearly`}</Text> : null}
       </View>
 
@@ -242,6 +249,27 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
           </View>
         </View>
       </Section>
+
+      {isStore ? (
+        <Section title={es ? 'Diseño de tu tienda' : 'Store design'} note={es ? 'Incluido gratis. Lo adaptamos a tu marca.' : 'Included free. We adapt it to your brand.'}>
+          <View style={styles.tplBox}>
+            {tpl ? (
+              <Image source={{ uri: templateShot(tpl.slug, 'phone') }} style={styles.tplThumb} resizeMode="cover" accessibilityLabel={tpl.name} />
+            ) : (
+              <View style={[styles.tplThumb, { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.softBlue }]}>
+                <Ionicons name="color-palette-outline" size={24} color={colors.primary} />
+              </View>
+            )}
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={styles.tplName}>{tpl ? tpl.name : es ? 'Aún no elegido' : 'Not chosen yet'}</Text>
+              <Text style={styles.note}>{tpl ? t({ es: tpl.tagline[0], en: tpl.tagline[1] }) : es ? 'Opcional. Puedes elegirlo después.' : 'Optional. You can pick it later.'}</Text>
+            </View>
+            <Pressable onPress={() => router.push(`/templates?${configToQuery({ ...cfg, template: undefined })}` as any)} style={styles.tplBtn} accessibilityRole="link">
+              <Text style={styles.tplBtnText}>{tpl ? (es ? 'Cambiar' : 'Change') : es ? 'Elegir' : 'Choose'}</Text>
+            </Pressable>
+          </View>
+        </Section>
+      ) : null}
 
       {hasDomain || isDomainProduct ? (
         <Section title={es ? 'Dirección web' : 'Web address'}>
@@ -439,6 +467,11 @@ function Trust({ icon, text }: { icon: string; text: string }) {
 }
 
 const styles = StyleSheet.create({
+  tplBox: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 12 },
+  tplThumb: { width: 48, height: 86, borderRadius: 8, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
+  tplName: { fontSize: 16, fontWeight: '800', color: colors.text },
+  tplBtn: { borderWidth: 1.5, borderColor: colors.primary, borderRadius: 10, paddingHorizontal: 14, minHeight: 40, justifyContent: 'center' },
+  tplBtnText: { color: colors.primary, fontWeight: '800', fontSize: 14 },
   wideWrap: { flexDirection: 'row', alignItems: 'stretch', borderRadius: 20, overflow: 'hidden', borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
   leftCol: { flex: 1.3, padding: 32, paddingRight: 40 },
   rightCol: { flex: 1, padding: 32, backgroundColor: '#F4F6FA', borderLeftWidth: 1, borderLeftColor: colors.border },

@@ -33,6 +33,7 @@ Clients pay with **USDT (automatic, via NOWPayments)**, Pago Móvil or other man
 | Manual payments | ✅ Client chooses a method and reports the reference; admin confirms |
 | Domains & hosting (/domains) | ✅ Live availability check for .com/.net/.org |
 | Sylkit Shield (/security) | ✅ Security page, global price ladder, booking form → saved as a quote request (source `shield:<plan>`) |
+| **Store templates (/templates)** | ✅ 8 original designs for the online store product (fashion, beauty, electronics, bakery, grocery, jewelry, home, pets). Live previews at /preview/<slug>/, picked on the store product page or at checkout; the choice is saved on the order (`config.template`). Source: `scripts/build_store_templates.py` → `public/preview/`, `src/data/storeTemplates.ts`; engine in `public/_store/` |
 | Startups (/startups) | ⏸️ Paused 29 Oct 2026 to focus on selling. Code kept in `/paused`; /startups redirects home |
 | Admin (/admin) | ✅ Orders, quotes, statuses, prices, extras, payment methods, marketplace |
 | Business email | ✅ Zoho Mail on sylkit.com (MX, SPF, DKIM, DMARC set) |
