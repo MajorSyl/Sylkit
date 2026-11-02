@@ -12,7 +12,7 @@ import { categories, getProduct, products } from '../../src/data/products';
 import { useProducts } from '../../src/lib/catalog';
 import { ui, useLang } from '../../src/i18n';
 import { colors, shadow, waLink } from '../../src/theme';
-import { getTemplate, STORE_PRODUCT, storeTemplates } from '../../src/data/storeTemplates';
+import { getTemplate, templatesFor } from '../../src/data/storeTemplates';
 import { templatePreview, templateShot } from '../../src/lib/templateShot';
 
 // Pre-render one static HTML page per product (good for Google).
@@ -22,7 +22,8 @@ export async function generateStaticParams(): Promise<Record<string, string>[]> 
 
 export default function ProductPage() {
   const { slug, billing, template } = useLocalSearchParams<{ slug: string; billing?: string; template?: string }>();
-  const [design, setDesign] = useState<string | undefined>(getTemplate(template)?.slug);
+  const designs = templatesFor(String(slug));
+  const [design, setDesign] = useState<string | undefined>(designs.find((x) => x.slug === template)?.slug);
   const { t, lang } = useLang();
   const width = useClientWidth();
   const wide = width >= 860;
@@ -100,7 +101,7 @@ export default function ProductPage() {
           {/* Plans first: the decision people came to make */}
           {product.pricing ? (
             <>
-              {product.slug === STORE_PRODUCT ? (
+              {designs.length ? (
                 <View style={styles.designBox}>
                   <View style={styles.designHead}>
                     <View style={{ flex: 1 }}>
@@ -115,12 +116,12 @@ export default function ProductPage() {
                             : 'Free with any plan. You can change it later.'}
                       </Text>
                     </View>
-                    <Link href="/templates" style={styles.backLink}>
+                    <Link href={`/templates?kind=${designs[0].kind}` as any} style={styles.backLink}>
                       {lang === 'es' ? 'Ver todas →' : 'See all →'}
                     </Link>
                   </View>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
-                    {storeTemplates.map((x) => {
+                    {designs.map((x) => {
                       const on = design === x.slug;
                       return (
                         <View key={x.slug} style={[styles.designCard, on && styles.designOn]}>
@@ -141,7 +142,7 @@ export default function ProductPage() {
                   <Text style={[styles.h2, { marginTop: 18 }]}>{lang === 'es' ? '2. Elige tu plan' : '2. Choose your plan'}</Text>
                 </View>
               ) : null}
-              <PlanCards product={product} initialBilling={billing} template={product.slug === STORE_PRODUCT ? design : undefined} />
+              <PlanCards product={product} initialBilling={billing} template={designs.length ? design : undefined} />
             </>
           ) : (
             <View style={[styles.buyBox, shadow]}>

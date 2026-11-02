@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ANNUAL_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
-import { getTemplate, STORE_PRODUCT } from '../data/storeTemplates';
+import { getTemplate, templatesFor } from '../data/storeTemplates';
 import { templateShot } from '../lib/templateShot';
 import { useLang } from '../i18n';
 import { payIcon, PayOption, paySub, payTitle, usePayOptions } from '../lib/payOptions';
@@ -45,10 +45,10 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     billing: initial?.billing && allowed.includes(initial.billing) ? initial.billing : allowed[0],
     addons: initial?.addons ?? {},
     domain: initial?.domain && (!isDomainProduct || initial.domain.mode !== 'sub') ? initial.domain : undefined,
-    // Online store only: the design picked on the product page or in the templates gallery.
-    template: product.slug === STORE_PRODUCT ? getTemplate(initial?.template)?.slug : undefined,
+    // Products with design templates (store, website, app): the design picked on the product page or in the gallery.
+    template: getTemplate(initial?.template)?.product === product.slug ? initial?.template : undefined,
   }));
-  const isStore = product.slug === STORE_PRODUCT;
+  const designs = templatesFor(product.slug);
   const tpl = getTemplate(cfg.template);
   const [contact, setContact] = useState<Contact>({ email: '', name: '', whatsapp: '', business: '', country: '' });
   const [pay, setPay] = useState('');
@@ -250,8 +250,8 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         </View>
       </Section>
 
-      {isStore ? (
-        <Section title={es ? 'Diseño de tu tienda' : 'Store design'} note={es ? 'Incluido gratis. Lo adaptamos a tu marca.' : 'Included free. We adapt it to your brand.'}>
+      {designs.length ? (
+        <Section title={designs[0].kind === 'app' ? (es ? 'Diseño de tu app' : 'App design') : designs[0].kind === 'website' ? (es ? 'Diseño de tu sitio web' : 'Website design') : es ? 'Diseño de tu tienda' : 'Store design'} note={es ? 'Incluido gratis. Lo adaptamos a tu marca.' : 'Included free. We adapt it to your brand.'}>
           <View style={styles.tplBox}>
             {tpl ? (
               <Image source={{ uri: templateShot(tpl.slug, 'phone') }} style={styles.tplThumb} resizeMode="cover" accessibilityLabel={tpl.name} />
@@ -264,7 +264,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
               <Text style={styles.tplName}>{tpl ? tpl.name : es ? 'Aún no elegido' : 'Not chosen yet'}</Text>
               <Text style={styles.note}>{tpl ? t({ es: tpl.tagline[0], en: tpl.tagline[1] }) : es ? 'Opcional. Puedes elegirlo después.' : 'Optional. You can pick it later.'}</Text>
             </View>
-            <Pressable onPress={() => router.push(`/templates?${configToQuery({ ...cfg, template: undefined })}` as any)} style={styles.tplBtn} accessibilityRole="link">
+            <Pressable onPress={() => router.push(`/templates?product=${product.slug}&${configToQuery({ ...cfg, template: undefined })}` as any)} style={styles.tplBtn} accessibilityRole="link">
               <Text style={styles.tplBtnText}>{tpl ? (es ? 'Cambiar' : 'Change') : es ? 'Elegir' : 'Choose'}</Text>
             </Pressable>
           </View>

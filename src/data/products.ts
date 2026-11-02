@@ -128,6 +128,7 @@ export const products: Product[] = [
       en: 'Professional website on your own domain, mobile-friendly design and a WhatsApp button so customers reach you instantly.',
     },
     features: [
+      { es: 'Plantillas: arquitectura e inmobiliaria', en: 'Templates: architecture and real estate' },
       { es: 'Diseño adaptado a móviles', en: 'Mobile-friendly design' },
       { es: 'Tu propio dominio', en: 'Your own domain' },
       { es: 'Botón de WhatsApp', en: 'WhatsApp button' },
@@ -152,6 +153,7 @@ export const products: Product[] = [
     },
     features: [
       { es: 'iOS y Android', en: 'iOS and Android' },
+      { es: 'Plantillas: inmobiliaria y obra', en: 'Templates: real estate and construction' },
       { es: 'Diseño a tu marca', en: 'Designed to your brand' },
       { es: 'Publicación en tiendas', en: 'Store publishing' },
       { es: 'Panel de administración', en: 'Admin panel' },

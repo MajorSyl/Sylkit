@@ -148,17 +148,17 @@ export default function Home() {
 
           {/* Store templates */}
           <View style={[styles.sectionHead, { marginTop: 40 }]}>
-            <Text style={styles.h2}>{lang === 'es' ? 'Plantillas para tu tienda en línea' : 'Templates for your online store'}</Text>
+            <Text style={styles.h2}>{lang === 'es' ? 'Plantillas de diseño' : 'Design templates'}</Text>
             <Pressable onPress={() => router.push('/templates' as any)} accessibilityRole="link">
               <Text style={styles.tplAll}>{lang === 'es' ? 'Ver todas →' : 'See all →'}</Text>
             </Pressable>
           </View>
           <Text style={styles.sectionSub}>
-            {lang === 'es' ? 'Elige un diseño, nosotros la armamos con tus productos. Pedidos directo a tu WhatsApp.' : 'Pick a design and we set it up with your products. Orders go straight to your WhatsApp.'}
+            {lang === 'es' ? 'Tiendas en línea, sitios web y apps listas para tu negocio. Elige un diseño y lo adaptamos a tu marca.' : 'Online stores, websites and apps ready for your business. Pick a design and we adapt it to your brand.'}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 6 }}>
             {storeTemplates.map((x) => (
-              <Pressable key={x.slug} style={[styles.tplCard, shadow]} onPress={() => router.push(`/product/tienda-online-whatsapp?template=${x.slug}` as any)} accessibilityRole="link" accessibilityLabel={x.name}>
+              <Pressable key={x.slug} style={[styles.tplCard, shadow]} onPress={() => router.push(`/product/${x.product}?template=${x.slug}` as any)} accessibilityRole="link" accessibilityLabel={x.name}>
                 <Image source={{ uri: templateShot(x.slug, 'phone') }} style={styles.tplShot} resizeMode="cover" />
                 <Text style={styles.tplName}>{x.name}</Text>
                 <Text style={styles.tplTag} numberOfLines={1}>{lang === 'es' ? x.tagline[0] : x.tagline[1]}</Text>

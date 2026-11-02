@@ -23,8 +23,8 @@ const products: Item[] = [
   {
     href: '/templates',
     icon: 'color-palette-outline',
-    label: { en: 'Online store templates', es: 'Plantillas de tienda en línea' },
-    sub: { en: 'Fashion, beauty, tech, food and more', es: 'Moda, belleza, tecnología, comida y más' },
+    label: { en: 'Design templates', es: 'Plantillas de diseño' },
+    sub: { en: 'Online stores, websites and mobile apps', es: 'Tiendas en línea, sitios web y apps móviles' },
   },
   {
     href: '/domains',
@@ -54,7 +54,7 @@ const products: Item[] = [
 
 const top: { href: string; label: T }[] = [
   { href: '/', label: { en: 'Software', es: 'Software' } },
-  { href: '/templates', label: { en: 'Store templates', es: 'Plantillas' } },
+  { href: '/templates', label: { en: 'Templates', es: 'Plantillas' } },
   { href: '/domains', label: { en: 'Domains', es: 'Dominios' } },
   { href: '/product/hosting-web', label: { en: 'Hosting', es: 'Hosting' } },
   { href: '/security', label: { en: 'Security', es: 'Seguridad' } },
