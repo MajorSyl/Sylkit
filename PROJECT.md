@@ -1,6 +1,6 @@
 # Sylkit: Project Documentation
 
-**Owner:** Sylvanus Fannah · **Site:** https://sylkit.com · **Business email:** sylvanus@sylkit.com · **Last updated:** 25 October 2026
+**Owner:** Sylvanus Fannah · **Site:** https://sylkit.com · **Business email:** sylvanus@sylkit.com · **Last updated:** 1 November 2026
 
 Sylkit sells four things:
 1. **Software for your business:** ready-made systems (POS, pharmacy, clinic, inventory…) used by subscription or bought once. Sylkit keeps ownership and maintains them.
@@ -19,11 +19,18 @@ Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago M�
 - **Colors:** graphite #1D1D1F, silver #F5F5F7, white, and Sylkit Blue #2558E8 only on the lid and main actions.
 - Design canvas with all explored directions: Claude artifact "Sylkit Tech Logos".
 
+## Latest updates (1 November 2026)
+- **Catalog as a showroom:** the home page shows systems and design templates as big screenshot cards (name, category, price, "+" to buy), with a category dropdown with counts, sort, filters (live demo, Web, Android, iOS), one search bar and a large/grid view toggle. Domains and hosting stay out of the grid; they have their own entry and page.
+- **Design templates:** 12 original designs: 8 online stores, 2 websites (architecture, real estate) and 2 matching mobile apps, at /templates with live previews.
+- **Customer support:** help widget on every page (quick answers, AI assistant, talk to a person, track order, WhatsApp) and an inbox at Admin → Support. The header's WhatsApp button is now "Help".
+- **Checkout:** one-page Shopify-style checkout, order page and printable invoice; "I already have a domain" now checks the domain is valid.
+- **Portuguese:** the whole site follows the visitor's language (English, Spanish, Portuguese).
+
 ## 1. What is live
 
 | Area | Status |
 |---|---|
-| Site (sylkit.com) | ✅ Catalog, search, categories, product pages with real screenshots |
+| Site (sylkit.com) | ✅ Catalog shown as a showroom of screenshot cards (category dropdown, sort, filters, search, large/grid view), product pages with real screenshots. Domains and hosting are kept out of the card grid |
 | Catalog | ✅ 19 products in 10 categories |
 | Live demos | ✅ 15 demos on their own subdomains (pos.sylkit.com…), each with its own brand, reset daily |
 | Price calculator | ✅ Plans, extras and quantities; yearly / monthly / buy once; web address picker |
@@ -33,7 +40,7 @@ Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago M�
 | Manual payments | ✅ Client chooses a method and reports the reference; admin confirms |
 | Domains & hosting (/domains) | ✅ Live availability check for .com/.net/.org |
 | Sylkit Shield (/security) | ✅ Security page, global price ladder, booking form → saved as a quote request (source `shield:<plan>`) |
-| **Customer support (help widget + /admin/support)** | ✅ Chat bubble on every public page: quick answers, AI assistant (live catalog and prices, hands off to a person), "talk to a person" tickets, order tracking and WhatsApp. Tickets and replies live in Cloudflare D1 `sylkit-support` (worker `worker/support.js`); you reply from Admin → Support. Office hours Mon–Sat 9–18 Caracas. ⏳ Needs secrets in Cloudflare: `ANTHROPIC_API_KEY` (AI), `RESEND_API_KEY` (emails), `NTFY_TOPIC` (phone push). Test: `node --no-warnings worker/test/support.test.mjs` |
+| **Customer support (help widget + /admin/support)** | ✅ Chat bubble on every public page: quick answers, AI assistant (live catalog and prices, hands off to a person), "talk to a person" tickets, order tracking and WhatsApp. Tickets and replies live in Cloudflare D1 `sylkit-support` (worker `worker/support.js`); you reply from Admin → Support. Office hours Mon–Sat 9–18 Caracas. Phone push ✅ (`NTFY_TOPIC` set; subscribe to the topic in the ntfy app). ⏳ Still needs `ANTHROPIC_API_KEY` (AI assistant; until then the widget answers common questions itself) and `RESEND_API_KEY` (emails to you and to customers). Test: `node --no-warnings worker/test/support.test.mjs` |
 | **Design templates (/templates)** | ✅ 12 original designs in three kinds. **Online stores** (8, product `tienda-online-whatsapp`): Lumen, Rosé, Volt, Horno, Fresco, Aurum, Nido, Patitas. **Websites** (product `sitio-web-para-negocios`): Plano (architecture), Habitat (real estate). **Mobile apps** (product `app-movil-a-medida`): Habitat app (search, favorites, visit booking), Plano app (portfolio, quote wizard, build tracking). Each website has a matching app. Live previews at /preview/<slug>/; picked on the product page or at checkout and saved on the order (`config.template`). Source: `scripts/build_store_templates.py` + `scripts/template_data_web_app.py` → `public/preview/`, `src/data/storeTemplates.ts`; engines in `public/_store/`, `public/_site/` (with `art.js` building illustrations) and `public/_app/` |
 | Startups (/startups) | ⏸️ Paused 29 Oct 2026 to focus on selling. Code kept in `/paused`; /startups redirects home |
 | Admin (/admin) | ✅ Orders, quotes, statuses, prices, extras, payment methods, marketplace |
@@ -55,7 +62,7 @@ Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago M�
 | Email | Zoho Mail (people); Resend for automatic emails from `no-reply@sylkit.com` |
 | Node | 22 (required by the build) |
 
-### Worker (`worker/index.js` + `worker/payments.js`)
+### Worker (`worker/index.js` + `payments.js`, `stripe.js`, `orders.js`, `support.js`)
 | Route | What it does |
 |---|---|
 | `/` and pages | Serves the site |
@@ -66,6 +73,8 @@ Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago M�
 | `GET /api/pay/status?t=` | Current payment status; catches up if a webhook was missed |
 | `POST /api/pay/ipn` | NOWPayments webhook; HMAC-SHA512 signature verified before any update |
 | `GET /api/pay/health` | Shows whether keys are bound and accepted, coins enabled, minimums. Never shows key values |
+| `/api/support/status`, `/ai`, `/ticket`, `/thread`, `/message` | Help widget: office hours, AI assistant answers, customer messages (rate-limited per visitor) |
+| `/api/support/admin/*` | Support inbox for Admin → Support; checks the Supabase session is an admin |
 | Daily cron | Pings Supabase so the free database never pauses |
 
 ### Cloudflare secrets (Worker → Settings → Variables and Secrets, type **Secret**)
@@ -75,20 +84,28 @@ Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago M�
 | `NOWPAYMENTS_IPN_SECRET` | Verifies NOWPayments webhooks |
 | `SUPABASE_SERVICE_ROLE_KEY` | Lets the worker update orders after payment |
 | `NOWPAYMENTS_SANDBOX` (optional, plain) | `true` switches to the NOWPayments test server |
+| `NTFY_TOPIC` | ✅ Set. Phone push for new support messages (free ntfy app). Keep the topic name private |
+| `ANTHROPIC_API_KEY` | ⏳ Turns on the AI assistant in the help widget (Claude Haiku 5.5, prepaid credits) |
+| `RESEND_API_KEY` | ⏳ Emails: new-message alerts to you and your replies to customers |
+| `SUPPORT_EMAIL` (optional, plain) | Where support alerts go (default sylvanus@sylkit.com) |
+
+The support inbox is stored in the Cloudflare **D1** database `sylkit-support` (binding `SUPPORT_DB` in `wrangler.jsonc`).
 
 `wrangler.jsonc` has `keep_vars: true`, so deploys never erase dashboard variables. **Never put keys in Build variables** (they're not available at runtime).
 
 ### Folders
 ```
-app/                pages: index, product/[slug], quote (checkout), track, domains,
-                    startups, startup, admin/{index,order,products,listings}
-src/components/     Header, Footer, ProductCard, PricingCalculator, DomainPicker, CryptoPay,
-                    EstimateBreakdown, QuoteForm, ListingCard, AdminGate…
+app/                pages: index, product/[slug], checkout, order, invoice, quote, track, domains,
+                    templates, security, admin/{index,order,products,listings,support}
+src/components/     Header, Footer, Showroom (card catalog), HelpWidget (support), CheckoutFlow,
+                    PlanCards, DomainPicker, CryptoPay, QuoteForm, AdminGate…
 src/data/           products.ts, pricing.ts (fallback copies of catalog and prices)
 src/lib/            supabase, catalog, pricing, listings, status
 public/shots/       product screenshots and covers (webp)
 public/demos/       the 15 live demos;  public/_kit/ demo engine
-worker/             index.js, payments.js, test/payments.test.mjs (29 checks)
+public/preview/     the 12 design templates; engines in public/_store, public/_site, public/_app
+scripts/            build_store_templates.py (+ template_data_web_app.py) generates the templates
+worker/             index.js, payments.js, stripe.js, orders.js, support.js; tests in worker/test/
 supabase/           marketplace.sql (to apply)
 ```
 
@@ -229,11 +246,13 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 | **Reconnect Supabase connector** with fannah2026 (it's on the other account) | Sylvanus |
 | Then: apply `supabase/marketplace.sql`, send order alerts to sylvanus@sylkit.com, activate admin login | Claude |
 | Manual payment details (Pago Móvil, Binance Pay ID, Orange Money) in Admin → Products | Sylvanus |
-| Resend API key → automatic client emails | Sylvanus |
+| Resend API key → automatic client emails and support emails | Sylvanus |
+| `ANTHROPIC_API_KEY` in Cloudflare → AI assistant in the help widget (buy ~$5 of credits) | Sylvanus |
+| Install the ntfy app and subscribe to the support topic → phone alerts | Sylvanus |
+| Send a test message from the help bubble and reply from Admin → Support | Sylvanus |
 | Terms of Service page + client agreement | Claude (ready) |
 | Nightly backups of client data, before the first real client | Claude (ready) |
 | QR code for the crypto address | Claude (optional) |
-| Home page with three clear doors: Software · Domains & websites · Own a business | Claude (offered) |
 | Make the **total1** repo private; change exposed passwords | Sylvanus (security) |
 
 ---
