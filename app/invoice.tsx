@@ -6,6 +6,7 @@ import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, StyleSheet
 import type { ServerEstimate } from '../src/components/EstimateBreakdown';
 import { Logo } from '../src/components/Logo';
 import { useLang } from '../src/i18n';
+import { orderLines } from '../src/lib/orderLines';
 import { money } from '../src/lib/pricing';
 import { colors } from '../src/theme';
 
@@ -29,8 +30,6 @@ type Invoice = {
   stripe: { number: string | null; pdf: string | null; url: string | null } | null;
 };
 
-type Line = { label: string; sub?: string; amount: number };
-
 const PRINT_CSS = `
 @page { margin: 14mm; }
 @media print {
@@ -45,35 +44,6 @@ function methodName(m: string | null, es: boolean) {
   if (v.startsWith('card')) return es ? 'Tarjeta (Stripe)' : 'Card (Stripe)';
   if (v.startsWith('crypto:')) return `Crypto (${v.slice(7).toUpperCase()})`;
   return v || '—';
-}
-
-function buildLines(inv: Invoice, es: boolean): Line[] {
-  const product = inv.product ? (es ? inv.product.es : inv.product.en) : es ? 'Proyecto a medida' : 'Custom project';
-  const est = inv.estimate;
-  const total = Number(inv.amount ?? 0);
-  if (!est) return [{ label: product, sub: inv.notes ?? undefined, amount: total }];
-  const plan = est.plan_name?.[es ? 'es' : 'en'] ?? '';
-  const name = (l: ServerEstimate['lines'][number]) => `${es ? l.name_es : l.name_en}${l.qty > 1 ? ` ×${l.qty}` : ''}`;
-  const lines: Line[] = [];
-  if (est.billing === 'once') {
-    const monthlyExtras = est.lines.filter((l) => l.kind === 'monthly').map(name);
-    lines.push({
-      label: `${product} · ${es ? 'Plan' : 'Plan'} ${plan}`,
-      sub: `${es ? 'Licencia de pago único, incluye 12 meses de soporte' : 'One-time license, includes 12 months of support'}${monthlyExtras.length ? ` · ${es ? 'incluye' : 'includes'}: ${monthlyExtras.join(', ')}` : ''}`,
-      amount: Number(est.license ?? 0),
-    });
-  } else {
-    const months = est.billing === 'yearly' ? 10 : 1;
-    const period = est.billing === 'yearly' ? (es ? 'Suscripción anual (12 meses, 2 gratis)' : 'Yearly subscription (12 months, 2 free)') : es ? 'Suscripción mensual' : 'Monthly subscription';
-    lines.push({ label: `${product} · ${es ? 'Plan' : 'Plan'} ${plan}`, sub: period, amount: Number(est.plan_monthly) * months });
-    for (const l of est.lines.filter((x) => x.kind === 'monthly')) lines.push({ label: name(l), sub: period, amount: Number(l.total) * months });
-  }
-  if (Number(est.plan_setup) > 0) lines.push({ label: es ? 'Instalación y configuración' : 'Setup and configuration', sub: es ? 'Pago único' : 'One-time', amount: Number(est.plan_setup) });
-  for (const l of est.lines.filter((x) => x.kind === 'one_time')) lines.push({ label: name(l), sub: es ? 'Pago único' : 'One-time', amount: Number(l.total) });
-  const sum = lines.reduce((a, l) => a + l.amount, 0);
-  // If the final price was adjusted by hand, show one honest line with the real total.
-  if (Math.abs(sum - total) > 0.01) return [{ label: `${product} · ${es ? 'Plan' : 'Plan'} ${plan}`, sub: inv.notes ?? undefined, amount: total }];
-  return lines;
 }
 
 export default function InvoicePage() {
@@ -109,7 +79,7 @@ export default function InvoicePage() {
   const body = () => {
     if (error) return <Text style={styles.error}>{error}</Text>;
     if (!inv) return <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 60 }} />;
-    const lines = buildLines(inv, es);
+    const lines = orderLines(inv, es);
     const total = Number(inv.amount ?? lines.reduce((a, l) => a + l.amount, 0));
     const cur = inv.currency || 'USD';
     const c = inv.customer;

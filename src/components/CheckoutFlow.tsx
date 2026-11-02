@@ -244,9 +244,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       </Section>
 
       {hasDomain || isDomainProduct ? (
-        <Section title={es ? 'Dirección web' : 'Web address'}>
-          <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={hasDomain ? catalog.custom_domain.price : 0} modes={isDomainProduct ? ['new', 'own'] : undefined} />
-        </Section>
+        <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={hasDomain ? catalog.custom_domain.price : 0} modes={isDomainProduct ? ['new', 'own'] : undefined} />
       ) : null}
 
       {addons.length ? (

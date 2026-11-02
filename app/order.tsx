@@ -8,10 +8,12 @@ import { CardPay, ManageCard } from '../src/components/CardPay';
 import { CheckoutFooter, CheckoutHeader } from '../src/components/CheckoutHeader';
 import { PayRow } from '../src/components/CheckoutFlow';
 import { CryptoPay } from '../src/components/CryptoPay';
-import { EstimateBreakdown, ServerEstimate } from '../src/components/EstimateBreakdown';
+import type { ServerEstimate } from '../src/components/EstimateBreakdown';
 import { Field, formStyles } from '../src/components/Field';
 import { useLang } from '../src/i18n';
+import { orderLines } from '../src/lib/orderLines';
 import { PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
+import { money } from '../src/lib/pricing';
 import { formatDate, formatMoney, OrderStatus, statusLabel } from '../src/lib/status';
 import { friendlyError, supabase } from '../src/lib/supabase';
 import { colors, shadow, waLink } from '../src/theme';
@@ -305,11 +307,32 @@ export default function OrderPage() {
               </Text>
             </View>
             <View style={[styles.pill, paid ? styles.pillPaid : styles.pillOpen]}>
-              <Text style={[styles.pillText, { color: paid ? '#067647' : '#B54708' }]}>{paid ? (es ? 'Pagado' : 'Paid') : t(statusLabel[order.status])}</Text>
+              <Text style={[styles.pillText, { color: paid ? '#067647' : '#B54708' }]}>
+                {paid
+                  ? es
+                    ? 'Pagado'
+                    : 'Paid'
+                  : order.status === 'accepted'
+                    ? es
+                      ? 'Pendiente de pago'
+                      : 'Awaiting payment'
+                    : t(statusLabel[order.status])}
+              </Text>
             </View>
           </View>
-          {order.estimate ? <EstimateBreakdown est={order.estimate} lang={lang} /> : null}
-          {!order.estimate && order.quote_notes && order.status !== 'quoted' ? <Text style={styles.notes}>{order.quote_notes}</Text> : null}
+          {order.quote_amount != null && order.status !== 'quoted'
+            ? orderLines({ estimate: order.estimate, amount: order.quote_amount, notes: order.quote_notes, product: { en: order.product_name_en ?? 'Custom project', es: order.product_name_es ?? 'Proyecto a medida' } }, es).map((l, i) => (
+                <View key={i} style={styles.lineRow}>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={styles.lineLabel}>{l.label}</Text>
+                    {l.sub ? <Text style={styles.muted}>{l.sub}</Text> : null}
+                  </View>
+                  <Text style={styles.lineAmount}>{money(l.amount)}</Text>
+                </View>
+              ))
+            : order.estimate
+              ? <Text style={styles.muted}>{es ? 'Revisaremos tu solicitud y te enviaremos el precio final.' : "We'll review your request and send you the final price."}</Text>
+              : null}
           {order.quote_amount != null && order.status !== 'quoted' ? (
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>{paid ? (es ? 'Total pagado' : 'Total paid') : es ? 'Total a pagar' : 'Total to pay'}</Text>
@@ -425,6 +448,9 @@ const styles = StyleSheet.create({
   pillPaid: { backgroundColor: '#ECFDF3' },
   pillOpen: { backgroundColor: '#FFF4E5' },
   pillText: { fontSize: 13, fontWeight: '800' },
+  lineRow: { flexDirection: 'row', gap: 12, alignItems: 'flex-start' },
+  lineLabel: { fontSize: 15, fontWeight: '700', color: colors.text },
+  lineAmount: { fontSize: 15, fontWeight: '700', color: colors.text },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 12 },
   totalLabel: { fontSize: 16, fontWeight: '800', color: colors.text },
   total: { fontSize: 22, fontWeight: '800', color: colors.text },

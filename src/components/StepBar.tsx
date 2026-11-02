@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLang } from '../i18n';
+import { useClientWidth } from '../lib/useClientWidth';
 import { colors } from '../theme';
 
 // The four steps of buying, shown at the top of the checkout and the order page:
@@ -15,6 +16,8 @@ const STEPS = [
 
 export function StepBar({ current }: { current: 0 | 1 | 2 | 3 }) {
   const { t } = useLang();
+  const w = useClientWidth();
+  const compact = w > 0 && w < 480; // phones: only the current step keeps its label
   return (
     <View style={styles.row} accessibilityRole="progressbar" accessibilityValue={{ min: 1, max: 4, now: current + 1 }}>
       {STEPS.map((s, i) => {
@@ -26,9 +29,11 @@ export function StepBar({ current }: { current: 0 | 1 | 2 | 3 }) {
             <View style={[styles.dot, done && styles.dotDone, on && styles.dotOn]}>
               {done ? <Ionicons name="checkmark" size={13} color="#fff" /> : <Text style={[styles.num, on && { color: '#fff' }]}>{i + 1}</Text>}
             </View>
-            <Text style={[styles.label, (done || on) && styles.labelOn]} numberOfLines={1}>
-              {t(s)}
-            </Text>
+            {!compact || on || (current === 3 && i === 3) ? (
+              <Text style={[styles.label, (done || on) && styles.labelOn]} numberOfLines={1}>
+                {t(s)}
+              </Text>
+            ) : null}
           </View>
         );
       })}
