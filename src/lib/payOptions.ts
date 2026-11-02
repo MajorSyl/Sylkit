@@ -6,7 +6,10 @@ import { tx } from '../i18n';
 // Every way a client can pay, in one list used by both the checkout and the order page.
 //   card   -> Stripe Checkout (automatic, renews by itself)
 //   crypto -> NOWPayments USDT (automatic)
-//   manual -> methods from the payment_methods table (Pago Móvil, Zelle, Binance Pay…): client reports the reference
+//   manual -> methods from the payment_methods table (Pago Móvil, Binance Pay…): client reports the reference
+//
+// Pago Móvil only works with a Venezuelan bank account, so it is shown only to clients in Venezuela
+// (Cloudflare country cookie, Caracas time zone, or Venezuela typed as the order's country).
 
 export type PayOption = {
   id: string; // 'card' | 'crypto' | manual method id
@@ -19,7 +22,25 @@ type Manual = { id: string; name: string; kind: string; details_es: string; deta
 
 let cache: PayOption[] | null = null;
 
-export function usePayOptions() {
+const VENEZUELA_ONLY = /pago\s*m[oó]vil|mercantil/i;
+
+function inVenezuela(country?: string | null) {
+  if (country && /^(ve|ven|venezuela)$/i.test(country.trim())) return true;
+  if (typeof document !== 'undefined' && /(?:^|; )sk_cc=VE(?:;|$)/.test(document.cookie)) return true;
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone === 'America/Caracas';
+  } catch {
+    return false;
+  }
+}
+
+/** Hide Venezuela-only methods for clients elsewhere. `keep` is a method the order already uses. */
+function forClient(list: PayOption[], country?: string | null, keep?: string) {
+  if (inVenezuela(country)) return list;
+  return list.filter((o) => o.kind !== 'manual' || o.id === keep || !VENEZUELA_ONLY.test(o.name));
+}
+
+export function usePayOptions(client?: { country?: string | null; keep?: string }) {
   const [options, setOptions] = useState<PayOption[] | null>(cache);
   useEffect(() => {
     let alive = true;
@@ -50,7 +71,7 @@ export function usePayOptions() {
       alive = false;
     };
   }, []);
-  return options;
+  return options && forClient(options, client?.country, client?.keep);
 }
 
 export function payTitle(o: PayOption, lang: Lang) {

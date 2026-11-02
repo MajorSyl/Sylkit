@@ -35,7 +35,6 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const width = useClientWidth();
   const wide = width >= 960;
   const catalog = useAddons();
-  const payOptions = usePayOptions();
   const pricing = product.pricing!;
   const allowed = allowedBilling(pricing);
   const yearlyOnly = isYearlyOnly(pricing);
@@ -53,6 +52,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const designs = templatesFor(product.slug);
   const tpl = getTemplate(cfg.template);
   const [contact, setContact] = useState<Contact>({ email: '', name: '', whatsapp: '', business: '', country: '' });
+  const payOptions = usePayOptions({ country: contact.country });
   const [pay, setPay] = useState('');
   const [showExtras, setShowExtras] = useState(Object.keys(initial?.addons ?? {}).length > 0);
   const [showSummary, setShowSummary] = useState(false);

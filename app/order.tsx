@@ -37,6 +37,7 @@ type Order = {
   quote_notes: string | null;
   quote_valid_until: string | null;
   payment_method: string | null;
+  country?: string | null;
   created_at: string;
   estimate: ServerEstimate | null;
   events: { kind: string; message: string | null; at: string }[];
@@ -52,8 +53,8 @@ export default function OrderPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const options = usePayOptions();
   const [payId, setPayId] = useState(params.pay ? String(params.pay) : '');
+  const options = usePayOptions({ country: order?.country, keep: payId });
   const [choosing, setChoosing] = useState(false);
   const [reference, setReference] = useState('');
   const [busy, setBusy] = useState(false);

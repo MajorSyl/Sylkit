@@ -8,7 +8,7 @@ Sylkit sells four things:
 3. **Own a business (startups):** whole online businesses built by Sylkit and sold outright. Only Sylkit sells there.
 4. **Sylkit Shield (security):** security checks, fixes and monitoring for websites, apps and business systems (/security).
 
-Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)**, Pago Móvil or other manual methods.
+Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)** or manual methods. **Pago Móvil (Banco Mercantil)** is shown only to clients in Venezuela. **Zelle is not accepted** (switched off 2 Nov 2026).
 
 ---
 
@@ -117,7 +117,7 @@ supabase/           marketplace.sql (to apply)
 A step bar (Plan › Details › Payment › Done) sits at the top of every buying page.
 1. **Plan** (product page): plan cards + yearly / monthly / buy-once switch → **Choose plan**.
 2. **Details** (`/checkout`): one page. Left: contact (email, name, WhatsApp, business, country), web address, extras (folded), payment method. Right: order summary with "Total today" and renewal date (folds into a bar on phones). One button: **Pay $X**.
-   - Payment methods come from `/api/order/methods` (card if `STRIPE_SECRET_KEY` is set, USDT if NOWPayments is set) plus the active rows in `payment_methods` (Pago Móvil, Zelle, Binance Pay…).
+   - Payment methods come from `/api/order/methods` (card if `STRIPE_SECRET_KEY` is set, USDT if NOWPayments is set) plus the active rows in `payment_methods` (Pago Móvil, Binance Pay…). `src/lib/payOptions.ts` hides Pago Móvil unless the client is in Venezuela (Cloudflare `sk_cc=VE` cookie, Caracas time zone, or "Venezuela" typed as the country). Pago Móvil details are edited in Admin → Products and are not kept in this public repo.
 3. **Payment**: card goes straight to Stripe's secure page; USDT and manual methods open the order page with only the chosen method (USDT address, or the method's details + a reference field). "Use a different payment method" switches.
 4. **Done** (`/order?t=…`): "Thank you, name! Your payment is confirmed", what happens next (payment → setup → ready), order summary, **View invoice**, card/subscription management, activity.
 - **Invoice** (`/invoice?t=…`): printable invoice (Print / Save as PDF), PAID or UNPAID stamp; card orders also link Stripe's official invoice PDF. Data from `GET /api/order/invoice?t=` (worker, service role, token holder only).

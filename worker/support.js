@@ -117,7 +117,7 @@ Reply in ${language} unless the customer clearly writes in another language; the
 
 Facts you can rely on:
 - Prices: each system has plans with a monthly price and a one-time setup fee. Paying yearly costs 10 months (2 months free). "Buy once" is a lifetime license equal to 30 months, with the first 12 months of hosting, support and updates included and an optional care plan from year 2 (3 months' price per year). Domains are billed yearly.
-- How to buy: choose a plan on the product page, then pay at checkout. Payment methods: card (Stripe), USDT crypto, and manual methods such as Pago Móvil; the customer picks one at checkout.
+- How to buy: choose a plan on the product page, then pay at checkout. Payment methods: card (Stripe) and USDT crypto; customers in Venezuela can also use Pago Móvil (Banco Mercantil), paid in bolívares at the BCV rate of the day. Zelle is not accepted. The customer picks one at checkout.
 - After paying, the customer gets an order page to track progress. Order status can be checked at ${SITE}/track.
 - Design templates (online stores, websites, apps) are at ${SITE}/templates and are included free with the matching plan.
 - Custom projects: ${SITE}/quote (Sylkit sends a quote).

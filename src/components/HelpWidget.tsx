@@ -49,11 +49,11 @@ const FAQ: { q: [string, string, string]; a: [string, string, string]; keys: Reg
   },
   {
     q: ['How can I pay?', '¿Cómo puedo pagar?', 'Como posso pagar?'],
-    keys: /pay|pago|pagar|card|tarjeta|usdt|zelle|pago móvil|cartão/i,
+    keys: /pay|pago|pagar|card|tarjeta|usdt|pago móvil|cartão/i,
     a: [
-      'You choose at checkout: card, USDT (crypto) or a manual method such as Pago Móvil. After paying you get an order page to follow your setup.',
-      'Eliges al pagar: tarjeta, USDT (cripto) o un método manual como Pago Móvil. Después del pago recibes una página para seguir tu pedido.',
-      'Você escolhe no pagamento: cartão, USDT (cripto) ou um método manual como Pago Móvil. Depois do pagamento você recebe uma página para acompanhar o pedido.',
+      'You choose at checkout: card or USDT (crypto). Clients in Venezuela can also pay by Pago Móvil (Banco Mercantil). After paying you get an order page to follow your setup.',
+      'Eliges al pagar: tarjeta o USDT (cripto). En Venezuela también puedes pagar por Pago Móvil (Banco Mercantil). Después del pago recibes una página para seguir tu pedido.',
+      'Você escolhe no pagamento: cartão ou USDT (cripto). Na Venezuela também é possível pagar por Pago Móvil (Banco Mercantil). Depois do pagamento você recebe uma página para acompanhar o pedido.',
     ],
   },
   {
