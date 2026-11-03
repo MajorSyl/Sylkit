@@ -82,10 +82,29 @@ async function invoice(url, env) {
   });
 }
 
+// Card is only offered while the Stripe account can actually take charges. If Stripe has paused
+// payments (e.g. overdue verification tasks), customers see the other methods instead of an error.
+// Cached per Worker instance for 5 minutes so the order page stays fast.
+let cardCache = { at: 0, ok: false };
+async function cardAvailable(env) {
+  if (!env.STRIPE_SECRET_KEY) return false;
+  if (Date.now() - cardCache.at < 5 * 60 * 1000) return cardCache.ok;
+  let ok = false;
+  try {
+    const r = await fetch(`${STRIPE}/account`, { headers: { authorization: `Bearer ${env.STRIPE_SECRET_KEY}` } });
+    const a = await r.json();
+    ok = r.ok && a.charges_enabled === true && (a.capabilities?.card_payments ?? 'active') === 'active';
+  } catch {
+    ok = false;
+  }
+  cardCache = { at: Date.now(), ok };
+  return ok;
+}
+
 export async function handleOrders(request, env, url) {
   try {
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
-    if (url.pathname === '/api/order/methods') return json({ card: !!env.STRIPE_SECRET_KEY, crypto: !!env.NOWPAYMENTS_API_KEY });
+    if (url.pathname === '/api/order/methods') return json({ card: await cardAvailable(env), crypto: !!env.NOWPAYMENTS_API_KEY });
     if (url.pathname === '/api/order/invoice') return await invoice(url, env);
     return json({ error: 'not_found' }, 404);
   } catch (e) {

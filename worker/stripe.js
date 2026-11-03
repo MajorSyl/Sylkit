@@ -381,8 +381,27 @@ async function health(env) {
     } catch (e) {
       out.api_key_check = { ok: false, message: String(e.message || e) };
     }
+    try {
+      const a = await stripe(env, 'GET', '/account');
+      out.account = {
+        country: a.country,
+        default_currency: a.default_currency,
+        charges_enabled: a.charges_enabled,
+        payouts_enabled: a.payouts_enabled,
+        card_payments: a.capabilities?.card_payments ?? null,
+        disabled_reason: a.requirements?.disabled_reason ?? null,
+        tasks_past_due: (a.requirements?.past_due || []).length,
+      };
+    } catch (e) {
+      out.account = { error: String(e.message || e) };
+    }
   }
-  out.ready = out.configured.STRIPE_SECRET_KEY && out.configured.STRIPE_WEBHOOK_SECRET && out.configured.SUPABASE_SERVICE_ROLE_KEY && !!out.api_key_check?.ok;
+  out.ready =
+    out.configured.STRIPE_SECRET_KEY &&
+    out.configured.STRIPE_WEBHOOK_SECRET &&
+    out.configured.SUPABASE_SERVICE_ROLE_KEY &&
+    !!out.api_key_check?.ok &&
+    out.account?.charges_enabled === true;
   return json(out);
 }
 
