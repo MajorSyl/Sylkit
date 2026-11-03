@@ -96,7 +96,7 @@ export default function TemplatesPage() {
         <meta
           name="description"
           content={
-            tx('Original designs ready for your business: online stores with WhatsApp, architecture and real estate websites, and mobile apps.', 'Diseños originales listos para tu negocio: tiendas en línea con WhatsApp, sitios web de arquitectura e inmobiliaria, y apps móviles.', "Designs originais prontos para o seu negócio: lojas online com WhatsApp, sites de arquitetura e imobiliárias, e apps para celular.")
+            tx('Designs ready for your business: online stores with WhatsApp, architecture and real estate websites, and mobile apps.', 'Diseños listos para tu negocio: tiendas en línea con WhatsApp, sitios web de arquitectura e inmobiliaria, y apps móviles.', "Designs prontos para o seu negócio: lojas online com WhatsApp, sites de arquitetura e imobiliárias, e apps para celular.")
           }
         />
       </Head>
@@ -167,6 +167,15 @@ export default function TemplatesPage() {
                   </View>
                   <Text style={styles.sub}>{L(x.tagline)}</Text>
                   <Text style={styles.blurb}>{L(x.blurb)}</Text>
+                  {x.credit ? (
+                    <Text style={styles.credit}>
+                      {tx('Design based on work by', 'Diseño basado en el trabajo de', 'Design baseado no trabalho de')}{' '}
+                      <Text style={styles.creditLink} onPress={() => Linking.openURL(x.credit!.url)} accessibilityRole="link">
+                        {x.credit.author}
+                      </Text>{' '}
+                      ({x.credit.source}, {x.credit.license})
+                    </Text>
+                  ) : null}
                   {x.pair ? (
                     <Pressable onPress={() => switchKind(getTemplate(x.pair)!.kind)} accessibilityRole="button">
                       <Text style={styles.pair}>↔ {pairLabel(x.kind)}</Text>
@@ -246,6 +255,8 @@ const styles = StyleSheet.create({
   tag: { fontSize: 12, fontWeight: '800', color: colors.primary, backgroundColor: colors.softBlue, paddingHorizontal: 9, paddingVertical: 3, borderRadius: 999, overflow: 'hidden' },
   sub: { fontSize: 13, fontWeight: '700', color: colors.text },
   blurb: { fontSize: 14, lineHeight: 20, color: colors.muted },
+  credit: { fontSize: 12, lineHeight: 17, color: colors.muted },
+  creditLink: { textDecorationLine: 'underline' },
   pair: { fontSize: 13, fontWeight: '800', color: '#0E7F98', paddingVertical: 4 },
   actions: { flexDirection: 'row', gap: 8, marginTop: 6 },
   btn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44, borderRadius: 12, paddingHorizontal: 10 },
