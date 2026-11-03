@@ -182,6 +182,7 @@ async function createCheckout(request, env) {
     locale: 'auto', // Stripe shows its page in the visitor's browser language (Portuguese, Spanish, English…)
     metadata: meta,
     billing_address_collection: 'auto',
+    allow_promotion_codes: true,
     ...(order.email ? { customer_email: order.email } : {}),
   };
 
@@ -219,7 +220,10 @@ async function markPaid(env, order, session) {
   const quote = Number(order.quote_amount);
   const es = order.lang === 'es';
   const ref = session.subscription || session.payment_intent || session.id;
-  if (quote && Math.abs(paidTotal - quote) > 0.01) {
+  // For subscription sessions Stripe's amount_total reflects only the recurring portion on the
+  // first invoice (it does NOT sum the setup/one-time line item into the session total the same
+  // way a payment session does), so skip the mismatch guard for subscriptions.
+  if (quote && session.mode !== 'subscription' && Math.abs(paidTotal - quote) > 0.01) {
     await addEvent(env, order.id, 'update', `Card payment ${session.id} total (${paidTotal}) does not match the quote (${quote}). Check manually.`, false);
     return { status: order.status };
   }
@@ -301,6 +305,20 @@ async function webhook(request, env) {
       return json(await onInvoice(env, obj, 'failed'));
     case 'customer.subscription.deleted':
       return json(await onSubscriptionEnded(env, obj));
+    case 'customer.subscription.updated': {
+      // Plan upgrades / downgrades arrive here; log them so the team can review if needed.
+      const n = obj?.metadata?.sylkit_order;
+      if (!n) return json({ ok: true, ignored: 'no_order' });
+      const order = await getOrder(env, 'order_number', String(n));
+      if (!order) return json({ ok: true, ignored: 'unknown_order' });
+      // Only log cancellation-scheduled changes visibly; other updates are silent internal notes.
+      if (obj.cancel_at_period_end) {
+        const es = order.lang === 'es';
+        await addEvent(env, order.id, 'update', es ? 'Tu suscripción está programada para cancelarse al final del período.' : 'Your subscription is scheduled to cancel at the end of the billing period.');
+      }
+      await addEvent(env, order.id, 'update', `Stripe subscription ${obj.id} updated (status ${obj.status}).`, false);
+      return json({ ok: true });
+    }
     default:
       return json({ ok: true, ignored: event.type });
   }
