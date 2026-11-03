@@ -204,7 +204,14 @@ async function createCheckout(request, env) {
 
   // Same order + same amount within a short window reuses the same session instead of making duplicates.
   const window = Math.floor(Date.now() / (20 * 60 * 1000));
-  const session = await stripe(env, 'POST', '/checkout/sessions', params, `sylkit-${order.order_number}-${cents(total)}-${plan.mode}-${window}`);
+  let session;
+  try {
+    session = await stripe(env, 'POST', '/checkout/sessions', params, `sylkit-${order.order_number}-${cents(total)}-${plan.mode}-v2-${window}`);
+  } catch (e) {
+    // Keep Stripe's own reason on the order (internal note) so a failed checkout can be diagnosed.
+    await addEvent(env, order.id, 'update', `Stripe checkout failed (${e.status || '?'} ${e.code || ''}): ${e.message}`, false).catch(() => {});
+    throw e;
+  }
 
   await patchOrder(env, order.id, { payment_method: 'card', payment_reference: session.id });
   await addEvent(env, order.id, 'update', es ? 'Pago con tarjeta iniciado.' : 'Card payment started.', false);
@@ -389,6 +396,6 @@ export async function handleStripe(request, env, url) {
     return json({ error: 'not_found' }, 404);
   } catch (e) {
     console.error('stripe error', e);
-    return json({ error: e.status && e.status < 500 ? 'stripe_error' : 'server_error', message: e.code || undefined }, e.status && e.status < 500 ? 502 : 500);
+    return json({ error: e.status && e.status < 500 ? 'stripe_error' : 'server_error', code: e.code || undefined, message: String(e.message || '').slice(0, 300) || undefined }, e.status && e.status < 500 ? 502 : 500);
   }
 }
