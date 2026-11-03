@@ -7,7 +7,7 @@ and inside the preview.
 These previews are hand-built (public/preview/<slug>/index.html), so `custom: True` tells
 build_store_templates.py to list them without overwriting the page.
 Before adding one: check the Community page for extra license terms, use only free files,
-and replace the design's stock photos and paid fonts with our own.
+and keep the original photos from the design (no emoji or cartoon placeholders).
 """
 
 APP_PRODUCT = "app-movil-a-medida"
