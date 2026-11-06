@@ -6,11 +6,13 @@
 // - /api/pay/* NOWPayments crypto checkout, webhook and health check (see payments.js)
 // - /api/order/* payment methods on/off and invoice data for the order's token holder (see orders.js)
 // - /api/stripe/* card payments: Stripe Checkout, subscriptions, customer portal and webhook (see stripe.js)
+// - /api/paypal/* PayPal Checkout (PayPal balance or card on PayPal's page) and capture (see paypal.js)
 // - /api/support/* help widget, AI assistant and the admin support inbox (see support.js, D1 database sylkit-support)
 // - daily cron keeps the free Supabase database from pausing
 import { handlePayments } from './payments.js';
 import { handleStripe } from './stripe.js';
 import { handleOrders } from './orders.js';
+import { handlePaypal } from './paypal.js';
 import { handleSupport } from './support.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
@@ -62,6 +64,7 @@ async function route(request, env, ctx) {
   if (url.pathname.startsWith('/api/pay/')) return handlePayments(request, env, url);
   if (url.pathname.startsWith('/api/stripe/')) return handleStripe(request, env, url);
   if (url.pathname.startsWith('/api/order/')) return handleOrders(request, env, url);
+  if (url.pathname.startsWith('/api/paypal/')) return handlePaypal(request, env, url);
   if (url.pathname.startsWith('/api/support/')) return handleSupport(request, env, url, ctx);
   const sub = url.hostname.split('.')[0];
   const demo = url.hostname.endsWith('sylkit.com') ? DEMOS[sub] : undefined;

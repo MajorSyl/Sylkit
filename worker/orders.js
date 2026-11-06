@@ -1,3 +1,4 @@
+import { hasLive, hasSandbox } from './paypal.js';
 // Customer-facing order helpers (read only, keyed by the secret order token).
 //
 //   GET /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
@@ -104,7 +105,11 @@ async function cardAvailable(env) {
 export async function handleOrders(request, env, url) {
   try {
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
-    if (url.pathname === '/api/order/methods') return json({ card: await cardAvailable(env), crypto: !!env.NOWPAYMENTS_API_KEY });
+    if (url.pathname === '/api/order/methods') {
+      // PayPal: live keys show it to everyone; sandbox keys only for a test page (?paypaltest=1).
+      const paypal = hasLive(env) || (url.searchParams.get('paypaltest') === '1' && hasSandbox(env));
+      return json({ card: await cardAvailable(env), paypal, paypal_test: !hasLive(env) && paypal, crypto: !!env.NOWPAYMENTS_API_KEY });
+    }
     if (url.pathname === '/api/order/invoice') return await invoice(url, env);
     return json({ error: 'not_found' }, 404);
   } catch (e) {

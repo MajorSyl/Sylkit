@@ -7,7 +7,7 @@ import type { Product } from '../data/products';
 import { getTemplate, templatesFor } from '../data/storeTemplates';
 import { templateShot } from '../lib/templateShot';
 import { useLang } from '../i18n';
-import { payIcon, PayOption, paySub, payTitle, usePayOptions } from '../lib/payOptions';
+import { payIcon, PayOption, paySub, payTitle, paypalTest, usePayOptions } from '../lib/payOptions';
 import { allowedBilling, billingName, isYearlyOnly } from '../lib/planText';
 import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { friendlyError, supabase, createOrder } from '../lib/supabase';
@@ -104,7 +104,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const total = money(est.dueToday);
   const payLabel = !chosen
     ? tx('Continue', 'Continuar', "Continuar")
-    : chosen.kind === 'card'
+    : chosen.kind === 'card' || chosen.kind === 'paypal'
       ? tx(`Pay ${total}`, `Pagar ${total}`, `Pagar ${total}`)
       : chosen.kind === 'crypto'
         ? tx(`Continue to payment · ${total}`, `Continuar al pago · ${total}`, `Continuar para o pagamento · ${total}`)
@@ -143,6 +143,13 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       }
       // Confirm the order at the server-calculated total so it can be paid right away.
       await fetch('/api/pay/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => null);
+      if (chosen.kind === 'paypal') {
+        const r = await fetch('/api/paypal/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, test: paypalTest() }) }).catch(() => null);
+        const j = r ? await r.json().catch(() => ({})) : {};
+        if (r?.ok && j.url) {
+          if (Platform.OS === 'web' && typeof window !== 'undefined') return window.location.assign(j.url);
+        }
+      }
       if (chosen.kind === 'card') {
         const r = await fetch('/api/stripe/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => null);
         const j = r ? await r.json().catch(() => ({})) : {};
@@ -412,6 +419,13 @@ export function PayRow({ option, on, first, last, onPress }: { option: PayOption
       {on && option.kind === 'manual' && option.details ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>{t(option.details)}</Text>
+        </View>
+      ) : null}
+      {on && option.kind === 'paypal' ? (
+        <View style={styles.payDetail}>
+          <Text style={styles.payDetailText}>
+            {tx("We take you to PayPal's secure page: pay with your PayPal account or a debit/credit card, then you come back here.", 'Te llevamos a la página segura de PayPal: paga con tu cuenta PayPal o con tarjeta de débito o crédito, y luego vuelves aquí.', 'Levamos você à página segura do PayPal: pague com sua conta PayPal ou cartão de débito/crédito e depois volte aqui.')}
+          </Text>
         </View>
       ) : null}
       {on && option.kind === 'card' ? (
