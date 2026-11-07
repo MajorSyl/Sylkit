@@ -36,6 +36,7 @@ export type Product = {
   demoUrl?: string;
   pricing?: Pricing;
   image?: string; // screenshot or cover in /public/shots
+  cover?: string; // gallery cover: the real screenshot in laptop + phone mockups (/public/shots/covers)
 };
 
 export const products: Product[] = [
@@ -497,6 +498,7 @@ export const productImages: Record<string, string> = {
 // Attach plans to every product and derive the "From" price from the cheapest plan.
 for (const p of products) {
   p.image = productImages[p.slug];
+  p.cover = p.image ? p.image.replace('/shots/', '/shots/covers/') : undefined;
   const pr = pricingBySlug[p.slug];
   if (pr) {
     p.pricing = pr;

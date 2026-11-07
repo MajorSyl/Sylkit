@@ -6,3 +6,4 @@ const ORIGIN = Platform.OS === 'web' ? '' : 'https://sylkit.com';
 
 export const templateShot = (slug: string, kind: 'desktop' | 'phone') => `${ORIGIN}/shots/templates/${slug}-${kind}.webp`;
 export const templatePreview = (slug: string) => `${ORIGIN}/preview/${slug}/`;
+export const templateCover = (slug: string) => `${ORIGIN}/shots/covers/tpl-${slug}.webp`;
