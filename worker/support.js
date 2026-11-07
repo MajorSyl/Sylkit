@@ -29,7 +29,7 @@ const HOURS_TEXT = {
   es: 'Lun a sáb, 9 am a 6 pm (hora de Caracas)',
   pt: 'Seg a sáb, 9h às 18h (horário de Caracas)',
 };
-const LIMITS = { ticket: 6, message: 80, ai: 40 }; // per visitor per day
+const LIMITS = { ticket: 6, message: 80, ai: 40, ping: 40, hook: 600 }; // per visitor (IP) per day
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 const bad = (error, status = 400) => json({ error }, status);
@@ -48,7 +48,8 @@ function token() {
   return [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
 }
 
-async function overLimit(env, request, kind) {
+export async function overLimit(env, request, kind) {
+  if (!env.SUPPORT_DB) return false;
   const ip = request.headers.get('cf-connecting-ip') || 'unknown';
   const day = new Date().toISOString().slice(0, 10);
   const row = await env.SUPPORT_DB.prepare(

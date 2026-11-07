@@ -58,7 +58,6 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
               <Link href="/admin" style={styles.navLink}>Orders</Link>
               <Link href="/admin/support" style={styles.navLink}>Support</Link>
               <Link href="/admin/products" style={styles.navLink}>Products</Link>
-              <Link href="/admin/listings" style={styles.navLink}>Marketplace</Link>
               <Link href="/" style={styles.navLink}>View site</Link>
               <Pressable onPress={() => supabase.auth.signOut()}>
                 <Text style={styles.navLink}>Sign out</Text>

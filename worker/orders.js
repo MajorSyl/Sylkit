@@ -1,6 +1,7 @@
 import { hasLive, hasSandbox } from './paypal.js';
 import { alertOwner, orderLine } from './notify.js';
 import { hasMonime } from './monime.js';
+import { overLimit } from './support.js';
 // Customer-facing order helpers (read only, keyed by the secret order token).
 //
 //   GET /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
@@ -140,6 +141,7 @@ async function bcvRate() {
 // so the owner gets a phone alert. Only real, recent state changes trigger an alert.
 const pinged = new Set();
 async function ping(request, env) {
+  if (await overLimit(env, request, 'ping').catch(() => false)) return json({ ok: false, error: 'rate_limited' }, 429);
   const body = await request.json().catch(() => ({}));
   const token = String(body.token || '');
   const event = body.event === 'reported' ? 'reported' : 'new';

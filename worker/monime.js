@@ -16,6 +16,7 @@
 // the order paid. Test-mode payments never mark an order paid.
 
 import { alertOwner, orderLine } from './notify.js';
+import { overLimit } from './support.js';
 
 const API = 'https://api.monime.io';
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
@@ -201,6 +202,7 @@ async function confirm(request, env) {
 
 // Monime -> us. The body only tells us which order to re-check; the decision comes from Monime's API.
 async function webhook(request, env) {
+  if (await overLimit(env, request, 'hook').catch(() => false)) return json({ ok: false }, 429);
   const raw = await request.text();
   let body = null;
   try {

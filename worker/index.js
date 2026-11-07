@@ -95,9 +95,27 @@ function withCountry(res, request) {
   return out;
 }
 
+// Browser security headers on every response:
+//  - HTTPS only (HSTS), no MIME sniffing, no full URLs leaked to other sites (order links carry tokens),
+//  - pages can only be framed by Sylkit itself (blocks clickjacking of checkout/admin),
+//  - no camera/mic/location access.
+const SECURITY_HEADERS = {
+  'strict-transport-security': 'max-age=31536000; includeSubDomains',
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+  'content-security-policy': "frame-ancestors 'self' https://sylkit.com https://*.sylkit.com; base-uri 'self'; object-src 'none'",
+  'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=(self)',
+  'cross-origin-opener-policy': 'same-origin-allow-popups',
+};
+function secure(res) {
+  const out = new Response(res.body, res);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!out.headers.has(k)) out.headers.set(k, v);
+  return out;
+}
+
 export default {
   async fetch(request, env, ctx) {
-    return withCountry(await route(request, env, ctx), request);
+    return secure(withCountry(await route(request, env, ctx), request));
   },
 
   async scheduled(_event, _env, ctx) {
