@@ -1,4 +1,5 @@
 import { hasLive, hasSandbox } from './paypal.js';
+import { alertOwner, orderLine } from './notify.js';
 // Customer-facing order helpers (read only, keyed by the secret order token).
 //
 //   GET /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
@@ -133,8 +134,46 @@ async function bcvRate() {
   return bcvCache.data; // last good value, or null
 }
 
+// POST /api/order/ping { token, event: 'new' | 'reported' }
+// The site calls this right after a customer places an order or reports a manual payment,
+// so the owner gets a phone alert. Only real, recent state changes trigger an alert.
+const pinged = new Set();
+async function ping(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const token = String(body.token || '');
+  const event = body.event === 'reported' ? 'reported' : 'new';
+  if (!/^[0-9a-f-]{36}$/i.test(token) || !env.SUPABASE_SERVICE_ROLE_KEY) return json({ ok: false }, 400);
+  const rows = await sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,order_number,status,created_at,customer_name,email,whatsapp,country,details,quote_amount,quote_currency,payment_method,payment_reference,products(name_es,name_en)`);
+  const o = rows?.[0];
+  if (!o) return json({ ok: false }, 404);
+  const key = `${o.id}:${event}:${o.status}`;
+  if (pinged.has(key)) return json({ ok: true });
+  pinged.add(key);
+  if (event === 'new') {
+    if (Date.now() - new Date(o.created_at).getTime() > 30 * 60 * 1000) return json({ ok: true });
+    const custom = o.quote_amount == null;
+    await alertOwner(env, {
+      title: custom ? 'Nueva solicitud a medida' : 'Nuevo pedido',
+      message: `${orderLine(o)}${o.country ? ` · ${o.country}` : ''}${o.details ? `\n"${String(o.details).slice(0, 300)}"` : ''}${custom ? '\nResponde con un precio o escríbele por WhatsApp.' : '\nEsperando el pago.'}`,
+      orderId: o.id,
+      priority: custom ? 'high' : 'default',
+      tags: custom ? 'speech_balloon' : 'shopping_cart',
+    });
+  } else if (o.status === 'payment_submitted' && !String(o.payment_method || '').startsWith('crypto')) {
+    await alertOwner(env, {
+      title: `Pago reportado: ${o.payment_method || 'manual'}`,
+      message: `${orderLine(o)}\nReferencia: ${o.payment_reference || '-'}\nVerifícalo en tu banco y márcalo como pagado.`,
+      orderId: o.id,
+      priority: 'high',
+      tags: 'bank',
+    });
+  }
+  return json({ ok: true });
+}
+
 export async function handleOrders(request, env, url) {
   try {
+    if (request.method === 'POST' && url.pathname === '/api/order/ping') return await ping(request, env);
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
     if (url.pathname === '/api/order/methods') {
       // PayPal: live keys show it to everyone; sandbox keys only for a test page (?paypaltest=1).

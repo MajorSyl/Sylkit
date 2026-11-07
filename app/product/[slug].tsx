@@ -99,9 +99,9 @@ export default function ProductPage() {
                 <Ionicons name={product.demoUrl ? 'play-circle-outline' : 'logo-whatsapp'} size={16} color={colors.primary} />
                 <Text style={styles.linkText}>{product.demoUrl ? (tx('Try the live demo', 'Probar demo en vivo', "Testar a demo ao vivo")) : t(ui.demo)}</Text>
               </Pressable>
-              <Pressable style={styles.linkBtn} onPress={() => router.push(product.pricing ? '/quote' : `/quote?product=${product.slug}`)} accessibilityRole="link">
-                <Ionicons name="construct-outline" size={16} color={colors.primary} />
-                <Text style={styles.linkText}>{t(ui.customVersion)}</Text>
+              <Pressable style={styles.linkBtn} onPress={() => Linking.openURL(waLink(tx(`Hi! I'm interested in ${name}. Can you adapt it to my business?`, `¡Hola! Me interesa ${name}. ¿Lo pueden adaptar a mi negocio?`, `Olá! Tenho interesse em ${name}. Vocês podem adaptar ao meu negócio?`)))} accessibilityRole="link">
+                <Ionicons name="logo-whatsapp" size={16} color={colors.primary} />
+                <Text style={styles.linkText}>{tx('Ask us on WhatsApp', 'Pregúntanos por WhatsApp', 'Pergunte no WhatsApp')}</Text>
               </Pressable>
             </View>
           </View>
@@ -109,15 +109,16 @@ export default function ProductPage() {
           {/* Plans first: the decision people came to make */}
           {product.pricing ? (
             <>
+              <PlanCards product={product} initialBilling={billing} template={designs.length ? design : undefined} />
               {designs.length ? (
-                <View style={styles.designBox}>
+                <View style={[styles.designBox, { marginTop: 20 }]}>
                   <View style={styles.designHead}>
                     <View style={{ flex: 1 }}>
-                      <Text style={styles.h2}>{tx('1. Pick your design', '1. Elige tu diseño', "1. Escolha seu design")}</Text>
+                      <Text style={styles.h2}>{tx('Pick a design (optional)', 'Elige un diseño (opcional)', 'Escolha um design (opcional)')}</Text>
                       <Text style={styles.designSub}>
                         {getTemplate(design)
-                          ? tx(`You picked ${getTemplate(design)!.name}. Now choose your plan.`, `Elegiste ${getTemplate(design)!.name}. Ahora elige tu plan.`, `Você escolheu ${getTemplate(design)!.name}. Agora escolha seu plano.`)
-                          : tx('Free with any plan. You can change it later.', 'Gratis con cualquier plan. Puedes cambiarlo después.', "Grátis com qualquer plano. Você pode mudar depois.")}
+                          ? tx(`You picked ${getTemplate(design)!.name}. It's added when you choose a plan above.`, `Elegiste ${getTemplate(design)!.name}. Se agrega al elegir un plan arriba.`, `Você escolheu ${getTemplate(design)!.name}. Ele entra quando você escolher um plano acima.`)
+                          : tx('Free with any plan. Skip it and choose later with us if you prefer.', 'Gratis con cualquier plan. Si prefieres, sáltalo y lo eligen con nosotros después.', 'Grátis com qualquer plano. Se preferir, pule e escolha depois com a gente.')}
                       </Text>
                     </View>
                     <Link href={`/templates?kind=${designs[0].kind}` as any} style={styles.backLink}>
@@ -143,10 +144,8 @@ export default function ProductPage() {
                       );
                     })}
                   </ScrollView>
-                  <Text style={[styles.h2, { marginTop: 18 }]}>{tx('2. Choose your plan', '2. Elige tu plan', "2. Escolha seu plano")}</Text>
                 </View>
               ) : null}
-              <PlanCards product={product} initialBilling={billing} template={designs.length ? design : undefined} />
             </>
           ) : (
             <View style={[styles.buyBox, shadow]}>

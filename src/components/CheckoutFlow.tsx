@@ -1,18 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ANNUAL_MONTHS, ONCE_MONTHS } from '../data/pricing';
 import type { Product } from '../data/products';
 import { getTemplate, templatesFor } from '../data/storeTemplates';
 import { templateShot } from '../lib/templateShot';
 import { useLang } from '../i18n';
-import { payIcon, PayOption, paySub, payTitle, paypalTest, usePayOptions } from '../lib/payOptions';
+import { inVenezuela, payIcon, PayOption, paySub, payTitle, paypalTest, usePayOptions } from '../lib/payOptions';
 import { allowedBilling, billingName, isYearlyOnly } from '../lib/planText';
 import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { friendlyError, supabase, createOrder } from '../lib/supabase';
 import { useClientWidth } from '../lib/useClientWidth';
-import { colors } from '../theme';
+import { colors, waLink } from '../theme';
 import { DomainPicker } from './DomainPicker';
 import { Field, formStyles } from './Field';
 import { tx } from '../i18n';
@@ -56,6 +56,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const [pay, setPay] = useState('');
   const [showExtras, setShowExtras] = useState(Object.keys(initial?.addons ?? {}).length > 0);
   const [showSummary, setShowSummary] = useState(false);
+  const [showDomain, setShowDomain] = useState(!!initial?.domain);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -114,6 +115,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     setError('');
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(contact.email.trim())) return setError(tx('Please check your email.', 'Revisa tu correo electrónico.', "Confira seu e-mail."));
     if (contact.name.trim().length < 2) return setError(tx('Please enter your name.', 'Escribe tu nombre.', "Digite seu nome."));
+    if (contact.whatsapp.replace(/[^0-9]/g, '').length < 7) return setError(tx('Please enter your WhatsApp number so we can deliver your system.', 'Escribe tu número de WhatsApp para entregarte tu sistema.', 'Digite seu WhatsApp para entregarmos seu sistema.'));
     if (isDomainProduct && !cfg.domain) return setError(tx('Choose your domain.', 'Elige tu dominio.', "Escolha seu domínio."));
     if (!chosen) return setError(tx('Choose how you want to pay.', 'Elige cómo quieres pagar.', "Escolha como quer pagar."));
     setBusy(true);
@@ -141,6 +143,8 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       } catch {
         /* optional */
       }
+      // Tell the owner's phone right away (best effort).
+      fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
       // Confirm the order at the server-calculated total so it can be paid right away.
       await fetch('/api/pay/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => null);
       if (chosen.kind === 'paypal') {
@@ -227,8 +231,10 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   // ---------- left column ----------
   const form = (
     <View style={{ gap: 28 }}>
-      <Section title={tx('Contact', 'Contacto', "Contato")} note={tx('We send your receipt and system access here.', 'Te enviamos el recibo y el acceso a tu sistema aquí.', "Enviamos seu recibo e o acesso ao sistema aqui.")}>
-        <Field label={tx('Email', 'Correo electrónico', "E-mail")} value={contact.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" placeholder="you@business.com" />
+      <Section
+        title={tx('Your details', 'Tus datos', 'Seus dados')}
+        note={tx('We send your access and talk to you on WhatsApp. Your receipt goes to your email.', 'Te entregamos el acceso y hablamos contigo por WhatsApp. El recibo llega a tu correo.', 'Entregamos o acesso e falamos com você pelo WhatsApp. O recibo vai para o seu e-mail.')}
+      >
         <View style={styles.pair}>
           <View style={styles.half}>
             <Field label={tx('Full name', 'Nombre completo', "Nome completo")} value={contact.name} onChangeText={set('name')} autoComplete="name" />
@@ -237,14 +243,13 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
             <Field label="WhatsApp" value={contact.whatsapp} onChangeText={set('whatsapp')} keyboardType="phone-pad" placeholder="+58 412 …" autoComplete="tel" />
           </View>
         </View>
-        <View style={styles.pair}>
-          <View style={styles.half}>
-            <Field label={tx('Business (optional)', 'Negocio (opcional)', "Negócio (opcional)")} value={contact.business} onChangeText={set('business')} autoComplete="organization" />
-          </View>
-          <View style={styles.half}>
-            <Field label={tx('Country (optional)', 'País (opcional)', "País (opcional)")} value={contact.country} onChangeText={set('country')} autoComplete="country-name" />
-          </View>
-        </View>
+        <Field label={tx('Email', 'Correo electrónico', "E-mail")} value={contact.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" placeholder="you@business.com" />
+        {!inVenezuela(null) ? (
+          <Pressable onPress={() => set('country')(contact.country ? '' : 'Venezuela')} style={styles.veRow} accessibilityRole="checkbox" accessibilityState={{ checked: !!contact.country }}>
+            <View style={[styles.check, !!contact.country && styles.checkOn]}>{contact.country ? <Ionicons name="checkmark" size={14} color="#fff" /> : null}</View>
+            <Text style={styles.note}>{tx('I pay from Venezuela (show Pago Móvil and bank transfer)', 'Pago desde Venezuela (ver Pago Móvil y transferencia)', 'Pago da Venezuela (ver Pago Móvil e transferência)')}</Text>
+          </Pressable>
+        ) : null}
       </Section>
 
       {designs.length ? (
@@ -268,8 +273,20 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         </Section>
       ) : null}
 
-      {hasDomain || isDomainProduct ? (
-        <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={hasDomain ? catalog.custom_domain.price : 0} modes={isDomainProduct ? ['new', 'own'] : undefined} />
+      {isDomainProduct ? (
+        <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={hasDomain ? catalog.custom_domain.price : 0} modes={['new', 'own']} />
+      ) : hasDomain ? (
+        <View style={styles.extras}>
+          <Pressable style={styles.extrasHead} onPress={() => setShowDomain((v) => !v)} accessibilityRole="button" accessibilityState={{ expanded: showDomain }}>
+            <Ionicons name="globe-outline" size={22} color={colors.primary} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.extrasTitle}>{cfg.domain ? `${tx('Web address', 'Dirección web', 'Endereço web')}: ${domainLabel(cfg.domain)}` : tx('Web address (optional)', 'Dirección web (opcional)', 'Endereço web (opcional)')}</Text>
+              <Text style={styles.note}>{tx('Skip it if you are not sure. We set it up with you after you pay.', 'Sáltalo si no estás seguro. Lo configuramos contigo después del pago.', 'Pule se não tiver certeza. Configuramos com você depois do pagamento.')}</Text>
+            </View>
+            <Ionicons name={showDomain ? 'chevron-up' : 'chevron-down'} size={20} color={colors.muted} />
+          </Pressable>
+          {showDomain ? <DomainPicker value={cfg.domain} onChange={setDomain} domainPrice={catalog.custom_domain.price} /> : null}
+        </View>
       ) : null}
 
       {addons.length ? (
@@ -343,6 +360,16 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
             <Text style={styles.payBtnText}>{payLabel}</Text>
           </>
         )}
+      </Pressable>
+      <View style={styles.after}>
+        <Ionicons name="time-outline" size={18} color={colors.primary} />
+        <Text style={styles.afterText}>
+          {tx('After you pay, we review your order and send your access on WhatsApp, usually the same day (Mon–Sat, 9:00–18:00 Caracas time).', 'Después de pagar, revisamos tu pedido y te enviamos el acceso por WhatsApp, normalmente el mismo día (lun–sáb, 9:00–18:00 hora de Caracas).', 'Depois do pagamento, revisamos seu pedido e enviamos o acesso pelo WhatsApp, normalmente no mesmo dia (seg–sáb, 9:00–18:00, horário de Caracas).')}
+        </Text>
+      </View>
+      <Pressable onPress={() => Linking.openURL(waLink(tx(`Hi! I have a question before buying ${t(product.name)}.`, `¡Hola! Tengo una pregunta antes de comprar ${t(product.name)}.`, `Olá! Tenho uma dúvida antes de comprar ${t(product.name)}.`)))} style={styles.askRow} accessibilityRole="link">
+        <Ionicons name="logo-whatsapp" size={17} color={colors.whatsapp} />
+        <Text style={styles.askText}>{tx('Questions? Ask us on WhatsApp before you pay', '¿Dudas? Pregúntanos por WhatsApp antes de pagar', 'Dúvidas? Pergunte no WhatsApp antes de pagar')}</Text>
       </Pressable>
       <View style={styles.trust}>
         <Trust icon="shield-checkmark-outline" text={tx('14-day money-back guarantee', 'Garantía de 14 días', "Garantia de 14 dias")} />
@@ -465,6 +492,11 @@ function Trust({ icon, text }: { icon: string; text: string }) {
 }
 
 const styles = StyleSheet.create({
+  veRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 4 },
+  after: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', backgroundColor: '#F2F6FF', borderRadius: 12, padding: 12 },
+  afterText: { flex: 1, fontSize: 14, lineHeight: 20, color: colors.text },
+  askRow: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center', paddingVertical: 6 },
+  askText: { fontSize: 14, fontWeight: '700', color: colors.text },
   tplBox: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 12 },
   tplThumb: { width: 48, height: 86, borderRadius: 8, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
   tplName: { fontSize: 16, fontWeight: '800', color: colors.text },

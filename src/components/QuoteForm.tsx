@@ -21,6 +21,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
   const submit = async () => {
     setError('');
     if (f.name.trim().length < 2) return setError(tx('Please enter your name.', 'Escribe tu nombre.', "Digite seu nome."));
+    if (f.whatsapp.replace(/[^0-9]/g, '').length < 7) return setError(tx('Please enter your WhatsApp number.', 'Escribe tu número de WhatsApp.', 'Digite seu WhatsApp.'));
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.trim())) return setError(tx('Please check your email.', 'Revisa tu correo electrónico.', "Confira seu e-mail."));
     if (!productSlug && f.details.trim().length < 10)
       return setError(tx('Tell us a little about what you need.', 'Cuéntanos un poco qué necesitas.', "Conte um pouco sobre o que você precisa."));
@@ -43,6 +44,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
       return setError(friendlyError(err, lang));
     }
     const token = (data as any).token as string;
+    fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
     // Fixed-price plan: confirm it at the server-calculated total so the client can pay right away.
     if (config) {
       try {
@@ -57,7 +59,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
 
   return (
     <View style={[styles.card, shadow]}>
-      <Text style={styles.title}>{config ? (tx('Your details', 'Tus datos', "Seus dados")) : tx('Request a quote', 'Solicitar cotización', "Pedir orçamento")}</Text>
+      <Text style={styles.title}>{config ? (tx('Your details', 'Tus datos', "Seus dados")) : tx('Or leave us a short message', 'O déjanos un mensaje corto', 'Ou deixe uma mensagem curta')}</Text>
       <Text style={styles.sub}>
         {config
           ? tx('We will send your receipt and order link to this email.', 'Te enviaremos el recibo y el enlace de tu pedido a este correo.', "Enviaremos seu recibo e o link do pedido para este e-mail.")
@@ -70,7 +72,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
           <Field label={tx('Name *', 'Nombre *', "Nome *")} value={f.name} onChangeText={set('name')} autoComplete="name" />
         </View>
         <View style={styles.col}>
-          <Field label={tx('Company / business', 'Empresa / negocio', "Empresa / negócio")} value={f.business} onChangeText={set('business')} />
+          <Field label="WhatsApp *" value={f.whatsapp} onChangeText={set('whatsapp')} keyboardType="phone-pad" placeholder="+58 412 …" autoComplete="tel" />
         </View>
       </View>
       <View style={styles.row}>
@@ -84,11 +86,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
             autoComplete="email"
           />
         </View>
-        <View style={styles.col}>
-          <Field label="WhatsApp" value={f.whatsapp} onChangeText={set('whatsapp')} keyboardType="phone-pad" placeholder="+58 ..." />
-        </View>
       </View>
-      <Field label={tx('Country', 'País', "País")} value={f.country} onChangeText={set('country')} />
       <Field
         label={productSlug ? (tx('Details (optional)', 'Detalles (opcional)', "Detalhes (opcional)")) : tx('What do you need? *', '¿Qué necesitas? *', "Do que você precisa? *")}
         value={f.details}
@@ -106,7 +104,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
       <Text style={styles.fine}>
         {config
           ? tx('Next you choose how to pay: USDT or another method.', 'En el siguiente paso eliges cómo pagar: USDT u otro método.', "Em seguida você escolhe como pagar: cartão, USDT ou outro método.")
-          : tx('No commitment. We usually reply within 24 hours.', 'Sin compromiso. Respondemos normalmente en menos de 24 horas.', "Sem compromisso. Normalmente respondemos em até 24 horas.")}
+          : tx('No commitment. We reply on WhatsApp, usually the same day.', 'Sin compromiso. Te respondemos por WhatsApp, normalmente el mismo día.', 'Sem compromisso. Respondemos pelo WhatsApp, normalmente no mesmo dia.')}
       </Text>
     </View>
   );

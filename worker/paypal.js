@@ -14,6 +14,7 @@
 // and only while no live keys are set. A sandbox capture never marks an order as paid: it moves it to
 // "payment_submitted" with an internal note, so fake money can never unlock real work.
 
+import { alertOwner, orderLine } from './notify.js';
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SITE = 'https://sylkit.com';
 const LIVE_API = 'https://api-m.paypal.com';
@@ -237,6 +238,7 @@ async function capture(request, env) {
   }
   if (cap.status === 'PENDING') {
     // PayPal is still reviewing (e.g. eCheck or risk review). The team confirms it when it clears.
+    await alertOwner(env, { title: 'Pago PayPal pendiente de revisión', message: orderLine(order), orderId: order.id, tags: 'hourglass' });
     await patchOrder(env, order.id, { status: 'payment_submitted', payment_method: 'paypal', payment_reference: cap.id });
     await addEvent(env, order.id, 'update', `PayPal payment ${cap.id} is pending at PayPal (${cap.status_details?.reason || 'review'}).`, false);
     await addEvent(env, order.id, 'update', es ? 'Recibimos tu pago por PayPal; PayPal lo está revisando. Te avisamos al confirmarse.' : 'We received your PayPal payment; PayPal is reviewing it. We will let you know when it clears.');
@@ -244,6 +246,7 @@ async function capture(request, env) {
   }
   await patchOrder(env, order.id, { status: 'paid', payment_method: 'paypal', payment_reference: cap.id });
   await addEvent(env, order.id, 'update', es ? `Pago con PayPal confirmado: ${money2(paid)}.` : `PayPal payment confirmed: ${money2(paid)}.`);
+  await alertOwner(env, { title: `Pagado con PayPal ${money2(paid)}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
   return json({ order_status: 'paid' });
 }
 

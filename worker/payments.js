@@ -14,6 +14,7 @@ const NOWPAYMENTS_LIVE = 'https://api.nowpayments.io/v1';
 const NOWPAYMENTS_SANDBOX = 'https://api-sandbox.nowpayments.io/v1';
 // Set the plain variable NOWPAYMENTS_SANDBOX = "true" in Cloudflare to use a sandbox (test) key.
 let NOWPAYMENTS = NOWPAYMENTS_LIVE;
+import { alertOwner, orderLine } from './notify.js';
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SITE = 'https://sylkit.com';
 const DEFAULT_CURRENCY = 'usdttrc20';
@@ -82,9 +83,9 @@ async function sb(env, path, init = {}) {
 }
 
 const getOrderByToken = (env, token) =>
-  sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,order_number,status,quote_amount,quote_currency,payment_method,payment_reference,lang`).then((r) => r[0]);
+  sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,order_number,status,quote_amount,quote_currency,payment_method,payment_reference,lang,customer_name,whatsapp,email`).then((r) => r[0]);
 const getOrderByNumber = (env, n) =>
-  sb(env, `orders?order_number=eq.${encodeURIComponent(n)}&select=id,order_number,status,quote_amount,quote_currency,payment_method,payment_reference,lang`).then((r) => r[0]);
+  sb(env, `orders?order_number=eq.${encodeURIComponent(n)}&select=id,order_number,status,quote_amount,quote_currency,payment_method,payment_reference,lang,customer_name,whatsapp,email`).then((r) => r[0]);
 const patchOrder = (env, id, patch) => sb(env, `orders?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(patch), headers: { prefer: 'return=minimal' } });
 const addEvent = (env, order_id, kind, message, isPublic = true) =>
   sb(env, 'order_events', { method: 'POST', body: JSON.stringify({ order_id, kind, message, public: isPublic }), headers: { prefer: 'return=minimal' } });
@@ -129,6 +130,7 @@ async function applyPayment(env, order, p, { fromPoll = false } = {}) {
   if (status === 'finished' && amountOk) {
     await patchOrder(env, order.id, { status: 'paid', ...ref });
     await addEvent(env, order.id, 'update', `Crypto payment confirmed: ${p.actually_paid ?? p.pay_amount} ${String(p.pay_currency).toUpperCase()}.`);
+    await alertOwner(env, { title: `Pagado con cripto ${p.actually_paid ?? p.pay_amount} ${String(p.pay_currency).toUpperCase()}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
     return { status: 'paid' };
   }
   if (['confirming', 'confirmed', 'sending'].includes(status) && order.status === 'accepted') {

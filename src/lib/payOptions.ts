@@ -30,7 +30,7 @@ export const isBolivarMethod = (o: PayOption) => o.kind === 'manual' && VENEZUEL
 // Not accepted by Sylkit; hidden even if a row is still switched on in the table.
 const NOT_ACCEPTED = /zelle/i;
 
-function inVenezuela(country?: string | null) {
+export function inVenezuela(country?: string | null) {
   if (country && /^(ve|ven|venezuela)$/i.test(country.trim())) return true;
   if (typeof document !== 'undefined' && /(?:^|; )sk_cc=VE(?:;|$)/.test(document.cookie)) return true;
   try {

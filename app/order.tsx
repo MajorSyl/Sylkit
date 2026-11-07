@@ -109,6 +109,7 @@ export default function OrderPage() {
     const { error: err } = await supabase.rpc('submit_payment', { p_token: token, p_method: method.name, p_reference: reference.trim() });
     setBusy(false);
     if (err) return setActionError(friendlyError(err, lang));
+    fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'reported' }) }).catch(() => null);
     setReference('');
     load();
   };
@@ -152,17 +153,17 @@ export default function OrderPage() {
           title: tx(`Thank you${first ? `, ${first}` : ''}! Your payment is confirmed.`, `¡Gracias${first ? `, ${first}` : ''}! Tu pago está confirmado.`, `Obrigado${first ? `, ${first}` : ''}! Seu pagamento foi confirmado.`),
           sub:
             order.status === 'delivered'
-              ? tx('Your system is ready. Check your email to sign in.', 'Tu sistema está listo. Revisa tu correo para entrar.', "Seu sistema está pronto. Confira seu e-mail para entrar.")
+              ? tx('Your system is ready. We sent your access on WhatsApp.', 'Tu sistema está listo. Te enviamos el acceso por WhatsApp.', "Seu sistema está pronto. Enviamos o acesso pelo WhatsApp.")
               : order.status === 'in_progress'
                 ? tx("We're setting up your system. We'll tell you as soon as it's ready.", 'Estamos preparando tu sistema. Te avisamos apenas esté listo.', "Estamos preparando seu sistema. Avisaremos assim que estiver pronto.")
-                : tx("We'll message you on WhatsApp or email within 24 hours to start the setup.", 'Te escribiremos por WhatsApp o correo en menos de 24 horas para empezar la instalación.', "Vamos falar com você por WhatsApp ou e-mail em até 24 horas para começar a instalação."),
+                : tx("We're reviewing your order now. We'll message you on WhatsApp, usually the same day, with your access and next steps.", 'Estamos revisando tu pedido. Te escribimos por WhatsApp, normalmente el mismo día, con tu acceso y los siguientes pasos.', "Estamos revisando seu pedido. Escrevemos pelo WhatsApp, normalmente no mesmo dia, com seu acesso e os próximos passos."),
         };
       if (order.status === 'payment_submitted' && !cryptoStarted)
         return {
           icon: 'time',
           color: '#F79009',
           title: tx("We're checking your payment", 'Estamos verificando tu pago', "Estamos verificando seu pagamento"),
-          sub: tx('We usually confirm it within a few hours. We will email you.', 'Normalmente lo confirmamos en pocas horas. Te avisamos por correo.', "Normalmente confirmamos em poucas horas. Avisaremos por e-mail."),
+          sub: tx('We usually confirm it within a few hours (Mon–Sat, 9:00–18:00 Caracas). We will message you on WhatsApp.', 'Normalmente lo confirmamos en pocas horas (lun–sáb, 9:00–18:00 hora de Caracas). Te avisamos por WhatsApp.', "Normalmente confirmamos em poucas horas (seg–sáb, 9:00–18:00, horário de Caracas). Avisaremos pelo WhatsApp."),
         };
       if (cardReturn)
         return { icon: 'card', color: colors.primary, title: tx('Confirming your payment…', 'Confirmando tu pago…', "Confirmando seu pagamento…"), sub: tx('This takes a few seconds.', 'Esto toma unos segundos.', "Isso leva alguns segundos.") };
@@ -181,7 +182,7 @@ export default function OrderPage() {
         icon: 'mail-open',
         color: colors.primary,
         title: tx('We received your request', 'Recibimos tu solicitud', "Recebemos sua solicitação"),
-        sub: tx("We'll email you a price within 24 hours.", 'Te enviaremos un precio en menos de 24 horas a tu correo.', "Enviaremos um preço por e-mail em até 24 horas."),
+        sub: tx("We got your message. We'll reply on WhatsApp, usually the same day.", 'Recibimos tu mensaje. Te respondemos por WhatsApp, normalmente el mismo día.', "Recebemos sua mensagem. Respondemos pelo WhatsApp, normalmente no mesmo dia."),
       };
     })();
 
@@ -196,6 +197,12 @@ export default function OrderPage() {
           </Text>
           <Text style={styles.h1}>{hero.title}</Text>
           <Text style={[styles.muted, { textAlign: 'center' }]}>{hero.sub}</Text>
+          {!payable || order.status === 'payment_submitted' ? (
+            <Pressable onPress={help} style={styles.heroWa} accessibilityRole="link">
+              <Ionicons name="logo-whatsapp" size={18} color="#fff" />
+              <Text style={styles.heroWaText}>{tx('Chat with us about this order', 'Escríbenos sobre este pedido', 'Fale com a gente sobre este pedido')}</Text>
+            </Pressable>
+          ) : null}
         </View>
 
         {/* ---------- payment ---------- */}
@@ -471,6 +478,8 @@ function CopyButton({ text }: { text: string }) {
 }
 
 const styles = StyleSheet.create({
+  heroWa: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.whatsapp, borderRadius: 999, paddingHorizontal: 18, height: 44, marginTop: 6 },
+  heroWaText: { color: '#fff', fontSize: 15, fontWeight: '800' },
   container: { width: '100%', maxWidth: 680, alignSelf: 'center', paddingHorizontal: 16, paddingTop: 24 },
   card: { backgroundColor: colors.surface, borderRadius: 20, padding: 20, gap: 12, borderWidth: 1, borderColor: colors.border },
   hero: { alignItems: 'center', paddingVertical: 28 },
