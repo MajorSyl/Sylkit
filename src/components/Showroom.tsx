@@ -149,10 +149,10 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
     return out;
   }, [items, cat, kind, demoOnly, platform, query, sort]);
 
-  const cols = width >= 1500 ? 5 : width >= 1150 ? 4 : width >= 820 ? 3 : width >= 540 ? 2 : 1;
+  const cols = width >= 1400 ? 5 : width >= 1100 ? 4 : width >= 760 ? 3 : width >= 520 ? 2 : 1;
   const wide = width >= 820;
   const activeFilters = (demoOnly ? 1 : 0) + (platform ? 1 : 0) + (kind !== 'all' ? 1 : 0);
-  const priceText = (i: Item) => (i.price == null ? t(ui.priceOnRequest) : `${t(ui.from)} $${Number.isInteger(i.price) ? i.price : i.price.toFixed(2)}${i.priceUnit}`);
+  const priceText = (i: Item) => (i.price == null ? tx('Quote', 'Cotizar', 'Orçamento') : `$${Number.isInteger(i.price) ? i.price : i.price.toFixed(2)}${i.priceUnit}`);
   const scrollChips = () => {
     chipX.current += 480;
     chipsRef.current?.scrollTo({ x: chipX.current, animated: true });
@@ -264,9 +264,9 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
 
       {/* Cards */}
       {list.length ? (
-        <View style={[styles.grid, { marginHorizontal: -10 }]}>
+        <View style={[styles.grid, { marginHorizontal: -8 }]}>
           {list.map((i) => (
-            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: 10, paddingBottom: 28 }}>
+            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: 8, paddingBottom: 24 }}>
               <Card item={i} touch={!wide} priceText={priceText(i)} openDemo={openUrl} />
             </View>
           ))}
@@ -354,7 +354,7 @@ function Opt({ on, label, onPress, check }: { on: boolean; label: string; onPres
 function Card({ item, touch, priceText, openDemo }: { item: Item; touch: boolean; priceText: string; openDemo: (url: string) => void }) {
   const [hover, setHover] = useState(false);
   const isTpl = item.kind === 'template';
-  const showOverlay = touch || hover;
+  const showOverlay = hover && !touch;
   return (
     <View>
       <Pressable onPress={item.open} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)} style={styles.cover} accessibilityRole="link" accessibilityLabel={item.title}>
@@ -380,20 +380,18 @@ function Card({ item, touch, priceText, openDemo }: { item: Item; touch: boolean
       </Pressable>
       <View style={styles.meta}>
         <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={styles.avatar} />
-        <Text style={styles.owner}>Sylkit</Text>
-        <Text style={[styles.badge, isTpl ? styles.badgeTpl : item.demo ? styles.badgeLive : styles.badgeSvc]}>
-          {isTpl ? tx('TEMPLATE', 'PLANTILLA', 'MODELO') : item.demo ? tx('LIVE DEMO', 'DEMO EN VIVO', 'DEMO AO VIVO') : tx('SERVICE', 'SERVICIO', 'SERVIÇO')}
+        <Text style={styles.owner} numberOfLines={1}>
+          {item.title}
         </Text>
-        <View style={{ flex: 1 }} />
+        <Text style={[styles.badge, isTpl ? styles.badgeTpl : item.demo ? styles.badgeLive : styles.badgeSvc]} numberOfLines={1}>
+          {isTpl ? tx('TEMPLATE', 'PLANTILLA', 'MODELO') : item.demo ? tx('DEMO', 'DEMO', 'DEMO') : tx('SERVICE', 'SERVICIO', 'SERVIÇO')}
+        </Text>
+        <View style={{ flex: 1, minWidth: 4 }} />
+        <Ionicons name="pricetag-outline" size={13} color={colors.muted} />
         <Text style={styles.price} numberOfLines={1}>
           {priceText}
         </Text>
       </View>
-      {touch ? null : (
-        <Text style={styles.cardTitle} numberOfLines={1}>
-          {item.title}
-        </Text>
-      )}
     </View>
   );
 }
@@ -428,21 +426,21 @@ const styles = StyleSheet.create({
   head: { fontSize: 16, fontWeight: '800', color: colors.text },
   count: { fontSize: 13, color: colors.muted, fontWeight: '600' },
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
-  cover: { width: '100%', aspectRatio: 1.28, borderRadius: 8, overflow: 'hidden', backgroundColor: '#EEF1F6', position: 'relative' },
+  cover: { width: '100%', aspectRatio: 1.28, borderRadius: 4, overflow: 'hidden', backgroundColor: '#EEF1F6', position: 'relative' },
   img: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transitionDuration: '300ms' } as any,
   shade: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16, paddingTop: 48, paddingBottom: 14, backgroundImage: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%)' },
   ovTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
   ovSub: { color: 'rgba(255,255,255,0.82)', fontSize: 13, marginTop: 2, fontWeight: '600' },
   demoBtn: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 999, paddingHorizontal: 12, height: 32 },
   demoBtnText: { fontSize: 13, fontWeight: '800', color: colors.text },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 10 },
   avatar: { width: 22, height: 22, borderRadius: 999, backgroundColor: '#0B1B3A' },
-  owner: { fontSize: 14, fontWeight: '700', color: colors.text },
-  badge: { fontSize: 10, fontWeight: '900', letterSpacing: 0.4, paddingHorizontal: 7, paddingVertical: 3, borderRadius: 5, overflow: 'hidden' },
+  owner: { fontSize: 14, fontWeight: '700', color: colors.text, flexShrink: 1, minWidth: 0 },
+  badge: { fontSize: 10, fontWeight: '800', letterSpacing: 0.4, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, overflow: 'hidden', flexShrink: 0, whiteSpace: 'nowrap' } as any,
   badgeLive: { backgroundColor: colors.primary, color: '#fff' },
   badgeTpl: { backgroundColor: '#0B1B3A', color: '#fff' },
   badgeSvc: { backgroundColor: '#EEF2F8', color: colors.text },
-  price: { fontSize: 13, fontWeight: '700', color: colors.muted, flexShrink: 1 },
+  price: { fontSize: 13, fontWeight: '600', color: colors.muted, flexShrink: 0 },
   cardTitle: { fontSize: 14, fontWeight: '600', color: colors.muted, marginTop: 4 },
   empty: { alignItems: 'center', gap: 8, paddingVertical: 40, backgroundColor: colors.surface, borderRadius: 18, borderWidth: 1, borderColor: colors.border },
   emptyTitle: { fontSize: 18, fontWeight: '800', color: colors.text },

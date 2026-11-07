@@ -81,7 +81,8 @@ export default function Home() {
         </View>
 
         {/* Catalog: systems and design templates as a showroom of screenshot cards */}
-        <View style={styles.container} nativeID="catalog">
+        {/* Full-width gallery, like Behance */}
+        <View style={{ width: '100%', paddingHorizontal: width >= 1100 ? 32 : 16, marginTop: 8 }} nativeID="catalog">
           <View style={[styles.sectionHead, { marginTop: 8 }]}>
             <Text style={styles.h2}>{tx('All systems and designs', 'Todos los sistemas y diseños', 'Todos os sistemas e designs')}</Text>
             <Pressable onPress={() => router.push('/templates' as any)} accessibilityRole="link">
@@ -90,6 +91,9 @@ export default function Home() {
           </View>
           <Text style={[styles.sectionSub, { marginBottom: 14 }]}>{t(ui.featuredSub)}</Text>
           <Showroom products={products} />
+        </View>
+
+        <View style={styles.container}>
 
           {/* Custom banner */}
           <View style={[styles.banner, wide && { flexDirection: 'row', alignItems: 'center' }]}>

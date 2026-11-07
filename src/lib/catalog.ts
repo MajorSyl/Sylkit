@@ -41,6 +41,7 @@ export const rowToProduct = (r: any): Product => {
     platforms: r.platforms ?? [],
     demoUrl: r.demo_url ?? undefined,
     image: r.image_url ?? productImages[r.slug],
+    cover: productImages[r.slug] ? productImages[r.slug].replace('/shots/', '/shots/covers/') : undefined,
     pricing: r.pricing && Array.isArray(r.pricing.plans) ? pricingWithPt(r.pricing, pricingBySlug[r.slug]) : pricingBySlug[r.slug],
   };
 };
