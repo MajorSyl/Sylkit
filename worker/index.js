@@ -16,7 +16,6 @@ import { handleOrders } from './orders.js';
 import { handlePaypal } from './paypal.js';
 import { handleMonime } from './monime.js';
 import { handleSupport } from './support.js';
-import { runPriceJob } from './priceJob.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -116,12 +115,10 @@ function secure(res) {
 
 export default {
   async fetch(request, env, ctx) {
-    ctx.waitUntil(runPriceJob(env).catch(() => {}));
     return secure(withCountry(await route(request, env, ctx), request));
   },
 
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runPriceJob(env).catch(() => {}));
+  async scheduled(_event, _env, ctx) {
     ctx.waitUntil(
       fetch(`${SUPABASE_URL}/rest/v1/products?select=slug&limit=1`, {
         headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
