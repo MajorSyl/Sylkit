@@ -1,5 +1,6 @@
 import { hasLive, hasSandbox } from './paypal.js';
 import { alertOwner, orderLine } from './notify.js';
+import { hasMonime } from './monime.js';
 // Customer-facing order helpers (read only, keyed by the secret order token).
 //
 //   GET /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
@@ -178,7 +179,7 @@ export async function handleOrders(request, env, url) {
     if (url.pathname === '/api/order/methods') {
       // PayPal: live keys show it to everyone; sandbox keys only for a test page (?paypaltest=1).
       const paypal = hasLive(env) || (url.searchParams.get('paypaltest') === '1' && hasSandbox(env));
-      return json({ card: await cardAvailable(env), paypal, paypal_test: !hasLive(env) && paypal, crypto: !!env.NOWPAYMENTS_API_KEY });
+      return json({ card: await cardAvailable(env), paypal, paypal_test: !hasLive(env) && paypal, crypto: !!env.NOWPAYMENTS_API_KEY, monime: hasMonime(env) });
     }
     if (url.pathname === '/api/order/invoice') return await invoice(url, env);
     if (url.pathname === '/api/order/bcv') {

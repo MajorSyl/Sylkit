@@ -105,7 +105,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const total = money(est.dueToday);
   const payLabel = !chosen
     ? tx('Continue', 'Continuar', "Continuar")
-    : chosen.kind === 'card' || chosen.kind === 'paypal'
+    : chosen.kind === 'card' || chosen.kind === 'paypal' || chosen.kind === 'monime'
       ? tx(`Pay ${total}`, `Pagar ${total}`, `Pagar ${total}`)
       : chosen.kind === 'crypto'
         ? tx(`Continue to payment · ${total}`, `Continuar al pago · ${total}`, `Continuar para o pagamento · ${total}`)
@@ -149,6 +149,13 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       await fetch('/api/pay/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => null);
       if (chosen.kind === 'paypal') {
         const r = await fetch('/api/paypal/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, test: paypalTest() }) }).catch(() => null);
+        const j = r ? await r.json().catch(() => ({})) : {};
+        if (r?.ok && j.url) {
+          if (Platform.OS === 'web' && typeof window !== 'undefined') return window.location.assign(j.url);
+        }
+      }
+      if (chosen.kind === 'monime') {
+        const r = await fetch('/api/monime/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => null);
         const j = r ? await r.json().catch(() => ({})) : {};
         if (r?.ok && j.url) {
           if (Platform.OS === 'web' && typeof window !== 'undefined') return window.location.assign(j.url);
@@ -446,6 +453,13 @@ export function PayRow({ option, on, first, last, onPress }: { option: PayOption
       {on && option.kind === 'manual' && option.details ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>{t(option.details)}</Text>
+        </View>
+      ) : null}
+      {on && option.kind === 'monime' ? (
+        <View style={styles.payDetail}>
+          <Text style={styles.payDetailText}>
+            {tx("We take you to Monime's secure page. Pay in Leones with Orange Money, Afrimoney, your bank or a Visa debit card, then you come back here.", 'Te llevamos a la página segura de Monime. Paga en leones con Orange Money, Afrimoney, tu banco o una tarjeta Visa débito, y luego vuelves aquí.', 'Levamos você à página segura do Monime. Pague em leones com Orange Money, Afrimoney, banco ou cartão Visa débito e depois volte aqui.')}
+          </Text>
         </View>
       ) : null}
       {on && option.kind === 'paypal' ? (

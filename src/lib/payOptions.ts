@@ -13,7 +13,7 @@ import { tx } from '../i18n';
 
 export type PayOption = {
   id: string; // 'paypal' | 'card' | 'crypto' | manual method id
-  kind: 'paypal' | 'card' | 'crypto' | 'manual';
+  kind: 'paypal' | 'card' | 'crypto' | 'monime' | 'manual';
   name: string;
   details?: { es: string; en: string; pt?: string };
 };
@@ -40,10 +40,28 @@ export function inVenezuela(country?: string | null) {
   }
 }
 
+// Monime (Orange Money, Afrimoney, cards in Leones) is for clients in Sierra Leone. ?sl=1 shows it anywhere (testing).
+export function inSierraLeone(country?: string | null) {
+  if (country && /^(sl|sle|sierra\s*leone)$/i.test(country.trim())) return true;
+  try {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('sl') === '1') return true;
+  } catch {}
+  if (typeof document !== 'undefined' && /(?:^|; )sk_cc=SL(?:;|$)/.test(document.cookie)) return true;
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone === 'Africa/Freetown';
+  } catch {
+    return false;
+  }
+}
+
 /** Hide Venezuela-only methods for clients elsewhere. `keep` is a method the order already uses. */
 function forClient(list: PayOption[], country?: string | null, keep?: string) {
-  if (inVenezuela(country)) return list;
-  return list.filter((o) => o.kind !== 'manual' || o.id === keep || !VENEZUELA_ONLY.test(o.name));
+  const sl = inSierraLeone(country);
+  // Sierra Leone: Monime first (local mobile money), then the rest.
+  let out = list.filter((o) => o.kind !== 'monime' || sl || o.id === keep);
+  if (sl) out = [...out.filter((o) => o.kind === 'monime'), ...out.filter((o) => o.kind !== 'monime')];
+  if (inVenezuela(country)) return out;
+  return out.filter((o) => o.kind !== 'manual' || o.id === keep || !VENEZUELA_ONLY.test(o.name));
 }
 
 // Sandbox PayPal (fake money) is only offered on a page opened with ?paypaltest=1.
@@ -72,6 +90,7 @@ export function usePayOptions(client?: { country?: string | null; keep?: string 
           .then(({ data }) => (data as Manual[]) ?? []),
       ]);
       const list: PayOption[] = [];
+      if (auto.monime) list.push({ id: 'monime', kind: 'monime', name: 'monime' });
       if (auto.paypal) list.push({ id: 'paypal', kind: 'paypal', name: 'paypal' });
       if (auto.card) list.push({ id: 'card', kind: 'card', name: 'card' });
       if (auto.crypto) list.push({ id: 'crypto', kind: 'crypto', name: 'crypto' });
@@ -93,6 +112,7 @@ export function usePayOptions(client?: { country?: string | null; keep?: string 
 
 export function payTitle(o: PayOption, lang: Lang) {
   const es = lang === 'es';
+  if (o.kind === 'monime') return tx('Orange Money, Afrimoney or card (Sierra Leone)', 'Orange Money, Afrimoney o tarjeta (Sierra Leona)', 'Orange Money, Afrimoney ou cartão (Serra Leoa)');
   if (o.kind === 'paypal') return tx('PayPal or card', 'PayPal o tarjeta', "PayPal ou cartão");
   if (o.kind === 'card') return tx('Credit or debit card', 'Tarjeta de crédito o débito', "Cartão de crédito ou débito");
   if (o.kind === 'crypto') return tx('Crypto (USDT)', 'Cripto (USDT)', "Cripto (USDT)");
@@ -101,10 +121,11 @@ export function payTitle(o: PayOption, lang: Lang) {
 
 export function paySub(o: PayOption, lang: Lang) {
   const es = lang === 'es';
+  if (o.kind === 'monime') return tx('Pay in Leones with mobile money, bank or Visa debit on Monime. Confirmed instantly.', 'Paga en leones con dinero móvil, banco o Visa débito en Monime. Se confirma al instante.', 'Pague em leones com dinheiro móvel, banco ou Visa débito no Monime. Confirmado na hora.');
   if (o.kind === 'paypal') return tx('Pay with your PayPal account or a debit/credit card. Confirmed instantly.', 'Paga con tu cuenta PayPal o con tarjeta de débito o crédito. Se confirma al instante.', "Pague com sua conta PayPal ou cartão de débito/crédito. Confirmado na hora.");
   if (o.kind === 'card') return tx('Visa, Mastercard, Apple Pay. Secure payment by Stripe.', 'Visa, Mastercard, Apple Pay. Pago seguro con Stripe.', "Visa, Mastercard, Apple Pay. Pagamento seguro pela Stripe.");
   if (o.kind === 'crypto') return tx('TRC20 or BEP20. Confirmed automatically.', 'TRC20 o BEP20. Se confirma automáticamente.', "TRC20 ou BEP20. Confirmado automaticamente.");
   return tx('You pay and send us the reference. We confirm it within hours.', 'Pagas y nos envías la referencia. Lo confirmamos en pocas horas.', "Você paga e nos envia a referência. Confirmamos em poucas horas.");
 }
 
-export const payIcon = (o: PayOption) => (o.kind === 'paypal' ? 'logo-paypal' : o.kind === 'card' ? 'card' : o.kind === 'crypto' ? 'logo-bitcoin' : 'swap-horizontal');
+export const payIcon = (o: PayOption) => (o.kind === 'monime' ? 'phone-portrait' : o.kind === 'paypal' ? 'logo-paypal' : o.kind === 'card' ? 'card' : o.kind === 'crypto' ? 'logo-bitcoin' : 'swap-horizontal');

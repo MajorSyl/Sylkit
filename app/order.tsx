@@ -6,6 +6,7 @@ import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, Vi
 import { Button } from '../src/components/Button';
 import { CardPay, ManageCard } from '../src/components/CardPay';
 import { PayPalPay } from '../src/components/PayPalPay';
+import { MonimePay } from '../src/components/MonimePay';
 import { CheckoutFooter, CheckoutHeader } from '../src/components/CheckoutHeader';
 import { PayRow } from '../src/components/CheckoutFlow';
 import { CryptoPay } from '../src/components/CryptoPay';
@@ -55,7 +56,7 @@ export default function OrderPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   // Back from PayPal/Stripe the URL has ?paid=<method> but no ?pay=, so reopen that method to confirm it.
-  const [payId, setPayId] = useState(params.pay ? String(params.pay) : params.paid === 'paypal' || params.paid === 'card' ? String(params.paid) : '');
+  const [payId, setPayId] = useState(params.pay ? String(params.pay) : params.paid === 'paypal' || params.paid === 'card' || params.paid === 'monime' ? String(params.paid) : '');
   const options = usePayOptions({ country: order?.country, keep: payId });
   const [choosing, setChoosing] = useState(false);
   const [reference, setReference] = useState('');
@@ -138,7 +139,7 @@ export default function OrderPage() {
     const product = (order.product_name_en ? productName(order.product_name_en, order.product_name_es ?? order.product_name_en) : null) ?? (tx('Custom system', 'Sistema a medida', "Sistema sob medida"));
     const amount = order.quote_amount != null ? formatMoney(order.quote_amount, order.quote_currency) : '';
     const paid = PAID.includes(order.status);
-    const cardReturn = (params.paid === 'card' || params.paid === 'paypal') && order.status === 'accepted';
+    const cardReturn = (params.paid === 'card' || params.paid === 'paypal' || params.paid === 'monime') && order.status === 'accepted';
     const payable = order.status === 'accepted' || order.status === 'payment_submitted';
     const cryptoStarted = String(order.payment_method ?? '').startsWith('crypto:');
     const chosen = options?.find((o) => o.id === payId);
@@ -235,7 +236,9 @@ export default function OrderPage() {
 
             {chosen && !showChooser ? (
               <View style={{ gap: 12 }}>
-                {chosen.kind === 'paypal' ? (
+                {chosen.kind === 'monime' ? (
+                  <MonimePay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'monime'} onChanged={load} />
+                ) : chosen.kind === 'paypal' ? (
                   <PayPalPay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'paypal'} paypalOrder={params.token ? String(params.token) : undefined} onChanged={load} />
                 ) : chosen.kind === 'card' ? (
                   <CardPay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'card'} onChanged={load} />
