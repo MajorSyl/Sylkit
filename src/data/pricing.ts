@@ -10,7 +10,7 @@ export type Pricing = { group: string; plans: Plan[]; addons: string[]; billing?
 
 export const ANNUAL_MONTHS = 10; // pay yearly: 12 months for the price of 10
 export const ONCE_MONTHS = 30; // buy once: license = monthly price × 30 (≈ 2.5 years), includes the first 12 months of hosting, support and updates
-export const CARE_MONTHS = 3; // after year 1, optional care plan (hosting, updates, support) = monthly price × 3 per year
+export const CARE_MONTHS = 5; // after year 1, optional care plan (hosting, updates, support) = monthly price × 5 per year
 
 export const addonCatalog: Record<string, Addon> = {
   "extra_mailboxes": {"id": "extra_mailboxes", "name": {"es": "+5 correos adicionales", "en": "+5 email addresses", "pt": "+5 endereços de e-mail"}, "desc": {"es": "Cinco direcciones de correo más con tu dominio.", "en": "Five more email addresses on your domain.", "pt": "Mais cinco endereços de e-mail no seu domínio."}, "kind": "monthly", "price": 3, "perUnit": true},
@@ -27,7 +27,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "Another store or location on the same system.", "pt": "Outra loja ou unidade no mesmo sistema."
     },
     "kind": "monthly",
-    "price": 10,
+    "price": 15,
     "perUnit": true
   },
   "extra_users": {
@@ -97,7 +97,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "We move your products and customers from Excel into the system.", "pt": "Passamos seus produtos e clientes do Excel para o sistema."
     },
     "kind": "one_time",
-    "price": 50,
+    "price": 75,
     "perUnit": false
   },
   "onsite_training": {
@@ -111,7 +111,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "We visit your business and train your team.", "pt": "Visitamos seu negócio e treinamos sua equipe."
     },
     "kind": "one_time",
-    "price": 40,
+    "price": 60,
     "perUnit": true
   },
   "custom_report": {
@@ -139,7 +139,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "We connect it to your accounting, bank or another system.", "pt": "Conectamos à sua contabilidade, banco ou outro sistema."
     },
     "kind": "one_time",
-    "price": 150,
+    "price": 250,
     "perUnit": false
   },
   "custom_domain": {
@@ -181,7 +181,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "Show up on Google Maps and in searches.", "pt": "Apareça no Google Maps e nas buscas."
     },
     "kind": "one_time",
-    "price": 80,
+    "price": 120,
     "perUnit": false
   },
   "extra_pages": {
@@ -195,7 +195,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "One more page on your site.", "pt": "Mais uma página no seu site."
     },
     "kind": "one_time",
-    "price": 30,
+    "price": 40,
     "perUnit": true
   },
   "online_payments": {
@@ -209,7 +209,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "Customers pay directly on your site.", "pt": "Seus clientes pagam direto no seu site."
     },
     "kind": "one_time",
-    "price": 120,
+    "price": 150,
     "perUnit": false
   },
   "store_publishing": {
@@ -223,7 +223,7 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "We publish it to the stores under your account.", "pt": "Publicamos nas lojas com a sua conta."
     },
     "kind": "one_time",
-    "price": 150,
+    "price": 250,
     "perUnit": false
   },
   "extra_screens": {
@@ -279,14 +279,14 @@ export const addonCatalog: Record<string, Addon> = {
       "en": "Replies within 2 hours, weekends included.", "pt": "Respostas em até 2 horas, inclusive fins de semana."
     },
     "kind": "monthly",
-    "price": 15,
+    "price": 25,
     "perUnit": false
   }
 };
 
 export const pricingBySlug: Record<string, Pricing> = {
   "dominio-y-correo": {"group": "domain", "billing": ["yearly"], "plans": [{"id": "starter", "name": {"es": "Solo dominio", "en": "Domain only", "pt": "Só domínio"}, "monthly": 1.5, "setup": 0, "includes": [{"es": ".com, .net o .org registrado a tu nombre", "en": ".com, .net or .org registered in your name", "pt": ".com, .net ou .org registrado em seu nome"}, {"es": "Lo conectamos a tu sitio o sistema", "en": "We connect it to your site or system", "pt": "Conectamos ao seu site ou sistema"}, {"es": "Renovación automática: nunca se vence por olvido", "en": "Auto-renewal, it never expires by accident", "pt": "Renovação automática, nunca vence por esquecimento"}, {"es": "Transferencia gratis si te vas", "en": "Free transfer if you ever leave", "pt": "Transferência grátis se você sair"}], "popular": false}, {"id": "business", "name": {"es": "Dominio + correo", "en": "Domain + email", "pt": "Domínio + e-mail"}, "monthly": 5, "setup": 30, "includes": [{"es": "Tu dominio a tu nombre", "en": "Your domain in your name", "pt": "Seu domínio em seu nome"}, {"es": "Hasta 5 correos (ventas@tunegocio.com)", "en": "Up to 5 email addresses (sales@yourbusiness.com)", "pt": "Até 5 endereços de e-mail (vendas@seunegocio.com)"}, {"es": "Configurado en tu teléfono y computadora", "en": "Set up on your phone and computer", "pt": "Configurado no seu celular e computador"}, {"es": "Protección contra spam y virus", "en": "Spam and virus protection", "pt": "Proteção contra spam e vírus"}], "popular": true}, {"id": "pro", "name": {"es": "Dominio + correo + página", "en": "Domain + email + page", "pt": "Domínio + e-mail + página"}, "monthly": 9, "setup": 100, "includes": [{"es": "Todo lo de Dominio + correo", "en": "Everything in Domain + email", "pt": "Tudo do Domínio + e-mail"}, {"es": "Página web de 1 sección con botón de WhatsApp", "en": "1-page website with WhatsApp button", "pt": "Site de 1 página com botão de WhatsApp"}, {"es": "Perfil de Google Business", "en": "Google Business profile", "pt": "Perfil no Google Empresa"}, {"es": "Soporte prioritario", "en": "Priority support", "pt": "Suporte prioritário"}], "popular": false}], "addons": ["extra_mailboxes", "domain_transfer", "seo_pack", "priority_support"]},
-  "hosting-web": {"group": "hosting", "billing": ["yearly", "monthly"], "plans": [{"id": "starter", "name": {"es": "Básico", "en": "Basic", "pt": "Básico"}, "monthly": 5, "setup": 30, "includes": [{"es": "Página o sitio estático", "en": "Landing page or static site", "pt": "Página de destino ou site estático"}, {"es": "SSL gratis y red global rápida", "en": "Free SSL and fast global network", "pt": "SSL grátis e rede global rápida"}, {"es": "Monitoreo de disponibilidad", "en": "Uptime monitoring", "pt": "Monitoramento de disponibilidade"}, {"es": "Soporte por correo", "en": "Email support", "pt": "Suporte por e-mail"}], "popular": false}, {"id": "business", "name": {"es": "Negocio", "en": "Business", "pt": "Negócio"}, "monthly": 10, "setup": 50, "includes": [{"es": "Sitio con formularios o base de datos pequeña", "en": "Site with forms or a small database", "pt": "Site com formulários ou um pequeno banco de dados"}, {"es": "Copias de seguridad semanales", "en": "Weekly backups", "pt": "Backups semanais"}, {"es": "Actualizaciones y arreglos mensuales", "en": "Monthly updates and fixes", "pt": "Atualizações e correções mensais"}, {"es": "Soporte por WhatsApp", "en": "WhatsApp support", "pt": "Suporte por WhatsApp"}], "popular": true}, {"id": "pro", "name": {"es": "Pro", "en": "Pro", "pt": "Pro"}, "monthly": 20, "setup": 80, "includes": [{"es": "App web o tienda en línea", "en": "Web app or online store", "pt": "App web ou loja online"}, {"es": "Copias de seguridad diarias", "en": "Daily backups", "pt": "Backups diários"}, {"es": "Monitoreo de seguridad", "en": "Security monitoring", "pt": "Monitoramento de segurança"}, {"es": "Soporte prioritario", "en": "Priority support", "pt": "Suporte prioritário"}], "popular": false}], "addons": ["site_migration", "custom_domain", "business_email", "seo_pack", "priority_support"]},
+  "hosting-web": {"group": "hosting", "billing": ["yearly", "monthly"], "plans": [{"id": "starter", "name": {"es": "Básico", "en": "Basic", "pt": "Básico"}, "monthly": 7, "setup": 30, "includes": [{"es": "Página o sitio estático", "en": "Landing page or static site", "pt": "Página de destino ou site estático"}, {"es": "SSL gratis y red global rápida", "en": "Free SSL and fast global network", "pt": "SSL grátis e rede global rápida"}, {"es": "Monitoreo de disponibilidad", "en": "Uptime monitoring", "pt": "Monitoramento de disponibilidade"}, {"es": "Soporte por correo", "en": "Email support", "pt": "Suporte por e-mail"}], "popular": false}, {"id": "business", "name": {"es": "Negocio", "en": "Business", "pt": "Negócio"}, "monthly": 15, "setup": 50, "includes": [{"es": "Sitio con formularios o base de datos pequeña", "en": "Site with forms or a small database", "pt": "Site com formulários ou um pequeno banco de dados"}, {"es": "Copias de seguridad semanales", "en": "Weekly backups", "pt": "Backups semanais"}, {"es": "Actualizaciones y arreglos mensuales", "en": "Monthly updates and fixes", "pt": "Atualizações e correções mensais"}, {"es": "Soporte por WhatsApp", "en": "WhatsApp support", "pt": "Suporte por WhatsApp"}], "popular": true}, {"id": "pro", "name": {"es": "Pro", "en": "Pro", "pt": "Pro"}, "monthly": 29, "setup": 80, "includes": [{"es": "App web o tienda en línea", "en": "Web app or online store", "pt": "App web ou loja online"}, {"es": "Copias de seguridad diarias", "en": "Daily backups", "pt": "Backups diários"}, {"es": "Monitoreo de seguridad", "en": "Security monitoring", "pt": "Monitoramento de segurança"}, {"es": "Soporte prioritario", "en": "Priority support", "pt": "Suporte prioritário"}], "popular": false}], "addons": ["site_migration", "custom_domain", "business_email", "seo_pack", "priority_support"]},
   "alertas-de-vencimiento": {
     "group": "system",
     "plans": [
@@ -324,7 +324,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 35,
+        "monthly": 45,
         "setup": 119,
         "includes": [
           {
@@ -352,7 +352,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 59,
+        "monthly": 79,
         "setup": 179,
         "includes": [
           {
@@ -430,7 +430,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 35,
+        "monthly": 45,
         "setup": 119,
         "includes": [
           {
@@ -458,7 +458,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 59,
+        "monthly": 79,
         "setup": 179,
         "includes": [
           {
@@ -537,7 +537,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 35,
+        "monthly": 45,
         "setup": 119,
         "includes": [
           {
@@ -565,7 +565,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 59,
+        "monthly": 79,
         "setup": 179,
         "includes": [
           {
@@ -730,7 +730,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 29,
+        "monthly": 35,
         "setup": 99,
         "includes": [
           {
@@ -758,7 +758,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 49,
+        "monthly": 59,
         "setup": 149,
         "includes": [
           {
@@ -790,7 +790,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 89,
+        "monthly": 99,
         "setup": 279,
         "includes": [
           {
@@ -868,7 +868,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 39,
+        "monthly": 49,
         "setup": 129,
         "includes": [
           {
@@ -896,7 +896,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 69,
+        "monthly": 89,
         "setup": 199,
         "includes": [
           {
@@ -975,7 +975,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 29,
+        "monthly": 45,
         "setup": 99,
         "includes": [
           {
@@ -1003,7 +1003,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 49,
+        "monthly": 79,
         "setup": 149,
         "includes": [
           {
@@ -1081,7 +1081,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 35,
+        "monthly": 45,
         "setup": 119,
         "includes": [
           {
@@ -1109,7 +1109,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 59,
+        "monthly": 79,
         "setup": 179,
         "includes": [
           {
@@ -1187,7 +1187,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 39,
+        "monthly": 49,
         "setup": 129,
         "includes": [
           {
@@ -1215,7 +1215,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 69,
+        "monthly": 89,
         "setup": 199,
         "includes": [
           {
@@ -1399,7 +1399,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 35,
+        "monthly": 45,
         "setup": 119,
         "includes": [
           {
@@ -1427,7 +1427,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 59,
+        "monthly": 79,
         "setup": 179,
         "includes": [
           {
@@ -1477,7 +1477,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Inicial",
           "en": "Starter", "pt": "Inicial"
         },
-        "monthly": 15,
+        "monthly": 19,
         "setup": 49,
         "includes": [
           {
@@ -1505,7 +1505,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 25,
+        "monthly": 45,
         "setup": 79,
         "includes": [
           {
@@ -1533,7 +1533,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 45,
+        "monthly": 79,
         "setup": 129,
         "includes": [
           {
@@ -1611,7 +1611,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Negocio",
           "en": "Business", "pt": "Negócio"
         },
-        "monthly": 35,
+        "monthly": 45,
         "setup": 179,
         "includes": [
           {
@@ -1639,7 +1639,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "es": "Pro",
           "en": "Pro", "pt": "Pro"
         },
-        "monthly": 59,
+        "monthly": 79,
         "setup": 279,
         "includes": [
           {
@@ -1738,7 +1738,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Pro", "pt": "Pro"
         },
         "monthly": 29,
-        "setup": 399,
+        "setup": 449,
         "includes": [
           {
             "es": "Hasta 10 páginas, tienda o reservas",
@@ -1779,7 +1779,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Starter", "pt": "Inicial"
         },
         "monthly": 15,
-        "setup": 179,
+        "setup": 199,
         "includes": [
           {
             "es": "Sitio de 1 página",
@@ -1807,7 +1807,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Business", "pt": "Negócio"
         },
         "monthly": 25,
-        "setup": 349,
+        "setup": 399,
         "includes": [
           {
             "es": "Hasta 5 páginas",
@@ -1835,7 +1835,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Pro", "pt": "Pro"
         },
         "monthly": 39,
-        "setup": 549,
+        "setup": 699,
         "includes": [
           {
             "es": "Hasta 10 páginas, tienda o reservas",
@@ -1876,7 +1876,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Starter", "pt": "Inicial"
         },
         "monthly": 29,
-        "setup": 999,
+        "setup": 1499,
         "includes": [
           {
             "es": "App sencilla (hasta 5 pantallas)",
@@ -1904,7 +1904,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Business", "pt": "Negócio"
         },
         "monthly": 49,
-        "setup": 1999,
+        "setup": 2999,
         "includes": [
           {
             "es": "Hasta 12 pantallas",
@@ -1932,7 +1932,7 @@ export const pricingBySlug: Record<string, Pricing> = {
           "en": "Pro", "pt": "Pro"
         },
         "monthly": 89,
-        "setup": 3799,
+        "setup": 5999,
         "includes": [
           {
             "es": "Pantallas ilimitadas",

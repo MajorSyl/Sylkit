@@ -116,8 +116,8 @@ const faq: { q: T; a: T }[] = [
   {
     q: { en: 'How do I pay?', pt: "Como eu pago?", es: '¿Cómo pago?' },
     a: {
-      en: 'After we confirm your quote, you pay on your order page with USDT or another method. Audits from $499 can be split in two payments.', pt: "Depois de confirmarmos seu orçamento, você paga na página do pedido com cartão, USDT ou outro método. Auditorias a partir de $499 podem ser divididas em dois pagamentos.",
-      es: 'Cuando confirmamos tu cotización, pagas en la página de tu pedido con USDT u otro método. Las auditorías desde $499 se pueden pagar en dos partes.',
+      en: 'After we confirm your quote, you pay on your order page with USDT or another method. Audits from $699 can be split in two payments.', pt: "Depois de confirmarmos seu orçamento, você paga na página do pedido com cartão, USDT ou outro método. Auditorias a partir de $699 podem ser divididas em dois pagamentos.",
+      es: 'Cuando confirmamos tu cotización, pagas en la página de tu pedido con USDT u otro método. Las auditorías desde $699 se pueden pagar en dos partes.',
     },
   },
   {

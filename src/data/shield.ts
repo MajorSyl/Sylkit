@@ -48,7 +48,7 @@ export const shieldPlans: ShieldPlan[] = [
     step: 1,
     name: { en: 'Essential Audit', pt: "Essential Audit", es: 'Auditoría esencial' },
     best: { en: 'Small apps, PHP/WordPress sites, MVPs', pt: "Apps pequenos, sites PHP/WordPress, MVPs", es: 'Apps pequeñas, sitios PHP/WordPress, MVPs' },
-    price: { en: '$199', pt: "$199", es: '$199' },
+    price: { en: '$249', pt: "$249", es: '$249' },
     delivery: { en: '3–5 days', pt: "3–5 dias", es: '3–5 días' },
     popular: true,
     items: [
@@ -63,7 +63,7 @@ export const shieldPlans: ShieldPlan[] = [
     step: 1,
     name: { en: 'Pro Audit', pt: "Pro Audit", es: 'Auditoría Pro' },
     best: { en: 'Growing apps, web + mobile, APIs', pt: "Apps em crescimento, web + celular, APIs", es: 'Apps en crecimiento, web + móvil, APIs' },
-    price: { en: '$499', pt: "$499", es: '$499' },
+    price: { en: '$699', pt: "$699", es: '$699' },
     delivery: { en: '5–7 days', pt: "5–7 dias", es: '5–7 días' },
     items: [
       { en: 'Everything in Essential', pt: "Tudo do Essential", es: 'Todo lo de Esencial' },
@@ -77,7 +77,7 @@ export const shieldPlans: ShieldPlan[] = [
     step: 1,
     name: { en: 'Business Audit', pt: "Business Audit", es: 'Auditoría empresarial' },
     best: { en: 'Large or multi-system businesses', pt: "Empresas grandes ou com vários sistemas", es: 'Empresas con varios sistemas' },
-    price: { en: 'From $999', pt: "A partir de $999", es: 'Desde $999' },
+    price: { en: 'From $1,499', pt: "A partir de $1,499", es: 'Desde $1,499' },
     delivery: { en: 'Quoted', pt: "Sob orçamento", es: 'Según alcance' },
     items: [
       { en: 'Custom scope across all systems', pt: "Escopo personalizado em todos os sistemas", es: 'Alcance a medida en todos tus sistemas' },
@@ -171,7 +171,7 @@ export const shieldPolicies: { icon: string; t: Text; d: Text }[] = [
   { icon: 'gift', t: { en: 'Start free', pt: "Comece grátis", es: 'Empieza gratis' }, d: { en: 'Every client can begin with the free Security Snapshot.', pt: "Todo cliente pode começar com o Security Snapshot grátis.", es: 'Todos pueden empezar con el Diagnóstico rápido gratis.' } },
   { icon: 'trending-up', t: { en: 'Upgrade credit', pt: "Crédito de upgrade", es: 'Crédito para subir de nivel' }, d: { en: 'Pay for an audit, then upgrade within 30 days and the full amount counts toward it.', pt: "Pague por uma auditoria e, se fizer upgrade em até 30 dias, o valor total conta para o novo plano.", es: 'Si subes de auditoría en 30 días, lo que pagaste cuenta completo.' } },
   { icon: 'construct', t: { en: 'Fix credit', pt: "Crédito para correções", es: 'Crédito para correcciones' }, d: { en: '50% of your audit fee is credited toward fixes booked within 30 days.', pt: "50% do valor da auditoria vira crédito para correções agendadas em até 30 dias.", es: 'El 50% de tu auditoría se descuenta de las correcciones en 30 días.' } },
-  { icon: 'wallet', t: { en: 'Split payment', pt: "Pagamento dividido", es: 'Pago en dos partes' }, d: { en: 'Audits of $499 and above: half to start, half on delivery.', pt: "Auditorias a partir de $499: metade para começar, metade na entrega.", es: 'Auditorías desde $499: mitad al inicio, mitad al entregar.' } },
+  { icon: 'wallet', t: { en: 'Split payment', pt: "Pagamento dividido", es: 'Pago en dos partes' }, d: { en: 'Audits of $699 and above: half to start, half on delivery.', pt: "Auditorias a partir de $699: metade para começar, metade na entrega.", es: 'Auditorías desde $699: mitad al inicio, mitad al entregar.' } },
   { icon: 'pricetag', t: { en: 'Sylkit customers', pt: "Clientes Sylkit", es: 'Clientes Sylkit' }, d: { en: 'A free Starter Scan with every system you buy and 20% off all Shield plans.', pt: "Um Starter Scan grátis com cada sistema que você comprar e 20% de desconto em todos os planos Shield.", es: 'Escaneo inicial gratis con cada sistema y 20% de descuento en Shield.' } },
   { icon: 'flash', t: { en: 'Launch offer', pt: "Oferta de lançamento", es: 'Oferta de lanzamiento' }, d: { en: 'First 10 clients: 50% off any audit for a testimonial.', pt: "Primeiros 10 clientes: 50% de desconto em qualquer auditoria em troca de um depoimento.", es: 'Primeros 10 clientes: 50% de descuento a cambio de un testimonio.' } },
 ];

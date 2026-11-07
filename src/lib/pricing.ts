@@ -10,7 +10,7 @@ import { supabase } from './supabase';
 //   due today = one-time + first recurring payment
 // Buy once (no subscription):
 //   license  = monthly × 30, paid once on top of the one-time items; first 12 months of hosting, support and updates included
-//   care plan from year 2 (optional) = monthly × 3 per year
+//   care plan from year 2 (optional) = monthly × 5 per year
 
 export type Billing = 'yearly' | 'monthly' | 'once';
 export type DomainMode = 'sub' | 'new' | 'own';
