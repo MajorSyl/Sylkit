@@ -24,6 +24,9 @@ let cache: PayOption[] | null = null;
 
 // Venezuelan bank methods (Pago Móvil, bank transfer in bolívares) are shown only to clients in Venezuela.
 const VENEZUELA_ONLY = /pago\s*m[oó]vil|mercantil|transferencia|bank\s*transfer|banco|bol[ií]var/i;
+/** True for methods paid in bolívares inside Venezuela (shown with the amount at the BCV rate). */
+export const isBolivarMethod = (o: PayOption) => o.kind === 'manual' && VENEZUELA_ONLY.test(o.name) && !/usd|d[oó]lar/i.test(o.name);
+
 // Not accepted by Sylkit; hidden even if a row is still switched on in the table.
 const NOT_ACCEPTED = /zelle/i;
 

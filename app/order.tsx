@@ -14,7 +14,7 @@ import { Field, formStyles } from '../src/components/Field';
 import { useLang } from '../src/i18n';
 import { productName } from '../src/lib/names';
 import { orderLines } from '../src/lib/orderLines';
-import { PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
+import { isBolivarMethod, PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
 import { money } from '../src/lib/pricing';
 import { formatDate, formatMoney, OrderStatus, statusLabel } from '../src/lib/status';
 import { friendlyError, supabase } from '../src/lib/supabase';
@@ -237,8 +237,13 @@ export default function OrderPage() {
                 ) : (
                   <View style={styles.manual}>
                     <Text style={styles.manualTitle}>{payTitle(chosen, lang)}</Text>
-                    <Text style={styles.manualStep}>{tx(`1. Send exactly ${amount} using these details:`, `1. Envía exactamente ${amount} usando estos datos:`, `1. Envie exatamente ${amount} usando estes dados:`)}</Text>
-                    {chosen.details ? <Text style={styles.manualDetails}>{t(chosen.details)}</Text> : null}
+                    {isBolivarMethod(chosen) && (order.quote_currency || 'USD') === 'USD' && order.quote_amount != null ? (
+                      <BolivarAmount usd={Number(order.quote_amount)} amount={amount} />
+                    ) : (
+                      <Text style={styles.manualStep}>{tx(`1. Send exactly ${amount} using these details:`, `1. Envía exactamente ${amount} usando estos datos:`, `1. Envie exatamente ${amount} usando estes dados:`)}</Text>
+                    )}
+                    {chosen.details ? <Text style={styles.manualDetails} selectable>{t(chosen.details)}</Text> : null}
+                    {chosen.details ? <CopyButton text={t(chosen.details)} /> : null}
                     <Text style={styles.manualStep}>{tx('2. Enter the reference or confirmation number:', '2. Escribe la referencia o número de confirmación:', "2. Digite a referência ou número de confirmação:")}</Text>
                     <Field label={tx('Reference', 'Referencia', "Referência")} value={reference} onChangeText={setReference} placeholder={tx('e.g. 0012345678', 'Ej. 0012345678', "ex.: 0012345678")} />
                     <Button label={tx("I've paid", 'Ya pagué', "Já paguei")} icon="checkmark-circle" onPress={() => report(chosen)} loading={busy} />
@@ -415,6 +420,56 @@ function Next({ done, active, title, text, last }: { done: boolean; active: bool
   );
 }
 
+
+// Amount in bolívares at today's official BCV rate (Pago Móvil and bank transfers in Venezuela).
+function BolivarAmount({ usd, amount }: { usd: number; amount: string }) {
+  const [rate, setRate] = useState<{ rate: number; date: string | null } | null | undefined>(undefined);
+  useEffect(() => {
+    fetch('/api/order/bcv')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => setRate(j && j.rate ? j : null))
+      .catch(() => setRate(null));
+  }, []);
+  const bs = (n: number) => 'Bs. ' + n.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (rate === undefined) return <Text style={styles.manualStep}>{tx('1. Getting today\'s BCV rate…', '1. Consultando la tasa BCV de hoy…', '1. Consultando a taxa BCV de hoje…')}</Text>;
+  if (!rate)
+    return (
+      <Text style={styles.manualStep}>
+        {tx(`1. Send ${amount} in bolívares at today's official BCV rate, using these details:`, `1. Envía ${amount} en bolívares a la tasa oficial BCV del día, usando estos datos:`, `1. Envie ${amount} em bolívares à taxa oficial BCV do dia, usando estes dados:`)}
+      </Text>
+    );
+  const total = Math.round(usd * rate.rate * 100) / 100;
+  return (
+    <View style={{ gap: 4 }}>
+      <Text style={styles.manualStep}>{tx('1. Send exactly this amount using these details:', '1. Envía exactamente este monto usando estos datos:', '1. Envie exatamente este valor usando estes dados:')}</Text>
+      <Text style={styles.bsAmount} selectable>{bs(total)}</Text>
+      <Text style={styles.bsNote}>
+        {tx(`${amount} at the BCV rate of ${bs(rate.rate)} per dollar. If the rate changes before you pay, use the rate of the day you pay.`, `${amount} a la tasa BCV de ${bs(rate.rate)} por dólar. Si la tasa cambia antes de pagar, usa la del día en que pagues.`, `${amount} à taxa BCV de ${bs(rate.rate)} por dólar. Se a taxa mudar antes de pagar, use a do dia do pagamento.`)}
+      </Text>
+    </View>
+  );
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setDone(true);
+      setTimeout(() => setDone(false), 2000);
+    } catch {
+      /* the details stay selectable */
+    }
+  };
+  if (typeof navigator === 'undefined' || !navigator.clipboard) return null;
+  return (
+    <Pressable onPress={copy} style={styles.switch} accessibilityRole="button">
+      <Ionicons name={done ? 'checkmark' : 'copy-outline'} size={16} color={colors.primary} />
+      <Text style={styles.switchText}>{done ? tx('Copied', 'Copiado', 'Copiado') : tx('Copy payment details', 'Copiar datos de pago', 'Copiar dados de pagamento')}</Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   container: { width: '100%', maxWidth: 680, alignSelf: 'center', paddingHorizontal: 16, paddingTop: 24 },
   card: { backgroundColor: colors.surface, borderRadius: 20, padding: 20, gap: 12, borderWidth: 1, borderColor: colors.border },
@@ -429,6 +484,8 @@ const styles = StyleSheet.create({
   manual: { gap: 10, padding: 16, borderRadius: 14, borderWidth: 1, borderColor: '#D5DCEA', backgroundColor: colors.bg },
   manualTitle: { fontSize: 16, fontWeight: '800', color: colors.text },
   manualStep: { fontSize: 14, fontWeight: '700', color: colors.text },
+  bsAmount: { fontSize: 26, fontWeight: '800', color: colors.text, fontVariant: ['tabular-nums'] },
+  bsNote: { fontSize: 13, lineHeight: 19, color: colors.muted },
   manualDetails: { fontSize: 15, lineHeight: 23, color: colors.text, backgroundColor: colors.surface, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border },
   switch: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center', minHeight: 40 },
   switchText: { fontSize: 14, fontWeight: '700', color: colors.primary },

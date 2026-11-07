@@ -102,6 +102,37 @@ async function cardAvailable(env) {
   return ok;
 }
 
+// Official BCV exchange rate (bolívares per US dollar) for Pago Móvil and bank transfers in Venezuela.
+// Two public sources, cached for an hour per Worker instance; returns null if both are down,
+// and the order page then simply asks for "the BCV rate of the day".
+let bcvCache = { at: 0, data: null };
+async function bcvRate() {
+  if (bcvCache.data && Date.now() - bcvCache.at < 60 * 60 * 1000) return bcvCache.data;
+  const sources = [
+    async () => {
+      const j = await fetch('https://ve.dolarapi.com/v1/dolares/oficial', { cf: { cacheTtl: 1800 } }).then((r) => r.json());
+      return { rate: Number(j.promedio), date: j.fechaActualizacion || null };
+    },
+    async () => {
+      const j = await fetch('https://pydolarve.org/api/v2/dollar?page=bcv', { cf: { cacheTtl: 1800 } }).then((r) => r.json());
+      const usd = j?.monitors?.usd;
+      return { rate: Number(usd?.price), date: usd?.last_update || null };
+    },
+  ];
+  for (const get of sources) {
+    try {
+      const d = await get();
+      if (d.rate > 1 && d.rate < 1e7) {
+        bcvCache = { at: Date.now(), data: { rate: d.rate, date: d.date } };
+        return bcvCache.data;
+      }
+    } catch {
+      /* try the next source */
+    }
+  }
+  return bcvCache.data; // last good value, or null
+}
+
 export async function handleOrders(request, env, url) {
   try {
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
@@ -111,6 +142,10 @@ export async function handleOrders(request, env, url) {
       return json({ card: await cardAvailable(env), paypal, paypal_test: !hasLive(env) && paypal, crypto: !!env.NOWPAYMENTS_API_KEY });
     }
     if (url.pathname === '/api/order/invoice') return await invoice(url, env);
+    if (url.pathname === '/api/order/bcv') {
+      const d = await bcvRate();
+      return d ? json({ rate: d.rate, date: d.date }) : json({ error: 'rate_unavailable' }, 503);
+    }
     return json({ error: 'not_found' }, 404);
   } catch (e) {
     console.error('orders error', e);
