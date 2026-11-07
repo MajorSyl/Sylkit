@@ -23,7 +23,7 @@ const INCLUDED: Record<TemplateKind, Inc[]> = {
   store: [
     { icon: 'logo-whatsapp', es: 'Pedidos completos directo a tu WhatsApp', en: 'Complete orders straight to your WhatsApp', pt: "Pedidos completos direto no seu WhatsApp" },
     { icon: 'cart-outline', es: 'Carrito, tallas, colores y cantidades', en: 'Cart, sizes, colors and quantities', pt: "Carrinho, tamanhos, cores e quantidades" },
-    { icon: 'card-outline', es: 'Pago Móvil, Zelle, USDT, efectivo o tarjeta', en: 'Pago Móvil, Zelle, USDT, cash or card', pt: "Pix, cartão, USDT, dinheiro e outros métodos" },
+    { icon: 'card-outline', es: 'Pago Móvil, transferencia, USDT, efectivo o tarjeta', en: 'Pago Móvil, bank transfer, USDT, cash or card', pt: "Pix, cartão, USDT, dinheiro e outros métodos" },
     { icon: 'phone-portrait-outline', es: 'Hecha para el teléfono primero', en: 'Built for phones first', pt: "Feito primeiro para celular" },
     { icon: 'language-outline', es: 'Español e inglés automático', en: 'Automatic Spanish and English', pt: "Espanhol e inglês automáticos" },
     { icon: 'globe-outline', es: 'Tu propio dominio o tunegocio.sylkit.com', en: 'Your own domain or yourbusiness.sylkit.com', pt: "Seu próprio domínio ou seunegocio.sylkit.com" },

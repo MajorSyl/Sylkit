@@ -8,7 +8,7 @@ Sylkit sells four things:
 3. **Own a business (startups):** whole online businesses built by Sylkit and sold outright. Only Sylkit sells there.
 4. **Sylkit Shield (security):** security checks, fixes and monitoring for websites, apps and business systems (/security).
 
-Clients pay by **card (Stripe)**, **USDT (automatic, via NOWPayments)** or manual methods. **Pago Móvil (Banco Mercantil)** is shown only to clients in Venezuela. **Zelle is not accepted** (switched off 2 Nov 2026).
+Clients pay by **PayPal or card (on PayPal's page, live since 6 Nov 2026)**, **USDT (automatic, via NOWPayments)** or manual methods. **Pago Móvil and bank transfer (Banco Mercantil)** are shown only to clients in Venezuela. **Zelle is not accepted**: `payOptions.ts` hides any Zelle row even if it is switched on. Stripe card checkout stays in the code but is hidden while the Stripe account can't take charges. Apple Pay / Google Pay: not available yet (PayPal doesn't offer them to Venezuelan merchants; Stripe Checkout shows them automatically once an own-name Stripe account is connected).
 
 ---
 

@@ -88,6 +88,30 @@ function Products() {
     load();
   };
 
+  const [newMethod, setNewMethod] = useState({ name: '', details_es: '', details_en: '' });
+  const addMethod = async () => {
+    setMsg(null);
+    setBusy('new-method');
+    // Reuse the kind of an existing manual method (e.g. Pago Móvil) so the new row passes the table's checks.
+    const kind = methods.find((x) => !/card|crypto/i.test(x.kind))?.kind ?? 'manual';
+    const sort = Math.max(0, ...methods.map((x) => Number((x as M & { sort?: number }).sort) || 0)) + 1;
+    const id = typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}`;
+    const { error } = await supabase.from('payment_methods').insert({
+      id,
+      name: newMethod.name.trim(),
+      kind,
+      details_es: newMethod.details_es.trim(),
+      details_en: (newMethod.details_en || newMethod.details_es).trim(),
+      active: true,
+      sort,
+    });
+    setBusy('');
+    if (error) return setMsg({ ok: false, text: `Could not add the method: ${error.message}` });
+    setMsg({ ok: true, text: `${newMethod.name.trim()} added. Customers see it at checkout.` });
+    setNewMethod({ name: '', details_es: '', details_en: '' });
+    load();
+  };
+
   const saveMethod = async (m: M) => {
     setBusy(m.id);
     const { error } = await supabase.from('payment_methods').update({ details_es: m.details_es, details_en: m.details_en, active: m.active }).eq('id', m.id);
@@ -220,6 +244,16 @@ function Products() {
             <Button label="Save" variant="secondary" onPress={() => saveMethod(m)} loading={busy === m.id} disabled={m.kind === 'card'} />
           </View>
         ))}
+        <View style={styles.method}>
+          <Text style={styles.name}>Add a payment method</Text>
+          <Text style={adminStyles.muted}>
+            For manual methods the customer pays and sends you the reference (for example "Transferencia bancaria (Venezuela)"). Put Pago Móvil, Mercantil, Banco or Transferencia in the name to show it only to customers in Venezuela.
+          </Text>
+          <TextInput value={newMethod.name} onChangeText={(v) => setNewMethod((s) => ({ ...s, name: v }))} style={styles.input} placeholder="Name, e.g. Transferencia bancaria (Venezuela)" />
+          <TextInput value={newMethod.details_es} multiline onChangeText={(v) => setNewMethod((s) => ({ ...s, details_es: v }))} style={[styles.input, styles.area]} placeholder="Details in Spanish (bank, account number, holder, ID)" />
+          <TextInput value={newMethod.details_en} multiline onChangeText={(v) => setNewMethod((s) => ({ ...s, details_en: v }))} style={[styles.input, styles.area]} placeholder="Details in English" />
+          <Button label="Add method" onPress={addMethod} loading={busy === 'new-method'} disabled={!newMethod.name.trim() || !newMethod.details_es.trim()} />
+        </View>
       </View>
     </View>
   );

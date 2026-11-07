@@ -22,7 +22,10 @@ type Manual = { id: string; name: string; kind: string; details_es: string; deta
 
 let cache: PayOption[] | null = null;
 
-const VENEZUELA_ONLY = /pago\s*m[oó]vil|mercantil/i;
+// Venezuelan bank methods (Pago Móvil, bank transfer in bolívares) are shown only to clients in Venezuela.
+const VENEZUELA_ONLY = /pago\s*m[oó]vil|mercantil|transferencia|bank\s*transfer|banco|bol[ií]var/i;
+// Not accepted by Sylkit; hidden even if a row is still switched on in the table.
+const NOT_ACCEPTED = /zelle/i;
 
 function inVenezuela(country?: string | null) {
   if (country && /^(ve|ven|venezuela)$/i.test(country.trim())) return true;
@@ -72,6 +75,7 @@ export function usePayOptions(client?: { country?: string | null; keep?: string 
       for (const m of manual) {
         // Crypto rows in the table duplicate the automatic USDT option.
         if (auto.crypto && /usdt|crypto|cripto/i.test(`${m.kind} ${m.name}`)) continue;
+        if (NOT_ACCEPTED.test(m.name)) continue;
         list.push({ id: m.id, kind: 'manual', name: m.name, details: { es: m.details_es, en: m.details_en } });
       }
       cache = list;
