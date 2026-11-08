@@ -142,24 +142,26 @@ Request a quote → admin sends price → client accepts → pays (same payment 
 
 ### Plans (monthly / one-time setup, USD)
 
-Prices set on 2 Nov 2026 (`supabase/price_update_2026-11-02.sql`, replaces the 30 Oct 3% raise). Domains, hosting, extras and Shield were not changed. Yearly = monthly × 10, buy once = monthly × 30 (+ care from year 2 = monthly × 3/yr). Business is the recommended plan everywhere.
+Prices set on 7 Nov 2026 by the price review (`supabase/price_review_2026-11-07.sql`, applied to the database the same day; replaces the 2 Nov prices). Yearly = monthly × 10, buy once = monthly × 30 (+ optional care from year 2 = monthly × 5/yr). Business is the recommended plan everywhere. Full reasoning: the "Sylkit Pricing Review" doc.
 
 | Product | Starter | Business | Pro |
 |---|---|---|---|
-| **Pharmacy** | 29 / 79 | 49 / 129 | 79 / 199 |
-| Expiry Alerts, POS, Inventory, Car workshop, Payroll | 19 / 59 | 35 / 119 | 59 / 179 |
-| Clinic | 29 / 99 | 49 / 149 | 89 / 279 |
-| Restaurant, Home services | 25 / 79 | 39 / 129 | 69 / 199 |
-| Salon & barbershop | 19 / 59 | 29 / 99 | 49 / 149 |
+| **Pharmacy** (founding offer price) | 29 / 79 | 49 / 129 | 79 / 199 |
+| Expiry Alerts, POS, Inventory, Car workshop, Payroll | 19 / 59 | 45 / 119 | 79 / 179 |
+| Salon & barbershop | 19 / 59 | 45 / 99 | 79 / 149 |
+| Invoicing | 19 / 49 | 45 / 79 | 79 / 129 |
+| Online store | 19 / 99 | 45 / 179 | 79 / 279 |
+| Restaurant, Home services | 25 / 79 | 49 / 129 | 89 / 199 |
+| Clinic | 35 / 99 | 59 / 149 | 99 / 279 |
 | School management | 35 / 119 | 69 / 219 | 119 / 399 |
-| Invoicing | 15 / 49 | 25 / 79 | 45 / 129 |
-| Online store | 19 / 99 | 35 / 179 | 59 / 279 |
-| Personal website | 12 / 149 | 19 / 249 | 29 / 399 |
-| Business website | 15 / 179 | 25 / 349 | 39 / 549 |
-| Custom mobile app | 29 / 999 | 49 / 1,999 | 89 / 3,799 |
 | AI assistant | 35 / 119 | 69 / 219 | 119 / 399 |
+| Personal website | 12 / 149 | 19 / 249 | 29 / 449 |
+| Business website | 15 / 199 | 25 / 399 | 39 / 699 |
+| Custom mobile app | 29 / 1,499 | 49 / 2,999 | 89 / 5,999 |
 | **Domain & business email** (yearly) | **$15/yr**, no setup | **$50/yr** + $30 | **$90/yr** + $100 |
-| **Website hosting** | 5 / 30 | 10 / 50 | 20 / 80 |
+| **Website hosting** | 7 / 30 | 15 / 50 | 29 / 80 |
+
+**Pharmacy after the founding offer:** once the 10 founding pharmacies have signed, move Pharmacy to **35 / 59 / 99** (setups unchanged). Founders keep their price for 12 months.
 
 ### Pharmacy packaging (founding offer)
 - **First 10 founding pharmacies:** setup fee waived ($0), free data import + training, 60-day guarantee, price locked for 12 months. Shown on the site as the badge "10 founding pharmacies: $0 setup" and in the product description. Checkout still charges the normal setup, so for a founding pharmacy set the order total in Admin (or send a custom quote) with setup at $0.
@@ -168,8 +170,8 @@ Prices set on 2 Nov 2026 (`supabase/price_update_2026-11-02.sql`, replaces the 3
 - **Bring your own AI:** Pharmacy and Clinic (Business, Pro) and the Pro plan of the other business systems say customers can connect their own AI (Claude, OpenAI or other) with their API key for advanced features.
 
 ### Extras
-Monthly: extra branch $10 · 5 extra users $5 · WhatsApp alerts $10 · staff mobile app $10 · own domain $1.50 · +1,000 AI conversations $15 · +5 email addresses $3 · priority support $15.
-One-time: fiscal printer $80 · Excel import $50 · on-site training $40 · custom report $60 · integration $150 · business email $40 · Google/SEO $80 · extra page $30 · online payments $120 · store publishing $150 · extra app screen $60 · logo & colors $40 · domain transfer $15 · site migration $50.
+Monthly: extra branch $15 · 5 extra users $5 · WhatsApp alerts $10 · staff mobile app $10 · own domain $1.50 · +1,000 AI conversations $15 · +5 email addresses $3 · priority support $25.
+One-time: integration with another system $250 · store publishing $250 · online payments $150 · Google/SEO $120 · fiscal printer $80 · Excel import $75 · on-site training $60 · custom report $60 · extra app screen $60 · extra page $40 · business email $40 · logo & colors $40 · site migration $50 · domain transfer $15.
 
 All prices are editable in **Admin → Products**.
 
@@ -184,7 +186,7 @@ All prices are editable in **Admin → Products**.
 | .com domain | ~$10.46/yr (Cloudflare at cost) | $15/yr | ~$4.50/yr |
 | Domain + 5 emails | ~$10.46/yr (Zoho free plan*) | $50/yr + $30 | ~$70 yr 1, ~$40/yr after |
 | Domain + email + page | ~$10.46/yr | $90/yr + $100 | ~$180 yr 1, ~$80/yr after |
-| Hosting | ~$0 (Cloudflare) | $5–20/mo + setup | almost all |
+| Hosting | ~$0 (Cloudflare) | $7–29/mo + setup | almost all |
 
 \* Confirm Zoho's free plan still covers 5 addresses before the first email sale.
 
@@ -212,7 +214,7 @@ Paused on 29 Oct 2026 to focus on getting paying clients. To bring it back, move
 - **Page:** `/security` (`app/security.tsx`); prices and plans in `src/data/shield.ts`.
 - **Booking:** the form calls `create_order` with no product; details start with `[Sylkit Shield] Plan: …` and `p_source` is `shield:<plan id>`. Bookings appear in **Admin** with the other quotes; send the price and the client pays on the order page as usual.
 - **Rule:** never test a system before the client signs the scope agreement (the form only records that they claim authorization).
-- **Prices (USD, one list for everyone):** Snapshot free · Starter Scan $49 · Essential Audit $199 · Pro Audit $499 · Business Audit from $999 · Single Fix from $29 · Critical Fix Bundle $149 · Full Hardening quoted · Care Basic $19/mo · Care Standard $49/mo · Care Pro $99/mo (yearly = 10 months).
+- **Prices (USD, one list for everyone):** Snapshot free · Starter Scan $49 · Essential Audit $249 · Pro Audit $699 · Business Audit from $1,499 · Single Fix from $29 · Critical Fix Bundle $149 · Full Hardening quoted · Care Basic $19/mo · Care Standard $49/mo · Care Pro $99/mo (yearly = 10 months). Audits of $699 and above: half to start, half on delivery.
 
 ## 8. Responsibilities (put in the client agreement)
 
@@ -260,6 +262,13 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 | Nightly backups of client data, before the first real client | Claude (ready) |
 | QR code for the crypto address | Claude (optional) |
 | Make the **total1** repo private; change exposed passwords | Sylvanus (security) |
+| Supabase → Authentication: turn off new sign-ups and set the Site URL to https://sylkit.com | Sylvanus (security) |
+| Rotate the Monime API token (it was shared in chat) | Sylvanus (security) |
+| Switch off the old Zelle row in Admin → Payment methods | Sylvanus |
+| Add the Banco Mercantil account details in Admin → Payment methods | Sylvanus |
+| Real **$1 test payments** with PayPal and Monime; check each order turns Paid | Sylvanus |
+| When the 10 founding pharmacies have signed: Pharmacy to 35 / 59 / 99 | Claude (on request) |
+| Instagram: claim the main handle (@sylkit is taken, try @getsylkit) and reserve the country handles (.ve, .br, .sl) | Sylvanus |
 
 ---
 
