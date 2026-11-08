@@ -95,9 +95,9 @@ export function PayPalPay({ token, billing, returned, paypalOrder, pending, onCh
       </View>
       <Text style={styles.muted}>
         {tx(
-          "Use your PayPal account, or pay with a debit or credit card on PayPal's secure page. Your order is marked as paid instantly.",
-          'Usa tu cuenta PayPal o paga con tarjeta de débito o crédito en la página segura de PayPal. Tu pedido se marca como pagado al instante.',
-          'Use sua conta PayPal ou pague com cartão de débito ou crédito na página segura do PayPal. Seu pedido é marcado como pago na hora.',
+          "Log in to PayPal, or use your debit or credit card on PayPal's secure page (if PayPal asks for an account, creating one takes a minute). Your order is marked as paid instantly.",
+          'Entra a tu PayPal o usa tu tarjeta de débito o crédito en la página segura de PayPal (si PayPal te pide una cuenta, crearla toma un minuto). Tu pedido se marca como pagado al instante.',
+          'Entre no PayPal ou use seu cartão de débito ou crédito na página segura do PayPal (se o PayPal pedir uma conta, criar uma leva um minuto). Seu pedido é marcado como pago na hora.',
         )}
       </Text>
       {next ? <Text style={styles.muted}>{next}</Text> : null}

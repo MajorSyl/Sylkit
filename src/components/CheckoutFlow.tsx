@@ -469,7 +469,7 @@ export function PayRow({ option, on, first, last, onPress }: { option: PayOption
       {on && option.kind === 'paypal' ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>
-            {tx("We take you to PayPal's secure page: pay with your PayPal account or a debit/credit card, then you come back here.", 'Te llevamos a la página segura de PayPal: paga con tu cuenta PayPal o con tarjeta de débito o crédito, y luego vuelves aquí.', 'Levamos você à página segura do PayPal: pague com sua conta PayPal ou cartão de débito/crédito e depois volte aqui.')}
+            {tx("We take you to PayPal's secure page. Log in to PayPal, or use your debit/credit card: if PayPal asks for an account, creating one takes a minute and only needs your card. Then you come back here.", 'Te llevamos a la página segura de PayPal. Entra a tu PayPal o usa tu tarjeta de débito o crédito: si PayPal te pide una cuenta, crearla toma un minuto y solo necesita tu tarjeta. Luego vuelves aquí.', 'Levamos você à página segura do PayPal. Entre no PayPal ou use seu cartão de débito/crédito: se o PayPal pedir uma conta, criar uma leva um minuto e só precisa do seu cartão. Depois volte aqui.')}
           </Text>
         </View>
       ) : null}

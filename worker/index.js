@@ -17,7 +17,6 @@ import { handleOrders } from './orders.js';
 import { handlePaypal, sweepPaypal } from './paypal.js';
 import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
-import { runFixJob } from './fixJob.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -129,18 +128,12 @@ function secure(res) {
   return out;
 }
 
-let fixStarted = false;
 export default {
   async fetch(request, env, ctx) {
-    if (!fixStarted && ctx) {
-      fixStarted = true;
-      ctx.waitUntil(runFixJob(env).catch(() => {}));
-    }
     return secure(withCountry(await route(request, env, ctx), request));
   },
 
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runFixJob(env).catch(() => {}));
     ctx.waitUntil(sweepPaypal(env).catch(() => {}));
     ctx.waitUntil(sweepMonime(env).catch(() => {}));
     ctx.waitUntil(

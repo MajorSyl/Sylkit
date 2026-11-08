@@ -126,7 +126,7 @@ export function payTitle(o: PayOption, lang: Lang) {
 export function paySub(o: PayOption, lang: Lang) {
   const es = lang === 'es';
   if (o.kind === 'monime') return tx('Pay in Leones with mobile money on Monime. Confirmed instantly.', 'Paga en leones con dinero móvil en Monime. Se confirma al instante.', 'Pague em leones com dinheiro móvel no Monime. Confirmado na hora.');
-  if (o.kind === 'paypal') return tx('Pay with your PayPal account or a debit/credit card. Confirmed instantly.', 'Paga con tu cuenta PayPal o con tarjeta de débito o crédito. Se confirma al instante.', "Pague com sua conta PayPal ou cartão de débito/crédito. Confirmado na hora.");
+  if (o.kind === 'paypal') return tx('Log in to PayPal, or pay with your debit/credit card on PayPal. Confirmed instantly.', 'Entra a tu PayPal, o paga con tu tarjeta de débito o crédito en PayPal. Se confirma al instante.', 'Entre no PayPal, ou pague com seu cartão de débito/crédito no PayPal. Confirmado na hora.');
   if (o.kind === 'card') return tx('Visa, Mastercard, Apple Pay. Secure payment by Stripe.', 'Visa, Mastercard, Apple Pay. Pago seguro con Stripe.', "Visa, Mastercard, Apple Pay. Pagamento seguro pela Stripe.");
   if (o.kind === 'crypto') return tx('TRC20 or BEP20. Confirmed automatically.', 'TRC20 o BEP20. Se confirma automáticamente.', "TRC20 ou BEP20. Confirmado automaticamente.");
   return tx('You pay and send us the reference. We confirm it within hours.', 'Pagas y nos envías la referencia. Lo confirmamos en pocas horas.', "Você paga e nos envia a referência. Confirmamos em poucas horas.");
