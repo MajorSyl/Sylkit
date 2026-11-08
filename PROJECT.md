@@ -265,7 +265,10 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 | Supabase → Authentication: turn off new sign-ups and set the Site URL to https://sylkit.com | Sylvanus (security) |
 | Rotate the Monime API token (it was shared in chat) | Sylvanus (security) |
 | Switch off the old Zelle row in Admin → Payment methods | Sylvanus |
-| Add the Banco Mercantil account details in Admin → Payment methods | Sylvanus |
+| Add the real **Pago Móvil** details (bank, phone, ID) and **Banco Mercantil** account in Admin → Payment methods. Until then Venezuelan clients get a "get the details on WhatsApp" button instead | Sylvanus |
+| PayPal → Account settings → Website payments → turn on **PayPal account optional**, so clients can pay by card without a PayPal account (the PayPal page now opens on the card form when this is on) | Sylvanus |
+| Emails to clients (order link, receipt): add a `RESEND_API_KEY` secret after verifying sylkit.com in Resend. No emails are sent today; clients get their order link on screen and on WhatsApp | Sylvanus |
+| After the 8 Nov test: remove `worker/fixJob.js` and its lines in `worker/index.js` | Claude |
 | Real **$1 test payments** with PayPal and Monime; check each order turns Paid | Sylvanus |
 | When the 10 founding pharmacies have signed: Pharmacy to 35 / 59 / 99 | Claude (on request) |
 | Instagram: claim the main handle (@sylkit is taken, try @getsylkit) and reserve the country handles (.ve, .br, .sl) | Sylvanus |
