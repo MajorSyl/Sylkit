@@ -378,7 +378,8 @@ function Card({ item, touch, priceText, openDemo }: { item: Item; touch: boolean
           </Pressable>
         ) : null}
       </Pressable>
-      <View style={styles.meta}>
+      {/* The name and price under the card open the product too (people tap the name first). */}
+      <Pressable onPress={item.open} style={styles.meta} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
         <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={styles.avatar} />
         <Text style={styles.owner} numberOfLines={1}>
           {item.title}
@@ -391,7 +392,7 @@ function Card({ item, touch, priceText, openDemo }: { item: Item; touch: boolean
         <Text style={styles.price} numberOfLines={1}>
           {priceText}
         </Text>
-      </View>
+      </Pressable>
     </View>
   );
 }

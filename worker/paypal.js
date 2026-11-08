@@ -155,10 +155,11 @@ async function checkout(request, env) {
           paypal: {
             experience_context: {
               brand_name: 'Sylkit',
-              locale: es ? 'es-VE' : 'en-US',
+              locale: order.lang === 'pt' ? 'pt-BR' : es ? 'es-VE' : 'en-US',
               shipping_preference: 'NO_SHIPPING',
               user_action: 'PAY_NOW',
-              landing_page: 'NO_PREFERENCE',
+              // Card form first ("Pay with debit or credit card"); people with PayPal can still log in.
+              landing_page: 'GUEST_CHECKOUT',
               return_url: `${back}&paid=paypal`,
               cancel_url: `${back}&pay=paypal`,
             },
@@ -189,16 +190,27 @@ async function capture(request, env) {
   const body = await readBody(request);
   if (!body) return json({ error: 'bad_request' }, 400);
   const token = String(body.token || '');
-  const ppId = String(body.paypal_order || '');
-  if (!TOKEN_RE.test(token) || !/^[A-Z0-9]{8,32}$/.test(ppId)) return json({ error: 'bad_request' }, 400);
+  // paypal_order is optional: without it we use the PayPal order saved on this Sylkit order
+  // (a client who paid and closed the tab before coming back still gets their order confirmed).
+  const sent = String(body.paypal_order || '');
+  if (!TOKEN_RE.test(token) || (sent && !/^[A-Z0-9]{8,32}$/.test(sent))) return json({ error: 'bad_request' }, 400);
   const order = await getOrder(env, 'token', token);
   if (!order) return json({ error: 'order_not_found' }, 404);
   if (DONE.has(order.status)) return json({ order_status: order.status });
+  const ppId = sent || String(order.payment_reference || '');
+  if (!/^[A-Z0-9]{8,32}$/.test(ppId)) return json({ error: 'no_paypal_order', order_status: order.status }, 409);
   // Only the PayPal order we created for this Sylkit order can be captured against it.
   if (String(order.payment_reference || '') !== ppId) return json({ error: 'not_this_order', order_status: order.status }, 409);
+  const out = await captureFor(env, order, ppId);
+  return json(out.body, out.status);
+}
+
+// Takes the payment of an approved PayPal order and updates the Sylkit order. Used by the return
+// page and by the scheduled sweep. Returns { status, body } for the HTTP reply.
+async function captureFor(env, order, ppId) {
   const method = String(order.payment_method || '');
   const mode = method === 'paypal:sandbox' ? 'sandbox' : 'live';
-  if (mode === 'sandbox' ? !hasSandbox(env) : !hasLive(env)) return json({ error: 'payments_not_configured' }, 503);
+  if (mode === 'sandbox' ? !hasSandbox(env) : !hasLive(env)) return { status: 503, body: { error: 'payments_not_configured' } };
 
   let pp;
   try {
@@ -206,9 +218,11 @@ async function capture(request, env) {
   } catch (e) {
     // Already captured (e.g. page refreshed): read the order instead.
     if (e.code === 'ORDER_ALREADY_CAPTURED') pp = await paypal(env, mode, 'GET', `/v2/checkout/orders/${ppId}`);
+    // The client has not approved it on PayPal yet (still paying, or left): nothing to do.
+    else if (e.code === 'ORDER_NOT_APPROVED') return { status: 409, body: { error: 'not_approved', order_status: order.status } };
     else {
       await addEvent(env, order.id, 'update', `PayPal capture failed (${mode}, ${e.status || '?'} ${e.code || ''}): ${e.message}`, false).catch(() => {});
-      return json({ error: e.code === 'INSTRUMENT_DECLINED' ? 'declined' : 'capture_failed', code: e.code, order_status: order.status }, 402);
+      return { status: 402, body: { error: e.code === 'INSTRUMENT_DECLINED' ? 'declined' : 'capture_failed', code: e.code, order_status: order.status } };
     }
   }
 
@@ -217,10 +231,10 @@ async function capture(request, env) {
   const es = order.lang === 'es';
   if (unit.custom_id && unit.custom_id !== order.order_number) {
     await addEvent(env, order.id, 'update', `PayPal ${ppId} belongs to ${unit.custom_id}, not this order. Check manually.`, false);
-    return json({ error: 'not_this_order', order_status: order.status }, 409);
+    return { status: 409, body: { error: 'not_this_order', order_status: order.status } };
   }
   if (!cap || (cap.status !== 'COMPLETED' && cap.status !== 'PENDING')) {
-    return json({ error: 'not_completed', paypal_status: cap?.status || pp?.status, order_status: order.status }, 402);
+    return { status: 402, body: { error: 'not_completed', paypal_status: cap?.status || pp?.status, order_status: order.status } };
   }
   const paid = Number(cap.amount?.value);
   const quote = Number(order.quote_amount);
@@ -228,13 +242,13 @@ async function capture(request, env) {
   if (Math.abs(paid - quote) > 0.01 || ccy !== String(order.quote_currency || 'USD').toUpperCase()) {
     await addEvent(env, order.id, 'update', `PayPal capture ${cap.id} amount ${ccy} ${paid} does not match the quote (${quote}). Check manually.`, false);
     await patchOrder(env, order.id, { status: 'payment_submitted', payment_reference: cap.id });
-    return json({ order_status: 'payment_submitted' });
+    return { status: 200, body: { order_status: 'payment_submitted' } };
   }
 
   if (mode === 'sandbox') {
     await patchOrder(env, order.id, { status: 'payment_submitted', payment_method: 'paypal:sandbox', payment_reference: cap.id });
     await addEvent(env, order.id, 'update', `PayPal SANDBOX test capture ${cap.id} OK (${money2(paid)}). Not real money: do not start work.`, false);
-    return json({ order_status: 'payment_submitted', sandbox: true });
+    return { status: 200, body: { order_status: 'payment_submitted', sandbox: true } };
   }
   if (cap.status === 'PENDING') {
     // PayPal is still reviewing (e.g. eCheck or risk review). The team confirms it when it clears.
@@ -242,12 +256,34 @@ async function capture(request, env) {
     await patchOrder(env, order.id, { status: 'payment_submitted', payment_method: 'paypal', payment_reference: cap.id });
     await addEvent(env, order.id, 'update', `PayPal payment ${cap.id} is pending at PayPal (${cap.status_details?.reason || 'review'}).`, false);
     await addEvent(env, order.id, 'update', es ? 'Recibimos tu pago por PayPal; PayPal lo está revisando. Te avisamos al confirmarse.' : 'We received your PayPal payment; PayPal is reviewing it. We will let you know when it clears.');
-    return json({ order_status: 'payment_submitted' });
+    return { status: 200, body: { order_status: 'payment_submitted' } };
   }
   await patchOrder(env, order.id, { status: 'paid', payment_method: 'paypal', payment_reference: cap.id });
   await addEvent(env, order.id, 'update', es ? `Pago con PayPal confirmado: ${money2(paid)}.` : `PayPal payment confirmed: ${money2(paid)}.`);
   await alertOwner(env, { title: `Pagado con PayPal ${money2(paid)}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
-  return json({ order_status: 'paid' });
+  return { status: 200, body: { order_status: 'paid' } };
+}
+
+// ---------- sweep (cron): approved PayPal orders whose client never came back ----------
+
+export async function sweepPaypal(env) {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY || !hasLive(env)) return { checked: 0 };
+  const since = new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString();
+  const rows = await sb(env, `orders?status=eq.accepted&payment_method=eq.${encodeURIComponent('paypal:pending')}&created_at=gte.${encodeURIComponent(since)}&select=*&order=created_at.desc&limit=25`);
+  let paid = 0;
+  for (const order of rows || []) {
+    const ppId = String(order.payment_reference || '');
+    if (!/^[A-Z0-9]{8,32}$/.test(ppId)) continue;
+    try {
+      const pp = await paypal(env, 'live', 'GET', `/v2/checkout/orders/${ppId}`);
+      if (pp?.status !== 'APPROVED' && pp?.status !== 'COMPLETED') continue;
+      const out = await captureFor(env, order, ppId);
+      if (out.body?.order_status === 'paid') paid++;
+    } catch {
+      /* try again on the next run */
+    }
+  }
+  return { checked: rows?.length || 0, paid };
 }
 
 // ---------- health (no secrets) ----------

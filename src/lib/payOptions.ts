@@ -27,6 +27,9 @@ const VENEZUELA_ONLY = /pago\s*m[oó]vil|mercantil|transferencia|bank\s*transfer
 /** True for methods paid in bolívares inside Venezuela (shown with the amount at the BCV rate). */
 export const isBolivarMethod = (o: PayOption) => o.kind === 'manual' && VENEZUELA_ONLY.test(o.name) && !/usd|d[oó]lar/i.test(o.name);
 
+/** True when a manual method has real payment details (account or phone numbers), not just a "we'll send them" note. */
+export const hasPayDetails = (o: PayOption) => !!o.details && /\d{4,}/.test(`${o.details.es} ${o.details.en}`);
+
 // Not accepted by Sylkit; hidden even if a row is still switched on in the table.
 const NOT_ACCEPTED = /zelle/i;
 
@@ -60,7 +63,8 @@ function forClient(list: PayOption[], country?: string | null, keep?: string) {
   // Sierra Leone: Monime first (local mobile money), then the rest.
   let out = list.filter((o) => o.kind !== 'monime' || sl || o.id === keep);
   if (sl) out = [...out.filter((o) => o.kind === 'monime'), ...out.filter((o) => o.kind !== 'monime')];
-  if (inVenezuela(country)) return out;
+  // Venezuela: Pago Móvil and bank transfer in bolívares first (what most clients there use).
+  if (inVenezuela(country)) return [...out.filter((o) => isBolivarMethod(o)), ...out.filter((o) => !isBolivarMethod(o))];
   return out.filter((o) => o.kind !== 'manual' || o.id === keep || !VENEZUELA_ONLY.test(o.name));
 }
 
@@ -112,7 +116,7 @@ export function usePayOptions(client?: { country?: string | null; keep?: string 
 
 export function payTitle(o: PayOption, lang: Lang) {
   const es = lang === 'es';
-  if (o.kind === 'monime') return tx('Orange Money, Afrimoney or card (Sierra Leone)', 'Orange Money, Afrimoney o tarjeta (Sierra Leona)', 'Orange Money, Afrimoney ou cartão (Serra Leoa)');
+  if (o.kind === 'monime') return tx('Orange Money or Afrimoney (Sierra Leone)', 'Orange Money o Afrimoney (Sierra Leona)', 'Orange Money ou Afrimoney (Serra Leoa)');
   if (o.kind === 'paypal') return tx('PayPal or card', 'PayPal o tarjeta', "PayPal ou cartão");
   if (o.kind === 'card') return tx('Credit or debit card', 'Tarjeta de crédito o débito', "Cartão de crédito ou débito");
   if (o.kind === 'crypto') return tx('Crypto (USDT)', 'Cripto (USDT)', "Cripto (USDT)");
@@ -121,7 +125,7 @@ export function payTitle(o: PayOption, lang: Lang) {
 
 export function paySub(o: PayOption, lang: Lang) {
   const es = lang === 'es';
-  if (o.kind === 'monime') return tx('Pay in Leones with mobile money, bank or Visa debit on Monime. Confirmed instantly.', 'Paga en leones con dinero móvil, banco o Visa débito en Monime. Se confirma al instante.', 'Pague em leones com dinheiro móvel, banco ou Visa débito no Monime. Confirmado na hora.');
+  if (o.kind === 'monime') return tx('Pay in Leones with mobile money on Monime. Confirmed instantly.', 'Paga en leones con dinero móvil en Monime. Se confirma al instante.', 'Pague em leones com dinheiro móvel no Monime. Confirmado na hora.');
   if (o.kind === 'paypal') return tx('Pay with your PayPal account or a debit/credit card. Confirmed instantly.', 'Paga con tu cuenta PayPal o con tarjeta de débito o crédito. Se confirma al instante.', "Pague com sua conta PayPal ou cartão de débito/crédito. Confirmado na hora.");
   if (o.kind === 'card') return tx('Visa, Mastercard, Apple Pay. Secure payment by Stripe.', 'Visa, Mastercard, Apple Pay. Pago seguro con Stripe.', "Visa, Mastercard, Apple Pay. Pagamento seguro pela Stripe.");
   if (o.kind === 'crypto') return tx('TRC20 or BEP20. Confirmed automatically.', 'TRC20 o BEP20. Se confirma automáticamente.', "TRC20 ou BEP20. Confirmado automaticamente.");

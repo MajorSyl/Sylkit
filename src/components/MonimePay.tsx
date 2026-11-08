@@ -6,7 +6,7 @@ import { tx } from '../i18n';
 import { colors } from '../theme';
 import { Button } from './Button';
 
-// Monime (Sierra Leone) on the order tracking page: Orange Money, Afrimoney, bank or Visa debit, in Leones.
+// Monime (Sierra Leone) on the order tracking page: Orange Money or Afrimoney, in Leones.
 // POST /api/monime/checkout sends the customer to Monime; Monime sends them back with ?paid=monime,
 // and we ask POST /api/monime/confirm to check the payment with Monime (a few tries, it can take seconds).
 
@@ -79,13 +79,13 @@ export function MonimePay({ token, billing, returned, onChanged }: { token: stri
     <View style={styles.box}>
       <View style={styles.titleRow}>
         <Ionicons name="phone-portrait" size={20} color="#FF7900" />
-        <Text style={styles.title}>{tx('Orange Money, Afrimoney or card', 'Orange Money, Afrimoney o tarjeta', 'Orange Money, Afrimoney ou cartão')}</Text>
+        <Text style={styles.title}>{tx('Orange Money or Afrimoney', 'Orange Money o Afrimoney', 'Orange Money ou Afrimoney')}</Text>
       </View>
       <Text style={styles.muted}>
         {tx(
-          "Pay in Leones on Monime's secure page with Orange Money, Afrimoney, your bank or a Visa debit card. Your order is marked as paid instantly.",
-          'Paga en leones en la página segura de Monime con Orange Money, Afrimoney, tu banco o Visa débito. Tu pedido se marca como pagado al instante.',
-          'Pague em leones na página segura do Monime com Orange Money, Afrimoney, banco ou Visa débito. Seu pedido é marcado como pago na hora.',
+          "Pay in Leones on Monime's secure page with Orange Money or Afrimoney. Your order is marked as paid instantly.",
+          'Paga en leones en la página segura de Monime con Orange Money o Afrimoney. Tu pedido se marca como pagado al instante.',
+          'Pague em leones na página segura do Monime com Orange Money ou Afrimoney. Seu pedido é marcado como pago na hora.',
         )}
       </Text>
       {next ? <Text style={styles.muted}>{next}</Text> : null}

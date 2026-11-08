@@ -15,7 +15,7 @@ import { Field, formStyles } from '../src/components/Field';
 import { useLang } from '../src/i18n';
 import { productName } from '../src/lib/names';
 import { orderLines } from '../src/lib/orderLines';
-import { isBolivarMethod, PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
+import { hasPayDetails, isBolivarMethod, PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
 import { money } from '../src/lib/pricing';
 import { formatDate, formatMoney, OrderStatus, statusLabel } from '../src/lib/status';
 import { friendlyError, supabase } from '../src/lib/supabase';
@@ -125,7 +125,7 @@ export default function OrderPage() {
           <Ionicons name="receipt-outline" size={34} color={colors.primary} />
           <Text style={styles.h2}>{tx('Find your order', 'Busca tu pedido', "Encontre seu pedido")}</Text>
           <Text style={[styles.muted, { textAlign: 'center' }]}>
-            {tx('Open the link we emailed you after you ordered.', 'Abre el enlace que te enviamos por correo después de comprar.', "Abra o link que enviamos por e-mail depois da sua compra.")}
+            {tx('Open the order link we sent you on WhatsApp, or message us your order number (SK-…).', 'Abre el enlace de tu pedido que te enviamos por WhatsApp, o escríbenos tu número de pedido (SK-…).', 'Abra o link do pedido que enviamos pelo WhatsApp, ou envie o número do pedido (SK-…).')}
           </Text>
           {lastToken ? (
             <Button label={tx('Open my last order', 'Abrir mi último pedido', "Abrir meu último pedido")} icon="arrow-forward" onPress={() => setToken(lastToken)} />
@@ -198,6 +198,13 @@ export default function OrderPage() {
           </Text>
           <Text style={styles.h1}>{hero.title}</Text>
           <Text style={[styles.muted, { textAlign: 'center' }]}>{hero.sub}</Text>
+          {params.new ? (
+            // No emails yet: this page is the client's order link, so make it easy to keep.
+            <View style={{ alignItems: 'center', gap: 2 }}>
+              <Text style={[styles.muted, { textAlign: 'center', fontSize: 13 }]}>{tx('Save this page: it is your order link.', 'Guarda esta página: es el enlace de tu pedido.', 'Guarde esta página: é o link do seu pedido.')}</Text>
+              <CopyButton text={`https://sylkit.com/order?t=${token}`} label={tx('Copy my order link', 'Copiar el enlace de mi pedido', 'Copiar o link do meu pedido')} />
+            </View>
+          ) : null}
           {!payable || order.status === 'payment_submitted' ? (
             <Pressable onPress={help} style={styles.heroWa} accessibilityRole="link">
               <Ionicons name="logo-whatsapp" size={18} color="#fff" />
@@ -239,7 +246,7 @@ export default function OrderPage() {
                 {chosen.kind === 'monime' ? (
                   <MonimePay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'monime'} onChanged={load} />
                 ) : chosen.kind === 'paypal' ? (
-                  <PayPalPay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'paypal'} paypalOrder={params.token ? String(params.token) : undefined} onChanged={load} />
+                  <PayPalPay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'paypal'} paypalOrder={params.token ? String(params.token) : undefined} pending={order.payment_method === 'paypal:pending'} onChanged={load} />
                 ) : chosen.kind === 'card' ? (
                   <CardPay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'card'} onChanged={load} />
                 ) : chosen.kind === 'crypto' ? (
@@ -248,12 +255,30 @@ export default function OrderPage() {
                   <View style={styles.manual}>
                     <Text style={styles.manualTitle}>{payTitle(chosen, lang)}</Text>
                     {isBolivarMethod(chosen) && (order.quote_currency || 'USD') === 'USD' && order.quote_amount != null ? (
-                      <BolivarAmount usd={Number(order.quote_amount)} amount={amount} />
+                      <BolivarAmount usd={Number(order.quote_amount)} amount={amount} withDetails={hasPayDetails(chosen)} />
                     ) : (
-                      <Text style={styles.manualStep}>{tx(`1. Send exactly ${amount} using these details:`, `1. Envía exactamente ${amount} usando estos datos:`, `1. Envie exatamente ${amount} usando estes dados:`)}</Text>
+                      <Text style={styles.manualStep}>
+                        {hasPayDetails(chosen)
+                          ? tx(`1. Send exactly ${amount} using these details:`, `1. Envía exactamente ${amount} usando estos datos:`, `1. Envie exatamente ${amount} usando estes dados:`)
+                          : tx(`1. Send exactly ${amount}.`, `1. Envía exactamente ${amount}.`, `1. Envie exatamente ${amount}.`)}
+                      </Text>
                     )}
-                    {chosen.details ? <Text style={styles.manualDetails} selectable>{t(chosen.details)}</Text> : null}
-                    {chosen.details ? <CopyButton text={t(chosen.details)} /> : null}
+                    {hasPayDetails(chosen) ? (
+                      <>
+                        <Text style={styles.manualDetails} selectable>{t(chosen.details!)}</Text>
+                        <CopyButton text={t(chosen.details!)} />
+                      </>
+                    ) : (
+                      // No account details saved for this method yet: the client gets them on WhatsApp in one tap.
+                      <Pressable
+                        onPress={() => Linking.openURL(waLink(tx(`Hi! Please send me the ${chosen.name} details to pay my order ${order.order_number} (${amount}).`, `¡Hola! Envíame por favor los datos de ${chosen.name} para pagar mi pedido ${order.order_number} (${amount}).`, `Olá! Por favor, envie os dados de ${chosen.name} para pagar meu pedido ${order.order_number} (${amount}).`)))}
+                        style={styles.waDetails}
+                        accessibilityRole="link"
+                      >
+                        <Ionicons name="logo-whatsapp" size={18} color="#fff" />
+                        <Text style={styles.heroWaText}>{tx(`Get the ${chosen.name} details on WhatsApp`, `Recibir los datos de ${chosen.name} por WhatsApp`, `Receber os dados de ${chosen.name} pelo WhatsApp`)}</Text>
+                      </Pressable>
+                    )}
                     <Text style={styles.manualStep}>{tx('2. Enter the reference or confirmation number:', '2. Escribe la referencia o número de confirmación:', "2. Digite a referência ou número de confirmação:")}</Text>
                     <Field label={tx('Reference', 'Referencia', "Referência")} value={reference} onChangeText={setReference} placeholder={tx('e.g. 0012345678', 'Ej. 0012345678', "ex.: 0012345678")} />
                     <Button label={tx("I've paid", 'Ya pagué', "Já paguei")} icon="checkmark-circle" onPress={() => report(chosen)} loading={busy} />
@@ -432,7 +457,7 @@ function Next({ done, active, title, text, last }: { done: boolean; active: bool
 
 
 // Amount in bolívares at today's official BCV rate (Pago Móvil and bank transfers in Venezuela).
-function BolivarAmount({ usd, amount }: { usd: number; amount: string }) {
+function BolivarAmount({ usd, amount, withDetails = true }: { usd: number; amount: string; withDetails?: boolean }) {
   const [rate, setRate] = useState<{ rate: number; date: string | null } | null | undefined>(undefined);
   useEffect(() => {
     fetch('/api/order/bcv')
@@ -445,13 +470,19 @@ function BolivarAmount({ usd, amount }: { usd: number; amount: string }) {
   if (!rate)
     return (
       <Text style={styles.manualStep}>
-        {tx(`1. Send ${amount} in bolívares at today's official BCV rate, using these details:`, `1. Envía ${amount} en bolívares a la tasa oficial BCV del día, usando estos datos:`, `1. Envie ${amount} em bolívares à taxa oficial BCV do dia, usando estes dados:`)}
+        {withDetails
+          ? tx(`1. Send ${amount} in bolívares at today's official BCV rate, using these details:`, `1. Envía ${amount} en bolívares a la tasa oficial BCV del día, usando estos datos:`, `1. Envie ${amount} em bolívares à taxa oficial BCV do dia, usando estes dados:`)
+          : tx(`1. Send ${amount} in bolívares at today's official BCV rate.`, `1. Envía ${amount} en bolívares a la tasa oficial BCV del día.`, `1. Envie ${amount} em bolívares à taxa oficial BCV do dia.`)}
       </Text>
     );
   const total = Math.round(usd * rate.rate * 100) / 100;
   return (
     <View style={{ gap: 4 }}>
-      <Text style={styles.manualStep}>{tx('1. Send exactly this amount using these details:', '1. Envía exactamente este monto usando estos datos:', '1. Envie exatamente este valor usando estes dados:')}</Text>
+      <Text style={styles.manualStep}>
+        {withDetails
+          ? tx('1. Send exactly this amount using these details:', '1. Envía exactamente este monto usando estos datos:', '1. Envie exatamente este valor usando estes dados:')
+          : tx('1. Send exactly this amount:', '1. Envía exactamente este monto:', '1. Envie exatamente este valor:')}
+      </Text>
       <Text style={styles.bsAmount} selectable>{bs(total)}</Text>
       <Text style={styles.bsNote}>
         {tx(`${amount} at the BCV rate of ${bs(rate.rate)} per dollar. If the rate changes before you pay, use the rate of the day you pay.`, `${amount} a la tasa BCV de ${bs(rate.rate)} por dólar. Si la tasa cambia antes de pagar, usa la del día en que pagues.`, `${amount} à taxa BCV de ${bs(rate.rate)} por dólar. Se a taxa mudar antes de pagar, use a do dia do pagamento.`)}
@@ -460,7 +491,7 @@ function BolivarAmount({ usd, amount }: { usd: number; amount: string }) {
   );
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label }: { text: string; label?: string }) {
   const [done, setDone] = useState(false);
   const copy = async () => {
     try {
@@ -475,7 +506,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <Pressable onPress={copy} style={styles.switch} accessibilityRole="button">
       <Ionicons name={done ? 'checkmark' : 'copy-outline'} size={16} color={colors.primary} />
-      <Text style={styles.switchText}>{done ? tx('Copied', 'Copiado', 'Copiado') : tx('Copy payment details', 'Copiar datos de pago', 'Copiar dados de pagamento')}</Text>
+      <Text style={styles.switchText}>{done ? tx('Copied', 'Copiado', 'Copiado') : label ?? tx('Copy payment details', 'Copiar datos de pago', 'Copiar dados de pagamento')}</Text>
     </Pressable>
   );
 }
@@ -483,6 +514,7 @@ function CopyButton({ text }: { text: string }) {
 const styles = StyleSheet.create({
   heroWa: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.whatsapp, borderRadius: 999, paddingHorizontal: 18, height: 44, marginTop: 6 },
   heroWaText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  waDetails: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: colors.whatsapp, borderRadius: 12, paddingHorizontal: 16, minHeight: 48 },
   container: { width: '100%', maxWidth: 680, alignSelf: 'center', paddingHorizontal: 16, paddingTop: 24 },
   card: { backgroundColor: colors.surface, borderRadius: 20, padding: 20, gap: 12, borderWidth: 1, borderColor: colors.border },
   hero: { alignItems: 'center', paddingVertical: 28 },

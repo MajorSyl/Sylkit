@@ -27,7 +27,7 @@ const errorText = (code: string) =>
 
 type Billing = 'yearly' | 'monthly' | 'once' | undefined;
 
-export function PayPalPay({ token, billing, returned, paypalOrder, onChanged }: { token: string; lang: Lang; billing: Billing; returned: boolean; paypalOrder?: string; onChanged: () => void }) {
+export function PayPalPay({ token, billing, returned, paypalOrder, pending, onChanged }: { token: string; lang: Lang; billing: Billing; returned: boolean; paypalOrder?: string; pending?: boolean; onChanged: () => void }) {
   const [busy, setBusy] = useState(false);
   const [checking, setChecking] = useState(returned && !!paypalOrder);
   const [error, setError] = useState('');
@@ -51,6 +51,19 @@ export function PayPalPay({ token, billing, returned, paypalOrder, onChanged }: 
       }
     })();
   }, [returned, paypalOrder, token, onChanged]);
+
+  // Opened again later (e.g. paid on PayPal but closed the tab before coming back): quietly check
+  // whether PayPal approved it and, if so, take the payment. Nothing is shown if it wasn't approved.
+  useEffect(() => {
+    if (returned || !pending || once.current) return;
+    once.current = true;
+    fetch('/api/paypal/capture', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) })
+      .then((r) => r.json())
+      .then((j) => {
+        if (j?.order_status && j.order_status !== 'accepted') onChanged();
+      })
+      .catch(() => null);
+  }, [returned, pending, token, onChanged]);
 
   const pay = async () => {
     setError('');

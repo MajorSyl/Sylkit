@@ -19,6 +19,6 @@
     { "binding": "SUPPORT_DB", "database_name": "sylkit-support", "database_id": "63757c0b-3235-4203-a1b7-36b73dc6a5cd" }
   ],
   "triggers": {
-    "crons": ["17 9 * * *"]
+    "crons": ["*/15 * * * *"]
   }
 }

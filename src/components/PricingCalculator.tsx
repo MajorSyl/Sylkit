@@ -52,8 +52,8 @@ const L = {
   save: { es: 'Ahorras', en: 'You save', pt: "Você economiza" },
   cta: { es: 'Comprar ahora', en: 'Buy now', pt: "Comprar agora" },
   fine: {
-    es: 'Pagas en el siguiente paso con USDT, Pago Móvil u otro método.',
-    en: 'You pay in the next step with USDT, Pago Móvil or another method.', pt: "Você paga no próximo passo com cartão, USDT ou outro método.",
+    es: 'Pagas en el siguiente paso con PayPal o tarjeta, USDT u otro método.',
+    en: 'You pay in the next step with PayPal or card, USDT or another method.', pt: 'Você paga no próximo passo com PayPal ou cartão, USDT ou outro método.',
   },
 };
 

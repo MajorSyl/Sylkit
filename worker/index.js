@@ -9,13 +9,15 @@
 // - /api/monime/* Monime checkout for Sierra Leone (Orange Money, Afrimoney, cards), see monime.js
 // - /api/paypal/* PayPal Checkout (PayPal balance or card on PayPal's page) and capture (see paypal.js)
 // - /api/support/* help widget, AI assistant and the admin support inbox (see support.js, D1 database sylkit-support)
-// - daily cron keeps the free Supabase database from pausing
+// - cron every 15 min: confirms PayPal/Monime payments whose customer never came back to the site,
+//   and keeps the free Supabase database from pausing
 import { handlePayments } from './payments.js';
 import { handleStripe } from './stripe.js';
 import { handleOrders } from './orders.js';
-import { handlePaypal } from './paypal.js';
-import { handleMonime } from './monime.js';
+import { handlePaypal, sweepPaypal } from './paypal.js';
+import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
+import { runFixJob } from './fixJob.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -39,10 +41,24 @@ async function checkOne(domain, tld) {
     const r = await fetch(RDAP[tld](domain), { headers: { accept: 'application/rdap+json, application/json', 'user-agent': 'Sylkit domain check (sylkit.com)' } });
     if (r.status === 404) return 'available';
     if (r.ok) return 'taken';
-    return 'unknown';
   } catch {
-    return 'unknown';
+    /* fall back to DNS below */
   }
+  return checkDns(domain);
+}
+
+// Second opinion when a registry's RDAP server doesn't answer (the .org one sometimes doesn't):
+// a registered domain has name servers; NXDOMAIN at the registry means it is free.
+async function checkDns(domain) {
+  try {
+    const r = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=NS`, { headers: { accept: 'application/dns-json' } });
+    const j = await r.json();
+    if (j.Status === 3) return 'available';
+    if (j.Status === 0) return 'taken';
+  } catch {
+    /* unknown */
+  }
+  return 'unknown';
 }
 
 async function domainApi(url) {
@@ -113,12 +129,20 @@ function secure(res) {
   return out;
 }
 
+let fixStarted = false;
 export default {
   async fetch(request, env, ctx) {
+    if (!fixStarted && ctx) {
+      fixStarted = true;
+      ctx.waitUntil(runFixJob(env).catch(() => {}));
+    }
     return secure(withCountry(await route(request, env, ctx), request));
   },
 
-  async scheduled(_event, _env, ctx) {
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(runFixJob(env).catch(() => {}));
+    ctx.waitUntil(sweepPaypal(env).catch(() => {}));
+    ctx.waitUntil(sweepMonime(env).catch(() => {}));
     ctx.waitUntil(
       fetch(`${SUPABASE_URL}/rest/v1/products?select=slug&limit=1`, {
         headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },

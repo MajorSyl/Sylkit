@@ -7,7 +7,7 @@ import type { Product } from '../data/products';
 import { getTemplate, templatesFor } from '../data/storeTemplates';
 import { templateShot } from '../lib/templateShot';
 import { useLang } from '../i18n';
-import { inVenezuela, payIcon, PayOption, paySub, payTitle, paypalTest, usePayOptions } from '../lib/payOptions';
+import { hasPayDetails, inVenezuela, payIcon, PayOption, paySub, payTitle, paypalTest, usePayOptions } from '../lib/payOptions';
 import { allowedBilling, billingName, isYearlyOnly } from '../lib/planText';
 import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { friendlyError, supabase, createOrder } from '../lib/supabase';
@@ -240,7 +240,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     <View style={{ gap: 28 }}>
       <Section
         title={tx('Your details', 'Tus datos', 'Seus dados')}
-        note={tx('We send your access and talk to you on WhatsApp. Your receipt goes to your email.', 'Te entregamos el acceso y hablamos contigo por WhatsApp. El recibo llega a tu correo.', 'Entregamos o acesso e falamos com você pelo WhatsApp. O recibo vai para o seu e-mail.')}
+        note={tx('We send your access and talk to you on WhatsApp. Your invoice is on your order page.', 'Te entregamos el acceso y hablamos contigo por WhatsApp. Tu factura queda en la página de tu pedido.', 'Entregamos o acesso e falamos com você pelo WhatsApp. Sua fatura fica na página do seu pedido.')}
       >
         <View style={styles.pair}>
           <View style={styles.half}>
@@ -251,7 +251,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
           </View>
         </View>
         <Field label={tx('Email', 'Correo electrónico', "E-mail")} value={contact.email} onChangeText={set('email')} keyboardType="email-address" autoCapitalize="none" autoComplete="email" placeholder="you@business.com" />
-        {!inVenezuela(null) ? (
+        {lang === 'es' && !inVenezuela(null) ? (
           <Pressable onPress={() => set('country')(contact.country ? '' : 'Venezuela')} style={styles.veRow} accessibilityRole="checkbox" accessibilityState={{ checked: !!contact.country }}>
             <View style={[styles.check, !!contact.country && styles.checkOn]}>{contact.country ? <Ionicons name="checkmark" size={14} color="#fff" /> : null}</View>
             <Text style={styles.note}>{tx('I pay from Venezuela (show Pago Móvil and bank transfer)', 'Pago desde Venezuela (ver Pago Móvil y transferencia)', 'Pago da Venezuela (ver Pago Móvil e transferência)')}</Text>
@@ -450,7 +450,7 @@ export function PayRow({ option, on, first, last, onPress }: { option: PayOption
         </View>
         <Ionicons name={payIcon(option) as any} size={22} color={on ? colors.primary : colors.muted} />
       </Pressable>
-      {on && option.kind === 'manual' && option.details ? (
+      {on && option.kind === 'manual' && option.details && hasPayDetails(option) ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>{t(option.details)}</Text>
         </View>
@@ -458,7 +458,7 @@ export function PayRow({ option, on, first, last, onPress }: { option: PayOption
       {on && option.kind === 'monime' ? (
         <View style={styles.payDetail}>
           <Text style={styles.payDetailText}>
-            {tx("We take you to Monime's secure page. Pay in Leones with Orange Money, Afrimoney, your bank or a Visa debit card, then you come back here.", 'Te llevamos a la página segura de Monime. Paga en leones con Orange Money, Afrimoney, tu banco o una tarjeta Visa débito, y luego vuelves aquí.', 'Levamos você à página segura do Monime. Pague em leones com Orange Money, Afrimoney, banco ou cartão Visa débito e depois volte aqui.')}
+            {tx("We take you to Monime's secure page. Pay in Leones with Orange Money or Afrimoney, then you come back here.", 'Te llevamos a la página segura de Monime. Paga en leones con Orange Money o Afrimoney, y luego vuelves aquí.', 'Levamos você à página segura do Monime. Pague em leones com Orange Money ou Afrimoney e depois volte aqui.')}
           </Text>
         </View>
       ) : null}

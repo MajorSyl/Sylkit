@@ -1,5 +1,6 @@
-// Monime checkout for customers in Sierra Leone: Orange Money, Afrimoney, bank and Visa debit
-// on Monime's hosted page, priced in new Leones (SLE).
+// Monime checkout for customers in Sierra Leone: Orange Money and Afrimoney on Monime's hosted
+// page, priced in new Leones (SLE). Card, bank and wallet are switched off on the page because the
+// Sylkit Space can't take them (the page showed "not allowed to use card").
 //
 //   POST /api/monime/checkout { token }   -> { url }            redirect the customer there
 //   POST /api/monime/confirm  { token }   -> { order_status }   after the customer comes back
@@ -116,24 +117,26 @@ async function checkout(request, env) {
   const back = `${SITE}/order?t=${token}`;
   const win = Math.floor(Date.now() / (20 * 60 * 1000));
 
+  const session = {
+    name: `Sylkit ${order.order_number}`.slice(0, 150),
+    description: (order.product_name_en || order.product_name_es || 'Sylkit order').slice(0, 1000),
+    reference: order.order_number,
+    successUrl: `${back}&paid=monime`,
+    cancelUrl: `${back}&pay=monime`,
+    lineItems: [{ type: 'custom', name: `Sylkit ${order.order_number}`.slice(0, 100), price: { currency: 'SLE', value: minor }, quantity: 1 }],
+    brandingOptions: { primaryColor: '#2558E8' },
+    metadata: { sylkit_order: order.order_number, sylkit_token: token, usd: String(total), sle_minor: String(minor) },
+  };
   let s;
   try {
-    s = await monime(
-      env,
-      'POST',
-      '/v1/checkout-sessions',
-      {
-        name: `Sylkit ${order.order_number}`.slice(0, 150),
-        description: (order.product_name_en || order.product_name_es || 'Sylkit order').slice(0, 1000),
-        reference: order.order_number,
-        successUrl: `${back}&paid=monime`,
-        cancelUrl: `${back}&pay=monime`,
-        lineItems: [{ type: 'custom', name: `Sylkit ${order.order_number}`.slice(0, 100), price: { currency: 'SLE', value: minor }, quantity: 1 }],
-        brandingOptions: { primaryColor: '#2558E8' },
-        metadata: { sylkit_order: order.order_number, sylkit_token: token, usd: String(total), sle_minor: String(minor) },
-      },
-      `sylkit-${order.order_number}-${minor}-${win}`,
-    );
+    try {
+      // Mobile money only (Orange Money, Afrimoney): the other tabs only show errors to the customer.
+      s = await monime(env, 'POST', '/v1/checkout-sessions', { ...session, paymentOptions: { card: { disable: true }, bank: { disable: true }, wallet: { disable: true } } }, `sylkit-${order.order_number}-${minor}-${win}-momo`);
+    } catch (e) {
+      // If Monime ever rejects the payment options, a normal session still lets the customer pay.
+      if (e.status !== 400 && e.status !== 422) throw e;
+      s = await monime(env, 'POST', '/v1/checkout-sessions', session, `sylkit-${order.order_number}-${minor}-${win}`);
+    }
   } catch (e) {
     await addEvent(env, order.id, 'update', `Monime checkout failed (${e.status || '?'}): ${e.message}`, false).catch(() => {});
     return json({ error: 'monime_failed' }, 502);
@@ -185,6 +188,23 @@ async function settle(env, order) {
   await addEvent(env, order.id, 'update', es ? `Pago confirmado con Monime (${channel}): ${leones(paid / 100)}.` : `Payment confirmed with Monime (${channel}): ${leones(paid / 100)}.`);
   await alertOwner(env, { title: `Pagado con Monime ${leones(paid / 100)}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
   return 'paid';
+}
+
+// Scheduled check: Monime checkouts started in the last 3 days that are still unpaid here
+// (the webhook is the main path; this catches a missed one).
+export async function sweepMonime(env) {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY || !hasMonime(env)) return { checked: 0 };
+  const since = new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString();
+  const rows = await sb(env, `orders?status=eq.accepted&payment_method=eq.${encodeURIComponent('monime:pending')}&created_at=gte.${encodeURIComponent(since)}&select=*&order=created_at.desc&limit=25`);
+  let paid = 0;
+  for (const order of rows || []) {
+    try {
+      if ((await settle(env, order)) === 'paid') paid++;
+    } catch {
+      /* next run */
+    }
+  }
+  return { checked: rows?.length || 0, paid };
 }
 
 async function confirm(request, env) {

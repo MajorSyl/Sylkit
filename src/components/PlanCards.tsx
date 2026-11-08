@@ -107,7 +107,7 @@ export function PlanCards({ product, initialBilling, template }: { product: Prod
         <Text style={styles.hint}>{tx('Swipe to see all plans →', 'Desliza para ver todos los planes →', "Deslize para ver todos os planos →")}</Text>
       ) : null}
       <Text style={styles.fine}>
-        {tx('Extras and your web address are chosen in the next step. Pay by card, USDT, Pago Móvil or another method.', 'Las funciones extra y tu dirección web se eligen en el siguiente paso. Paga con tarjeta, USDT, Pago Móvil u otro método.', "Os extras e seu endereço web são escolhidos no próximo passo. Pague com cartão, USDT ou outro método.")}
+        {tx('Extras and your web address are chosen in the next step. Pay with PayPal or card, USDT, Orange Money or Afrimoney (Sierra Leone) or Pago Móvil (Venezuela).', 'Las funciones extra y tu dirección web se eligen en el siguiente paso. Paga con PayPal o tarjeta, USDT, Pago Móvil (Venezuela) u Orange Money y Afrimoney (Sierra Leona).', 'Os extras e seu endereço web são escolhidos no próximo passo. Pague com PayPal ou cartão, USDT, Orange Money ou Afrimoney (Serra Leoa) ou Pago Móvil (Venezuela).')}
       </Text>
     </View>
   );
