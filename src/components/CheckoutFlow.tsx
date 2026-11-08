@@ -60,9 +60,13 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
+  // Preselect the first method. If the list changes (e.g. the Venezuela box puts Pago Móvil first)
+  // and the client hasn't picked one themselves, follow the new first method.
+  const [picked, setPicked] = useState(false);
+  const firstId = payOptions?.[0]?.id ?? '';
   useEffect(() => {
-    if (!pay && payOptions?.length) setPay(payOptions[0].id);
-  }, [payOptions, pay]);
+    if (firstId && (!pay || !picked)) setPay(firstId);
+  }, [firstId, pay, picked]);
 
   const est = useMemo(() => estimate(pricing, catalog, cfg), [pricing, catalog, cfg]);
   const hasDomain = pricing.addons.includes('custom_domain') && !!catalog.custom_domain;
@@ -350,7 +354,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
         ) : (
           <View style={styles.payList} accessibilityRole="radiogroup">
             {payOptions.map((o, i) => (
-              <PayRow key={o.id} option={o} on={pay === o.id} first={i === 0} last={i === payOptions.length - 1} onPress={() => setPay(o.id)} />
+              <PayRow key={o.id} option={o} on={pay === o.id} first={i === 0} last={i === payOptions.length - 1} onPress={() => { setPicked(true); setPay(o.id); }} />
             ))}
           </View>
         )}
