@@ -20,7 +20,7 @@ import { handlePaypal, sweepPaypal } from './paypal.js';
 import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
 import { handleBuild, serveDomain, serveSite } from './build.js';
-import { handlePhotos } from './unsplash.js';
+import { drainUseQueue, handlePhotos } from './unsplash.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -157,6 +157,7 @@ export default {
   async scheduled(_event, env, ctx) {
     ctx.waitUntil(sweepPaypal(env).catch(() => {}));
     ctx.waitUntil(sweepMonime(env).catch(() => {}));
+    ctx.waitUntil(drainUseQueue(env).catch(() => {}));
     ctx.waitUntil(
       fetch(`${SUPABASE_URL}/rest/v1/products?select=slug&limit=1`, {
         headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },

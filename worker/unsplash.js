@@ -104,6 +104,24 @@ export async function trackUse(env, id) {
   return !!r?.ok;
 }
 
+// Download tracking for many photos at once (e.g. the photo library) is queued in D1 and sent a few
+// at a time by the 15-minute cron, so it never eats the hourly quota that live searches need.
+export async function drainUseQueue(env, max = 8) {
+  if (!env.UNSPLASH_ACCESS_KEY || !env.SUPPORT_DB) return 0;
+  const db = env.SUPPORT_DB;
+  await db.prepare('CREATE TABLE IF NOT EXISTS unsplash_queue (id TEXT PRIMARY KEY, added TEXT, sent TEXT)').run();
+  if (quota.remaining !== null && quota.remaining < 20 && Date.now() - quota.at < 3600e3) return 0;
+  const rows = (await db.prepare('SELECT id FROM unsplash_queue WHERE sent IS NULL LIMIT ?').bind(max).all()).results || [];
+  let n = 0;
+  for (const { id } of rows) {
+    if (await trackUse(env, id)) {
+      await db.prepare("UPDATE unsplash_queue SET sent = datetime('now') WHERE id = ?").bind(id).run();
+      n++;
+    }
+  }
+  return n;
+}
+
 async function use(request, env) {
   const body = await request.json().catch(() => ({}));
   if (await overLimit(env, request, 'photos_use').catch(() => false)) return json({ error: 'rate_limited' }, 429);
