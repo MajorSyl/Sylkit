@@ -182,7 +182,7 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
     return out;
   }, [items, cat, kind, demoOnly, platform, query, sort]);
 
-  const cols = width >= 1400 ? 5 : width >= 1100 ? 4 : width >= 760 ? 3 : 2; // two per row on phones, like Behance
+  const cols = width >= 1400 ? 5 : width >= 1100 ? 4 : width >= 760 ? 3 : 1; // one big card per row on phones
   const wide = width >= 820;
   const activeFilters = (demoOnly ? 1 : 0) + (platform ? 1 : 0) + (kind !== 'all' ? 1 : 0);
   const priceText = (i: Item) => (i.price == null ? (i.isNew ? tx('Live demo', 'Demo en vivo', 'Demo ao vivo') : tx('Quote', 'Cotizar', 'Orçamento')) : `$${Number.isInteger(i.price) ? i.price : i.price.toFixed(2)}${i.priceUnit}`);
@@ -297,10 +297,10 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
 
       {/* Cards */}
       {list.length ? (
-        <View style={[styles.grid, { marginHorizontal: wide ? -8 : -5 }]}>
+        <View style={[styles.grid, { marginHorizontal: cols === 1 ? 0 : -8 }]}>
           {list.map((i) => (
-            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: wide ? 8 : 5, paddingBottom: wide ? 24 : 16 }}>
-              <Card item={i} touch={!wide} small={cols === 2 && !wide} priceText={priceText(i)} openDemo={openUrl} />
+            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: cols === 1 ? 0 : 8, paddingBottom: cols === 1 ? 30 : 24 }}>
+              <Card item={i} touch={!wide} single={cols === 1} priceText={priceText(i)} openDemo={openUrl} />
             </View>
           ))}
         </View>
@@ -384,18 +384,46 @@ function Opt({ on, label, onPress, check }: { on: boolean; label: string; onPres
   );
 }
 
-function Card({ item, touch, small, priceText, openDemo }: { item: Item; touch: boolean; small: boolean; priceText: string; openDemo: (url: string) => void }) {
+function Card({ item, touch, single, priceText, openDemo }: { item: Item; touch: boolean; single: boolean; priceText: string; openDemo: (url: string) => void }) {
   const [hover, setHover] = useState(false);
   const isTpl = item.kind === 'template';
   const badge = item.isNew ? tx('NEW', 'NUEVO', 'NOVO') : isTpl ? tx('TEMPLATE', 'PLANTILLA', 'MODELO') : item.demo ? tx('LIVE DEMO', 'DEMO EN VIVO', 'DEMO AO VIVO') : null;
-  // Behance layout: the title sits on the image over a dark fade, a pill at the top right,
-  // and the owner row with numbers under the card.
+  const isDemoOnly = item.isNew || (!isTpl && item.demo && item.price == null);
+  if (single) {
+    // Phones: one large rounded card per row; under it the name with a grey pill and the price.
+    return (
+      <View>
+        <Pressable onPress={item.open} style={styles.coverBig} accessibilityRole="link" accessibilityLabel={item.title}>
+          {item.cover ? <Image source={{ uri: item.cover }} style={styles.img} resizeMode="cover" /> : null}
+          {!isTpl && item.demo ? (
+            <Pressable style={styles.playBtn} onPress={() => (item.isNew ? item.open() : openDemo(item.demo!))} accessibilityRole="link" accessibilityLabel={tx('Try demo', 'Probar demo', 'Testar demo')}>
+              <Ionicons name="play" size={16} color={colors.text} />
+            </Pressable>
+          ) : null}
+        </Pressable>
+        <Pressable onPress={item.open} style={styles.metaBig} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
+          <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={styles.avatarBig} />
+          <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Text style={styles.titleBig} numberOfLines={1}>{item.title}</Text>
+              {badge ? <Text style={styles.greyPill} numberOfLines={1}>{badge}</Text> : null}
+            </View>
+            <Text style={styles.subBig} numberOfLines={1}>{item.sub}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <Ionicons name={isDemoOnly ? 'play-circle-outline' : 'pricetag-outline'} size={16} color={colors.muted} />
+            <Text style={styles.priceBig} numberOfLines={1}>{priceText}</Text>
+          </View>
+        </Pressable>
+      </View>
+    );
+  }
   return (
     <View>
-      <Pressable onPress={item.open} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)} style={[styles.cover, small && { borderRadius: 6 }]} accessibilityRole="link" accessibilityLabel={item.title}>
+      <Pressable onPress={item.open} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)} style={styles.cover} accessibilityRole="link" accessibilityLabel={item.title}>
         {item.cover ? <Image source={{ uri: item.cover }} style={[styles.img, hover && ({ transform: [{ scale: 1.03 }] } as any)]} resizeMode="cover" /> : null}
-        <View style={[styles.shade as any, small && { paddingHorizontal: 9, paddingBottom: 8, paddingTop: 30 }]} pointerEvents="none">
-          <Text style={[styles.ovTitle, small && { fontSize: 12.5, lineHeight: 16 }]} numberOfLines={2}>
+        <View style={styles.shade as any} pointerEvents="none">
+          <Text style={styles.ovTitle} numberOfLines={2}>
             {item.title}
           </Text>
           {hover && !touch ? (
@@ -405,8 +433,8 @@ function Card({ item, touch, small, priceText, openDemo }: { item: Item; touch: 
           ) : null}
         </View>
         {badge ? (
-          <View style={[styles.pill, small && { top: 7, right: 7, paddingHorizontal: 7, height: 20 }]} pointerEvents="none">
-            <Text style={[styles.pillText, small && { fontSize: 9 }]} numberOfLines={1}>{badge}</Text>
+          <View style={styles.pill} pointerEvents="none">
+            <Text style={styles.pillText} numberOfLines={1}>{badge}</Text>
           </View>
         ) : null}
         {hover && !touch && !isTpl && item.demo && !item.isNew ? (
@@ -416,15 +444,15 @@ function Card({ item, touch, small, priceText, openDemo }: { item: Item; touch: 
           </Pressable>
         ) : null}
       </Pressable>
-      <Pressable onPress={item.open} style={[styles.meta, small && { marginTop: 7, gap: 5 }]} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
-        <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={[styles.avatar, small && { width: 18, height: 18 }]} />
-        <Text style={[styles.owner, small && { fontSize: 12 }]} numberOfLines={1}>
+      <Pressable onPress={item.open} style={styles.meta} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
+        <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={styles.avatar} />
+        <Text style={styles.owner} numberOfLines={1}>
           Sylkit
         </Text>
-        {!small ? <Text style={[styles.badge, styles.badgeLive]}>PRO</Text> : null}
+        <Text style={[styles.badge, styles.badgeLive]}>PRO</Text>
         <View style={{ flex: 1, minWidth: 2 }} />
-        <Ionicons name={item.isNew || (!isTpl && item.demo && item.price == null) ? 'play-circle-outline' : 'pricetag-outline'} size={small ? 12 : 13} color={colors.muted} />
-        <Text style={[styles.price, small && { fontSize: 11.5 }]} numberOfLines={1}>
+        <Ionicons name={isDemoOnly ? 'play-circle-outline' : 'pricetag-outline'} size={13} color={colors.muted} />
+        <Text style={styles.price} numberOfLines={1}>
           {priceText}
         </Text>
       </Pressable>
@@ -467,6 +495,14 @@ const styles = StyleSheet.create({
   shade: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16, paddingTop: 48, paddingBottom: 14, backgroundImage: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%)' },
   ovTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
   ovSub: { color: 'rgba(255,255,255,0.82)', fontSize: 13, marginTop: 2, fontWeight: '600' },
+  coverBig: { width: '100%', aspectRatio: 1.28, borderRadius: 20, overflow: 'hidden', backgroundColor: '#EEF1F6', position: 'relative' },
+  playBtn: { position: 'absolute', top: 14, right: 14, width: 40, height: 40, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.95)', alignItems: 'center', justifyContent: 'center' },
+  metaBig: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12 },
+  avatarBig: { width: 36, height: 36, borderRadius: 999, backgroundColor: '#0B1B3A' },
+  titleBig: { fontSize: 17, fontWeight: '700', color: colors.text, flexShrink: 1 },
+  subBig: { fontSize: 13, color: colors.muted },
+  greyPill: { fontSize: 10.5, fontWeight: '800', color: '#475467', backgroundColor: '#EEF0F4', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, overflow: 'hidden', flexShrink: 0, letterSpacing: 0.3 },
+  priceBig: { fontSize: 15, fontWeight: '600', color: colors.text },
   pill: { position: 'absolute', top: 12, right: 12, height: 24, paddingHorizontal: 10, borderRadius: 999, backgroundColor: 'rgba(17,20,28,0.72)', justifyContent: 'center' },
   pillText: { color: '#fff', fontSize: 10.5, fontWeight: '800', letterSpacing: 0.5 },
   demoBtn: { position: 'absolute', top: 44, right: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 999, paddingHorizontal: 12, height: 32 },

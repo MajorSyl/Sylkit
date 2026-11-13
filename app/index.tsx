@@ -49,7 +49,7 @@ export default function Home() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         {/* Catalog: systems and design templates as a showroom of screenshot cards */}
         {/* Full-width gallery, like Behance */}
-        <View style={{ width: '100%', paddingHorizontal: width >= 1100 ? 32 : 12, marginTop: 14 }} nativeID="catalog">
+        <View style={{ width: '100%', paddingHorizontal: width >= 1100 ? 32 : 16, marginTop: 14 }} nativeID="catalog">
           <Showroom products={products} />
         </View>
 
