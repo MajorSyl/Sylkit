@@ -16,6 +16,12 @@ type Item = { href: string; icon: string; label: T; sub: T };
 
 const products: Item[] = [
   {
+    href: '/work',
+    icon: 'briefcase-outline',
+    label: { en: 'Our work', pt: 'Nosso trabalho', es: 'Nuestro trabajo' },
+    sub: { en: 'Live demos: hotels, events, logistics, construction', pt: 'Demos ao vivo: hotéis, eventos, logística, construção', es: 'Demos en vivo: hoteles, eventos, logística, construcción' },
+  },
+  {
     href: '/',
     icon: 'apps-outline',
     label: { en: 'Software for your business', pt: "Software para o seu negócio", es: 'Software para tu negocio' },
@@ -55,6 +61,7 @@ const products: Item[] = [
 
 const top: { href: string; label: T }[] = [
   { href: '/', label: { en: 'Software', pt: "Software", es: 'Software' } },
+  { href: '/work', label: { en: 'Our work', pt: 'Nosso trabalho', es: 'Nuestro trabajo' } },
   { href: '/templates', label: { en: 'Templates', pt: "Modelos", es: 'Plantillas' } },
   { href: '/domains', label: { en: 'Domains', pt: "Domínios", es: 'Dominios' } },
   { href: '/product/hosting-web', label: { en: 'Hosting', pt: "Hospedagem", es: 'Hosting' } },
