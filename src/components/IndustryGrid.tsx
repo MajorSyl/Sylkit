@@ -8,7 +8,8 @@ import { colors } from '../theme';
 import { Photo } from './Photo';
 
 // Photo-led grid of industries; each card opens a working demo.
-export function IndustryGrid({ width }: { width: number }) {
+export function IndustryGrid({ width: w0 }: { width: number }) {
+  const width = w0 || 375;
   const { lang } = useLang();
   const router = useRouter();
   const cols = width >= 1100 ? 4 : width >= 700 ? 2 : 1;

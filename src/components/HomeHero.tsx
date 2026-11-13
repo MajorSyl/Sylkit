@@ -8,7 +8,8 @@ import { Photo } from './Photo';
 
 // Sylkit 2.0 hero: an editorial headline on the left, real photography with live-looking product
 // cards on the right (a confirmed booking, a scanned ticket), so visitors see what we build.
-export function HomeHero({ width }: { width: number }) {
+export function HomeHero({ width: w0 }: { width: number }) {
+  const width = w0 || 375; // pre-rendered pages have no width yet
   const router = useRouter();
   const wide = width >= 980;
   const hotel = pickPhotos('hotels', 1)[0];
