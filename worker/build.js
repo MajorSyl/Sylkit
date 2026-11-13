@@ -261,7 +261,9 @@ async function siteInfo(env, url) {
   let row = await getSite(env, url.searchParams.get('id'), url.searchParams.get('t'));
   if (!row) return bad('not_found', 404);
   row = await refreshStatus(env, row);
-  return json({ site: JSON.parse(row.data), slug: row.slug, status: row.status, live: row.status === 'live', url: urlOf(row.slug), order_number: row.order_number });
+  const site = JSON.parse(row.data);
+  const suggested = row.slug ? null : await freeSlug(env, slugify(site.name), row.id);
+  return json({ site, slug: row.slug, suggested, status: row.status, live: row.status === 'live', url: urlOf(row.slug), order_number: row.order_number });
 }
 
 async function preview(env, url) {

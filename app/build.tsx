@@ -115,7 +115,7 @@ export default function BuildPage() {
     setBuild(next);
     save(next);
     setInfo(j);
-    setSlug(j.slug || b.slug || '');
+    setSlug(j.slug || b.slug || j.suggested || '');
     setVersion((v) => v + 1);
     return true;
   }, []);
