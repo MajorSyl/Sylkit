@@ -45,8 +45,15 @@ const handle = (v) => {
     .replace(/\/.*$/, '');
   return /^[A-Za-z0-9._]{2,40}$/.test(s) ? s : '';
 };
-const phone = (v) => {
-  const s = String(v ?? '').replace(/[^\d+]/g, '');
+// Numbers people write the local way (0412…, 076…, (11) 9…) become international, so WhatsApp links work.
+const phone = (v, lang) => {
+  let s = String(v ?? '').replace(/[^\d+]/g, '');
+  if (s.startsWith('00')) s = '+' + s.slice(2);
+  if (!s.startsWith('+')) {
+    if (/^0[24]\d{9}$/.test(s)) s = '+58' + s.slice(1); // Venezuela: 0412 555 1234, 0212 …
+    else if (/^0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|99)\d{6}$/.test(s)) s = '+232' + s.slice(1); // Sierra Leone: 076 123 456
+    else if (lang === 'pt' && /^[1-9]{2}9?\d{8}$/.test(s)) s = '+55' + s; // Brazil: (11) 90000-0000
+  }
   const digits = s.replace(/\D/g, '');
   return digits.length >= 7 && digits.length <= 15 ? (s.startsWith('+') ? '+' : '') + digits : '';
 };
@@ -90,8 +97,8 @@ export function sanitizeSite(raw) {
       .filter((q) => q.q && q.a),
     cta: { title: str(r.cta?.title, 80), text: str(r.cta?.text, 200), button: str(r.cta?.button, 32) },
     contact: {
-      whatsapp: phone(c.whatsapp),
-      phone: phone(c.phone),
+      whatsapp: phone(c.whatsapp, lang),
+      phone: phone(c.phone, lang),
       email: email(c.email),
       address: str(c.address, 140),
       city: str(c.city, 60),

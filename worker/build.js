@@ -19,7 +19,8 @@ import { renderSite, renderWaiting, sanitizeSite } from './aisite.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const PRODUCT = 'web-con-ia';
-const MODELS = ['openrouter/free', 'google/gemma-4-31b-it:free', 'z-ai/glm-5.3-flash'];
+// GLM 5.3 Flash first: good Spanish/Portuguese and about $0.0015 per site. Free models as backup.
+const MODELS = ['z-ai/glm-5.3-flash', 'openrouter/free', 'google/gemma-4-31b-it:free'];
 const LIVE_STATUSES = new Set(['paid', 'in_progress', 'delivered']);
 const MAX_EDITS = 80; // per site, for good
 const RESERVED = new Set([
@@ -88,6 +89,7 @@ function rules(lang) {
 ${SHAPE}
 Rules:
 - Write every text in ${LANG_NAME[lang] || LANG_NAME.es}, simple and warm, like a good local copywriter. No clichés, no exaggeration.
+- Write WhatsApp and phone numbers in international format with the country code when the country is clear (e.g. +58 412 555 1234, +232 76 123 456, +55 11 90000 0000).
 - Use ONLY facts the customer gave for phone numbers, WhatsApp, email, address, city, social handles, prices, hours, years, numbers of clients, awards and reviews. Never invent them: leave "" or [] when unknown.
 - You may describe the services they mention and add a few obvious ones for that kind of business, without prices.
 - 3 features, 3 to 8 services, 0 to 4 FAQ (only real, useful questions), hours only if given.
