@@ -9,6 +9,7 @@
 // - /api/monime/* Monime checkout for Sierra Leone (Orange Money, Afrimoney, cards), see monime.js
 // - /api/paypal/* PayPal Checkout (PayPal balance or card on PayPal's page) and capture (see paypal.js)
 // - /api/photos/* Unsplash search for the photo library and AI Builder (key stays server side, see unsplash.js)
+// - /api/demo/* Sylkit 2.0 live demos: hotel bookings, event tickets + QR check-in, logistics, construction (see demo.js, D1 sylkit-demo)
 // - /api/build/* AI website builder; <name>.sylkit.com and sylkit.com/s/<name> serve the published sites (see build.js)
 // - /api/support/* help widget, AI assistant and the admin support inbox (see support.js, D1 database sylkit-support)
 // - cron every 15 min: confirms PayPal/Monime payments whose customer never came back to the site,
@@ -21,6 +22,7 @@ import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
 import { handleBuild, serveDomain, serveSite } from './build.js';
 import { drainUseQueue, handlePhotos } from './unsplash.js';
+import { handleDemo, sweepDemos } from './demo.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -90,6 +92,7 @@ async function route(request, env, ctx) {
   if (url.pathname.startsWith('/api/support/')) return handleSupport(request, env, url, ctx);
   if (url.pathname.startsWith('/api/build/')) return handleBuild(request, env, url);
   if (url.pathname.startsWith('/api/photos/')) return handlePhotos(request, env, url, ctx);
+  if (url.pathname.startsWith('/api/demo/')) return handleDemo(request, env, url);
   const sub = url.hostname.split('.')[0];
   const isSub = url.hostname.endsWith('.sylkit.com') && url.hostname.split('.').length === 3 && sub !== 'www';
   const demo = isSub ? DEMOS[sub] : undefined;
@@ -134,13 +137,13 @@ function withCountry(res, request) {
 // Browser security headers on every response:
 //  - HTTPS only (HSTS), no MIME sniffing, no full URLs leaked to other sites (order links carry tokens),
 //  - pages can only be framed by Sylkit itself (blocks clickjacking of checkout/admin),
-//  - no camera/mic/location access.
+//  - no mic/location access; camera only for Sylkit's own pages (QR ticket check-in).
 const SECURITY_HEADERS = {
   'strict-transport-security': 'max-age=31536000; includeSubDomains',
   'x-content-type-options': 'nosniff',
   'referrer-policy': 'strict-origin-when-cross-origin',
   'content-security-policy': "frame-ancestors 'self' https://sylkit.com https://*.sylkit.com; base-uri 'self'; object-src 'none'",
-  'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=(self)',
+  'permissions-policy': 'camera=(self), microphone=(), geolocation=(), payment=(self)',
   'cross-origin-opener-policy': 'same-origin-allow-popups',
 };
 function secure(res) {
@@ -158,6 +161,7 @@ export default {
     ctx.waitUntil(sweepPaypal(env).catch(() => {}));
     ctx.waitUntil(sweepMonime(env).catch(() => {}));
     ctx.waitUntil(drainUseQueue(env).catch(() => {}));
+    ctx.waitUntil(sweepDemos(env).catch(() => {}));
     ctx.waitUntil(
       fetch(`${SUPABASE_URL}/rest/v1/products?select=slug&limit=1`, {
         headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
