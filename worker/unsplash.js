@@ -106,7 +106,7 @@ export async function trackUse(env, id) {
 
 // Download tracking for many photos at once (e.g. the photo library) is queued in D1 and sent a few
 // at a time by the 15-minute cron, so it never eats the hourly quota that live searches need.
-export async function drainUseQueue(env, max = 8) {
+export async function drainUseQueue(env, max = 5) {
   if (!env.UNSPLASH_ACCESS_KEY || !env.SUPPORT_DB) return 0;
   const db = env.SUPPORT_DB;
   await db.prepare('CREATE TABLE IF NOT EXISTS unsplash_queue (id TEXT PRIMARY KEY, added TEXT, sent TEXT)').run();

@@ -14,6 +14,8 @@ import {
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
 import { Showroom } from '../src/components/Showroom';
+import { HomeHero } from '../src/components/HomeHero';
+import { IndustryGrid } from '../src/components/IndustryGrid';
 import { useProducts } from '../src/lib/catalog';
 import { useRouter } from 'expo-router';
 import { steps, ui, useLang } from '../src/i18n';
@@ -42,21 +44,12 @@ export default function Home() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg }}>
       <Head>
-        <title>Sylkit · {t(ui.tagline)}</title>
+        <title>{tx('Sylkit · Software that runs real businesses', 'Sylkit · Software que hace funcionar negocios reales', 'Sylkit · Software que faz negócios reais funcionarem')}</title>
         <meta name="description" content={t(ui.heroSub)} />
       </Head>
       <Header />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        {/* Hero */}
-        <View style={styles.hero}>
-          <View style={[styles.sphere, { width: 260, height: 260, top: -80, right: -60, backgroundColor: colors.cyan, opacity: 0.18 }]} />
-          <View style={[styles.sphere, { width: 200, height: 200, bottom: -70, left: -50, backgroundColor: colors.primary, opacity: 0.12 }]} />
-          <View style={styles.container}>
-            <Text style={[styles.h1, wide && { fontSize: 52, lineHeight: 58 }]}>{t(ui.tagline)}</Text>
-            <Text style={[styles.heroSub, wide && { fontSize: 18, lineHeight: 28 }]}>{t(ui.heroSub)}</Text>
-
-          </View>
-        </View>
+        <HomeHero width={width} />
 
         {/* Four clear doors */}
         <View style={styles.container}>
@@ -79,6 +72,16 @@ export default function Home() {
               </View>
             ))}
           </View>
+        </View>
+
+        {/* Work by industry: real photography, each card opens a live demo */}
+        <View style={[styles.container, { marginTop: 40 }]} nativeID="work">
+          <Text style={styles.kicker}>{tx('Our work', 'Nuestro trabajo', 'Nosso trabalho')}</Text>
+          <Text style={[styles.h2, wide && { fontSize: 34 }]}>{tx('Built for the way your industry works', 'Hecho para cómo trabaja tu industria', 'Feito para como sua indústria trabalha')}</Text>
+          <Text style={[styles.sectionSub, { marginTop: 8, marginBottom: 20 }]}>
+            {tx('Open any card to use a working demo with sample data. Nothing to install.', 'Abre cualquier tarjeta para usar un demo funcional con datos de ejemplo. Sin instalar nada.', 'Abra qualquer cartão para usar uma demo funcional com dados de exemplo. Nada para instalar.')}
+          </Text>
+          <IndustryGrid width={width} />
         </View>
 
         {/* Catalog: systems and design templates as a showroom of screenshot cards */}
@@ -172,6 +175,7 @@ function WhatsAppButton({ label, message }: { label: string; message: string }) 
 }
 
 const styles = StyleSheet.create({
+  kicker: { fontSize: 13, fontWeight: '700', color: colors.primary, letterSpacing: 0.6, textTransform: 'uppercase', marginBottom: 6 },
   tplAll: { fontSize: 15, fontWeight: '700', color: colors.primary },
   tplCard: { width: 150, backgroundColor: colors.surface, borderRadius: 16, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', paddingBottom: 10 },
   tplShot: { width: '100%', height: 230, marginBottom: 8 },
