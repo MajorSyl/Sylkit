@@ -15,6 +15,10 @@
     "not_found_handling": "none"
   },
   // Support inbox: tickets, messages and usage limits for the help widget (worker/support.js).
+  // Logos and photos for websites made with the AI Builder (worker/build.js).
+  "kv_namespaces": [
+    { "binding": "SITE_MEDIA", "id": "934cb70c6e804e5bb3c907c54b43ea1c" }
+  ],
   "d1_databases": [
     { "binding": "SUPPORT_DB", "database_name": "sylkit-support", "database_id": "63757c0b-3235-4203-a1b7-36b73dc6a5cd" }
   ],

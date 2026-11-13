@@ -10,6 +10,7 @@
 //   renderSite(site, opts)       -> full HTML page
 //     opts.preview: shows the "Preview" ribbon and noindex
 //     opts.url:     public address (for the page's canonical/OG tags)
+//     opts.media:   { logo, photos[] } image URLs uploaded by the customer (never chosen by the AI)
 
 export const STYLES = ['clean', 'warm', 'bold', 'elegant', 'fresh'];
 const ICON_RE = /^\p{Extended_Pictographic}(‍?\p{Extended_Pictographic}|️|\p{Emoji_Modifier})*$/u;
@@ -149,9 +150,9 @@ function lum(h) {
 }
 
 const UI = {
-  es: { services: 'Servicios', about: 'Nosotros', hours: 'Horario', contact: 'Contacto', faq: 'Preguntas frecuentes', write: 'Escríbenos por WhatsApp', call: 'Llamar', mail: 'Correo', map: 'Ver en el mapa', see: 'Ver servicios', made: 'Hecho con Sylkit · Crea tu web con IA', preview: 'Vista previa · Así se verá tu web. Aún no está publicada.', hi: 'Hola, les escribo desde su página web.', ask: (n) => `Hola, me interesa: ${n}.`, follow: 'Síguenos', where: 'Dónde estamos' },
-  en: { services: 'Services', about: 'About', hours: 'Hours', contact: 'Contact', faq: 'Questions', write: 'Message us on WhatsApp', call: 'Call', mail: 'Email', map: 'Open in Maps', see: 'See services', made: 'Made with Sylkit · Build your website with AI', preview: 'Preview · This is how your website will look. It is not published yet.', hi: 'Hi, I am writing from your website.', ask: (n) => `Hi, I am interested in: ${n}.`, follow: 'Follow us', where: 'Find us' },
-  pt: { services: 'Serviços', about: 'Sobre nós', hours: 'Horário', contact: 'Contato', faq: 'Perguntas frequentes', write: 'Fale conosco no WhatsApp', call: 'Ligar', mail: 'E-mail', map: 'Ver no mapa', see: 'Ver serviços', made: 'Feito com Sylkit · Crie seu site com IA', preview: 'Prévia · Assim seu site vai ficar. Ainda não está publicado.', hi: 'Olá, estou escrevendo pelo seu site.', ask: (n) => `Olá, tenho interesse em: ${n}.`, follow: 'Siga-nos', where: 'Onde estamos' },
+  es: { services: 'Servicios', gallery: 'Galería', about: 'Nosotros', hours: 'Horario', contact: 'Contacto', faq: 'Preguntas frecuentes', write: 'Escríbenos por WhatsApp', call: 'Llamar', mail: 'Correo', map: 'Ver en el mapa', see: 'Ver servicios', made: 'Hecho con Sylkit · Crea tu web con IA', preview: 'Vista previa · Así se verá tu web. Aún no está publicada.', hi: 'Hola, les escribo desde su página web.', ask: (n) => `Hola, me interesa: ${n}.`, follow: 'Síguenos', where: 'Dónde estamos' },
+  en: { services: 'Services', gallery: 'Gallery', about: 'About', hours: 'Hours', contact: 'Contact', faq: 'Questions', write: 'Message us on WhatsApp', call: 'Call', mail: 'Email', map: 'Open in Maps', see: 'See services', made: 'Made with Sylkit · Build your website with AI', preview: 'Preview · This is how your website will look. It is not published yet.', hi: 'Hi, I am writing from your website.', ask: (n) => `Hi, I am interested in: ${n}.`, follow: 'Follow us', where: 'Find us' },
+  pt: { services: 'Serviços', gallery: 'Galeria', about: 'Sobre nós', hours: 'Horário', contact: 'Contato', faq: 'Perguntas frequentes', write: 'Fale conosco no WhatsApp', call: 'Ligar', mail: 'E-mail', map: 'Ver no mapa', see: 'Ver serviços', made: 'Feito com Sylkit · Crie seu site com IA', preview: 'Prévia · Assim seu site vai ficar. Ainda não está publicado.', hi: 'Olá, estou escrevendo pelo seu site.', ask: (n) => `Olá, tenho interesse em: ${n}.`, follow: 'Siga-nos', where: 'Onde estamos' },
 };
 
 const SVG = {
@@ -190,9 +191,15 @@ export function renderSite(site, opts = {}) {
     c.tiktok && [`https://www.tiktok.com/@${c.tiktok}`, SVG.tt, 'TikTok'],
   ].filter(Boolean);
   const chips = s.services.items.slice(0, 3);
+  const media = opts.media || {};
+  const logo = typeof media.logo === 'string' ? media.logo : '';
+  const photos = (Array.isArray(media.photos) ? media.photos : []).filter((x) => typeof x === 'string').slice(0, 8);
+  const heroPhoto = photos[0] || '';
+  const gallery = photos.length > 1 ? photos : [];
 
   const nav = [
     hasServices && ['#servicios', s.services.title || u.services],
+    gallery.length && ['#galeria', u.gallery],
     s.about.text && ['#nosotros', s.about.title || u.about],
     s.hours.length && ['#horario', u.hours],
     hasContact && ['#contacto', u.contact],
@@ -259,6 +266,10 @@ footer{border-top:1px solid var(--line);padding:36px 0 110px;color:var(--muted);
 footer .w{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
 .soc{display:flex;gap:10px}.soc a{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--text)}
 .made{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--muted)}.made:hover{color:var(--text)}
+.mark.img{background:#fff;border:1px solid var(--line);overflow:hidden}.mark img{width:100%;height:100%;object-fit:contain}
+.photo{position:absolute;inset:4%;border-radius:${s.style === 'bold' || s.style === 'elegant' ? 'var(--r)' : '28px'};overflow:hidden;box-shadow:0 40px 80px -36px rgba(0,0,0,.45)}.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.gal a{display:block;border-radius:var(--r);overflow:hidden;aspect-ratio:4/3;background:var(--surface)}.gal img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}.gal a:hover img{transform:scale(1.04)}
+.center .hero .heroimg{display:block;width:100%;max-width:880px;aspect-ratio:16/8;border-radius:var(--r);overflow:hidden;margin-top:40px}.center .hero .heroimg img{width:100%;height:100%;object-fit:cover;display:block}
 .float{position:fixed;right:18px;bottom:18px;z-index:70;width:60px;height:60px;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 14px 30px -8px rgba(0,0,0,.35)}.float svg{width:30px;height:30px}
 @media (max-width:860px){.links{display:none}.hero{padding:48px 0 64px}.hero .grid,.about{grid-template-columns:1fr;gap:34px}.art{max-width:300px}.chip.c0{left:-2%}.chip.c1{right:-2%}section{padding:64px 0}.feats{margin-top:0}.ctaband{padding:42px 22px}}
 @media (max-width:420px){.nav .btn span{display:none}.nav .btn{padding:10px 12px}}`;
@@ -270,14 +281,14 @@ footer .w{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-conten
 <title>${esc(title)}</title><meta name="description" content="${esc(desc)}">
 ${opts.preview ? '<meta name="robots" content="noindex, nofollow">' : ''}${opts.url ? `<link rel="canonical" href="${esc(opts.url)}"><meta property="og:url" content="${esc(opts.url)}">` : ''}
 <meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="website"><meta name="theme-color" content="${b.heroDark ? b.text : b.bg}">
-<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${s.icon}</text></svg>`)}">
+${logo ? `<link rel="icon" href="${esc(logo)}">` : `<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${s.icon}</text></svg>`)}">`}${heroPhoto ? `<meta property="og:image" content="${esc(heroPhoto)}">` : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?${f.link}&display=swap">
 <style>${css}</style></head>
 <body class="${layoutClass}">
 ${opts.preview ? `<div class="ribbon">${esc(u.preview)}</div>` : ''}
 <header><div class="w nav">
-<a class="brand" href="#"><span class="mark">${s.icon}</span><span>${esc(s.name)}</span></a>
+<a class="brand" href="#">${logo ? `<span class="mark img"><img src="${esc(logo)}" alt=""></span>` : `<span class="mark">${s.icon}</span>`}<span>${esc(s.name)}</span></a>
 <nav class="links">${nav.map(([h, t]) => `<a href="${h}">${esc(t)}</a>`).join('')}</nav>
 ${wa ? `<a class="btn" href="${esc(waText(u.hi))}" target="_blank" rel="noopener">${SVG.wa}<span>WhatsApp</span></a>` : ''}
 </div></header>
@@ -289,7 +300,7 @@ ${s.tagline ? `<div class="kick">${s.icon} ${esc(s.tagline)}</div>` : ''}
 ${s.hero.subtitle ? `<p>${nl(s.hero.subtitle)}</p>` : ''}
 <div class="actions"><a class="btn" href="${esc(primary)}" ${wa ? 'target="_blank" rel="noopener"' : ''}>${wa ? SVG.wa : ''}${esc(heroBtn)}</a>${hasServices ? `<a class="btn ghost" href="#servicios">${esc(u.see)}</a>` : ''}</div>
 </div>
-<div class="art"><div class="blob"></div><div class="big">${s.icon}</div>${chips.map((x, i) => `<div class="chip c${i}">${x.icon} ${esc(x.name)}</div>`).join('')}</div>
+${s.style === 'elegant' && heroPhoto ? `<div class="heroimg"><img src="${esc(heroPhoto)}" alt="${esc(s.name)}"></div>` : ''}<div class="art">${heroPhoto ? `<div class="photo"><img src="${esc(heroPhoto)}" alt="${esc(s.name)}"></div>` : `<div class="blob"></div><div class="big">${s.icon}</div>`}${chips.map((x, i) => `<div class="chip c${i}">${x.icon} ${esc(x.name)}</div>`).join('')}</div>
 </div></div>
 ${s.features.length ? `<div class="w"><div class="feats">${s.features.map((x) => `<div class="feat"><div class="ic">${x.icon}</div><div><h3>${esc(x.title)}</h3>${x.text ? `<p>${esc(x.text)}</p>` : ''}</div></div>`).join('')}</div></div>` : ''}
 ${
@@ -302,6 +313,11 @@ ${
         )
         .join('')}</div>
 </div></section>`
+    : ''
+}
+${
+  gallery.length
+    ? `<section id="galeria"><div class="w"><div class="head"><h2>${esc(u.gallery)}</h2></div><div class="gal">${gallery.map((g) => `<a href="${esc(g)}" target="_blank" rel="noopener"><img src="${esc(g)}" alt="${esc(s.name)}" loading="lazy"></a>`).join('')}</div></div></section>`
     : ''
 }
 ${

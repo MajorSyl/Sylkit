@@ -16,7 +16,61 @@ import { colors, shadow, waLink } from '../src/theme';
 
 type Site = { name: string; icon: string; lang: string };
 type Build = { id: string; token: string; slug?: string };
-type Info = { site: Site; slug: string | null; live: boolean; url: string | null; order_number: string | null };
+type Media = { logo: string; photos: string[] };
+type Info = {
+  site: Site | null;
+  slug: string | null;
+  live: boolean;
+  url: string | null;
+  order_number: string | null;
+  media?: Media;
+  domain?: string | null;
+  domain_status?: string | null;
+  target?: string;
+};
+type Question = { id: string; q: string; placeholder: string };
+const STYLES = [
+  { id: 'auto', es: 'Que elija la IA', en: 'Let AI choose', pt: 'A IA escolhe', colors: ['#2558e8', '#c2552d', '#0f766e'] },
+  { id: 'clean', es: 'Limpio', en: 'Clean', pt: 'Limpo', colors: ['#ffffff', '#0f172a', '#2558e8'] },
+  { id: 'warm', es: 'Cálido', en: 'Warm', pt: 'Acolhedor', colors: ['#fbf7f1', '#2a1d14', '#c2552d'] },
+  { id: 'bold', es: 'Llamativo', en: 'Bold', pt: 'Marcante', colors: ['#0e0e0e', '#ffffff', '#e11d48'] },
+  { id: 'elegant', es: 'Elegante', en: 'Elegant', pt: 'Elegante', colors: ['#faf9f7', '#1b1a18', '#a16207'] },
+  { id: 'fresh', es: 'Fresco', en: 'Fresh', pt: 'Leve', colors: ['#f2f7f6', '#0d1f1c', '#0d9488'] },
+];
+const FALLBACK_Q: Record<'es' | 'en' | 'pt', Question[]> = {
+  es: [
+    { id: 'name', q: '¿Cómo se llama tu negocio?', placeholder: 'Ej.: Panadería Dulce Hogar' },
+    { id: 'offer', q: '¿Qué vendes u ofreces? Si quieres, con precios.', placeholder: 'Ej.: Pan canilla $1, tortas desde $15' },
+    { id: 'where', q: '¿Dónde estás?', placeholder: 'Ej.: Calle Principal de Petare, Caracas' },
+    { id: 'hours', q: '¿Cuál es tu horario?', placeholder: 'Ej.: Lunes a sábado de 7:00 a 19:00' },
+    { id: 'contact', q: '¿Tu WhatsApp y redes sociales?', placeholder: 'Ej.: 0414 123 4567 · Instagram @minegocio' },
+  ],
+  en: [
+    { id: 'name', q: "What's your business called?", placeholder: 'e.g. Sunrise Bakery' },
+    { id: 'offer', q: 'What do you sell or offer? Add prices if you like.', placeholder: 'e.g. Bread $1, custom cakes from $15' },
+    { id: 'where', q: 'Where are you located?', placeholder: 'e.g. 12 Wilkinson Road, Freetown' },
+    { id: 'hours', q: 'What are your opening hours?', placeholder: 'e.g. Monday to Saturday, 7am to 7pm' },
+    { id: 'contact', q: 'Your WhatsApp and social media?', placeholder: 'e.g. +232 76 123 456 · Instagram @mybusiness' },
+  ],
+  pt: [
+    { id: 'name', q: 'Qual é o nome do seu negócio?', placeholder: 'Ex.: Padaria Pão Quente' },
+    { id: 'offer', q: 'O que você vende ou oferece? Com preços, se quiser.', placeholder: 'Ex.: Pão francês R$1, bolos a partir de R$50' },
+    { id: 'where', q: 'Onde você fica?', placeholder: 'Ex.: Rua das Flores, 120, Campinas' },
+    { id: 'hours', q: 'Qual é o seu horário?', placeholder: 'Ex.: Segunda a sábado, das 6h às 20h' },
+    { id: 'contact', q: 'Seu WhatsApp e redes sociais?', placeholder: 'Ex.: (19) 99876-5432 · Instagram @meunegocio' },
+  ],
+};
+
+// Shrinks a photo in the browser before upload (fast on slow connections, fits the storage limit).
+async function shrink(file: File, max: number, type: 'image/jpeg' | 'image/png'): Promise<Blob> {
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * scale);
+  c.height = Math.round(bmp.height * scale);
+  c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise((resolve, reject) => c.toBlob((b) => (b ? resolve(b) : reject(new Error('encode'))), type, 0.82));
+}
 
 const KEY = 'sk_build';
 const PRICE = '$7';
@@ -70,6 +124,15 @@ function errorText(code: string) {
       return tx("You've reached today's limit of free tries. Come back tomorrow, or message us and we'll help you.", 'Llegaste al límite de pruebas gratis de hoy. Vuelve mañana o escríbenos y te ayudamos.', 'Você atingiu o limite de testes grátis de hoje. Volte amanhã ou fale com a gente.');
     case 'edit_limit':
       return tx('This website has reached its limit of AI changes. Message us and we will make the changes for you.', 'Este sitio llegó a su límite de cambios con IA. Escríbenos y hacemos los cambios por ti.', 'Este site atingiu o limite de mudanças com IA. Fale com a gente e fazemos as mudanças.');
+    case 'too_big':
+    case 'not_an_image':
+      return tx('That file is not a photo we can use. Try a JPG or PNG.', 'Ese archivo no es una foto que podamos usar. Prueba con JPG o PNG.', 'Esse arquivo não é uma foto que possamos usar. Tente JPG ou PNG.');
+    case 'too_many':
+      return tx('You can add up to 8 photos. Remove one to add another.', 'Puedes agregar hasta 8 fotos. Quita una para agregar otra.', 'Você pode adicionar até 8 fotos. Remova uma para adicionar outra.');
+    case 'invalid_domain':
+      return tx('Write your domain like www.yourbusiness.com', 'Escribe tu dominio así: www.tunegocio.com', 'Escreva seu domínio assim: www.seunegocio.com');
+    case 'domain_taken':
+      return tx('That domain is already connected to another website.', 'Ese dominio ya está conectado a otra web.', 'Esse domínio já está conectado a outro site.');
     case 'taken':
       return tx('That address is taken. Try another one.', 'Esa dirección ya está ocupada. Prueba otra.', 'Esse endereço já está em uso. Tente outro.');
     case 'reserved':
@@ -99,7 +162,14 @@ export default function BuildPage() {
   const [prompt, setPrompt] = useState('');
   const [instruction, setInstruction] = useState('');
   const [slug, setSlug] = useState('');
-  const [busy, setBusy] = useState<'' | 'generate' | 'edit' | 'publish'>('');
+  const [busy, setBusy] = useState<'' | 'ask' | 'generate' | 'edit' | 'publish' | 'upload' | 'domain'>('');
+  const [questions, setQuestions] = useState<Question[] | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [style, setStyle] = useState('auto');
+  const [media, setMedia] = useState<Media>({ logo: '', photos: [] });
+  const [domainInput, setDomainInput] = useState('');
+  const logoInput = useRef<any>(null);
+  const photoInput = useRef<any>(null);
   const [error, setError] = useState('');
   const [version, setVersion] = useState(0);
   const [device, setDevice] = useState<'desktop' | 'phone'>('desktop');
@@ -114,11 +184,18 @@ export default function BuildPage() {
     const next = { ...b, slug: j.slug || b.slug };
     setBuild(next);
     save(next);
+    if (j.media) setMedia(j.media);
+    if (j.pending) {
+      // Started but not created yet: ask the questions again.
+      setQuestions(FALLBACK_Q[L]);
+      setInfo(null);
+      return true;
+    }
     setInfo(j);
     setSlug(j.slug || b.slug || j.suggested || '');
     setVersion((v) => v + 1);
     return true;
-  }, []);
+  }, [L]);
   useEffect(() => {
     const fromLink = params.site && params.t ? { id: String(params.site), token: String(params.t) } : null;
     const saved = load();
@@ -141,17 +218,36 @@ export default function BuildPage() {
     tx('Almost ready…', 'Ya casi…', 'Quase pronto…'),
   ];
 
-  const generate = async () => {
+  // Step 1: the short description → the AI's follow-up questions.
+  const ask = async () => {
     setError('');
-    if (prompt.trim().length < 12) return setError(errorText('prompt_too_short'));
-    setBusy('generate');
-    const j = await api('generate', { prompt: prompt.trim(), lang: L }).catch(() => ({ ok: false }));
+    if (prompt.trim().length < 8) return setError(errorText('prompt_too_short'));
+    setBusy('ask');
+    const j = await api('start', { prompt: prompt.trim(), lang: L }).catch(() => ({ ok: false }));
     setBusy('');
     if (!j.ok) return setError(errorText(j.error));
-    const b = { id: j.id, token: j.token, slug: j.slug };
+    const b = { id: j.id, token: j.token };
     setBuild(b);
     save(b);
-    setInfo({ site: j.site, slug: null, live: false, url: null, order_number: null });
+    setQuestions(j.questions?.length ? j.questions : FALLBACK_Q[L]);
+    setAnswers({});
+    scroller.current?.scrollTo({ y: 0, animated: true });
+  };
+
+  // Step 2: answers + style + photos → the website.
+  const generate = async () => {
+    if (!build) return;
+    setError('');
+    setBusy('generate');
+    const list = (questions ?? []).map((q) => ({ q: q.q, a: answers[q.id] || '' }));
+    const j = await api('generate', { id: build.id, token: build.token, answers: list, style: style === 'auto' ? '' : style }).catch(() => ({ ok: false }));
+    setBusy('');
+    if (!j.ok) return setError(errorText(j.error));
+    const b = { ...build, slug: j.slug };
+    setBuild(b);
+    save(b);
+    setQuestions(null);
+    setInfo({ site: j.site, slug: null, live: false, url: null, order_number: null, media });
     setSlug(j.slug || '');
     setVersion((v) => v + 1);
     scroller.current?.scrollTo({ y: 0, animated: true });
@@ -190,9 +286,95 @@ export default function BuildPage() {
     save(null);
     setBuild(null);
     setInfo(null);
+    setQuestions(null);
+    setMedia({ logo: '', photos: [] });
     setPrompt('');
     setError('');
   };
+
+  const pickFiles = (kind: 'logo' | 'photo') => (kind === 'logo' ? logoInput : photoInput).current?.click();
+  const onFiles = async (kind: 'logo' | 'photo', files: FileList | null) => {
+    if (!build || !files?.length) return;
+    setError('');
+    setBusy('upload');
+    try {
+      const list = Array.from(files).slice(0, kind === 'logo' ? 1 : 8 - media.photos.length);
+      for (const f of list) {
+        const blob = await shrink(f, kind === 'logo' ? 512 : 1600, kind === 'logo' ? 'image/png' : 'image/jpeg').catch(() => f);
+        const r = await fetch(`/api/build/upload?id=${build.id}&t=${build.token}&kind=${kind}`, { method: 'POST', body: blob });
+        const j = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          setError(errorText(j.error));
+          break;
+        }
+        setMedia(j.media);
+      }
+      setVersion((v) => v + 1);
+    } finally {
+      setBusy('');
+      if (logoInput.current) logoInput.current.value = '';
+      if (photoInput.current) photoInput.current.value = '';
+    }
+  };
+  const removeMedia = async (url: string) => {
+    if (!build) return;
+    const j = await api('unmedia', { id: build.id, token: build.token, url }).catch(() => ({ ok: false }));
+    if (j.ok) {
+      setMedia(j.media);
+      setVersion((v) => v + 1);
+    }
+  };
+  const connectDomain = async (host: string) => {
+    if (!build) return;
+    setError('');
+    setBusy('domain');
+    const j = await api('domain', { id: build.id, token: build.token, hostname: host }).catch(() => ({ ok: false }));
+    setBusy('');
+    if (!j.ok) return setError(errorText(j.error));
+    setInfo((i) => (i ? { ...i, domain: j.domain, domain_status: j.status ?? null, target: j.target ?? i.target } : i));
+    if (!host) setDomainInput('');
+  };
+
+  // Hidden file pickers (web).
+  const fileInputs =
+    Platform.OS === 'web'
+      ? [
+          createElement('input', { key: 'l', ref: logoInput, type: 'file', accept: 'image/*', style: { display: 'none' }, onChange: (e: any) => onFiles('logo', e.target.files) }),
+          createElement('input', { key: 'p', ref: photoInput, type: 'file', accept: 'image/*', multiple: true, style: { display: 'none' }, onChange: (e: any) => onFiles('photo', e.target.files) }),
+        ]
+      : null;
+
+  // Logo + photos picker, used before creating and in the editor.
+  const mediaBox = (
+    <View style={{ gap: 10 }}>
+      {fileInputs}
+      <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <Pressable onPress={() => pickFiles('logo')} style={styles.upBox} accessibilityRole="button">
+          {media.logo ? createElement('img', { src: media.logo, alt: '', style: { width: '100%', height: '100%', objectFit: 'contain', borderRadius: 12 } }) : (
+            <>
+              <Ionicons name="image-outline" size={22} color={colors.primary} />
+              <Text style={styles.upText}>{tx('Logo', 'Logo', 'Logo')}</Text>
+            </>
+          )}
+        </Pressable>
+        {media.photos.map((u) => (
+          <View key={u} style={styles.upBox}>
+            {createElement('img', { src: u, alt: '', style: { width: '100%', height: '100%', objectFit: 'cover', borderRadius: 12 } })}
+            <Pressable onPress={() => removeMedia(u)} style={styles.upX} accessibilityRole="button" accessibilityLabel={tx('Remove photo', 'Quitar foto', 'Remover foto')}>
+              <Ionicons name="close" size={14} color="#fff" />
+            </Pressable>
+          </View>
+        ))}
+        {media.photos.length < 8 ? (
+          <Pressable onPress={() => pickFiles('photo')} style={styles.upBox} accessibilityRole="button">
+            {busy === 'upload' ? <ActivityIndicator color={colors.primary} /> : <Ionicons name="camera-outline" size={22} color={colors.primary} />}
+            <Text style={styles.upText}>{tx('Photos', 'Fotos', 'Fotos')}</Text>
+          </Pressable>
+        ) : null}
+      </View>
+      <Text style={styles.small}>{tx('Your logo and up to 8 photos of your business, products or team. The first photo goes at the top.', 'Tu logo y hasta 8 fotos de tu negocio, productos o equipo. La primera foto va arriba.', 'Seu logo e até 8 fotos do seu negócio, produtos ou equipe. A primeira foto vai no topo.')}</Text>
+    </View>
+  );
 
   const editLink = build ? `https://sylkit.com/build?site=${build.id}&t=${build.token}` : '';
   const copyLink = async () => {
@@ -216,8 +398,84 @@ export default function BuildPage() {
         })
       : null;
 
+  // ---------- questions screen ----------
+  if (build && !info?.site && questions) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.bg }}>
+        <Head>
+          <title>{tx('A few questions · Sylkit AI Builder', 'Unas preguntas · Sylkit AI Builder', 'Algumas perguntas · Sylkit AI Builder')}</title>
+          <meta name="robots" content="noindex" />
+        </Head>
+        <Header />
+        <ScrollView ref={scroller} contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={styles.startWrap}>
+            <View style={styles.badge}>
+              <Ionicons name="chatbubbles-outline" size={14} color={colors.primary} />
+              <Text style={styles.badgeText}>{tx('Step 2 of 3', 'Paso 2 de 3', 'Passo 2 de 3')}</Text>
+            </View>
+            <Text style={[styles.h1, { fontSize: 32 }]}>{tx('A few quick questions', 'Unas preguntas rápidas', 'Algumas perguntas rápidas')}</Text>
+            <Text style={styles.lead}>{tx('Answer what you can. You can skip any question.', 'Responde lo que puedas. Puedes saltar cualquier pregunta.', 'Responda o que puder. Você pode pular qualquer pergunta.')}</Text>
+
+            <View style={[styles.promptCard, shadow, { gap: 16 }]}>
+              {questions.map((q, i) => (
+                <View key={q.id} style={{ gap: 6 }}>
+                  <Text style={styles.qLabel}>
+                    {i + 1}. {q.q}
+                  </Text>
+                  <TextInput
+                    value={answers[q.id] || ''}
+                    onChangeText={(v) => setAnswers((a) => ({ ...a, [q.id]: v }))}
+                    placeholder={q.placeholder}
+                    placeholderTextColor="#9AA6BC"
+                    multiline
+                    maxLength={600}
+                    style={styles.qInput}
+                  />
+                </View>
+              ))}
+            </View>
+
+            <View style={[styles.promptCard, shadow]}>
+              <Text style={styles.qLabel}>{tx('Your logo and photos (optional)', 'Tu logo y fotos (opcional)', 'Seu logo e fotos (opcional)')}</Text>
+              {mediaBox}
+            </View>
+
+            <View style={[styles.promptCard, shadow]}>
+              <Text style={styles.qLabel}>{tx('Which style do you like?', '¿Qué estilo te gusta?', 'Qual estilo você prefere?')}</Text>
+              <View style={styles.chips}>
+                {STYLES.map((st) => {
+                  const on = style === st.id;
+                  return (
+                    <Pressable key={st.id} onPress={() => setStyle(st.id)} style={[styles.styleChip, on && styles.styleOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
+                      <View style={{ flexDirection: 'row' }}>
+                        {st.colors.map((c, k) => (
+                          <View key={k} style={[styles.dot, { backgroundColor: c, marginLeft: k ? -6 : 0 }]} />
+                        ))}
+                      </View>
+                      <Text style={[styles.chipText, on && { color: colors.primary }]}>{st[L]}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+            <Pressable onPress={generate} disabled={busy === 'generate' || busy === 'upload'} style={[styles.primary, { alignSelf: 'stretch' }, busy === 'generate' && { opacity: 0.85 }]} accessibilityRole="button">
+              {busy === 'generate' ? <ActivityIndicator color="#fff" /> : <Ionicons name="sparkles" size={18} color="#fff" />}
+              <Text style={styles.primaryText}>{busy === 'generate' ? steps[step % steps.length] : tx('Create my website', 'Crear mi web', 'Criar meu site')}</Text>
+            </Pressable>
+            <Pressable onPress={startOver} accessibilityRole="button">
+              <Text style={[styles.small, { textDecorationLine: 'underline' }]}>{tx('Change my description', 'Cambiar mi descripción', 'Mudar minha descrição')}</Text>
+            </Pressable>
+          </View>
+          <Footer />
+        </ScrollView>
+      </View>
+    );
+  }
+
   // ---------- start screen ----------
-  if (!build || !info) {
+  if (!build || !info?.site) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
         <Head>
@@ -242,23 +500,23 @@ export default function BuildPage() {
                 onChangeText={setPrompt}
                 multiline
                 maxLength={1500}
-                editable={busy !== 'generate'}
+                editable={busy !== 'ask'}
                 placeholder={tx('Example: Family bakery in Freetown. Bread, pastries and custom cakes. Open Mon–Sat 7am–6pm. WhatsApp +232 76 123 456.', 'Ejemplo: Panadería familiar en Petare. Pan, cachitos y tortas por encargo. Abrimos de lunes a sábado de 6 a 7. WhatsApp 0414 123 4567.', 'Exemplo: Padaria familiar em São Paulo. Pães, salgados e bolos sob encomenda. Aberta de seg. a sáb. das 6h às 19h. WhatsApp (11) 90000-0000.')}
                 placeholderTextColor="#9AA6BC"
                 style={styles.promptInput}
                 accessibilityLabel={tx('Describe your business', 'Describe tu negocio', 'Descreva seu negócio')}
               />
               <Text style={styles.hint}>
-                {tx('Include: what you sell or do, your city, your hours and your WhatsApp. The AI only uses the contact details you write.', 'Incluye: qué vendes o haces, tu ciudad, tu horario y tu WhatsApp. La IA solo usa los datos de contacto que escribas.', 'Inclua: o que você vende ou faz, sua cidade, seu horário e seu WhatsApp. A IA só usa os contatos que você escrever.')}
+                {tx('A sentence or two is enough. Next, the AI asks you a few quick questions and you can add your logo and photos.', 'Con una o dos frases basta. Después la IA te hace unas preguntas rápidas y puedes agregar tu logo y fotos.', 'Uma ou duas frases bastam. Depois a IA faz algumas perguntas rápidas e você pode adicionar seu logo e fotos.')}
               </Text>
               {error ? <Text style={styles.error}>{error}</Text> : null}
-              <Pressable onPress={generate} disabled={busy === 'generate'} style={[styles.primary, busy === 'generate' && { opacity: 0.85 }]} accessibilityRole="button">
-                {busy === 'generate' ? <ActivityIndicator color="#fff" /> : <Ionicons name="sparkles" size={18} color="#fff" />}
-                <Text style={styles.primaryText}>{busy === 'generate' ? steps[step % steps.length] : tx('Create my website', 'Crear mi web', 'Criar meu site')}</Text>
+              <Pressable onPress={ask} disabled={busy === 'ask'} style={[styles.primary, busy === 'ask' && { opacity: 0.85 }]} accessibilityRole="button">
+                {busy === 'ask' ? <ActivityIndicator color="#fff" /> : <Ionicons name="arrow-forward" size={18} color="#fff" />}
+                <Text style={styles.primaryText}>{busy === 'ask' ? tx('Reading about your business…', 'Leyendo sobre tu negocio…', 'Lendo sobre o seu negócio…') : tx('Continue', 'Continuar', 'Continuar')}</Text>
               </Pressable>
             </View>
 
-            {busy !== 'generate' ? (
+            {busy !== 'ask' ? (
               <View style={{ gap: 10, width: '100%' }}>
                 <Text style={styles.small}>{tx('Or try an example:', 'O prueba un ejemplo:', 'Ou teste um exemplo:')}</Text>
                 {EXAMPLES[L].map((e) => (
@@ -293,7 +551,51 @@ export default function BuildPage() {
   }
 
   // ---------- editor ----------
-  const site = info.site;
+  const site = info.site as Site;
+  const domainBox = (
+    <View style={styles.panel}>
+      <Text style={styles.panelTitle}>{tx('Your own domain', 'Tu propio dominio', 'Seu próprio domínio')}</Text>
+      {info.domain ? (
+        <View style={{ gap: 8 }}>
+          <Text style={styles.link}>{info.domain}</Text>
+          {info.domain_status === 'active' ? (
+            <Text style={styles.small}>✅ {tx('Connected. Your website opens on this address.', 'Conectado. Tu web abre en esta dirección.', 'Conectado. Seu site abre neste endereço.')}</Text>
+          ) : (
+            <>
+              <Text style={styles.small}>{tx('At the company where you bought your domain, add this record (DNS):', 'En la empresa donde compraste tu dominio, agrega este registro (DNS):', 'Na empresa onde você comprou seu domínio, adicione este registro (DNS):')}</Text>
+              <View style={styles.dns}>
+                <Text style={styles.dnsText}>{tx('Type', 'Tipo', 'Tipo')}: CNAME</Text>
+                <Text style={styles.dnsText}>{tx('Name', 'Nombre', 'Nome')}: {info.domain.startsWith('www.') ? 'www' : info.domain.split('.')[0]}</Text>
+                <Text style={styles.dnsText}>{tx('Value', 'Valor', 'Valor')}: {info.target || 'sites.sylkit.com'}</Text>
+              </View>
+              <Text style={styles.small}>
+                {info.domain_status === 'pending'
+                  ? tx('We check it automatically. It can take from a few minutes to a few hours.', 'Lo revisamos automáticamente. Puede tardar de minutos a unas horas.', 'Verificamos automaticamente. Pode levar de minutos a algumas horas.')
+                  : tx('We finish connecting it for you and message you on WhatsApp, usually within a day.', 'Terminamos de conectarlo por ti y te escribimos por WhatsApp, normalmente en un día.', 'Terminamos de conectar para você e avisamos pelo WhatsApp, normalmente em um dia.')}
+              </Text>
+            </>
+          )}
+          <Pressable onPress={() => connectDomain('')} accessibilityRole="button">
+            <Text style={[styles.small, { textDecorationLine: 'underline' }]}>{tx('Remove this domain', 'Quitar este dominio', 'Remover este domínio')}</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View style={{ gap: 8 }}>
+          <Text style={styles.small}>{tx('Already have a domain? Use it for this website. Your .sylkit.com address keeps working too.', '¿Ya tienes un dominio? Úsalo para esta web. Tu dirección .sylkit.com sigue funcionando.', 'Já tem um domínio? Use neste site. Seu endereço .sylkit.com continua funcionando.')}</Text>
+          <View style={styles.slugRow}>
+            <TextInput value={domainInput} onChangeText={(v) => setDomainInput(v.trim().toLowerCase())} placeholder="www.tunegocio.com" placeholderTextColor="#9AA6BC" autoCapitalize="none" autoCorrect={false} style={styles.slugInput} accessibilityLabel={tx('Your domain', 'Tu dominio', 'Seu domínio')} />
+          </View>
+          <Pressable onPress={() => connectDomain(domainInput)} disabled={!!busy || domainInput.length < 4} style={[styles.secondary, (!!busy || domainInput.length < 4) && { opacity: 0.55 }]} accessibilityRole="button">
+            {busy === 'domain' ? <ActivityIndicator color={colors.primary} /> : <Ionicons name="link-outline" size={16} color={colors.primary} />}
+            <Text style={styles.secondaryText}>{tx('Connect my domain', 'Conectar mi dominio', 'Conectar meu domínio')}</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push('/checkout?product=dominio-y-correo&plan=starter&billing=yearly' as any)} accessibilityRole="link">
+            <Text style={[styles.small, { color: colors.primary, fontWeight: '700' }]}>{tx("Don't have one? Get your .com for $15/year →", '¿No tienes? Consigue tu .com por $15 al año →', 'Não tem? Tenha seu .com por $15/ano →')}</Text>
+          </Pressable>
+        </View>
+      )}
+    </View>
+  );
   const tools = (
     <View style={{ gap: 14 }}>
       {info.live && info.url ? (
@@ -332,6 +634,13 @@ export default function BuildPage() {
           <Text style={styles.secondaryText}>{busy === 'edit' ? tx('Applying your change…', 'Aplicando tu cambio…', 'Aplicando sua mudança…') : tx('Apply change', 'Aplicar cambio', 'Aplicar mudança')}</Text>
         </Pressable>
       </View>
+
+      <View style={styles.panel}>
+        <Text style={styles.panelTitle}>{tx('Logo and photos', 'Logo y fotos', 'Logo e fotos')}</Text>
+        {mediaBox}
+      </View>
+
+      {domainBox}
 
       {!info.live ? (
         <View style={[styles.panel, { borderColor: colors.primary }]}>
@@ -481,5 +790,15 @@ const styles = StyleSheet.create({
   chipText: { fontSize: 13, fontWeight: '600', color: colors.text },
   slugRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.bg, borderRadius: 12, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
   slugInput: { flex: 1, minWidth: 0, fontSize: 16, fontWeight: '700', color: colors.text, paddingHorizontal: 12, paddingVertical: 12, outlineStyle: 'none' } as any,
+  qLabel: { fontSize: 16, fontWeight: '800', color: colors.text },
+  qInput: { minHeight: 52, fontSize: 15, lineHeight: 22, color: colors.text, padding: 12, borderRadius: 12, backgroundColor: colors.bg, textAlignVertical: 'top', outlineStyle: 'none' } as any,
+  styleChip: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 999, borderWidth: 1.5, borderColor: colors.border, backgroundColor: colors.surface, paddingHorizontal: 12, paddingVertical: 8 },
+  styleOn: { borderColor: colors.primary, backgroundColor: colors.softBlue },
+  dot: { width: 16, height: 16, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(0,0,0,0.12)' },
+  upBox: { width: 76, height: 76, borderRadius: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: colors.border, backgroundColor: colors.bg, alignItems: 'center', justifyContent: 'center', gap: 2, overflow: 'hidden' },
+  upText: { fontSize: 12, fontWeight: '700', color: colors.primary },
+  upX: { position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(0,0,0,0.65)', alignItems: 'center', justifyContent: 'center' },
+  dns: { backgroundColor: colors.bg, borderRadius: 12, padding: 12, gap: 4, borderWidth: 1, borderColor: colors.border },
+  dnsText: { fontSize: 14, fontWeight: '700', color: colors.text, fontFamily: Platform.select({ web: 'ui-monospace, Menlo, Consolas, monospace', default: undefined }) } as any,
   slugSuffix: { fontSize: 15, color: colors.muted, paddingRight: 12, fontWeight: '600' },
 });

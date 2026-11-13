@@ -2,7 +2,13 @@
 // the customer previews and edits it by chat, pays to publish, and the site goes live on
 // <name>.sylkit.com (also reachable at sylkit.com/s/<name>).
 //
-//   POST /api/build/generate  { prompt, lang }                -> { id, token, site, slug }
+//   POST /api/build/start     { prompt, lang }                -> { id, token, questions[] }   (AI asks what's missing)
+//   POST /api/build/generate  { id, token, answers[], style } -> { site, slug }                (writes the site)
+//        (old form { prompt, lang } still works: no questions, new site)
+//   POST /api/build/upload?id=&t=&kind=logo|photo  (image bytes) -> { media }
+//   POST /api/build/unmedia   { id, token, url }              -> { media }
+//   GET  /api/build/img/<id>/<file>                           -> the image (Workers KV SITE_MEDIA)
+//   POST /api/build/domain    { id, token, hostname }         -> { domain, status, target }   ('' removes it)
 //   POST /api/build/edit      { id, token, instruction }      -> { site }
 //   GET  /api/build/site?id=&t=                               -> { site, slug, status, live, url, order_number }
 //   GET  /api/build/preview?id=&t=                            -> the preview page (HTML)
@@ -10,22 +16,31 @@
 //   POST /api/build/link      { id, token, order_token }      -> { ok }  (called by the checkout right after the order)
 //
 // Storage: D1 table ai_sites (SUPPORT_DB). The secret token is the only way to edit a site.
-// AI: OpenRouter (OPENROUTER_API_KEY). Free models first, a very cheap one as backup; the list
+// AI: OpenRouter (OPENROUTER_API_KEY). Cheap, good models first, a free one as last resort; the list
 // can be changed with the OPENROUTER_MODELS variable (comma separated) without touching code.
+// Customer domains: with Cloudflare for SaaS switched on and a CF_SAAS_TOKEN secret, a domain is added
+// as a custom hostname automatically; without it, the request is sent to the owner to connect by hand.
 // A site is only public once the order linked to it is paid (or later, in progress / delivered).
 
 import { overLimit } from './support.js';
+import { alertOwner } from './notify.js';
 import { renderSite, renderWaiting, sanitizeSite } from './aisite.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const PRODUCT = 'web-con-ia';
-// GLM 5.3 Flash first: good Spanish/Portuguese and about $0.0015 per site. Free models as backup.
-const MODELS = ['z-ai/glm-5.3-flash', 'openrouter/free', 'google/gemma-4-31b-it:free'];
+// GLM 5.3 Flash first (good Spanish/Portuguese, about $0.0015 per site), Qwen Flash as a good cheap
+// backup, a free model last. (openrouter/free was dropped: it sometimes picks tiny 1-2B models.)
+const MODELS = ['z-ai/glm-5.3-flash', 'qwen/qwen3.8-flash', 'google/gemma-4-31b-it:free'];
+const ZONE_ID = 'bf9c8b4c9aa081fca506a46ef6503c7f'; // sylkit.com
+const CNAME_TARGET = 'sites.sylkit.com';
+const IMG_BASE = 'https://sylkit.com/api/build/img/';
+const MAX_PHOTOS = 8;
+const MAX_BYTES = 1_600_000;
 const LIVE_STATUSES = new Set(['paid', 'in_progress', 'delivered']);
 const MAX_EDITS = 80; // per site, for good
 const RESERVED = new Set([
   'www', 'api', 'admin', 'app', 'mail', 'email', 'smtp', 'ftp', 'blog', 'shop', 'store', 'help', 'support', 'status', 'docs', 'dev', 'test', 'staging',
-  'sylkit', 'sylvanus', 'sylvanusfannah', 'aromyst', 'billing', 'pay', 'login', 'secure', 'account', 'cdn', 'static', 'build', 'preview', 'demo',
+  'sylkit', 'sylvanus', 'sylvanusfannah', 'aromyst', 'sites', 'billing', 'pay', 'login', 'secure', 'account', 'cdn', 'static', 'build', 'preview', 'demo',
   'alertas', 'pos', 'inventario', 'farmacia', 'clinica', 'restaurante', 'salon', 'taller', 'servicios', 'escuela', 'nomina', 'facturas', 'tienda', 'portafolio', 'asistente',
 ]);
 // We don't build sites that pretend to be a bank, a payment app or a big brand, or that ask for logins.
@@ -54,6 +69,10 @@ async function db(env) {
        ip TEXT, status TEXT NOT NULL DEFAULT 'draft', order_token TEXT, order_number TEXT, edits INTEGER NOT NULL DEFAULT 0,
        created_at TEXT, updated_at TEXT, checked_at TEXT, live_at TEXT)`,
     ).run();
+    // Columns added after launch (ignored when they already exist).
+    for (const col of ['media TEXT', 'domain TEXT', 'domain_status TEXT', 'domain_id TEXT']) {
+      await env.SUPPORT_DB.prepare(`ALTER TABLE ai_sites ADD COLUMN ${col}`).run().catch(() => {});
+    }
     ready = true;
   }
   return env.SUPPORT_DB;
@@ -64,6 +83,23 @@ async function getSite(env, id, token) {
   const row = await (await db(env)).prepare('SELECT * FROM ai_sites WHERE id = ?').bind(id).first();
   return row && row.token === token ? row : null;
 }
+
+function mediaOf(row) {
+  try {
+    const m = JSON.parse(row.media || '{}');
+    return { logo: m.logo ? IMG_BASE + m.logo : '', photos: (m.photos || []).map((k) => IMG_BASE + k) };
+  } catch {
+    return { logo: '', photos: [] };
+  }
+}
+const rawMedia = (row) => {
+  try {
+    const m = JSON.parse(row.media || '{}');
+    return { logo: m.logo || '', photos: Array.isArray(m.photos) ? m.photos : [] };
+  } catch {
+    return { logo: '', photos: [] };
+  }
+};
 
 // ---------- AI ----------
 
@@ -105,7 +141,7 @@ function parseJson(text) {
   return JSON.parse(t.slice(a, b + 1));
 }
 
-async function askAI(env, messages) {
+async function askAI(env, messages, { maxTokens = 3500 } = {}) {
   if (!env.OPENROUTER_API_KEY) throw new Error('ai_not_configured');
   const models = String(env.OPENROUTER_MODELS || '').split(',').map((m) => m.trim()).filter(Boolean);
   const list = models.length ? models : MODELS;
@@ -115,7 +151,7 @@ async function askAI(env, messages) {
       const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: { authorization: `Bearer ${env.OPENROUTER_API_KEY}`, 'content-type': 'application/json', 'HTTP-Referer': 'https://sylkit.com', 'X-Title': 'Sylkit AI Builder' },
-        body: JSON.stringify({ model, messages, temperature: 0.6, max_tokens: 3500, response_format: { type: 'json_object' } }),
+        body: JSON.stringify({ model, messages, temperature: 0.6, max_tokens: maxTokens, response_format: { type: 'json_object' } }),
         signal: AbortSignal.timeout(55000),
       });
       const j = await r.json().catch(() => null);
@@ -192,17 +228,93 @@ const urlOf = (slug) => (slug ? `https://${slug}.sylkit.com` : null);
 
 // ---------- handlers ----------
 
-async function generate(request, env) {
+const DEFAULT_Q = {
+  es: [
+    ['name', '¿Cómo se llama tu negocio?', 'Ej.: Panadería Dulce Hogar'],
+    ['offer', '¿Qué vendes u ofreces? Si quieres, con precios.', 'Ej.: Pan canilla $1, tortas desde $15, cachitos $1,50'],
+    ['where', '¿Dónde estás?', 'Ej.: Calle Principal de Petare, Caracas'],
+    ['hours', '¿Cuál es tu horario?', 'Ej.: Lunes a sábado de 7:00 a 19:00'],
+    ['contact', '¿Tu WhatsApp y redes sociales?', 'Ej.: 0414 123 4567 · Instagram @minegocio'],
+  ],
+  en: [
+    ['name', "What's your business called?", 'e.g. Sunrise Bakery'],
+    ['offer', 'What do you sell or offer? Add prices if you like.', 'e.g. Bread $1, custom cakes from $15'],
+    ['where', 'Where are you located?', 'e.g. 12 Wilkinson Road, Freetown'],
+    ['hours', 'What are your opening hours?', 'e.g. Monday to Saturday, 7am to 7pm'],
+    ['contact', 'Your WhatsApp and social media?', 'e.g. +232 76 123 456 · Instagram @mybusiness'],
+  ],
+  pt: [
+    ['name', 'Qual é o nome do seu negócio?', 'Ex.: Padaria Pão Quente'],
+    ['offer', 'O que você vende ou oferece? Com preços, se quiser.', 'Ex.: Pão francês R$1, bolos a partir de R$50'],
+    ['where', 'Onde você fica?', 'Ex.: Rua das Flores, 120, Campinas'],
+    ['hours', 'Qual é o seu horário?', 'Ex.: Segunda a sábado, das 6h às 20h'],
+    ['contact', 'Seu WhatsApp e redes sociais?', 'Ex.: (19) 99876-5432 · Instagram @meunegocio'],
+  ],
+};
+const defaultQuestions = (lang) => (DEFAULT_Q[lang] || DEFAULT_Q.es).map(([id, q, ph]) => ({ id, q, placeholder: ph }));
+
+function questionRules(lang) {
+  return `You help a small business owner create their website. Read what they wrote and ask 3 to 5 short, friendly questions about what is MISSING for a great one-page business website.
+Priorities: business name, what they sell or offer (and prices if they want to show them), location or service area, opening hours, WhatsApp or phone, social media, anything special about them.
+Never ask about things they already told you. Never ask for passwords, bank details or ID numbers.
+Write in ${LANG_NAME[lang] || LANG_NAME.es}. Reply with ONE JSON object only:
+{"questions":[{"id":"short_id","q":"the question","placeholder":"a short realistic example answer"}]}`;
+}
+
+async function start(request, env) {
   const body = await request.json().catch(() => ({}));
   const prompt = String(body.prompt || '').trim().slice(0, 1500);
   const lang = ['es', 'en', 'pt'].includes(body.lang) ? body.lang : 'es';
-  if (prompt.length < 12) return bad('prompt_too_short');
+  if (prompt.length < 8) return bad('prompt_too_short');
+  if (BLOCK.test(prompt)) return bad('not_allowed', 422);
+  if (await overLimit(env, request, 'build_q').catch(() => false)) return bad('rate_limited', 429);
+  let questions = [];
+  try {
+    const out = await askAI(env, [
+      { role: 'system', content: questionRules(lang) },
+      { role: 'user', content: `The business owner wrote:\n"""${prompt}"""` },
+    ], { maxTokens: 700 });
+    questions = (Array.isArray(out.data?.questions) ? out.data.questions : [])
+      .slice(0, 5)
+      .map((x, i) => ({
+        id: String(x?.id || `q${i}`).replace(/[^a-z0-9_]/gi, '').slice(0, 20) || `q${i}`,
+        q: String(x?.q || '').replace(/[<>]/g, '').trim().slice(0, 160),
+        placeholder: String(x?.placeholder || '').replace(/[<>]/g, '').trim().slice(0, 120),
+      }))
+      .filter((x) => x.q.length > 5 && !BLOCK.test(x.q));
+  } catch (e) {
+    console.log('build questions failed', String(e?.message || e));
+  }
+  if (questions.length < 2) questions = defaultQuestions(lang);
+  const id = newId();
+  const token = newToken();
+  await (await db(env))
+    .prepare('INSERT INTO ai_sites (id, token, data, prompt, lang, ip, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id, token, '{}', prompt, lang, request.headers.get('cf-connecting-ip') || '', now(), now())
+    .run();
+  return json({ id, token, questions });
+}
+
+async function generate(request, env) {
+  const body = await request.json().catch(() => ({}));
+  // New flow: the site was started with /start (questions answered). Old flow: just a prompt.
+  const existing = body.id ? await getSite(env, body.id, body.token) : null;
+  if (body.id && !existing) return bad('not_found', 404);
+  const lang = existing ? existing.lang : ['es', 'en', 'pt'].includes(body.lang) ? body.lang : 'es';
+  const basePrompt = existing ? String(existing.prompt || '') : String(body.prompt || '').trim().slice(0, 1500);
+  const answers = (Array.isArray(body.answers) ? body.answers : [])
+    .slice(0, 8)
+    .map((a) => ({ q: String(a?.q || '').slice(0, 160), a: String(a?.a || '').trim().slice(0, 600) }))
+    .filter((a) => a.a);
+  const style = ['clean', 'warm', 'bold', 'elegant', 'fresh'].includes(body.style) ? body.style : '';
+  const prompt = [basePrompt, ...answers.map((a) => `${a.q}\n${a.a}`)].join('\n\n');
+  if (prompt.trim().length < 12) return bad('prompt_too_short');
   if (BLOCK.test(prompt)) return bad('not_allowed', 422);
   if (await overLimit(env, request, 'build').catch(() => false)) return bad('rate_limited', 429);
   let out;
   try {
     out = await askAI(env, [
-      { role: 'system', content: rules(lang) },
+      { role: 'system', content: rules(lang) + (style ? `\n- Use the style "${style}" (the customer chose it).` : '') },
       { role: 'user', content: `The customer wrote:\n"""${prompt}"""\nCreate their website.` },
     ]);
   } catch (e) {
@@ -215,14 +327,21 @@ async function generate(request, env) {
   } catch {
     return bad('ai_busy', 503);
   }
+  if (style) site.style = style;
   if (BLOCK.test(JSON.stringify(site))) return bad('not_allowed', 422);
-  const id = newId();
-  const token = newToken();
-  await (await db(env))
-    .prepare('INSERT INTO ai_sites (id, token, data, prompt, lang, ip, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(id, token, JSON.stringify(site), prompt, lang, request.headers.get('cf-connecting-ip') || '', now(), now())
-    .run();
-  const slug = await freeSlug(env, slugify(site.name), id);
+  let id = existing?.id;
+  let token = existing?.token;
+  if (existing) {
+    await (await db(env)).prepare('UPDATE ai_sites SET data = ?, prompt = ?, updated_at = ? WHERE id = ?').bind(JSON.stringify(site), prompt.slice(0, 4000), now(), id).run();
+  } else {
+    id = newId();
+    token = newToken();
+    await (await db(env))
+      .prepare('INSERT INTO ai_sites (id, token, data, prompt, lang, ip, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(id, token, JSON.stringify(site), prompt, lang, request.headers.get('cf-connecting-ip') || '', now(), now())
+      .run();
+  }
+  const slug = existing?.slug || (await freeSlug(env, slugify(site.name), id));
   return json({ id, token, site, slug, model: out.model });
 }
 
@@ -236,6 +355,7 @@ async function edit(request, env) {
   if (row.edits >= MAX_EDITS) return bad('edit_limit', 429);
   if (await overLimit(env, request, 'build_edit').catch(() => false)) return bad('rate_limited', 429);
   const current = JSON.parse(row.data);
+  if (!current.name) return bad('not_generated', 409);
   let out;
   try {
     out = await askAI(env, [
@@ -262,14 +382,21 @@ async function siteInfo(env, url) {
   if (!row) return bad('not_found', 404);
   row = await refreshStatus(env, row);
   const site = JSON.parse(row.data);
+  if (!site.name) return json({ site: null, pending: true, media: mediaOf(row) });
   const suggested = row.slug ? null : await freeSlug(env, slugify(site.name), row.id);
-  return json({ site, slug: row.slug, suggested, status: row.status, live: row.status === 'live', url: urlOf(row.slug), order_number: row.order_number });
+  if (row.domain && row.domain_id && row.domain_status !== 'active') row = await refreshDomain(env, row);
+  return json({
+    site, slug: row.slug, suggested, status: row.status, live: row.status === 'live', url: urlOf(row.slug), order_number: row.order_number,
+    media: mediaOf(row), domain: row.domain || null, domain_status: row.domain_status || null, target: CNAME_TARGET,
+  });
 }
 
 async function preview(env, url) {
   const row = await getSite(env, url.searchParams.get('id'), url.searchParams.get('t'));
   if (!row) return new Response('Not found', { status: 404 });
-  return new Response(renderSite(JSON.parse(row.data), { preview: true }), {
+  const site = JSON.parse(row.data);
+  if (!site.name) return new Response('Not ready', { status: 404 });
+  return new Response(renderSite(site, { preview: true, media: mediaOf(row) }), {
     headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store', 'x-robots-tag': 'noindex' },
   });
 }
@@ -313,20 +440,163 @@ async function link(request, env) {
 // name.sylkit.com and sylkit.com/s/name. Returns null when no AI site has that name.
 export async function serveSite(env, slug) {
   if (!validSlug(slug)) return null;
-  let row = await (await db(env)).prepare('SELECT * FROM ai_sites WHERE slug = ?').bind(slug).first();
+  const row = await (await db(env)).prepare('SELECT * FROM ai_sites WHERE slug = ?').bind(slug).first();
   if (!row) return null;
+  return render(env, row);
+}
+
+// A customer's own domain (www.theirbusiness.com) pointed at sites.sylkit.com.
+export async function serveDomain(env, host) {
+  const h = String(host || '').toLowerCase();
+  const alt = h.startsWith('www.') ? h.slice(4) : `www.${h}`;
+  const row = await (await db(env)).prepare('SELECT * FROM ai_sites WHERE domain = ? OR domain = ? LIMIT 1').bind(h, alt).first();
+  if (!row) return null;
+  return render(env, row, `https://${row.domain}`);
+}
+
+async function render(env, row, canonical) {
   row = await refreshStatus(env, row);
   const site = JSON.parse(row.data);
+  if (!site.name) return null;
   if (row.status !== 'live') {
     return new Response(renderWaiting(site.lang, site.name), { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
   }
-  return new Response(renderSite(site, { url: urlOf(slug) }), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+  return new Response(renderSite(site, { url: canonical || urlOf(row.slug), media: mediaOf(row) }), { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=60' } });
+}
+
+// ---------- logo and photos (Workers KV: SITE_MEDIA) ----------
+
+function imageType(bytes) {
+  const b = bytes;
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return 'image/jpeg';
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return 'image/png';
+  if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return 'image/webp';
+  return '';
+}
+
+async function upload(request, env, url) {
+  if (!env.SITE_MEDIA) return bad('storage_not_configured', 503);
+  const row = await getSite(env, url.searchParams.get('id'), url.searchParams.get('t'));
+  if (!row) return bad('not_found', 404);
+  const kind = url.searchParams.get('kind') === 'logo' ? 'logo' : 'photo';
+  if (await overLimit(env, request, 'build_upload').catch(() => false)) return bad('rate_limited', 429);
+  const buf = new Uint8Array(await request.arrayBuffer());
+  if (!buf.length || buf.length > MAX_BYTES) return bad('too_big', 413);
+  const type = imageType(buf);
+  if (!type) return bad('not_an_image', 415);
+  const media = rawMedia(row);
+  if (kind === 'photo' && media.photos.length >= MAX_PHOTOS) return bad('too_many', 409);
+  const key = `${row.id}/${kind}-${rand(10, 'abcdefghijkmnpqrstuvwxyz23456789')}`;
+  await env.SITE_MEDIA.put(key, buf, { metadata: { type } });
+  if (kind === 'logo') {
+    if (media.logo) await env.SITE_MEDIA.delete(media.logo).catch(() => {});
+    media.logo = key;
+  } else media.photos.push(key);
+  await (await db(env)).prepare('UPDATE ai_sites SET media = ?, updated_at = ? WHERE id = ?').bind(JSON.stringify(media), now(), row.id).run();
+  return json({ media: mediaOf({ media: JSON.stringify(media) }) });
+}
+
+async function unmedia(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const row = await getSite(env, body.id, body.token);
+  if (!row) return bad('not_found', 404);
+  const key = String(body.url || '').replace(IMG_BASE, '');
+  const media = rawMedia(row);
+  if (media.logo === key) media.logo = '';
+  media.photos = media.photos.filter((k) => k !== key);
+  if (key.startsWith(`${row.id}/`)) await env.SITE_MEDIA?.delete(key).catch(() => {});
+  await (await db(env)).prepare('UPDATE ai_sites SET media = ?, updated_at = ? WHERE id = ?').bind(JSON.stringify(media), now(), row.id).run();
+  return json({ media: mediaOf({ media: JSON.stringify(media) }) });
+}
+
+async function image(env, url) {
+  const key = url.pathname.slice('/api/build/img/'.length);
+  if (!/^[a-z0-9]{12}\/(logo|photo)-[a-z0-9]{10}$/.test(key) || !env.SITE_MEDIA) return new Response('Not found', { status: 404 });
+  const { value, metadata } = await env.SITE_MEDIA.getWithMetadata(key, { type: 'arrayBuffer' });
+  if (!value) return new Response('Not found', { status: 404 });
+  return new Response(value, { headers: { 'content-type': metadata?.type || 'image/jpeg', 'cache-control': 'public, max-age=31536000, immutable', 'access-control-allow-origin': '*' } });
+}
+
+// ---------- customer's own domain ----------
+
+const HOST_RE = /^(?=.{4,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24}$/;
+
+async function cf(env, method, path, body) {
+  const r = await fetch(`https://api.cloudflare.com/client/v4${path}`, {
+    method,
+    headers: { authorization: `Bearer ${env.CF_SAAS_TOKEN}`, 'content-type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || j.success === false) throw new Error(j.errors?.[0]?.message || `cloudflare ${r.status}`);
+  return j.result;
+}
+
+async function refreshDomain(env, row) {
+  if (!env.CF_SAAS_TOKEN || !row.domain_id) return row;
+  try {
+    const h = await cf(env, 'GET', `/zones/${ZONE_ID}/custom_hostnames/${row.domain_id}`);
+    const status = h.status === 'active' && h.ssl?.status === 'active' ? 'active' : 'pending';
+    if (status !== row.domain_status) await (await db(env)).prepare('UPDATE ai_sites SET domain_status = ? WHERE id = ?').bind(status, row.id).run();
+    return { ...row, domain_status: status };
+  } catch {
+    return row;
+  }
+}
+
+async function setDomain(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const row = await getSite(env, body.id, body.token);
+  if (!row) return bad('not_found', 404);
+  const host = String(body.hostname || '')
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '')
+    .replace(/\.$/, '');
+  const d1 = await db(env);
+  // Remove the current domain.
+  if (!host) {
+    if (row.domain_id && env.CF_SAAS_TOKEN) await cf(env, 'DELETE', `/zones/${ZONE_ID}/custom_hostnames/${row.domain_id}`).catch(() => {});
+    await d1.prepare('UPDATE ai_sites SET domain = NULL, domain_status = NULL, domain_id = NULL WHERE id = ?').bind(row.id).run();
+    return json({ domain: null });
+  }
+  if (!HOST_RE.test(host) || host.endsWith('sylkit.com')) return bad('invalid_domain');
+  const taken = await d1.prepare('SELECT id FROM ai_sites WHERE domain = ? AND id != ?').bind(host, row.id).first();
+  if (taken) return bad('domain_taken', 409);
+  if (row.domain === host) return json({ domain: host, status: row.domain_status, target: CNAME_TARGET });
+  if (row.domain_id && env.CF_SAAS_TOKEN) await cf(env, 'DELETE', `/zones/${ZONE_ID}/custom_hostnames/${row.domain_id}`).catch(() => {});
+  let status = 'manual';
+  let domainId = null;
+  if (env.CF_SAAS_TOKEN) {
+    try {
+      const h = await cf(env, 'POST', `/zones/${ZONE_ID}/custom_hostnames`, { hostname: host, ssl: { method: 'http', type: 'dv' } });
+      domainId = h.id;
+      status = 'pending';
+    } catch (e) {
+      console.log('custom hostname failed', String(e?.message || e));
+    }
+  }
+  await d1.prepare('UPDATE ai_sites SET domain = ?, domain_status = ?, domain_id = ?, updated_at = ? WHERE id = ?').bind(host, status, domainId, now(), row.id).run();
+  if (status === 'manual') {
+    await alertOwner(env, {
+      title: 'Dominio propio para web con IA',
+      message: `${host} → ${row.slug ? `${row.slug}.sylkit.com` : row.id}${row.order_number ? ` (${row.order_number})` : ''}\nConéctalo en Cloudflare (custom hostname) o responde al cliente.`,
+      tags: 'globe_with_meridians',
+    }).catch(() => {});
+  }
+  return json({ domain: host, status, target: CNAME_TARGET });
 }
 
 export async function handleBuild(request, env, url) {
   try {
     const p = url.pathname;
+    if (p === '/api/build/start' && request.method === 'POST') return await start(request, env);
     if (p === '/api/build/generate' && request.method === 'POST') return await generate(request, env);
+    if (p === '/api/build/upload' && request.method === 'POST') return await upload(request, env, url);
+    if (p === '/api/build/unmedia' && request.method === 'POST') return await unmedia(request, env);
+    if (p === '/api/build/domain' && request.method === 'POST') return await setDomain(request, env);
+    if (p.startsWith('/api/build/img/') && request.method === 'GET') return await image(env, url);
     if (p === '/api/build/edit' && request.method === 'POST') return await edit(request, env);
     if (p === '/api/build/slug' && request.method === 'POST') return await setSlug(request, env);
     if (p === '/api/build/link' && request.method === 'POST') return await link(request, env);

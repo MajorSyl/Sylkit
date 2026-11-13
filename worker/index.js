@@ -18,7 +18,7 @@ import { handleOrders } from './orders.js';
 import { handlePaypal, sweepPaypal } from './paypal.js';
 import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
-import { handleBuild, serveSite } from './build.js';
+import { handleBuild, serveDomain, serveSite } from './build.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -90,6 +90,13 @@ async function route(request, env, ctx) {
   const sub = url.hostname.split('.')[0];
   const isSub = url.hostname.endsWith('.sylkit.com') && url.hostname.split('.').length === 3 && sub !== 'www';
   const demo = isSub ? DEMOS[sub] : undefined;
+
+  // A customer's own domain pointed at sites.sylkit.com (Cloudflare for SaaS): their AI website.
+  const ours = url.hostname === 'sylkit.com' || url.hostname.endsWith('.sylkit.com') || url.hostname.endsWith('.workers.dev') || url.hostname === 'localhost';
+  if (!ours) {
+    const res = await serveDomain(env, url.hostname).catch(() => null);
+    if (res) return res;
+  }
 
   // Websites made with the AI builder: <name>.sylkit.com, or sylkit.com/s/<name>.
   const sPath = url.pathname.match(/^\/s\/([a-z0-9-]{3,30})\/?$/);

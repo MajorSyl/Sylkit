@@ -241,7 +241,11 @@ Customers describe their business at **sylkit.com/build**. AI writes the website
 - **Publishing:** the checkout links the order to the site. The site goes live on `<name>.sylkit.com` (and `sylkit.com/s/<name>`) as soon as the order is Paid, In progress or Delivered. Cancelling the order takes it offline within a day. Until then the address shows "being prepared".
 - **Customer edit link:** `sylkit.com/build?site=<id>&t=<token>` (also written on the order).
 - **Files:** `app/build.tsx` (page), `worker/build.js` (API), `worker/aisite.js` (site engine, 5 styles), D1 table `ai_sites`.
-- **Custom .com:** sell the existing Domain product; connecting it to an AI site is manual for now.
+- **Questions, logo and photos (13 Nov):** after the first description the AI asks 3–5 short questions about what's missing. Customers pick a style and upload a logo and up to 8 photos (shrunk in the browser, stored in Workers KV `sylkit-site-media`, binding `SITE_MEDIA`).
+- **Customer's own domain:** in the editor the customer enters `www.theirbusiness.com` and gets the record to add: **CNAME www → sites.sylkit.com**.
+  - **Today (manual):** you get a phone alert. Connect it in Cloudflare → sylkit.com → SSL/TLS → Custom Hostnames.
+  - **To make it automatic:** (1) enable Cloudflare for SaaS (Custom Hostnames) on sylkit.com, which needs a payment method but is free for the first 100 domains; (2) set the fallback origin to `sites.sylkit.com`; (3) create an API token with *SSL and Certificates: Edit* on sylkit.com and save it as the worker secret `CF_SAAS_TOKEN`; (4) add a worker route `*/*` → sylkit so customer domains reach the worker.
+  - Bare domains (without www) only work if the customer's DNS provider supports CNAME flattening/ALIAS. Otherwise they forward the bare domain to www at their registrar.
 - **Subdomains:** a Cloudflare route `*.sylkit.com/*` sends unknown subdomains to the Sylkit worker. Other workers on sylkit.com subdomains need their own route too, or the catch-all takes them over. Routes exist today for admin, aromyst, sylvanus and sylvanusfannah. **If you add a new subdomain for another project, add a route `<name>.sylkit.com/*` for it.**
 - **Crypto:** USDT TRC20 has a ~$11 minimum at NOWPayments, so orders under $12 (like a $7 AI website) pay with BEP20.
 
