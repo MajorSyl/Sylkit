@@ -62,7 +62,7 @@ function Projects({ onShare }: { onShare: (c: string) => void }) {
 
   if (!data) return <Wrap style={{ paddingTop: 24 }}><Text style={d.sub}>{tx('Loading projects…', 'Cargando obras…', 'Carregando obras…')}</Text></Wrap>;
   const p = data.projects[sel];
-  const over = p.spent > p.planned * (p.progress / 100) * 1.05;
+  const over = p.tasks.find((t: any) => t.spent > t.cost); // a task that went over its budget
 
   const toggle = async (t: any) => {
     setBusy(true);
@@ -110,10 +110,10 @@ function Projects({ onShare }: { onShare: (c: string) => void }) {
       <View style={[d.row, { alignItems: 'stretch' }]}>
         <Stat label={tx('Contract budget', 'Presupuesto del contrato', 'Orçamento do contrato')} value={money(p.budget)} />
         <Stat label={tx('Planned cost', 'Costo planificado', 'Custo planejado')} value={money(p.planned)} />
-        <Stat label={tx('Spent so far', 'Gastado a la fecha', 'Gasto até agora')} value={money(p.spent)} tone={over ? '#B42318' : '#067647'} />
+        <Stat label={tx('Spent so far', 'Gastado a la fecha', 'Gasto até agora')} value={money(p.spent)} tone={over ? '#B54708' : '#067647'} />
         <Stat label={tx('Margin', 'Margen', 'Margem')} value={`${Math.round(((p.budget - p.planned) / p.budget) * 100)}%`} />
       </View>
-      {over ? <Notice tone="error" text={tx('Spending is ahead of progress. Review the structure phase costs.', 'El gasto va por delante del avance. Revisa los costos de la fase de estructura.', 'Os gastos estão à frente do progresso. Revise os custos da fase de estrutura.')} /> : null}
+      {over ? <Notice tone="error" text={`${over.name}: ${tx('over budget by', 'excedido en', 'acima do orçamento em')} ${money(over.spent - over.cost)}`} /> : null}
 
       <View style={{ flexDirection: width >= 900 ? 'row' : 'column', gap: 16, alignItems: 'flex-start' }}>
         <Card style={{ flex: 1.3, gap: 4, width: width >= 900 ? undefined : '100%' }}>

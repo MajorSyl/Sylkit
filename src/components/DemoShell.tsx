@@ -101,7 +101,7 @@ export function Btn({ label, onPress, icon, kind = 'main', disabled, small }: { 
 
 export function Field({ label, ...p }: TextInputProps & { label: string }) {
   return (
-    <View style={{ gap: 6, flexGrow: 1, flexBasis: 200 }}>
+    <View style={{ gap: 6, flexGrow: 1, minWidth: 200 }}>
       <Text style={styles.label}>{label}</Text>
       <TextInput {...p} style={styles.input} placeholderTextColor="#98A2B3" accessibilityLabel={label} />
     </View>
@@ -111,7 +111,7 @@ export function Field({ label, ...p }: TextInputProps & { label: string }) {
 /** Native date picker on the web, text field elsewhere. */
 export function DateField({ label, value, onChange, min }: { label: string; value: string; onChange: (v: string) => void; min?: string }) {
   return (
-    <View style={{ gap: 6, flexGrow: 1, flexBasis: 150 }}>
+    <View style={{ gap: 6, flexGrow: 1, minWidth: 150 }}>
       <Text style={styles.label}>{label}</Text>
       {Platform.OS === 'web'
         ? createElement('input', {

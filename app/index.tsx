@@ -14,8 +14,6 @@ import {
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
 import { Showroom } from '../src/components/Showroom';
-import { HomeHero } from '../src/components/HomeHero';
-import { IndustryGrid } from '../src/components/IndustryGrid';
 import { useProducts } from '../src/lib/catalog';
 import { useRouter } from 'expo-router';
 import { steps, ui, useLang } from '../src/i18n';
@@ -49,10 +47,14 @@ export default function Home() {
       </Head>
       <Header />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <HomeHero width={width} />
+        {/* Catalog: systems and design templates as a showroom of screenshot cards */}
+        {/* Full-width gallery, like Behance */}
+        <View style={{ width: '100%', paddingHorizontal: width >= 1100 ? 32 : 12, marginTop: 14 }} nativeID="catalog">
+          <Showroom products={products} />
+        </View>
 
-        {/* Four clear doors */}
-        <View style={styles.container}>
+        {/* More from Sylkit */}
+        <View style={[styles.container, { marginTop: 16 }]}>
           <View style={styles.doors}>
             {doors.map((d, i) => (
               <View key={d.href} style={{ width: wide ? '20%' : i === doors.length - 1 ? '100%' : '50%', padding: 6 }}>
@@ -72,29 +74,6 @@ export default function Home() {
               </View>
             ))}
           </View>
-        </View>
-
-        {/* Work by industry: real photography, each card opens a live demo */}
-        <View style={[styles.container, { marginTop: 40 }]} nativeID="work">
-          <Text style={styles.kicker}>{tx('Our work', 'Nuestro trabajo', 'Nosso trabalho')}</Text>
-          <Text style={[styles.h2, wide && { fontSize: 34 }]}>{tx('Built for the way your industry works', 'Hecho para cómo trabaja tu industria', 'Feito para como sua indústria trabalha')}</Text>
-          <Text style={[styles.sectionSub, { marginTop: 8, marginBottom: 20 }]}>
-            {tx('Open any card to use a working demo with sample data. Nothing to install.', 'Abre cualquier tarjeta para usar un demo funcional con datos de ejemplo. Sin instalar nada.', 'Abra qualquer cartão para usar uma demo funcional com dados de exemplo. Nada para instalar.')}
-          </Text>
-          <IndustryGrid width={width} />
-        </View>
-
-        {/* Catalog: systems and design templates as a showroom of screenshot cards */}
-        {/* Full-width gallery, like Behance */}
-        <View style={{ width: '100%', paddingHorizontal: width >= 1100 ? 32 : 16, marginTop: 8 }} nativeID="catalog">
-          <View style={[styles.sectionHead, { marginTop: 8 }]}>
-            <Text style={styles.h2}>{tx('All systems and designs', 'Todos los sistemas y diseños', 'Todos os sistemas e designs')}</Text>
-            <Pressable onPress={() => router.push('/templates' as any)} accessibilityRole="link">
-              <Text style={styles.tplAll}>{tx('Templates →', 'Plantillas →', 'Modelos →')}</Text>
-            </Pressable>
-          </View>
-          <Text style={[styles.sectionSub, { marginBottom: 14 }]}>{t(ui.featuredSub)}</Text>
-          <Showroom products={products} />
         </View>
 
         <View style={styles.container}>

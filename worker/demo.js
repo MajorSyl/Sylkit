@@ -153,11 +153,11 @@ async function seed(db, ws) {
 
   // Construction: two projects with phases, budget and site reports.
   const projects = [
-    ['Residencial Las Palmas · 12 apartments', 'Grupo Horizonte', 'Valencia', 480000, -60, 120, [
+    ['Residencial Las Palmas · 12 apartments', 'Grupo Horizonte', 'Valencia', 565000, -60, 120, [
       ['Site preparation', 'foundation', 28000, 27400, 1, -45], ['Foundations', 'foundation', 64000, 66100, 1, -20], ['Structure, floors 1–3', 'structure', 120000, 71000, 0, 15],
       ['Structure, floors 4–6', 'structure', 110000, 0, 0, 45], ['Electrical and plumbing', 'installations', 72000, 8000, 0, 70], ['Finishes and painting', 'finishes', 86000, 0, 0, 110],
     ]],
-    ['Clínica San Rafael · extension', 'Fundación San Rafael', 'Caracas', 150000, -20, 90, [
+    ['Clínica San Rafael · extension', 'Fundación San Rafael', 'Caracas', 178000, -20, 90, [
       ['Demolition', 'foundation', 9000, 8600, 1, -10], ['Foundations', 'foundation', 26000, 12000, 0, 10], ['Steel structure', 'structure', 48000, 0, 0, 35],
       ['Installations', 'installations', 37000, 0, 0, 60], ['Finishes', 'finishes', 30000, 0, 0, 85],
     ]],

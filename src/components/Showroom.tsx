@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, ImageBackground, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { categories, type Product } from '../data/products';
+import { industries } from '../data/industries';
 import { storeTemplates } from '../data/storeTemplates';
 import { tx, ui, useLang } from '../i18n';
 import { tplText } from '../lib/names';
@@ -17,10 +18,13 @@ import { colors, waLink } from '../theme';
 // Covers live in /public/shots/covers (generated from real screenshots of the live demos and template previews).
 
 type Kind = 'all' | 'system' | 'template';
+// Sylkit 2.0 industry demos (app/demo/*) are systems too; their covers are /shots/covers/demo-<id>.webp.
+const DEMO_ROUTE: Record<string, string> = { hotels: 'hotel', events: 'events', construction: 'construction', logistics: 'logistics', realestate: 'realestate', fashion: 'boutique' };
 type Sort = 'featured' | 'price' | 'name';
 type Item = {
   key: string;
   kind: 'system' | 'template';
+  isNew?: boolean;
   title: string;
   sub: string;
   cover?: string;
@@ -35,6 +39,12 @@ type Item = {
 
 // The cover shown behind each sector chip.
 const CHIP_COVER: Record<string, string> = {
+  hotels: '/shots/covers/demo-hotel.webp',
+  events: '/shots/covers/demo-events.webp',
+  construction: '/shots/covers/demo-construction.webp',
+  logistics: '/shots/covers/demo-logistics.webp',
+  realestate: '/shots/covers/demo-realestate.webp',
+  fashion: '/shots/covers/demo-boutique.webp',
   all: '/shots/covers/portafolio.webp',
   templates: '/shots/covers/tpl-aula-app.webp',
   retail: '/shots/covers/pos.webp',
@@ -112,12 +122,35 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
         haystack: [x.name, ...x.tagline, ...x.sectorName, ...x.blurb].join(' ').toLowerCase(),
       };
     });
-    return [...sys, ...tpl];
+    const demos: Item[] = industries
+      .filter((x) => DEMO_ROUTE[x.id])
+      .map((x) => {
+        const pick = (o: { en: string; es: string; pt: string }) => (lang === 'pt' ? o.pt : lang === 'es' ? o.es : o.en);
+        const route = `/demo/${DEMO_ROUTE[x.id]}`;
+        return {
+          key: 'demo-' + x.id,
+          kind: 'system',
+          isNew: true,
+          title: pick(x.title),
+          sub: pick(x.built),
+          cover: `${ORIGIN}/shots/covers/demo-${DEMO_ROUTE[x.id]}.webp`,
+          category: x.id,
+          price: null,
+          priceUnit: '',
+          demo: route,
+          platforms: ['Web', 'Android', 'iOS'],
+          open: () => router.push(route as any),
+          haystack: [x.title.en, x.title.es, x.title.pt, x.built.en, x.built.es, x.built.pt].join(' ').toLowerCase(),
+        };
+      });
+    return [...demos, ...sys, ...tpl];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, lang]);
 
   const chips = useMemo(() => {
-    const out = [{ id: 'all', label: tx('For you', 'Para ti', 'Para você') }, { id: 'templates', label: tx('Templates', 'Plantillas', 'Modelos') }];
+    const out = [{ id: 'all', label: tx('For you', 'Para ti', 'Para você') }];
+    for (const x of industries) if (DEMO_ROUTE[x.id]) out.push({ id: x.id, label: lang === 'pt' ? x.title.pt : lang === 'es' ? x.title.es : x.title.en });
+    out.push({ id: 'templates', label: tx('Templates', 'Plantillas', 'Modelos') });
     for (const c of categories) if (items.some((i) => i.category === c.id)) out.push({ id: c.id, label: t(c.name) });
     return out;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,10 +182,10 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
     return out;
   }, [items, cat, kind, demoOnly, platform, query, sort]);
 
-  const cols = width >= 1400 ? 5 : width >= 1100 ? 4 : width >= 760 ? 3 : width >= 520 ? 2 : 1;
+  const cols = width >= 1400 ? 5 : width >= 1100 ? 4 : width >= 760 ? 3 : 2; // two per row on phones, like Behance
   const wide = width >= 820;
   const activeFilters = (demoOnly ? 1 : 0) + (platform ? 1 : 0) + (kind !== 'all' ? 1 : 0);
-  const priceText = (i: Item) => (i.price == null ? tx('Quote', 'Cotizar', 'Orçamento') : `$${Number.isInteger(i.price) ? i.price : i.price.toFixed(2)}${i.priceUnit}`);
+  const priceText = (i: Item) => (i.price == null ? (i.isNew ? tx('Live demo', 'Demo en vivo', 'Demo ao vivo') : tx('Quote', 'Cotizar', 'Orçamento')) : `$${Number.isInteger(i.price) ? i.price : i.price.toFixed(2)}${i.priceUnit}`);
   const scrollChips = () => {
     chipX.current += 480;
     chipsRef.current?.scrollTo({ x: chipX.current, animated: true });
@@ -264,10 +297,10 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
 
       {/* Cards */}
       {list.length ? (
-        <View style={[styles.grid, { marginHorizontal: -8 }]}>
+        <View style={[styles.grid, { marginHorizontal: wide ? -8 : -5 }]}>
           {list.map((i) => (
-            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: 8, paddingBottom: 24 }}>
-              <Card item={i} touch={!wide} priceText={priceText(i)} openDemo={openUrl} />
+            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: wide ? 8 : 5, paddingBottom: wide ? 24 : 16 }}>
+              <Card item={i} touch={!wide} small={cols === 2 && !wide} priceText={priceText(i)} openDemo={openUrl} />
             </View>
           ))}
         </View>
@@ -351,45 +384,47 @@ function Opt({ on, label, onPress, check }: { on: boolean; label: string; onPres
   );
 }
 
-function Card({ item, touch, priceText, openDemo }: { item: Item; touch: boolean; priceText: string; openDemo: (url: string) => void }) {
+function Card({ item, touch, small, priceText, openDemo }: { item: Item; touch: boolean; small: boolean; priceText: string; openDemo: (url: string) => void }) {
   const [hover, setHover] = useState(false);
   const isTpl = item.kind === 'template';
-  const showOverlay = hover && !touch;
+  const badge = item.isNew ? tx('NEW', 'NUEVO', 'NOVO') : isTpl ? tx('TEMPLATE', 'PLANTILLA', 'MODELO') : item.demo ? tx('LIVE DEMO', 'DEMO EN VIVO', 'DEMO AO VIVO') : null;
+  // Behance layout: the title sits on the image over a dark fade, a pill at the top right,
+  // and the owner row with numbers under the card.
   return (
     <View>
-      <Pressable onPress={item.open} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)} style={styles.cover} accessibilityRole="link" accessibilityLabel={item.title}>
+      <Pressable onPress={item.open} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)} style={[styles.cover, small && { borderRadius: 6 }]} accessibilityRole="link" accessibilityLabel={item.title}>
         {item.cover ? <Image source={{ uri: item.cover }} style={[styles.img, hover && ({ transform: [{ scale: 1.03 }] } as any)]} resizeMode="cover" /> : null}
-        {showOverlay ? (
-          <View style={styles.shade as any}>
-            <Text style={styles.ovTitle} numberOfLines={2}>
-              {item.title}
+        <View style={[styles.shade as any, small && { paddingHorizontal: 9, paddingBottom: 8, paddingTop: 30 }]} pointerEvents="none">
+          <Text style={[styles.ovTitle, small && { fontSize: 12.5, lineHeight: 16 }]} numberOfLines={2}>
+            {item.title}
+          </Text>
+          {hover && !touch ? (
+            <Text style={styles.ovSub} numberOfLines={1}>
+              {item.sub}
             </Text>
-            {!touch ? (
-              <Text style={styles.ovSub} numberOfLines={1}>
-                {item.sub}
-              </Text>
-            ) : null}
+          ) : null}
+        </View>
+        {badge ? (
+          <View style={[styles.pill, small && { top: 7, right: 7, paddingHorizontal: 7, height: 20 }]} pointerEvents="none">
+            <Text style={[styles.pillText, small && { fontSize: 9 }]} numberOfLines={1}>{badge}</Text>
           </View>
         ) : null}
-        {hover && !isTpl && item.demo ? (
+        {hover && !touch && !isTpl && item.demo && !item.isNew ? (
           <Pressable style={styles.demoBtn} onPress={() => openDemo(item.demo!)} accessibilityRole="link">
             <Ionicons name="play" size={12} color={colors.text} />
             <Text style={styles.demoBtnText}>{tx('Try demo', 'Probar demo', 'Testar demo')}</Text>
           </Pressable>
         ) : null}
       </Pressable>
-      {/* The name and price under the card open the product too (people tap the name first). */}
-      <Pressable onPress={item.open} style={styles.meta} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
-        <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={styles.avatar} />
-        <Text style={styles.owner} numberOfLines={1}>
-          {item.title}
+      <Pressable onPress={item.open} style={[styles.meta, small && { marginTop: 7, gap: 5 }]} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
+        <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={[styles.avatar, small && { width: 18, height: 18 }]} />
+        <Text style={[styles.owner, small && { fontSize: 12 }]} numberOfLines={1}>
+          Sylkit
         </Text>
-        <Text style={[styles.badge, isTpl ? styles.badgeTpl : item.demo ? styles.badgeLive : styles.badgeSvc]} numberOfLines={1}>
-          {isTpl ? tx('TEMPLATE', 'PLANTILLA', 'MODELO') : item.demo ? tx('DEMO', 'DEMO', 'DEMO') : tx('SERVICE', 'SERVICIO', 'SERVIÇO')}
-        </Text>
-        <View style={{ flex: 1, minWidth: 4 }} />
-        <Ionicons name="pricetag-outline" size={13} color={colors.muted} />
-        <Text style={styles.price} numberOfLines={1}>
+        {!small ? <Text style={[styles.badge, styles.badgeLive]}>PRO</Text> : null}
+        <View style={{ flex: 1, minWidth: 2 }} />
+        <Ionicons name={item.isNew || (!isTpl && item.demo && item.price == null) ? 'play-circle-outline' : 'pricetag-outline'} size={small ? 12 : 13} color={colors.muted} />
+        <Text style={[styles.price, small && { fontSize: 11.5 }]} numberOfLines={1}>
           {priceText}
         </Text>
       </Pressable>
@@ -432,7 +467,9 @@ const styles = StyleSheet.create({
   shade: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16, paddingTop: 48, paddingBottom: 14, backgroundImage: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%)' },
   ovTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
   ovSub: { color: 'rgba(255,255,255,0.82)', fontSize: 13, marginTop: 2, fontWeight: '600' },
-  demoBtn: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 999, paddingHorizontal: 12, height: 32 },
+  pill: { position: 'absolute', top: 12, right: 12, height: 24, paddingHorizontal: 10, borderRadius: 999, backgroundColor: 'rgba(17,20,28,0.72)', justifyContent: 'center' },
+  pillText: { color: '#fff', fontSize: 10.5, fontWeight: '800', letterSpacing: 0.5 },
+  demoBtn: { position: 'absolute', top: 44, right: 12, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 999, paddingHorizontal: 12, height: 32 },
   demoBtnText: { fontSize: 13, fontWeight: '800', color: colors.text },
   meta: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 10 },
   avatar: { width: 22, height: 22, borderRadius: 999, backgroundColor: '#0B1B3A' },
