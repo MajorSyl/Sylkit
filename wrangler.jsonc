@@ -6,7 +6,7 @@
   "workers_dev": true,
   // Keep variables set in the Cloudflare dashboard (payment keys) when deploying.
   "keep_vars": true,
-  "preview_urls": false,
+  "preview_urls": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
@@ -20,7 +20,9 @@
     { "binding": "SITE_MEDIA", "id": "934cb70c6e804e5bb3c907c54b43ea1c" }
   ],
   "d1_databases": [
-    { "binding": "SUPPORT_DB", "database_name": "sylkit-support", "database_id": "63757c0b-3235-4203-a1b7-36b73dc6a5cd" }
+    { "binding": "SUPPORT_DB", "database_name": "sylkit-support", "database_id": "63757c0b-3235-4203-a1b7-36b73dc6a5cd" },
+    // Demo data only (bookings, tickets, shipments in the live demos). Never real customer data.
+    { "binding": "DEMO_DB", "database_name": "sylkit-demo", "database_id": "bf9484e9-3de5-4929-a779-7b8f3b0e77ad" }
   ],
   "triggers": {
     "crons": ["*/15 * * * *"]

@@ -8,6 +8,7 @@
 // - /api/stripe/* card payments: Stripe Checkout, subscriptions, customer portal and webhook (see stripe.js)
 // - /api/monime/* Monime checkout for Sierra Leone (Orange Money, Afrimoney, cards), see monime.js
 // - /api/paypal/* PayPal Checkout (PayPal balance or card on PayPal's page) and capture (see paypal.js)
+// - /api/photos/* Unsplash search for the photo library and AI Builder (key stays server side, see unsplash.js)
 // - /api/build/* AI website builder; <name>.sylkit.com and sylkit.com/s/<name> serve the published sites (see build.js)
 // - /api/support/* help widget, AI assistant and the admin support inbox (see support.js, D1 database sylkit-support)
 // - cron every 15 min: confirms PayPal/Monime payments whose customer never came back to the site,
@@ -19,6 +20,7 @@ import { handlePaypal, sweepPaypal } from './paypal.js';
 import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
 import { handleBuild, serveDomain, serveSite } from './build.js';
+import { handlePhotos } from './unsplash.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -87,6 +89,7 @@ async function route(request, env, ctx) {
   if (url.pathname.startsWith('/api/monime/')) return handleMonime(request, env, url);
   if (url.pathname.startsWith('/api/support/')) return handleSupport(request, env, url, ctx);
   if (url.pathname.startsWith('/api/build/')) return handleBuild(request, env, url);
+  if (url.pathname.startsWith('/api/photos/')) return handlePhotos(request, env, url, ctx);
   const sub = url.hostname.split('.')[0];
   const isSub = url.hostname.endsWith('.sylkit.com') && url.hostname.split('.').length === 3 && sub !== 'www';
   const demo = isSub ? DEMOS[sub] : undefined;
