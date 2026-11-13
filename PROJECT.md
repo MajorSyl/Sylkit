@@ -231,6 +231,18 @@ Response time: Starter next business day · Business same day · Pro 2 hours. Up
 
 ---
 
+## Sylkit AI Builder (Web con IA) · added 13 Nov 2026
+
+Customers describe their business at **sylkit.com/build**. AI writes the website, they preview it and ask for changes by chat, choose an address and publish for **$7/month or $70/year** (product `web-con-ia`, no setup fee). Previews are free.
+
+- **AI:** OpenRouter, key in the worker secret `OPENROUTER_API_KEY` ($10/month limit set in OpenRouter). Free models first, `z-ai/glm-5.3-flash` (a fraction of a cent per site) as backup. To change models without code, set the variable `OPENROUTER_MODELS` (comma separated).
+- **Safe by design:** the AI only fills fields (texts, services, hours, contact). It never writes HTML or links. The only links are WhatsApp, phone, email, Google Maps and Instagram/Facebook/TikTok handles. Prompts about banks, payment apps, logins or passwords are refused.
+- **Limits:** 8 new sites and 60 changes per visitor per day; 80 AI changes per site.
+- **Publishing:** the checkout links the order to the site. The site goes live on `<name>.sylkit.com` (and `sylkit.com/s/<name>`) as soon as the order is Paid, In progress or Delivered. Cancelling the order takes it offline within a day. Until then the address shows "being prepared".
+- **Customer edit link:** `sylkit.com/build?site=<id>&t=<token>` (also written on the order).
+- **Files:** `app/build.tsx` (page), `worker/build.js` (API), `worker/aisite.js` (site engine, 5 styles), D1 table `ai_sites`.
+- **Custom .com:** sell the existing Domain product; connecting it to an AI site is manual for now.
+
 ## 9. Email and DNS (sylkit.com on Cloudflare)
 
 | Record | Value |

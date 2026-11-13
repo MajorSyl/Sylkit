@@ -8,6 +8,7 @@
 // - /api/stripe/* card payments: Stripe Checkout, subscriptions, customer portal and webhook (see stripe.js)
 // - /api/monime/* Monime checkout for Sierra Leone (Orange Money, Afrimoney, cards), see monime.js
 // - /api/paypal/* PayPal Checkout (PayPal balance or card on PayPal's page) and capture (see paypal.js)
+// - /api/build/* AI website builder; <name>.sylkit.com and sylkit.com/s/<name> serve the published sites (see build.js)
 // - /api/support/* help widget, AI assistant and the admin support inbox (see support.js, D1 database sylkit-support)
 // - cron every 15 min: confirms PayPal/Monime payments whose customer never came back to the site,
 //   and keeps the free Supabase database from pausing
@@ -17,6 +18,8 @@ import { handleOrders } from './orders.js';
 import { handlePaypal, sweepPaypal } from './paypal.js';
 import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
+import { handleBuild, serveSite } from './build.js';
+import { runProductJob } from './productJob.js';
 
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_A0oOnUNRvW4ig6sXbM0CFw_1Tr2MwYy';
@@ -84,8 +87,17 @@ async function route(request, env, ctx) {
   if (url.pathname.startsWith('/api/paypal/')) return handlePaypal(request, env, url);
   if (url.pathname.startsWith('/api/monime/')) return handleMonime(request, env, url);
   if (url.pathname.startsWith('/api/support/')) return handleSupport(request, env, url, ctx);
+  if (url.pathname.startsWith('/api/build/')) return handleBuild(request, env, url);
   const sub = url.hostname.split('.')[0];
-  const demo = url.hostname.endsWith('sylkit.com') ? DEMOS[sub] : undefined;
+  const isSub = url.hostname.endsWith('.sylkit.com') && url.hostname.split('.').length === 3 && sub !== 'www';
+  const demo = isSub ? DEMOS[sub] : undefined;
+
+  // Websites made with the AI builder: <name>.sylkit.com, or sylkit.com/s/<name>.
+  const sPath = url.pathname.match(/^\/s\/([a-z0-9-]{3,30})\/?$/);
+  if ((isSub && !demo && url.pathname === '/') || sPath) {
+    const res = await serveSite(env, sPath ? sPath[1] : sub).catch(() => null);
+    if (res) return res;
+  }
 
   if (demo && !url.pathname.startsWith('/_kit/')) {
     const target = new URL(url);
@@ -130,10 +142,12 @@ function secure(res) {
 
 export default {
   async fetch(request, env, ctx) {
+    if (ctx) ctx.waitUntil(runProductJob(env).catch(() => {}));
     return secure(withCountry(await route(request, env, ctx), request));
   },
 
   async scheduled(_event, env, ctx) {
+    ctx.waitUntil(runProductJob(env).catch(() => {}));
     ctx.waitUntil(sweepPaypal(env).catch(() => {}));
     ctx.waitUntil(sweepMonime(env).catch(() => {}));
     ctx.waitUntil(

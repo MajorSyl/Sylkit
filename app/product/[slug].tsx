@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useClientWidth } from '../../src/lib/useClientWidth';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { Link, Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
 import { useRef, useState } from 'react';
 import { Image, Linking, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
@@ -33,6 +33,9 @@ export default function ProductPage() {
   const router = useRouter();
   const scroller = useRef<ScrollView>(null);
   const product = live.find((p) => p.slug === String(slug)) ?? getProduct(String(slug));
+
+  // The AI Builder has its own page.
+  if (String(slug) === 'web-con-ia') return <Redirect href="/build" />;
 
   if (!product) {
     return (

@@ -23,6 +23,7 @@ import { tplText } from '../src/lib/names';
 
 const doors: { href: string; icon: string; title: { es: string; en: string; pt?: string }; sub: { es: string; en: string; pt?: string } }[] = [
   { href: '#catalog', icon: 'apps-outline', title: { en: 'Software', pt: "Software", es: 'Software' }, sub: { en: 'Ready-made or custom systems', pt: "Sistemas prontos ou sob medida", es: 'Sistemas listos o a medida' } },
+  { href: '/build', icon: 'sparkles-outline', title: { en: 'Website with AI', pt: 'Site com IA', es: 'Web con IA' }, sub: { en: 'Describe your business, get your site', pt: 'Descreva seu negócio e tenha seu site', es: 'Describe tu negocio y obtén tu web' } },
   { href: '/domains', icon: 'globe-outline', title: { en: 'Domains & hosting', pt: "Domínios e hospedagem", es: 'Dominios y hosting' }, sub: { en: 'Your .com, email and hosting', pt: "Seu .com, e-mail e hospedagem", es: 'Tu .com, correo y hosting' } },
   { href: '/security', icon: 'shield-checkmark-outline', title: { en: 'Security', pt: "Segurança", es: 'Seguridad' }, sub: { en: 'Check and protect your app', pt: "Verifique e proteja seu app", es: 'Revisa y protege tu app' } },
   { href: '/quote', icon: 'construct-outline', title: { en: 'Custom system', pt: "Sistema sob medida", es: 'Sistema a medida' }, sub: { en: 'Tell us what you need, we build it', pt: "Conte o que você precisa, nós construímos", es: 'Cuéntanos qué necesitas y lo construimos' } },
@@ -60,8 +61,8 @@ export default function Home() {
         {/* Four clear doors */}
         <View style={styles.container}>
           <View style={styles.doors}>
-            {doors.map((d) => (
-              <View key={d.href} style={{ width: wide ? '25%' : '50%', padding: 6 }}>
+            {doors.map((d, i) => (
+              <View key={d.href} style={{ width: wide ? '20%' : i === doors.length - 1 ? '100%' : '50%', padding: 6 }}>
                 <Pressable style={[styles.door, shadow]} onPress={() => {
                     if (d.href === '#catalog') {
                       try {
