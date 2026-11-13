@@ -250,7 +250,7 @@ export default function OrderPage() {
                 ) : chosen.kind === 'card' ? (
                   <CardPay token={token} lang={lang} billing={order.estimate?.billing} returned={params.paid === 'card'} onChanged={load} />
                 ) : chosen.kind === 'crypto' ? (
-                  <CryptoPay token={token} lang={lang} onChanged={load} />
+                  <CryptoPay token={token} lang={lang} amount={Number(order.quote_amount) || undefined} onChanged={load} />
                 ) : (
                   <View style={styles.manual}>
                     <Text style={styles.manualTitle}>{payTitle(chosen, lang)}</Text>

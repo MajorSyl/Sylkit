@@ -69,10 +69,14 @@ const errorText = (code: string, es: boolean) =>
     nowpayments_error: tx('The payment processor did not respond. Try again in a minute.', 'El procesador de pagos no respondió. Intenta de nuevo en un minuto.', "O processador de pagamentos não respondeu. Tente de novo em um minuto."),
   })[code] ?? (tx('Could not create the payment. Please try again.', 'No se pudo crear el pago. Intenta de nuevo.', "Não foi possível criar o pagamento. Tente de novo."));
 
-export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lang; onChanged: () => void }) {
+// TRC20 has a network minimum of about $11 at our processor, so small orders (e.g. a $7 AI website) use BEP20.
+const TRC20_MIN_USD = 12;
+
+export function CryptoPay({ token, lang, amount, onChanged }: { token: string; lang: Lang; amount?: number; onChanged: () => void }) {
+  const small = amount != null && amount > 0 && amount < TRC20_MIN_USD;
   const es = lang === 'es';
   const t = (x: { es: string; en: string; pt?: string }) => (lang === 'pt' ? x.pt ?? x.es : x[lang]);
-  const [network, setNetwork] = useState('usdttrc20');
+  const [network, setNetwork] = useState(small ? 'usdtbsc' : 'usdttrc20');
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -168,12 +172,13 @@ export function CryptoPay({ token, lang, onChanged }: { token: string; lang: Lan
           <Text style={styles.label}>{t(L.network)}</Text>
           {NETWORKS.map((n) => {
             const on = network === n.id;
+            const off = small && n.id === 'usdttrc20';
             return (
-              <Pressable key={n.id} onPress={() => setNetwork(n.id)} style={[styles.net, on && styles.netOn]} accessibilityRole="radio" accessibilityState={{ checked: on }}>
+              <Pressable key={n.id} onPress={() => !off && setNetwork(n.id)} disabled={off} style={[styles.net, on && styles.netOn, off && { opacity: 0.5 }]} accessibilityRole="radio" accessibilityState={{ checked: on, disabled: off }}>
                 <Ionicons name={on ? 'radio-button-on' : 'radio-button-off'} size={20} color={on ? colors.primary : colors.muted} />
                 <View style={{ flex: 1 }}>
                   <Text style={styles.netName}>{n.label}</Text>
-                  <Text style={styles.muted}>{t(n.note)}</Text>
+                  <Text style={styles.muted}>{off ? tx(`Minimum $${TRC20_MIN_USD} on this network. Use BEP20.`, `Mínimo $${TRC20_MIN_USD} en esta red. Usa BEP20.`, `Mínimo $${TRC20_MIN_USD} nesta rede. Use BEP20.`) : t(n.note)}</Text>
                 </View>
               </Pressable>
             );

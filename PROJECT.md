@@ -242,6 +242,8 @@ Customers describe their business at **sylkit.com/build**. AI writes the website
 - **Customer edit link:** `sylkit.com/build?site=<id>&t=<token>` (also written on the order).
 - **Files:** `app/build.tsx` (page), `worker/build.js` (API), `worker/aisite.js` (site engine, 5 styles), D1 table `ai_sites`.
 - **Custom .com:** sell the existing Domain product; connecting it to an AI site is manual for now.
+- **Subdomains:** a Cloudflare route `*.sylkit.com/*` sends unknown subdomains to the Sylkit worker. Other workers on sylkit.com subdomains need their own route too, or the catch-all takes them over. Routes exist today for admin, aromyst, sylvanus and sylvanusfannah. **If you add a new subdomain for another project, add a route `<name>.sylkit.com/*` for it.**
+- **Crypto:** USDT TRC20 has a ~$11 minimum at NOWPayments, so orders under $12 (like a $7 AI website) pay with BEP20.
 
 ## 9. Email and DNS (sylkit.com on Cloudflare)
 
