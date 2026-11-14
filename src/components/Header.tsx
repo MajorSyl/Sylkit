@@ -111,7 +111,7 @@ export function Header() {
               </Link>
             ))}
             <Link href="/account" asChild>
-              <Pressable style={[styles.navLink, { flexDirection: 'row', alignItems: 'center', gap: 6 }]} accessibilityRole="link">
+              <Pressable style={styles.navLinkIcon} accessibilityRole="link">
                 <Ionicons name={session ? 'person-circle-outline' : 'log-in-outline'} size={17} color={colors.text} />
                 <Text style={styles.navText}>{accountLabel}</Text>
               </Pressable>
@@ -174,6 +174,8 @@ export function Header() {
 }
 
 const styles = StyleSheet.create({
+  // A single style object: <Link asChild> can't take a style array.
+  navLinkIcon: { paddingHorizontal: 10, minHeight: 40, flexDirection: 'row', alignItems: 'center', gap: 6 },
   wrap: {
     backgroundColor: colors.glass,
     borderBottomWidth: 1,
