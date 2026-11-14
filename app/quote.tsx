@@ -5,6 +5,7 @@ import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-na
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
 import { QuoteForm } from '../src/components/QuoteForm';
+import { SignInGate } from '../src/components/SignInGate';
 import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
 import { configFromQuery, estimate, useAddons } from '../src/lib/pricing';
@@ -61,7 +62,9 @@ export default function QuotePage() {
               <Ionicons name="arrow-forward" size={16} color="#fff" />
             </Pressable>
           </View>
-          <QuoteForm productSlug={p?.slug} productName={p ? t(p.name) : undefined} config={null} />
+          <SignInGate title={tx('Sign in to request a quote', 'Inicia sesión para solicitar una cotización', 'Entre para pedir um orçamento')}>
+            {() => <QuoteForm productSlug={p?.slug} productName={p ? t(p.name) : undefined} config={null} />}
+          </SignInGate>
         </View>
         <Footer />
       </ScrollView>

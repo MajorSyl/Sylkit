@@ -47,7 +47,7 @@ export const rowToProduct = (r: any): Product => {
 };
 
 export async function fetchProducts(): Promise<Product[]> {
-  const { data, error } = await supabase.from('products').select('*').eq('active', true).order('sort');
+  const { data, error } = await supabase.from('products').select('*').eq('active', true).neq('slug', 'web-con-ia').order('sort'); // the AI website builder was retired on 14 Nov 2026
   if (error || !data || data.length === 0) throw error ?? new Error('empty');
   cache = data.map(rowToProduct);
   return cache;

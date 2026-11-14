@@ -1,6 +1,6 @@
 # Sylkit: Project Documentation
 
-**Owner:** Sylvanus Fannah · **Site:** https://sylkit.com · **Business email:** sylvanus@sylkit.com · **Last updated:** 13 November 2026
+**Owner:** Sylvanus Fannah · **Site:** https://sylkit.com · **Business email:** sylvanus@sylkit.com · **Last updated:** 14 November 2026
 
 Sylkit sells four things:
 1. **Software for your business:** ready-made systems (POS, pharmacy, clinic, inventory…) used by subscription or bought once. Sylkit keeps ownership and maintains them.
@@ -231,23 +231,18 @@ Response time: Starter next business day · Business same day · Pro 2 hours. Up
 
 ---
 
-## Sylkit AI Builder (Web con IA) · added 13 Nov 2026
+## Customer accounts · added 14 Nov 2026
 
-Customers describe their business at **sylkit.com/build**. AI writes the website, they preview it and ask for changes by chat, choose an address and publish for **$7/month or $70/year** (product `web-con-ia`, no setup fee). Previews are free.
+- **Sign in:** Supabase Auth on the Sylkit project: **Continue with Google** or an **email magic link** (no passwords). Code: `src/lib/auth.ts`, `src/components/SignInGate.tsx`.
+- **Public, no login:** browsing systems, templates, demos, `/work` and the chat widget.
+- **Login required:** the checkout (`/checkout`, every "Order" button) and the quote form (`/quote`). The WhatsApp option on `/quote` stays open. Name and email are prefilled from the account.
+- **Orders ↔ accounts:** after an order is created, the site calls `POST /api/account/link`. The link is stored in D1 `account_orders` (SUPPORT_DB), so the Supabase `orders` table was not changed. An account also sees older orders placed with the same, verified email.
+- **My orders** at `/account` (header: "Sign in" / "My orders"): status, amount, invoice link (`/invoice?t=`), order page, Sylkit's public notes on each order, and the customer's support chats with a reply box (support messages by the same verified email; the AI transcript is never shown).
+- **API:** `worker/account.js`. Every call checks the Supabase session with Supabase itself; limit `account` 120/day per visitor.
+- **Setup in Supabase (Sylvanus):** Authentication → URL Configuration: Site URL `https://sylkit.com`, Redirect URLs `https://sylkit.com/**` and `https://*-sylkit.fannah2026.workers.dev/**`. Authentication → Providers → Google: on, with a Google Cloud OAuth client (redirect `https://chcljhwcvzlmxrrhetfv.supabase.co/auth/v1/callback`). Magic links use Supabase's email until custom SMTP (Resend) is set.
 
-- **AI:** OpenRouter, key in the worker secret `OPENROUTER_API_KEY` ($10/month limit set in OpenRouter). Free models first, `z-ai/glm-5.3-flash` (a fraction of a cent per site) as backup. To change models without code, set the variable `OPENROUTER_MODELS` (comma separated).
-- **Safe by design:** the AI only fills fields (texts, services, hours, contact). It never writes HTML or links. The only links are WhatsApp, phone, email, Google Maps and Instagram/Facebook/TikTok handles. Prompts about banks, payment apps, logins or passwords are refused.
-- **Limits:** 8 new sites and 60 changes per visitor per day; 80 AI changes per site.
-- **Publishing:** the checkout links the order to the site. The site goes live on `<name>.sylkit.com` (and `sylkit.com/s/<name>`) as soon as the order is Paid, In progress or Delivered. Cancelling the order takes it offline within a day. Until then the address shows "being prepared".
-- **Customer edit link:** `sylkit.com/build?site=<id>&t=<token>` (also written on the order).
-- **Files:** `app/build.tsx` (page), `worker/build.js` (API), `worker/aisite.js` (site engine, 5 styles), D1 table `ai_sites`.
-- **Questions, logo and photos (13 Nov):** after the first description the AI asks 3–5 short questions about what's missing. Customers pick a style and upload a logo and up to 8 photos (shrunk in the browser, stored in Workers KV `sylkit-site-media`, binding `SITE_MEDIA`).
-- **Customer's own domain:** in the editor the customer enters `www.theirbusiness.com` and gets the record to add: **CNAME www → sites.sylkit.com**.
-  - **Today (manual):** you get a phone alert. Connect it in Cloudflare → sylkit.com → SSL/TLS → Custom Hostnames.
-  - **To make it automatic:** (1) enable Cloudflare for SaaS (Custom Hostnames) on sylkit.com, which needs a payment method but is free for the first 100 domains; (2) set the fallback origin to `sites.sylkit.com`; (3) create an API token with *SSL and Certificates: Edit* on sylkit.com and save it as the worker secret `CF_SAAS_TOKEN`; (4) add a worker route `*/*` → sylkit so customer domains reach the worker.
-  - Bare domains (without www) only work if the customer's DNS provider supports CNAME flattening/ALIAS. Otherwise they forward the bare domain to www at their registrar.
-- **Subdomains:** a Cloudflare route `*.sylkit.com/*` sends unknown subdomains to the Sylkit worker. Other workers on sylkit.com subdomains need their own route too, or the catch-all takes them over. Routes exist today for admin, aromyst, sylvanus and sylvanusfannah. **If you add a new subdomain for another project, add a route `<name>.sylkit.com/*` for it.**
-- **Crypto:** USDT TRC20 has a ~$11 minimum at NOWPayments, so orders under $12 (like a $7 AI website) pay with BEP20.
+## AI website builder · retired 14 Nov 2026
+Removed completely: `/build`, `app/build.tsx`, `worker/build.js`, `worker/aisite.js`, the `/api/build/*` routes, `<name>.sylkit.com` and `/s/<name>` site serving, the checkout's AI-site step, the homepage tile, the `web-con-ia` product and price, the KV `SITE_MEDIA` binding and the OpenRouter integration (secret `OPENROUTER_API_KEY` deleted). A one-time job sets the `web-con-ia` row inactive in the catalog and drops the D1 table `ai_sites` (2 unpublished test sites only). No customer had published or paid for a site.
 
 ## Sylkit 2.0 · live on sylkit.com since 13 Nov 2026
 
@@ -258,7 +253,7 @@ Production runs commit `020c6ce`. Work happens on branch `sylkit-2`; every push 
 - **Phones:** one large rounded card per row; under it the Sylkit logo, the name with a grey label (NEW / LIVE DEMO / TEMPLATE), a one-line description and the price; a play button on the image opens the demo.
 - **Desktop/tablet:** 3–5 cards per row, title on the image, label pill in the corner, "Sylkit PRO" + price under the card.
 - No likes/view counts (we don't have real ones yet; fake numbers are not allowed).
-- 37 cards: 6 new industry demos, all systems, all templates. The service tiles (Software, Website with AI, Domains, Security, Custom) are below the gallery.
+- 36 cards: 6 new industry demos, all systems, all templates. The service tiles (Software, Domains, Security, Custom) are below the gallery.
 - Code: `src/components/Showroom.tsx`, `app/index.tsx`. Covers: `public/shots/covers/` (new demo covers `demo-*.webp` made with `scripts/make_cover.py` from real screenshots).
 
 **Portfolio** at `/work`: industry demos plus every product with a live demo. "Our work" link in the header.

@@ -29,7 +29,7 @@ const HOURS_TEXT = {
   es: 'Lun a sáb, 9 am a 6 pm (hora de Caracas)',
   pt: 'Seg a sáb, 9h às 18h (horário de Caracas)',
 };
-const LIMITS = { ticket: 6, message: 80, ai: 40, ping: 40, hook: 600, build: 8, build_edit: 60, build_q: 20, build_upload: 60, photos: 60, photos_use: 200, demo_ws: 20, demo: 400 }; // per visitor (IP) per day
+const LIMITS = { ticket: 6, message: 80, ai: 40, ping: 40, hook: 600, account: 120, photos: 60, photos_use: 200, demo_ws: 20, demo: 400 }; // per visitor (IP) per day
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 const bad = (error, status = 400) => json({ error }, status);
@@ -94,7 +94,7 @@ let catalogCache = { at: 0, text: '' };
 async function catalogText() {
   if (catalogCache.text && Date.now() - catalogCache.at < 10 * 60e3) return catalogCache.text;
   try {
-    const r = await fetch(`${SUPABASE_URL}/rest/v1/products?select=slug,category,name_en,short_en,price_from,pricing,demo_url&active=eq.true&order=sort`, {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/products?select=slug,category,name_en,short_en,price_from,pricing,demo_url&active=eq.true&slug=neq.web-con-ia&order=sort`, {
       headers: { apikey: SUPABASE_KEY, authorization: `Bearer ${SUPABASE_KEY}` },
     });
     const rows = r.ok ? await r.json() : [];

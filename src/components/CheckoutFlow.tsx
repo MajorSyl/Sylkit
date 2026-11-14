@@ -11,6 +11,7 @@ import { hasPayDetails, inVenezuela, payIcon, PayOption, paySub, payTitle, paypa
 import { allowedBilling, billingName, isYearlyOnly } from '../lib/planText';
 import { Billing, Config, configToQuery, DomainChoice, domainLabel, estimate, MAX_QTY, money, useAddons } from '../lib/pricing';
 import { friendlyError, supabase, createOrder } from '../lib/supabase';
+import { accountContact, linkOrder, useSession } from '../lib/auth';
 import { useClientWidth } from '../lib/useClientWidth';
 import { colors, waLink } from '../theme';
 import { DomainPicker } from './DomainPicker';
@@ -52,6 +53,12 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const designs = templatesFor(product.slug);
   const tpl = getTemplate(cfg.template);
   const [contact, setContact] = useState<Contact>({ email: '', name: '', whatsapp: '', business: '', country: '' });
+  // Signed-in customers: start with the name and email from their account.
+  const session = useSession();
+  useEffect(() => {
+    const a = accountContact(session);
+    if (a.email || a.name) setContact((c) => ({ ...c, email: c.email || a.email, name: c.name || a.name }));
+  }, [session]);
   const payOptions = usePayOptions({ country: contact.country });
   const [pay, setPay] = useState('');
   const [showExtras, setShowExtras] = useState(Object.keys(initial?.addons ?? {}).length > 0);
@@ -59,19 +66,6 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
   const [showDomain, setShowDomain] = useState(!!initial?.domain);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  // AI Builder: the website being published (saved in this browser by /build).
-  const isAiSite = product.slug === 'web-con-ia';
-  const [aiBuild, setAiBuild] = useState<{ id: string; token: string; slug?: string } | null>(null);
-  useEffect(() => {
-    if (!isAiSite) return;
-    try {
-      const b = JSON.parse(localStorage.getItem('sk_build') || 'null');
-      if (b?.id && b?.token) setAiBuild(b);
-    } catch {
-      /* no saved site */
-    }
-  }, [isAiSite]);
-
   // Preselect the first method. If the list changes (e.g. the Venezuela box puts Pago Móvil first)
   // and the client hasn't picked one themselves, follow the new first method.
   const [picked, setPicked] = useState(false);
@@ -133,7 +127,6 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     if (contact.name.trim().length < 2) return setError(tx('Please enter your name.', 'Escribe tu nombre.', "Digite seu nome."));
     if (contact.whatsapp.replace(/[^0-9]/g, '').length < 7) return setError(tx('Please enter your WhatsApp number so we can deliver your system.', 'Escribe tu número de WhatsApp para entregarte tu sistema.', 'Digite seu WhatsApp para entregarmos seu sistema.'));
     if (isDomainProduct && !cfg.domain) return setError(tx('Choose your domain.', 'Elige tu dominio.', "Escolha seu domínio."));
-    if (isAiSite && !aiBuild?.slug) return setError(tx('First create your website and choose its address.', 'Primero crea tu web y elige su dirección.', 'Primeiro crie seu site e escolha o endereço.'));
     if (!chosen) return setError(tx('Choose how you want to pay.', 'Elige cómo quieres pagar.', "Escolha como quer pagar."));
     setBusy(true);
     try {
@@ -160,10 +153,8 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       } catch {
         /* optional */
       }
-      // AI Builder: attach the website to this order, so it goes live as soon as it's paid.
-      if (isAiSite && aiBuild) {
-        await fetch('/api/build/link', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: aiBuild.id, token: aiBuild.token, order_token: token }) }).catch(() => null);
-      }
+      // Save the order in the customer's account ("My orders").
+      await linkOrder(token);
       // Tell the owner's phone right away (best effort).
       fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
       // Confirm the order at the server-calculated total so it can be paid right away.
@@ -279,23 +270,6 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
           </Pressable>
         ) : null}
       </Section>
-
-      {isAiSite ? (
-        <Section title={tx('Your website', 'Tu web', 'Seu site')} note={tx('It goes live on this address as soon as your payment is confirmed.', 'Se publica en esta dirección en cuanto se confirme tu pago.', 'Entra no ar neste endereço assim que o pagamento for confirmado.')}>
-          <View style={styles.tplBox}>
-            <View style={[styles.tplThumb, { alignItems: 'center', justifyContent: 'center', backgroundColor: colors.softBlue }]}>
-              <Ionicons name="sparkles" size={24} color={colors.primary} />
-            </View>
-            <View style={{ flex: 1, gap: 2 }}>
-              <Text style={styles.tplName}>{aiBuild?.slug ? `${aiBuild.slug}.sylkit.com` : tx('No website yet', 'Aún no has creado tu web', 'Você ainda não criou seu site')}</Text>
-              <Text style={styles.note}>{aiBuild?.slug ? tx('Made with Sylkit AI Builder', 'Hecha con Sylkit AI Builder', 'Feito com Sylkit AI Builder') : tx('Create it with AI first, it takes a minute.', 'Créala primero con IA, toma un minuto.', 'Crie primeiro com IA, leva um minuto.')}</Text>
-            </View>
-            <Pressable onPress={() => router.push('/build' as any)} style={styles.tplBtn} accessibilityRole="link">
-              <Text style={styles.tplBtnText}>{aiBuild?.slug ? tx('Edit', 'Editar', 'Editar') : tx('Create', 'Crear', 'Criar')}</Text>
-            </Pressable>
-          </View>
-        </Section>
-      ) : null}
 
       {designs.length ? (
         <Section title={designs[0].kind === 'app' ? (tx('App design', 'Diseño de tu app', "Design do app")) : designs[0].kind === 'website' ? (tx('Website design', 'Diseño de tu sitio web', "Design do site")) : tx('Store design', 'Diseño de tu tienda', "Design da loja")} note={tx('Included free. We adapt it to your brand.', 'Incluido gratis. Lo adaptamos a tu marca.', "Incluído grátis. Nós o adaptamos à sua marca.")}>

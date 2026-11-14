@@ -7,6 +7,7 @@ import type { Text as T } from '../i18n';
 import { useLang } from '../i18n';
 import { colors, glass, waLink } from '../theme';
 import { Logo } from './Logo';
+import { useSession } from '../lib/auth';
 import { tx } from '../i18n';
 
 // Site navigation. Wide screens show labeled links; phones show a "Menu" button that opens
@@ -75,6 +76,8 @@ export function Header() {
   const wide = width >= 980;
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const session = useSession();
+  const accountLabel = session ? tx('My orders', 'Mis pedidos', 'Meus pedidos') : tx('Sign in', 'Iniciar sesión', 'Entrar');
   const go = (href: string) => {
     setOpen(false);
     router.push(href as any);
@@ -107,9 +110,10 @@ export function Header() {
                 </Pressable>
               </Link>
             ))}
-            <Link href="/order" asChild>
-              <Pressable style={styles.navLink} accessibilityRole="link">
-                <Text style={styles.navText}>{tx('My order', 'Mi pedido', "Meu pedido")}</Text>
+            <Link href="/account" asChild>
+              <Pressable style={[styles.navLink, { flexDirection: 'row', alignItems: 'center', gap: 6 }]} accessibilityRole="link">
+                <Ionicons name={session ? 'person-circle-outline' : 'log-in-outline'} size={17} color={colors.text} />
+                <Text style={styles.navText}>{accountLabel}</Text>
               </Pressable>
             </Link>
             <Pressable style={styles.helpBtn} onPress={help} accessibilityRole="button">
@@ -151,11 +155,11 @@ export function Header() {
               </Pressable>
             ))}
             <View style={styles.divider} />
-            <Pressable style={styles.item} onPress={() => go('/order')} accessibilityRole="link">
+            <Pressable style={styles.item} onPress={() => go('/account')} accessibilityRole="link">
               <View style={styles.itemIcon}>
-                <Ionicons name="receipt-outline" size={22} color={colors.primary} />
+                <Ionicons name={session ? 'receipt-outline' : 'log-in-outline'} size={22} color={colors.primary} />
               </View>
-              <Text style={[styles.itemLabel, { flex: 1 }]}>{tx('Track my order', 'Seguir mi pedido', "Acompanhar meu pedido")}</Text>
+              <Text style={[styles.itemLabel, { flex: 1 }]}>{session ? tx('My orders', 'Mis pedidos', 'Meus pedidos') : tx('Sign in · My orders', 'Iniciar sesión · Mis pedidos', 'Entrar · Meus pedidos')}</Text>
               <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>
           </ScrollView>

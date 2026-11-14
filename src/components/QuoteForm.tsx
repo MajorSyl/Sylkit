@@ -1,9 +1,10 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLang } from '../i18n';
 import type { Config } from '../lib/pricing';
 import { friendlyError, supabase, createOrder } from '../lib/supabase';
+import { accountContact, linkOrder, useSession } from '../lib/auth';
 import { colors, shadow } from '../theme';
 import { Button } from './Button';
 import { Field, formStyles } from './Field';
@@ -17,6 +18,12 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const set = (k: keyof typeof f) => (v: string) => setF((s) => ({ ...s, [k]: v }));
+  // Signed-in customers: start with the name and email from their account.
+  const session = useSession();
+  useEffect(() => {
+    const a = accountContact(session);
+    if (a.email || a.name) setF((s) => ({ ...s, email: s.email || a.email, name: s.name || a.name }));
+  }, [session]);
 
   const submit = async () => {
     setError('');
@@ -44,6 +51,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
       return setError(friendlyError(err, lang));
     }
     const token = (data as any).token as string;
+    await linkOrder(token); // save it in the customer's account ("My orders")
     fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
     // Fixed-price plan: confirm it at the server-calculated total so the client can pay right away.
     if (config) {

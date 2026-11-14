@@ -8,9 +8,9 @@
 // - /api/stripe/* card payments: Stripe Checkout, subscriptions, customer portal and webhook (see stripe.js)
 // - /api/monime/* Monime checkout for Sierra Leone (Orange Money, Afrimoney, cards), see monime.js
 // - /api/paypal/* PayPal Checkout (PayPal balance or card on PayPal's page) and capture (see paypal.js)
-// - /api/photos/* Unsplash search for the photo library and AI Builder (key stays server side, see unsplash.js)
+// - /api/photos/* Unsplash search for the photo library (key stays server side, see unsplash.js)
 // - /api/demo/* Sylkit 2.0 live demos: hotel bookings, event tickets + QR check-in, logistics, construction (see demo.js, D1 sylkit-demo)
-// - /api/build/* AI website builder; <name>.sylkit.com and sylkit.com/s/<name> serve the published sites (see build.js)
+// - /api/account/* customer accounts (Supabase Auth): link orders to the signed-in customer, "My orders" (see account.js)
 // - /api/support/* help widget, AI assistant and the admin support inbox (see support.js, D1 database sylkit-support)
 // - cron every 15 min: confirms PayPal/Monime payments whose customer never came back to the site,
 //   and keeps the free Supabase database from pausing
@@ -20,7 +20,7 @@ import { handleOrders } from './orders.js';
 import { handlePaypal, sweepPaypal } from './paypal.js';
 import { handleMonime, sweepMonime } from './monime.js';
 import { handleSupport } from './support.js';
-import { handleBuild, serveDomain, serveSite } from './build.js';
+import { handleAccount, retireAiBuilder } from './account.js';
 import { drainUseQueue, handlePhotos } from './unsplash.js';
 import { handleDemo, sweepDemos } from './demo.js';
 
@@ -90,26 +90,12 @@ async function route(request, env, ctx) {
   if (url.pathname.startsWith('/api/paypal/')) return handlePaypal(request, env, url);
   if (url.pathname.startsWith('/api/monime/')) return handleMonime(request, env, url);
   if (url.pathname.startsWith('/api/support/')) return handleSupport(request, env, url, ctx);
-  if (url.pathname.startsWith('/api/build/')) return handleBuild(request, env, url);
+  if (url.pathname.startsWith('/api/account/')) return handleAccount(request, env, url);
   if (url.pathname.startsWith('/api/photos/')) return handlePhotos(request, env, url, ctx);
   if (url.pathname.startsWith('/api/demo/')) return handleDemo(request, env, url);
   const sub = url.hostname.split('.')[0];
   const isSub = url.hostname.endsWith('.sylkit.com') && url.hostname.split('.').length === 3 && sub !== 'www';
   const demo = isSub ? DEMOS[sub] : undefined;
-
-  // A customer's own domain pointed at sites.sylkit.com (Cloudflare for SaaS): their AI website.
-  const ours = url.hostname === 'sylkit.com' || url.hostname.endsWith('.sylkit.com') || url.hostname.endsWith('.workers.dev') || url.hostname === 'localhost';
-  if (!ours) {
-    const res = await serveDomain(env, url.hostname).catch(() => null);
-    if (res) return res;
-  }
-
-  // Websites made with the AI builder: <name>.sylkit.com, or sylkit.com/s/<name>.
-  const sPath = url.pathname.match(/^\/s\/([a-z0-9-]{3,30})\/?$/);
-  if ((isSub && !demo && url.pathname === '/') || sPath) {
-    const res = await serveSite(env, sPath ? sPath[1] : sub).catch(() => null);
-    if (res) return res;
-  }
 
   if (demo && !url.pathname.startsWith('/_kit/')) {
     const target = new URL(url);
@@ -162,6 +148,7 @@ export default {
     ctx.waitUntil(sweepMonime(env).catch(() => {}));
     ctx.waitUntil(drainUseQueue(env).catch(() => {}));
     ctx.waitUntil(sweepDemos(env).catch(() => {}));
+    ctx.waitUntil(retireAiBuilder(env).catch(() => {}));
     ctx.waitUntil(
       fetch(`${SUPABASE_URL}/rest/v1/products?select=slug&limit=1`, {
         headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },

@@ -3,6 +3,7 @@ import Head from 'expo-router/head';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { CheckoutFooter, CheckoutHeader } from '../src/components/CheckoutHeader';
 import { CheckoutFlow } from '../src/components/CheckoutFlow';
+import { SignInGate } from '../src/components/SignInGate';
 import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
 import { configFromQuery } from '../src/lib/pricing';
@@ -14,7 +15,7 @@ import { tx } from '../src/i18n';
 
 export default function CheckoutPage() {
   const { product, plan, billing, add, domain, template } = useLocalSearchParams<{ product?: string; plan?: string; billing?: string; add?: string; domain?: string; template?: string }>();
-  const { lang } = useLang();
+  const { lang, t } = useLang();
   const es = lang === 'es';
   const list = useProducts();
   const p = product ? list.find((x) => x.slug === product) : undefined;
@@ -30,7 +31,9 @@ export default function CheckoutPage() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
           {p?.pricing ? (
-            <CheckoutFlow product={p} initial={cfg} />
+            <SignInGate title={`${tx('Sign in to order', 'Inicia sesión para pedir', 'Entre para pedir')} ${t(p.name)}`}>
+              {() => <CheckoutFlow product={p} initial={cfg} />}
+            </SignInGate>
           ) : (
             <View style={styles.empty}>
               <Text style={styles.h1}>{tx('Your cart is empty', 'Tu carrito está vacío', "Seu carrinho está vazio")}</Text>
