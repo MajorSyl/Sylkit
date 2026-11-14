@@ -93,6 +93,8 @@ async function route(request, env, ctx) {
   if (url.pathname.startsWith('/api/account/')) return handleAccount(request, env, url);
   if (url.pathname.startsWith('/api/photos/')) return handlePhotos(request, env, url, ctx);
   if (url.pathname.startsWith('/api/demo/')) return handleDemo(request, env, url);
+  // Any other /api address (including the retired /api/build/*) is simply not found.
+  if (url.pathname.startsWith('/api/')) return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers: { 'content-type': 'application/json' } });
   const sub = url.hostname.split('.')[0];
   const isSub = url.hostname.endsWith('.sylkit.com') && url.hostname.split('.').length === 3 && sub !== 'www';
   const demo = isSub ? DEMOS[sub] : undefined;
