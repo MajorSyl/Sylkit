@@ -1,9 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { Session } from '@supabase/supabase-js';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { tx } from '../i18n';
-import { sendMagicLink, signInWithGoogle, useSession } from '../lib/auth';
+import { googleEnabled, sendMagicLink, signInWithGoogle, useSession } from '../lib/auth';
 import { colors } from '../theme';
 
 // Shows the sign-in card until the customer has an account session, then renders the page.
@@ -20,6 +20,10 @@ export function SignInCard({ title, sub }: { title: string; sub?: string }) {
   const [busy, setBusy] = useState<'google' | 'email' | null>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
+  const [hasGoogle, setHasGoogle] = useState(false);
+  useEffect(() => {
+    googleEnabled().then(setHasGoogle);
+  }, []);
 
   const google = async () => {
     setError('');
@@ -84,6 +88,8 @@ export function SignInCard({ title, sub }: { title: string; sub?: string }) {
           </View>
         ) : (
           <>
+            {hasGoogle ? (
+              <>
             <Pressable onPress={google} disabled={!!busy} style={[styles.google, busy && { opacity: 0.6 }]} accessibilityRole="button">
               {busy === 'google' ? <ActivityIndicator color={colors.text} /> : <Ionicons name="logo-google" size={18} color={colors.text} />}
               <Text style={styles.googleText}>{tx('Continue with Google', 'Continuar con Google', 'Continuar com Google')}</Text>
@@ -94,6 +100,9 @@ export function SignInCard({ title, sub }: { title: string; sub?: string }) {
               <Text style={styles.orText}>{tx('or', 'o', 'ou')}</Text>
               <View style={styles.line} />
             </View>
+
+              </>
+            ) : null}
 
             <Text style={styles.label}>{tx('Email', 'Correo electrónico', 'E-mail')}</Text>
             <TextInput

@@ -2,7 +2,7 @@
 // Browsing, demos and the chat never need an account; ordering and quotes do.
 import type { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
-import { supabase } from './supabase';
+import { supabase, SUPABASE_KEY, SUPABASE_URL } from './supabase';
 
 /** Current session (null = signed out, undefined = still checking). Updates when it changes. */
 export function useSession() {
@@ -23,6 +23,16 @@ export function useSession() {
 function backHere() {
   if (typeof window === 'undefined') return 'https://sylkit.com/';
   return window.location.origin + window.location.pathname + window.location.search;
+}
+
+/** Whether Google sign-in is switched on in Supabase (the button only shows when it is). */
+let googleOn: Promise<boolean> | null = null;
+export function googleEnabled() {
+  googleOn ||= fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_KEY } })
+    .then((r) => r.json())
+    .then((j) => !!j?.external?.google)
+    .catch(() => false);
+  return googleOn;
 }
 
 export async function signInWithGoogle() {
