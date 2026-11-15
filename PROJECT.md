@@ -231,7 +231,7 @@ Response time: Starter next business day · Business same day · Pro 2 hours. Up
 
 ---
 
-## Customer accounts · added 14 Nov 2026
+## Customer accounts · live since 14 Nov 2026 (commit 88971bc)
 
 - **Sign in:** Supabase Auth on the Sylkit project: **Continue with Google** or an **email magic link** (no passwords). Code: `src/lib/auth.ts`, `src/components/SignInGate.tsx`.
 - **Public, no login:** browsing systems, templates, demos, `/work` and the chat widget.
@@ -242,7 +242,7 @@ Response time: Starter next business day · Business same day · Pro 2 hours. Up
 - **Setup in Supabase (Sylvanus):** Authentication → URL Configuration: Site URL `https://sylkit.com`, Redirect URLs `https://sylkit.com/**` and `https://*-sylkit.fannah2026.workers.dev/**`. Authentication → Providers → Google: on, with a Google Cloud OAuth client (redirect `https://chcljhwcvzlmxrrhetfv.supabase.co/auth/v1/callback`). Magic links use Supabase's email until custom SMTP (Resend) is set.
 
 ## AI website builder · retired 14 Nov 2026
-Removed completely: `/build`, `app/build.tsx`, `worker/build.js`, `worker/aisite.js`, the `/api/build/*` routes, `<name>.sylkit.com` and `/s/<name>` site serving, the checkout's AI-site step, the homepage tile, the `web-con-ia` product and price, the KV `SITE_MEDIA` binding and the OpenRouter integration (secret `OPENROUTER_API_KEY` deleted). A one-time job sets the `web-con-ia` row inactive in the catalog and drops the D1 table `ai_sites` (2 unpublished test sites only). No customer had published or paid for a site.
+Removed completely: `/build`, `app/build.tsx`, `worker/build.js`, `worker/aisite.js`, the `/api/build/*` routes, `<name>.sylkit.com` and `/s/<name>` site serving, the checkout's AI-site step, the homepage tile, the `web-con-ia` product and price, the KV `SITE_MEDIA` binding and the OpenRouter integration (secret `OPENROUTER_API_KEY` deleted). The one-time job ran on 15 Nov 2026 03:15 UTC: `web-con-ia` set inactive in the catalog, D1 table `ai_sites` dropped (2 unpublished test sites only). KV namespace `sylkit-site-media` deleted (it was empty). No customer had published or paid for a site.
 
 ## Sylkit 2.0 · live on sylkit.com since 13 Nov 2026
 
