@@ -78,7 +78,7 @@
       const cat = cfg.cats.find((c) => c.id === p[2]);
       return {
         id: 'p' + i, name: [p[0], p[1]], cat: p[2], price: p[3],
-        em: x.em || (cat && cat.em) || '🛍️', old: x.old, badge: x.badge, opt: x.opt, unit: x.unit,
+        em: x.em || (cat && cat.em) || '🛍️', img: x.img, old: x.old, badge: x.badge, opt: x.opt, unit: x.unit,
         stock: x.stock ?? 10, a: x.a || palette[i % palette.length],
         d: x.d || (cfg.desc && cfg.desc[p[2]]) || cfg.descAll || '',
       };
@@ -103,8 +103,15 @@
     }
     document.title = `${cfg.name} · ${L(cfg.tagline)}`;
 
-    const art = (p, cls = '') => `<div class="s-art ${cls}" style="--a:${p.a}"><span class="em" aria-hidden="true">${p.em}</span></div>`;
-    const artRaw = (em, a, cls = '') => `<div class="s-art ${cls}" style="--a:${a}"><span class="em" aria-hidden="true">${em}</span></div>`;
+    // Real product photos (Unsplash, hotlinked, credited in the footer). cfg.photos = [[url, author, profile], ...];
+    // products, categories and promo tiles point to a photo by index ("img": 3). Emoji stay only as a fallback.
+    const used = new Set();
+    const svg = (d) => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+    const PERK = { '🚚': svg('<path d="M3 6h11v10H3zM14 9h4l3 3.5V16h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>'), '💳': svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>'), '💬': svg('<path d="M4 5h16v11H9l-5 4z"/>'), '🛵': svg('<path d="M3 6h11v10H3zM14 9h4l3 3.5V16h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/>'), '🔒': svg('<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>'), '🎁': svg('<rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"/>') };
+    const pic = (i, w) => { const ph = cfg.photos && cfg.photos[i]; if (!ph) return ''; used.add(i); return `${ph[0]}${ph[0].includes('?') ? '&' : '?'}auto=format&fit=crop&q=72&w=${w || 600}`; };
+    const photoArt = (img, cls, w) => `<div class="s-art photo ${cls}"><img src="${pic(img, w)}" alt="" loading="lazy"></div>`;
+    const art = (p, cls = '') => (p.img != null && cfg.photos ? photoArt(p.img, cls, /xl|lg/.test(cls) ? 1000 : 600) : `<div class="s-art ${cls}" style="--a:${p.a}"><span class="em" aria-hidden="true">${p.em}</span></div>`);
+    const artRaw = (em, a, cls = '', img) => (img != null && cfg.photos ? photoArt(img, cls, 500) : `<div class="s-art ${cls}" style="--a:${a}"><span class="em" aria-hidden="true">${em}</span></div>`);
     const priceHtml = (p) => `<div class="s-price">${money(p.price)}${p.unit ? `<span class="u">/${esc(L(p.unit))}</span>` : ''}${p.old ? `<s>${money(p.old)}</s>` : ''}</div>`;
     const badge = (p) => (!p.stock ? `<span class="s-badge out">${S.soldOut}</span>` : p.badge ? `<span class="s-badge ${p.badge === 'sale' ? 'sale' : ''}">${p.badge === 'sale' && p.old ? '-' + Math.round((1 - p.price / p.old) * 100) + '%' : S[p.badge] || esc(L(p.badge))}</span>` : '');
     const count = () => st.cart.reduce((s, l) => s + l.qty, 0);
@@ -122,7 +129,7 @@
       if (h.layout === 'editorial') return `<section class="s-hero editorial"><div class="s-wrap">${h.eyebrow ? `<span class="s-eyebrow">${esc(L(h.eyebrow))}</span>` : ''}<h1 class="s-h">${L(h.title)}</h1><div class="s-row"><div>${h.lead ? `<p class="s-lead">${esc(L(h.lead))}</p>` : ''}${ctas}</div><div class="s-pair">${heroArt.slice(0, 2).map((p) => art(p, 'xl')).join('')}</div></div></div></section>`;
       // promo
       const main = heroArt[0];
-      return `<section class="s-hero promo"><div class="s-wrap"><div class="s-grid"><div class="s-main" style="${h.bg ? `--hero-bg:${h.bg};` : ''}${h.ink ? `--hero-ink:${h.ink}` : ''}">${main ? art(main, 'xl') : ''}${head}${ctas}</div><div class="s-side">${(h.tiles || []).map((t) => `<button class="s-tile" data-cat="${t.cat}">${artRaw(t.em, t.a)}<div><small>${esc(L(t.s))}</small><br><b>${esc(L(t.t))}</b></div></button>`).join('')}</div></div></div></section>`;
+      return `<section class="s-hero promo"><div class="s-wrap"><div class="s-grid"><div class="s-main" style="${h.bg ? `--hero-bg:${h.bg};` : ''}${h.ink ? `--hero-ink:${h.ink}` : ''}">${main ? art(main, 'xl') : ''}${head}${ctas}</div><div class="s-side">${(h.tiles || []).map((t) => `<button class="s-tile" data-cat="${t.cat}">${artRaw(t.em, t.a, '', t.img)}<div><small>${esc(L(t.s))}</small><br><b>${esc(L(t.t))}</b></div></button>`).join('')}</div></div></div></section>`;
     }
 
     const app = document.createElement('div');
@@ -144,14 +151,14 @@
           <div class="s-cats" id="s-cats"></div></div></section>
         <section class="s-sec" id="shop"><div class="s-wrap"><div class="s-sec-head"><h2 class="s-h">${esc(L(cfg.gridTitle) || S.featured)}</h2><span class="s-muted" id="s-n"></span></div>
           <div class="s-chips" id="s-chips"></div><div class="s-grid-p" id="s-grid"></div></div></section>
-        ${cfg.perks ? `<section class="s-sec"><div class="s-wrap"><div class="s-sec-head"><h2 class="s-h">${S.perksT}</h2></div><div class="s-strip">${cfg.perks.map((p) => `<div class="s-perk"><i>${p[0]}</i><div><b>${esc(L(p[1]))}</b><span>${esc(L(p[2]))}</span></div></div>`).join('')}</div></div></section>` : ''}
+        ${cfg.perks ? `<section class="s-sec"><div class="s-wrap"><div class="s-sec-head"><h2 class="s-h">${S.perksT}</h2></div><div class="s-strip">${cfg.perks.map((p) => `<div class="s-perk"><i>${PERK[p[0]] || p[0]}</i><div><b>${esc(L(p[1]))}</b><span>${esc(L(p[2]))}</span></div></div>`).join('')}</div></div></section>` : ''}
         ${cfg.quotes ? `<section class="s-sec"><div class="s-wrap"><div class="s-sec-head"><h2 class="s-h">${S.quotesT}</h2></div><div class="s-quotes">${cfg.quotes.map((q) => `<div class="s-quote"><span class="s-stars">★★★★★</span><p>“${esc(L(q[0]))}”</p><small>${esc(q[1])}</small></div>`).join('')}</div></div></section>` : ''}
       </main>
       <footer class="s-foot"><div class="s-wrap">
         <div><a class="s-brand" href="#top" data-go="top"><span class="s-mark">${esc(cfg.mark || cfg.name[0])}</span><b>${esc(cfg.name)}</b></a><p class="s-muted" style="margin-top:10px;max-width:360px">${esc(L(cfg.about))}</p></div>
         <div><h4>${S.contact}</h4>${(cfg.contact || []).map((c) => `<p>${esc(L(c))}</p>`).join('')}</div>
         <div><h4>${S.payWith}</h4><div class="s-pays">${(cfg.payments || []).map((p) => `<span>${esc(L(p))}</span>`).join('')}</div></div>
-        <p class="s-made">${S.made} <a href="https://sylkit.com" target="_top">Sylkit</a></p>
+        <p class="s-made">${S.made} <a href="https://sylkit.com" target="_top">Sylkit</a></p>${cfg.photos ? `<p class="s-made s-credit">${lang === 'es' ? 'Fotos' : 'Photos'}: ${[...new Map(cfg.photos.map((ph) => [ph[1], ph])).values()].map((ph) => `<a href="${esc(ph[2])}" target="_blank" rel="noopener">${esc(ph[1])}</a>`).join(', ')} · <a href="https://unsplash.com/?utm_source=sylkit&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : ''}
       </div></footer>
       <button class="s-fab s-hide" id="s-fab" data-act="cart"></button>
       <div class="s-scrim" id="s-scrim"></div>
@@ -163,7 +170,7 @@
 
     // ---------- Dynamic parts ----------
     function renderCats() {
-      $('s-cats').innerHTML = cfg.cats.map((c) => `<button class="s-cat ${st.cat === c.id ? 'on' : ''}" data-cat="${c.id}">${artRaw(c.em, c.a || palette[0])}<span>${esc(L(c.n))}</span></button>`).join('');
+      $('s-cats').innerHTML = cfg.cats.map((c) => `<button class="s-cat ${st.cat === c.id ? 'on' : ''}" data-cat="${c.id}">${artRaw(c.em, c.a || palette[0], '', c.img)}<span>${esc(L(c.n))}</span></button>`).join('');
       $('s-chips').innerHTML = [['all', S.all], ...cfg.cats.map((c) => [c.id, L(c.n)])].map(([id, n]) => `<button class="s-chip ${st.cat === id ? 'on' : ''}" data-cat="${id}">${esc(n)}</button>`).join('');
       document.querySelectorAll('.s-nav button').forEach((b) => b.classList.toggle('on', b.dataset.cat === st.cat));
     }

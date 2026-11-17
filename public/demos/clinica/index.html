@@ -8,6 +8,11 @@ const SLOTS = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '1
 const ST = { es: { booked: 'Agendada', waiting: 'En espera', consult: 'En consulta', done: 'Atendida', noshow: 'No asistió' }, en: { booked: 'Booked', waiting: 'Waiting', consult: 'In consultation', done: 'Seen', noshow: 'No-show' } };
 const STC = { booked: 'blue', waiting: 'orange', consult: 'purple', done: 'green', noshow: 'gray' };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1758691462878-6edc3d3da1be?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8OXx8bW9kZXJuJTIwY2xpbmljJTIwZG9jdG9yfGVufDF8MHx8fDE3OTQ1NDg2MjJ8MA&ixlib=rb-4.1.0", "Vitaly Gariev", "https://unsplash.com/@silverkblack?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Citas, historias clínicas y recordatorios", en: "Appointments, patient records and reminders" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'clinica', version: 1, theme: {"layout": "side", "bg": "#F3F7FA", "card": "#ffffff", "primary": "#0E7490", "primaryD": "#155E75", "soft": "#CFFAFE", "font": "'Plus Jakarta Sans',sans-serif", "head": "'Plus Jakarta Sans',sans-serif", "fonts": "family=Plus+Jakarta+Sans:wght@400;600;700;800", "r": "10px", "rLg": "16px"},
   product: 'clinica-citas-historias', logo: "🩺", color: '#1D6BFF',
   name: { es: 'Clínica', en: 'Clinic' }, brand: { es: "Centro Médico Vida", en: "Vida Medical Center" },

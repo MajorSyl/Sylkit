@@ -183,3 +183,9 @@ a { color: inherit; }
 .w-toast.show { opacity: 1; transform: translate(-50%, 0); }
 body.w-lock { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+
+/* Real photos */
+.w-art.photo, .a-art.photo { background: var(--soft); overflow: hidden; }
+.w-art.photo img, .a-art.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-credit { font-size: 11px; opacity: .7; margin: 10px 0 0; padding: 0 16px 16px; }
+.photo-credit a { color: inherit; }

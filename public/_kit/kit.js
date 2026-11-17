@@ -153,7 +153,9 @@
       ui: {
         stats: (items) => `<div class="k-stats">${items.map((i) => `<div class="k-stat"${i.act ? ` data-act="${i.act}" data-v="${esc(i.v ?? '')}" style="cursor:pointer"` : ''}><div class="l">${esc(i.label)}</div><div class="n" style="color:${i.color || 'var(--text)'}">${esc(i.value)}</div></div>`).join('')}</div>`,
         card: (title, inner, head) => `<div class="k-card">${title || head ? `<div class="k-card-h"><h2>${esc(title || '')}</h2>${head || ''}</div>` : ''}${inner}</div>`,
-        row: (o) => `<div class="k-row"${o.act ? ` data-act="${o.act}" data-id="${esc(o.id ?? '')}" style="cursor:pointer"` : ''}>${o.avatar ? `<div class="k-avatar" style="background:${o.color || 'var(--primary)'};font-size:${String(o.avatar).length > 2 ? '11px' : '15px'}">${esc(o.avatar)}</div>` : o.icon ? (isEmoji(o.icon) ? `<div class="k-thumb k-mono" style="--mono:${tint(o.title || o.titleHtml || '')}">${esc(initialsOf(o.title || String(o.titleHtml || '').replace(/<[^>]+>/g, '')))}</div>` : `<div class="k-thumb"${o.iconBg ? ` style="background:${o.iconBg}"` : ''}>${o.icon}</div>`) : ''}<div class="k-grow"><div class="k-title">${o.titleHtml ?? esc(o.title)}</div>${o.meta ? `<div class="k-meta">${o.metaHtml ? o.meta : esc(o.meta)}</div>` : ''}</div>${o.right ? `<div class="k-right">${o.right}</div>` : ''}</div>`,
+        row: (o) => `<div class="k-row"${o.act ? ` data-act="${o.act}" data-id="${esc(o.id ?? '')}" style="cursor:pointer"` : ''}>${rowPhoto(o) ? `<img class="k-photo" src="${esc(rowPhoto(o))}" alt="" loading="lazy">` : o.avatar ? `<div class="k-avatar" style="background:${o.color || 'var(--primary)'};font-size:${String(o.avatar).length > 2 ? '11px' : '15px'}">${esc(o.avatar)}</div>` : o.icon ? (isEmoji(o.icon) ? `<div class="k-thumb k-mono" style="--mono:${tint(o.title || o.titleHtml || '')}">${esc(initialsOf(o.title || String(o.titleHtml || '').replace(/<[^>]+>/g, '')))}</div>` : `<div class="k-thumb"${o.iconBg ? ` style="background:${o.iconBg}"` : ''}>${o.icon}</div>`) : ''}<div class="k-grow"><div class="k-title">${o.titleHtml ?? esc(o.title)}</div>${o.meta ? `<div class="k-meta">${o.metaHtml ? o.meta : esc(o.meta)}</div>` : ''}</div>${o.right ? `<div class="k-right">${o.right}</div>` : ''}</div>`,
+        // Product grid with real photos: items [{ id, title, sub, price, img }] -> click runs act with data-id.
+        tiles: (items, act) => `<div class="k-ptiles">${items.map((x) => `<div class="k-ptile" data-act="${act}" data-id="${esc(x.id)}">${x.img ? `<img src="${esc(x.img.startsWith('http') ? x.img : photoUrl(x.img, 360, 270))}" alt="" loading="lazy">` : ''}<div><b>${esc(x.title)}</b>${x.sub ? `<span>${esc(x.sub)}</span>` : ''}${x.price != null ? `<em>${esc(x.price)}</em>` : ''}</div></div>`).join('')}</div>`,
         pill: (text, color) => `<span class="k-pill ${color || 'blue'}">${esc(text)}</span>`,
         btn: (label, act, data, variant) => `<button class="k-btn ${variant || 's'}" data-act="${act}"${Object.entries(data || {}).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('')}>${label}</button>`,
         empty: (text) => `<div class="k-empty">${esc(text || app.t('none'))}</div>`,
@@ -163,6 +165,35 @@
         initials: (s) => String(s).split(' ').filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase(),
       },
     };
+
+    // Real photos (Unsplash, hotlinked with credit). cfg.photos = { key: [url, author, profileUrl] };
+    // cfg.photoOf(title) maps a row title to a photo key, so item lists show the real product.
+    const used = new Set();
+    const photoUrl = (key, w, h) => {
+      const p = cfg.photos && cfg.photos[key]; if (!p) return '';
+      used.add(key);
+      return `${p[0]}${p[0].includes('?') ? '&' : '?'}auto=format&fit=crop&q=70&w=${w || 160}&h=${h || w || 160}`;
+    };
+    app.photo = photoUrl;
+    function rowPhoto(o) {
+      if (o.img) return o.img.startsWith('http') ? o.img : photoUrl(o.img);
+      if (!cfg.photoOf) return '';
+      const k = cfg.photoOf(String(o.title || String(o.titleHtml || '').replace(/<[^>]+>/g, '')), o);
+      return k ? photoUrl(k) : '';
+    }
+    function credits() {
+      const names = [...used].map((k) => cfg.photos[k]).filter(Boolean);
+      const seen = new Set();
+      const list = names.filter((p) => !seen.has(p[1]) && seen.add(p[1])).map((p) => `<a href="${esc(p[2])}" target="_blank" rel="noopener">${esc(p[1])}</a>`).join(', ');
+      return list ? `<p class="k-credits">${lang === 'es' ? 'Fotos' : 'Photos'}: ${list} · <a href="https://unsplash.com/?utm_source=sylkit&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : '';
+    }
+    function hero() {
+      const c = cfg.cover; if (!c || tab !== cfg.tabs[0].id) return '';
+      const url = photoUrl(c.photo, 1600, 520);
+      return `<section class="k-hero" style="background-image:linear-gradient(90deg,rgba(10,14,24,.78),rgba(10,14,24,.25) 70%),url('${esc(url)}')">
+        <div><small>${esc(c.eyebrow ? c.eyebrow[lang] : cfg.name[lang])}</small><h1>${esc(c.title ? c.title[lang] : (cfg.brand || cfg.name)[lang])}</h1>${c.lead ? `<p>${esc(c.lead[lang])}</p>` : ''}</div>
+        ${c.stats ? `<div class="k-hero-stats">${c.stats(app).map(([l, v]) => `<div><b>${esc(v)}</b><span>${esc(l)}</span></div>`).join('')}</div>` : ''}</section>`;
+    }
 
     db = load();
 
@@ -247,7 +278,19 @@
         return `<button data-tab="${tb.id}" class="${tb.id === tab ? 'on' : ''}">${tb.icon ? (isEmoji(tb.icon) ? (iconFor(tb.icon) ? `<span class="ic">${iconFor(tb.icon)}</span>` : '') : `<span class="ic">${tb.icon}</span>`) : ''}${esc(app.t(tb.label))}${n ? ` <span class="k-badge">${n}</span>` : ''}</button>`;
       }).join('');
       const current = cfg.tabs.find((x) => x.id === tab);
-      document.getElementById('k-view').innerHTML = stripEmoji(current.render(app));
+      used.clear();
+      const body = stripEmoji(current.render(app));
+      const view = document.getElementById('k-view');
+      view.innerHTML = hero() + body;
+      // Product tiles and cart thumbnails drawn by each demo: swap the placeholder for the real photo.
+      if (cfg.photoOf) view.querySelectorAll('.k-tile, .k-row').forEach((el) => {
+        const nm = el.querySelector('.nm, .k-title, b'); const key = nm && cfg.photoOf(nm.textContent.trim());
+        if (!key) return;
+        const ph = el.querySelector(':scope > .em, :scope > .k-thumb, :scope > div > .em');
+        if (ph && ph.classList.contains('k-thumb')) { ph.classList.add('k-has-img'); ph.innerHTML = `<img src="${esc(photoUrl(key))}" alt="">`; }
+        else if (ph) ph.outerHTML = `<img class="k-tile-img" src="${esc(photoUrl(key, 320, 240))}" alt="">`;
+      });
+      view.insertAdjacentHTML('beforeend', credits());
       if (current.after) current.after(app);
       document.body.classList.toggle('k-has-fab', !!document.querySelector('.k-fab'));
       if (focus) {

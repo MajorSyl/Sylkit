@@ -17,6 +17,11 @@
 <script src="/_kit/kit.js"></script>
 <script>
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1628840042765-356cda07504e?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MXx8cGl6emF8ZW58MXwyfHx8MTc5NDg4NDIyN3ww&ixlib=rb-4.1.0", "Fernando Andrade", "https://unsplash.com/@thisisnando?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Responde y toma pedidos por WhatsApp 24/7", en: "Answers and takes orders on WhatsApp 24/7" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'asistente', version: 1, theme: {"headerDark": true, "bg": "#F0F2F5", "primary": "#128C7E", "primaryD": "#075E54", "soft": "#D9FDD3", "hbg": "#075E54", "hfg": "#ffffff", "font": "'Inter',sans-serif", "head": "'Inter',sans-serif", "fonts": "family=Inter:wght@400;600;700;800", "r": "10px", "rLg": "16px"},
   product: 'asistente-ia-para-negocios', logo: "🍕", color: '#25D366',
   name: { es: 'Asistente de WhatsApp', en: 'WhatsApp Assistant' }, brand: { es: "Pizzería Don Vito", en: "Don Vito Pizzeria" },

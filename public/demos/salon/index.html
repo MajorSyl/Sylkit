@@ -6,6 +6,11 @@
 <script>
 const HOURS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1593702295094-aea22597af65?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8M3x8YmFyYmVyc2hvcCUyMGhhaXJjdXR8ZW58MXwwfHx8MTc5NDg4NDIzMHww&ixlib=rb-4.1.0", "Michael DeMoya", "https://unsplash.com/@demoya?utm_source=sylkit&utm_medium=referral"], "ph1": ["https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MXx8YmFyYmVyc2hvcCUyMGhhaXJjdXR8ZW58MXwwfHx8MTc5NDg4NDIzMHww&ixlib=rb-4.1.0", "Michael DeMoya", "https://unsplash.com/@demoya?utm_source=sylkit&utm_medium=referral"], "ph2": ["https://images.unsplash.com/photo-1599351431618-317f6a5f9a6b?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8OXx8YmFyYmVyc2hvcCUyMGhhaXJjdXR8ZW58MXwwfHx8MTc5NDg4NDIzMHww&ixlib=rb-4.1.0", "Agustin Fernandez", "https://unsplash.com/@agustinfernandez?utm_source=sylkit&utm_medium=referral"], "ph3": ["https://images.unsplash.com/photo-1593702282967-96c9f195befa?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTV8fGJhcmJlcnNob3AlMjBoYWlyY3V0fGVufDF8MHx8fDE3OTQ4ODQyMzB8MA&ixlib=rb-4.1.0", "Michael DeMoya", "https://unsplash.com/@demoya?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Citas, comisiones y clientes fieles", en: "Bookings, commissions and loyal clients" } },
+  photoOf: (t) => ({"Corte de caballero": "ph1", "Men's haircut": "ph1", "Barba": "ph2", "Beard trim": "ph2", "Corte y peinado dama": "ph3", "Women's cut & style": "ph3"})[t] || '',
+  /*/sylkit-photos*/
   id: 'salon', version: 1, theme: {"dark": true, "headerDark": true, "bg": "#0C0A09", "card": "#1C1917", "text": "#F5F5F4", "muted": "#A8A29E", "border": "rgba(255,255,255,.08)", "line": "#44403C", "input": "#0C0A09", "primary": "#D4A64A", "primaryD": "#E7C27A", "soft": "rgba(212,166,74,.16)", "onPrimary": "#1C1917", "hbg": "#0C0A09", "hfg": "#ffffff", "font": "'Lato',sans-serif", "head": "'Playfair Display',serif", "fonts": "family=Lato:wght@400;600;700;800&family=Playfair+Display:wght@400;700", "r": "4px", "rLg": "8px"},
   product: 'salon-barberia-reservas', logo: "✂️", color: '#7A5AF8',
   name: { es: 'Salón y barbería', en: 'Salon & Barbershop' }, brand: { es: "Barbería Royal", en: "Royal Barbershop" },

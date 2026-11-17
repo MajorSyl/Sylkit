@@ -20,6 +20,11 @@ const TPL = {
   clean: { es: 'Minimalista', en: 'Minimal', bg: '#F6F8FC', fg: '#0B1B3A', accent: '#1D6BFF', body: '#fff', text: '#0B1B3A' },
 };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1758518731706-be5d5230e5a5?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MXx8YnVzaW5lc3MlMjB0ZWFtJTIwb2ZmaWNlJTIwbWVldGluZ3xlbnwxfDB8fHwxNzk0NTQ4NjIzfDA&ixlib=rb-4.1.0", "Vitaly Gariev", "https://unsplash.com/@silverkblack?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Tu sitio profesional, listo para compartir", en: "Your professional site, ready to share" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'portafolio', version: 1, theme: {"bg": "#F7F5FF", "primary": "#7C3AED", "primaryD": "#6D28D9", "soft": "#EDE9FE", "font": "'Plus Jakarta Sans',sans-serif", "head": "'Plus Jakarta Sans',sans-serif", "fonts": "family=Plus+Jakarta+Sans:wght@400;600;700;800", "r": "12px", "rLg": "20px"},
   product: 'sitio-web-personal', logo: '🌐', color: '#7A5AF8',
   name: { es: 'Sitio web personal', en: 'Personal Website' }, brand: { es: 'Sylkit Sitios', en: 'Sylkit Sites' },

@@ -7,6 +7,11 @@
 const FS = { es: { paid: 'Pagada', pending: 'Pendiente', overdue: 'Vencida', draft: 'Borrador' }, en: { paid: 'Paid', pending: 'Pending', overdue: 'Overdue', draft: 'Draft' } };
 const FC = { paid: 'green', pending: 'orange', overdue: 'red', draft: 'gray' };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1713947503588-8ff8196dc4a3?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MXx8YWNjb3VudGFudCUyMG9mZmljZSUyMGRlc2t8ZW58MXwwfHx8MTc5NDg4NDI0NHww&ixlib=rb-4.1.0", "Vitaly Gariev", "https://unsplash.com/@silverkblack?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Facturas, cobros y clientes en un solo lugar", en: "Invoices, payments and clients in one place" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'facturas', version: 1, theme: {"headerDark": true, "bg": "#F6F8F7", "card": "#ffffff", "primary": "#15803D", "primaryD": "#166534", "soft": "#DCFCE7", "hbg": "#052E16", "hfg": "#ffffff", "font": "'Source Sans 3',sans-serif", "head": "'Source Serif 4',serif", "fonts": "family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:wght@400;700", "r": "6px", "rLg": "10px"},
   product: 'facturacion', logo: "📑", color: '#1D6BFF',
   name: { es: 'Facturación', en: 'Invoicing' }, brand: { es: "Asesores Díaz & Asociados", en: "Díaz & Associates" },

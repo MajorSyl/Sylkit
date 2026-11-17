@@ -400,17 +400,17 @@ HEAD = """<!doctype html>
 """
 PAGES = {
     "store": HEAD + """<link rel="stylesheet" href="/_store/store.css"></head><body>
-<script src="/_store/store.js"></script>
+<script src="/_site/icons.js"></script><script src="/_store/store.js"></script>
 <script>SylStore.create({cfg});</script>
 </body></html>
 """,
     "website": HEAD + """<link rel="stylesheet" href="/_site/site.css"></head><body>
-<script src="/_site/art.js"></script><script src="/_site/site.js"></script>
+<script src="/_site/icons.js"></script><script src="/_site/art.js"></script><script src="/_site/site.js"></script>
 <script>SylSite.create({cfg});</script>
 </body></html>
 """,
     "app": HEAD + """<link rel="stylesheet" href="/_app/app.css"></head><body>
-<script src="/_site/art.js"></script><script src="/_app/app.js"></script>
+<script src="/_site/icons.js"></script><script src="/_site/art.js"></script><script src="/_app/app.js"></script>
 <script>SylApp.create({cfg});</script>
 </body></html>
 """,
@@ -426,9 +426,15 @@ def main():
     from template_data_web_app import APP_TEMPLATES, WEB_TEMPLATES
     from template_data_figma import FIGMA_TEMPLATES
 
+    from template_photos import apply_store, scene_photos
     for t in TEMPLATES:
         t.setdefault("kind", "store")
         t.setdefault("product", STORE_PRODUCT)
+        apply_store(t)
+    # Websites + apps share one photo set: every drawn scene becomes a real photo.
+    photos, scene = scene_photos(WEB_TEMPLATES + APP_TEMPLATES)
+    for t in WEB_TEMPLATES + APP_TEMPLATES:
+        t["photos"], t["scene"] = photos, scene
     listing = []
     for t in TEMPLATES + WEB_TEMPLATES + APP_TEMPLATES + FIGMA_TEMPLATES:
         kind = t["kind"]

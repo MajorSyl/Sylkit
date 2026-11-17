@@ -60,7 +60,15 @@
     const embed = params.get('embed') === '1';
     const KEY = `sylkit_site_${cfg.slug}_fav`;
     const num = (n) => Number(n).toLocaleString(lang === 'es' ? 'es-VE' : 'en-US', { maximumFractionDigits: 0 });
-    const art = (k, s, cls = '') => `<div class="w-art ${cls}">${SylArt.svg(k, s, cfg.pal)}</div>`;
+    // Real photos: every scene (kind + seed) maps to a credited Unsplash photo (cfg.scene / cfg.photos).
+    // The drawn illustration (SylArt) is only a fallback for scenes without a photo.
+    const art = (k, s, cls = '') => {
+      const i = cfg.scene ? cfg.scene[`${k}:${s}`] : undefined;
+      const ph = i != null && cfg.photos ? cfg.photos[i] : null;
+      if (ph) return `<div class="w-art photo ${cls}"><img src="${ph[0]}&auto=format&fit=crop&q=72&w=${/xl|lg|hero/.test(cls) ? 1400 : 800}" alt="" loading="lazy"></div>`;
+      return `<div class="w-art ${cls}">${SylArt.svg(k, s, cfg.pal)}</div>`;
+    };
+    const credit = () => cfg.photos ? `<p class="photo-credit">${lang === 'es' ? 'Fotos' : 'Photos'}: ${[...new Map(cfg.photos.map((ph) => [ph[1], ph])).values()].map((ph) => `<a href="${ph[2]}" target="_blank" rel="noopener">${esc(ph[1])}</a>`).join(', ')} · <a href="https://unsplash.com/?utm_source=sylkit&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : '';
     const items = cfg.items.map((x, i) => ({ ...x, id: 'i' + i, code: (cfg.codePrefix || 'P') + '-' + (101 + i) }));
     const byId = (id) => items.find((x) => x.id === id);
     const typeName = (id) => L((cfg.types.find((t) => t.id === id) || {}).n);
@@ -122,7 +130,7 @@
       <footer class="w-foot"><div class="w-wrap"><div><a class="w-brand" href="#top"><span class="w-mark">${esc(cfg.mark)}</span><b>${esc(cfg.name)}</b></a><p class="w-muted" style="margin-top:10px;max-width:380px">${esc(L(cfg.about))}</p></div>
         <div><h4>${S.contact}</h4>${(cfg.contact.lines || []).map((l) => `<p>${esc(L(l))}</p>`).join('')}</div>
         <div><h4>${esc(L(cfg.navTitle) || 'Menu')}</h4>${cfg.nav.map(([id, n]) => `<p><a href="#${id}" style="text-decoration:none">${esc(L(n))}</a></p>`).join('')}</div>
-        <p class="w-made">${S.made} <a href="https://sylkit.com" target="_top">Sylkit</a></p></div></footer>
+        <p class="w-made">${S.made} <a href="https://sylkit.com" target="_top">Sylkit</a></p>${credit()}</div></footer>
       <div class="w-scrim" id="w-scrim"></div><div class="w-sheet" id="w-sheet" role="dialog" aria-modal="true"></div><div class="w-toast" id="w-toast" role="status"></div>`;
     document.body.appendChild(app);
     const $ = (id) => document.getElementById(id);

@@ -1,43 +1,306 @@
 {
-  "rose-makeup": ["lipstick makeup cosmetics", "squarish"],
-  "rose-skin": ["skincare serum bottle", "squarish"],
-  "rose-perfume": ["perfume bottle", "squarish"],
-  "volt-phone": ["smartphone on table", "squarish"],
-  "volt-audio": ["headphones product", "squarish"],
-  "volt-gadgets": ["smartwatch laptop gadget", "squarish"],
-  "horno-bread": ["bakery bread pastries", "squarish"],
-  "horno-cake": ["cake dessert slice", "squarish"],
-  "horno-coffee": ["coffee cup latte", "squarish"],
-  "fresco-produce": ["fresh vegetables fruit market", "squarish"],
-  "fresco-dairy": ["eggs milk cheese", "squarish"],
-  "aurum-jewelry": ["gold jewelry necklace ring", "squarish"],
-  "aurum-watch": ["luxury wrist watch", "squarish"],
-  "nido-decor": ["home decor vase", "squarish"],
-  "nido-furniture": ["armchair sofa interior", "squarish"],
-  "nido-lamp": ["lamp interior lighting", "squarish"],
-  "patitas-dog": ["dog pet", "squarish"],
-  "patitas-cat": ["cat pet", "squarish"],
-  "patitas-supplies": ["pet food bowl toy", "squarish"],
-  "pharmacy": ["pharmacy medicine", "landscape"],
-  "pills": ["medicine pills box", "squarish"],
-  "minimarket": ["grocery store shelves", "landscape"],
-  "groceries": ["grocery products packaged food", "squarish"],
-  "food": ["plated food dish restaurant", "squarish"],
-  "pizza": ["pizza", "squarish"],
-  "barber": ["barbershop haircut", "landscape"],
-  "mechanic": ["car mechanic workshop", "landscape"],
-  "hardware": ["hardware store tools", "landscape"],
-  "boutique": ["clothing boutique store", "landscape"],
-  "home-repair": ["plumber electrician home repair", "landscape"],
-  "warehouse": ["warehouse distribution boxes", "landscape"],
-  "accounting": ["accountant office desk", "landscape"],
-  "gym": ["gym interior equipment", "landscape"],
-  "fitness-class": ["fitness class workout", "landscape"],
-  "cars": ["car rental suv sedan", "landscape"],
-  "burger": ["burger fries meal", "squarish"],
-  "delivery-rider": ["food delivery motorbike", "landscape"],
-  "apartments": ["apartment building exterior", "landscape"],
-  "apartment-interior": ["apartment bedroom interior", "landscape"],
-  "travel-beach": ["tropical beach travel", "landscape"],
-  "travel-city": ["travel destination city mountains", "landscape"]
+ "rose-makeup": [
+  "lipstick makeup cosmetics",
+  "squarish"
+ ],
+ "rose-skin": [
+  "skincare serum bottle",
+  "squarish"
+ ],
+ "rose-perfume": [
+  "perfume bottle",
+  "squarish"
+ ],
+ "volt-phone": [
+  "smartphone on table",
+  "squarish"
+ ],
+ "volt-audio": [
+  "headphones product",
+  "squarish"
+ ],
+ "volt-gadgets": [
+  "smartwatch laptop gadget",
+  "squarish"
+ ],
+ "horno-bread": [
+  "bakery bread pastries",
+  "squarish"
+ ],
+ "horno-cake": [
+  "cake dessert slice",
+  "squarish"
+ ],
+ "horno-coffee": [
+  "coffee cup latte",
+  "squarish"
+ ],
+ "fresco-produce": [
+  "fresh vegetables fruit market",
+  "squarish"
+ ],
+ "fresco-dairy": [
+  "eggs milk cheese",
+  "squarish"
+ ],
+ "aurum-jewelry": [
+  "gold jewelry necklace ring",
+  "squarish"
+ ],
+ "aurum-watch": [
+  "luxury wrist watch",
+  "squarish"
+ ],
+ "nido-decor": [
+  "home decor vase",
+  "squarish"
+ ],
+ "nido-furniture": [
+  "armchair sofa interior",
+  "squarish"
+ ],
+ "nido-lamp": [
+  "lamp interior lighting",
+  "squarish"
+ ],
+ "patitas-dog": [
+  "dog pet",
+  "squarish"
+ ],
+ "patitas-cat": [
+  "cat pet",
+  "squarish"
+ ],
+ "patitas-supplies": [
+  "pet food bowl toy",
+  "squarish"
+ ],
+ "pharmacy": [
+  "pharmacy medicine",
+  "landscape"
+ ],
+ "pills": [
+  "medicine pills box",
+  "squarish"
+ ],
+ "minimarket": [
+  "grocery store shelves",
+  "landscape"
+ ],
+ "groceries": [
+  "grocery products packaged food",
+  "squarish"
+ ],
+ "food": [
+  "plated food dish restaurant",
+  "squarish"
+ ],
+ "pizza": [
+  "pizza",
+  "squarish"
+ ],
+ "barber": [
+  "barbershop haircut",
+  "landscape"
+ ],
+ "mechanic": [
+  "car mechanic workshop",
+  "landscape"
+ ],
+ "hardware": [
+  "hardware store tools",
+  "landscape"
+ ],
+ "boutique": [
+  "clothing boutique store",
+  "landscape"
+ ],
+ "home-repair": [
+  "plumber electrician home repair",
+  "landscape"
+ ],
+ "warehouse": [
+  "warehouse distribution boxes",
+  "landscape"
+ ],
+ "accounting": [
+  "accountant office desk",
+  "landscape"
+ ],
+ "gym": [
+  "gym interior equipment",
+  "landscape"
+ ],
+ "fitness-class": [
+  "fitness class workout",
+  "landscape"
+ ],
+ "cars": [
+  "car rental suv sedan",
+  "landscape"
+ ],
+ "burger": [
+  "burger fries meal",
+  "squarish"
+ ],
+ "delivery-rider": [
+  "food delivery motorbike",
+  "landscape"
+ ],
+ "apartments": [
+  "apartment building exterior",
+  "landscape"
+ ],
+ "apartment-interior": [
+  "apartment bedroom interior",
+  "landscape"
+ ],
+ "travel-beach": [
+  "tropical beach travel",
+  "landscape"
+ ],
+ "travel-city": [
+  "travel destination city mountains",
+  "landscape"
+ ],
+ "water-bottle": [
+  "bottled water",
+  "squarish"
+ ],
+ "soda": [
+  "soda bottle cola",
+  "squarish"
+ ],
+ "oj-bottle": [
+  "orange juice bottle",
+  "squarish"
+ ],
+ "coffee-bag": [
+  "ground coffee bag",
+  "squarish"
+ ],
+ "rice": [
+  "rice grains bag",
+  "squarish"
+ ],
+ "pasta-dry": [
+  "dry pasta",
+  "squarish"
+ ],
+ "oil": [
+  "cooking oil bottle",
+  "squarish"
+ ],
+ "sugar": [
+  "sugar",
+  "squarish"
+ ],
+ "milk": [
+  "milk bottle carton",
+  "squarish"
+ ],
+ "yogurt": [
+  "yogurt",
+  "squarish"
+ ],
+ "soap": [
+  "soap bar",
+  "squarish"
+ ],
+ "detergent": [
+  "laundry detergent",
+  "squarish"
+ ],
+ "toilet-paper": [
+  "toilet paper rolls",
+  "squarish"
+ ],
+ "cleaning": [
+  "cleaning products bottles",
+  "squarish"
+ ],
+ "cookies": [
+  "cookies",
+  "squarish"
+ ],
+ "chocolate": [
+  "chocolate bar",
+  "squarish"
+ ],
+ "cornmeal": [
+  "corn flour arepa",
+  "squarish"
+ ],
+ "cheese-sticks": [
+  "fried cheese sticks",
+  "squarish"
+ ],
+ "empanadas": [
+  "empanadas",
+  "squarish"
+ ],
+ "caesar": [
+  "caesar salad",
+  "squarish"
+ ],
+ "lemonade": [
+  "lemonade glass",
+  "squarish"
+ ],
+ "flan": [
+  "flan caramel dessert",
+  "squarish"
+ ],
+ "soft-drink": [
+  "soft drink glass ice",
+  "squarish"
+ ],
+ "jeans": [
+  "jeans denim",
+  "squarish"
+ ],
+ "sandals": [
+  "sandals",
+  "squarish"
+ ],
+ "sunglasses": [
+  "sunglasses",
+  "squarish"
+ ],
+ "dress": [
+  "floral dress",
+  "squarish"
+ ],
+ "tacos": [
+  "tacos",
+  "squarish"
+ ],
+ "sushi": [
+  "sushi",
+  "squarish"
+ ],
+ "fried-chicken": [
+  "fried chicken",
+  "squarish"
+ ],
+ "bowl": [
+  "healthy salad bowl",
+  "squarish"
+ ],
+ "tour-colonial": [
+  "colonial town colorful street",
+  "landscape"
+ ],
+ "waterfall": [
+  "waterfall jungle",
+  "landscape"
+ ],
+ "island": [
+  "caribbean island boat",
+  "landscape"
+ ],
+ "hiking": [
+  "mountain hiking group",
+  "landscape"
+ ]
 }

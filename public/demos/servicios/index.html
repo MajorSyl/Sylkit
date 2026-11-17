@@ -8,6 +8,11 @@ const JS = { es: { new: 'Nuevo', assigned: 'Asignado', onway: 'En camino', worki
 const JC = { new: 'red', assigned: 'blue', onway: 'orange', working: 'purple', done: 'green' };
 const JN = { assigned: 'onway', onway: 'working', working: 'done' };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MXx8cGx1bWJlciUyMGVsZWN0cmljaWFuJTIwaG9tZSUyMHJlcGFpcnxlbnwxfDB8fHwxNzk0ODg0MjQwfDA&ixlib=rb-4.1.0", "Emmanuel Ikwuegbu", "https://unsplash.com/@emmages?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Técnicos, citas y presupuestos a domicilio", en: "Technicians, visits and quotes at home" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'servicios', version: 1, theme: {"bg": "#EFFCF9", "card": "#ffffff", "primary": "#0D9488", "primaryD": "#0F766E", "soft": "#CCFBF1", "font": "'Outfit',sans-serif", "head": "'Outfit',sans-serif", "fonts": "family=Outfit:wght@400;600;700;800", "r": "14px", "rLg": "22px"},
   product: 'servicios-a-domicilio', logo: "🏠", color: '#0E9384',
   name: { es: 'Servicios a domicilio', en: 'Home Services' }, brand: { es: "HogarPro", en: "HogarPro" },

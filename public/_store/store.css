@@ -218,3 +218,15 @@ img { max-width: 100%; }
 .s-toast.show { opacity: 1; transform: translate(-50%, 0); }
 body.s-lock { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Real photos */
+.s-art.photo { background: var(--soft); }
+.s-art.photo::before { display: none; }
+.s-art.photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+.s-card:hover .s-art.photo img { transform: scale(1.04); }
+.s-hero.promo .s-main .s-art.photo { position: absolute; inset: 0; width: 100%; height: 100%; right: 0; top: 0; aspect-ratio: auto; border-radius: inherit; z-index: -2; }
+.s-hero.promo .s-main:has(.s-art.photo) { color: #fff !important; }
+.s-hero.promo .s-main:has(.s-art.photo)::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.62), rgba(0,0,0,.08) 75%); z-index: -1; border-radius: inherit; }
+.s-hero.banner .s-floats .s-art.photo { aspect-ratio: 3 / 4; }
+.s-credit a { color: inherit; }
+.s-perk i { display: grid; place-items: center; font-style: normal; }

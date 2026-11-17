@@ -6,6 +6,11 @@
 <script>
 const SUBJ = { es: ['Matemáticas', 'Lengua', 'Ciencias', 'Historia', 'Inglés'], en: ['Math', 'Language', 'Science', 'History', 'English'] };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1509062522246-3755977927d7?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8Mnx8c3R1ZGVudHMlMjBjbGFzc3Jvb20lMjB1bml2ZXJzaXR5fGVufDF8MHx8fDE3OTQ1NDg2MjN8MA&ixlib=rb-4.1.0", "Quilia", "https://unsplash.com/@heyquilia?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Notas, asistencia y pagos del colegio", en: "Grades, attendance and school fees" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'escuela', version: 1, theme: {"headerDark": true, "bg": "#FFF9E8", "card": "#ffffff", "primary": "#2563EB", "primaryD": "#1D4ED8", "soft": "#DBEAFE", "accent": "#FBBF24", "hbg": "#2563EB", "hfg": "#ffffff", "font": "'Nunito',sans-serif", "head": "'Fredoka',sans-serif", "fonts": "family=Nunito:wght@400;600;700;800&family=Fredoka:wght@400;600;700;800", "r": "16px", "rLg": "24px"},
   product: 'gestion-escolar', logo: "🎒", color: '#1D6BFF',
   name: { es: 'Gestión escolar', en: 'School Management' }, brand: { es: "Colegio Los Próceres", en: "Los Próceres School" },

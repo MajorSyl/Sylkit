@@ -9,6 +9,11 @@ const WL = { es: { received: 'Recibido', diagnosis: 'Diagnóstico', approval: 'E
   en: { received: 'Received', diagnosis: 'Diagnosis', approval: 'Awaiting approval', repair: 'In repair', ready: 'Ready for pickup', delivered: 'Delivered' } };
 const WC = { received: 'gray', diagnosis: 'blue', approval: 'orange', repair: 'purple', ready: 'green', delivered: 'gray' };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1771340012319-0b4fca008b54?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8M3x8Y2FyJTIwbWVjaGFuaWMlMjB3b3Jrc2hvcHxlbnwxfDB8fHwxNzk0ODg0MjMyfDA&ixlib=rb-4.1.0", "Dextar Studio", "https://unsplash.com/@dextarstudio?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Órdenes de trabajo, repuestos y avisos al cliente", en: "Work orders, parts and customer updates" } },
+  photoOf: (t) => ({})[t] || '',
+  /*/sylkit-photos*/
   id: 'taller', version: 1, theme: {"layout": "side", "dark": true, "headerDark": true, "bg": "#18181B", "card": "#27272A", "text": "#F4F4F5", "muted": "#A1A1AA", "border": "rgba(255,255,255,.08)", "line": "#3F3F46", "input": "#18181B", "primary": "#F97316", "primaryD": "#FDBA74", "soft": "rgba(249,115,22,.16)", "hbg": "#09090B", "hfg": "#ffffff", "font": "'Barlow',sans-serif", "head": "'Barlow Condensed',sans-serif", "fonts": "family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@400;600;700;800", "r": "4px", "rLg": "6px"},
   product: 'taller-mecanico', logo: "🔧", color: '#F79009',
   name: { es: 'Taller mecánico', en: 'Car Workshop' }, brand: { es: "AutoTaller El Rápido", en: "El Rápido Auto Shop" },

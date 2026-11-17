@@ -69,7 +69,15 @@
     const embed = new URLSearchParams(location.search).get('embed') === '1';
     const KEY = `sylkit_app_${cfg.slug}_v1`;
     const num = (n) => Number(n).toLocaleString(lang === 'es' ? 'es-VE' : 'en-US', { maximumFractionDigits: 0 });
-    const art = (k, s, cls = '') => `<div class="a-art ${cls}">${SylArt.svg(k, s, cfg.pal)}</div>`;
+    // Real photos: every scene (kind + seed) maps to a credited Unsplash photo (cfg.scene / cfg.photos).
+    // The drawn illustration (SylArt) is only a fallback for scenes without a photo.
+    const art = (k, s, cls = '') => {
+      const i = cfg.scene ? cfg.scene[`${k}:${s}`] : undefined;
+      const ph = i != null && cfg.photos ? cfg.photos[i] : null;
+      if (ph) return `<div class="a-art photo ${cls}"><img src="${ph[0]}&auto=format&fit=crop&q=72&w=${/xl|lg|hero/.test(cls) ? 1400 : 800}" alt="" loading="lazy"></div>`;
+      return `<div class="a-art ${cls}">${SylArt.svg(k, s, cfg.pal)}</div>`;
+    };
+    const credit = () => cfg.photos ? `<p class="photo-credit">${lang === 'es' ? 'Fotos' : 'Photos'}: ${[...new Map(cfg.photos.map((ph) => [ph[1], ph])).values()].map((ph) => `<a href="${ph[2]}" target="_blank" rel="noopener">${esc(ph[1])}</a>`).join(', ')} · <a href="https://unsplash.com/?utm_source=sylkit&utm_medium=referral" target="_blank" rel="noopener">Unsplash</a></p>` : '';
     const items = cfg.items.map((x, i) => ({ ...x, id: 'i' + i }));
     const byId = (id) => items.find((x) => x.id === id);
     const typeName = (id) => L((cfg.types.find((t) => t.id === id) || {}).n);
@@ -261,7 +269,7 @@
     function render(keepScroll) {
       const body = $('a-body');
       const y = body.scrollTop;
-      body.innerHTML = SCREENS[st.tab]();
+      body.innerHTML = SCREENS[st.tab]() + (st.tab === TABS[0][0] ? credit() : "");
       body.scrollTop = keepScroll ? y : 0;
       $('a-tabs').innerHTML = TABS.map(([id, icon, label]) => {
         const n = id === 'saved' ? st.favs.length : id === 'visits' ? st.visits.length : 0;

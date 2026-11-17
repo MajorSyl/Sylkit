@@ -6,6 +6,11 @@
 <script>
 const CATS = { es: { ferre: 'Ferretería', elec: 'Electricidad', pint: 'Pinturas', plom: 'Plomería', herr: 'Herramientas' }, en: { ferre: 'Hardware', elec: 'Electrical', pint: 'Paint', plom: 'Plumbing', herr: 'Tools' } };
 SylDemo.create({
+  /*sylkit-photos*/
+  photos: {"ph0": ["https://images.unsplash.com/photo-1774273177331-4c19e9912071?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTN8fGhhcmR3YXJlJTIwc3RvcmUlMjB0b29sc3xlbnwxfDB8fHwxNzk0ODg0MjM2fDA&ixlib=rb-4.1.0", "Tianlei Wu", "https://unsplash.com/@wutianlei?utm_source=sylkit&utm_medium=referral"], "ph1": ["https://images.unsplash.com/photo-1542238060-646c7ed65622?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8NHx8aGFyZHdhcmUlMjBzdG9yZSUyMHRvb2xzfGVufDF8MHx8fDE3OTQ4ODQyMzZ8MA&ixlib=rb-4.1.0", "Jacob Campbell", "https://unsplash.com/@jacobsoup?utm_source=sylkit&utm_medium=referral"], "ph2": ["https://images.unsplash.com/photo-1785769587815-a222f309e6cc?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTF8fGhhcmR3YXJlJTIwc3RvcmUlMjB0b29sc3xlbnwxfDB8fHwxNzk0ODg0MjM2fDA&ixlib=rb-4.1.0", "Lucas", "https://unsplash.com/@steinman_photography?utm_source=sylkit&utm_medium=referral"]},
+  cover: { photo: 'ph0', lead: { es: "Stock en dos almacenes, sin sorpresas", en: "Stock across two warehouses, no surprises" } },
+  photoOf: (t) => ({"Pintura blanca galón": "ph1", "Clavos 2\" (kg)": "ph2"})[t] || '',
+  /*/sylkit-photos*/
   id: 'inventario', version: 1, theme: {"layout": "side", "headerDark": true, "bg": "#EEF0F3", "card": "#ffffff", "text": "#1F2933", "muted": "#616E7C", "border": "rgba(31,41,51,.10)", "line": "#CBD2D9", "primary": "#D97706", "primaryD": "#B45309", "soft": "#FEF3C7", "hbg": "#1F2933", "hfg": "#ffffff", "font": "'IBM Plex Sans',sans-serif", "head": "'IBM Plex Sans',sans-serif", "fonts": "family=IBM+Plex+Sans:wght@400;600;700;800", "r": "6px", "rLg": "8px"},
   product: 'control-de-inventario', logo: "🔩", color: '#0E9384',
   name: { es: 'Control de inventario', en: 'Inventory Control' }, brand: { es: "Ferretería El Tornillo", en: "El Tornillo Hardware" },
