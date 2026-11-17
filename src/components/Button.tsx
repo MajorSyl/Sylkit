@@ -27,7 +27,7 @@ export function Button({
       onPress={onPress}
       disabled={disabled || loading}
       accessibilityRole="button"
-      style={({ pressed }) => [styles.btn, { backgroundColor: v.bg }, (pressed || disabled) && { opacity: 0.75 }, style]}
+      style={({ pressed, hovered }: any) => [styles.btn, { backgroundColor: v.bg }, variant === 'primary' && styles.sheen, hovered && !disabled && styles.hover, pressed && { transform: [{ scale: 0.97 }] }, disabled && { opacity: 0.75 }, style]}
     >
       {loading ? (
         <ActivityIndicator color={v.fg} />
@@ -50,6 +50,9 @@ const variants: Record<Variant, { bg: string; fg: string }> = {
 };
 
 const styles = StyleSheet.create({
+  // Smooth press and hover on the web (a short transition); on phones the press scale is instant.
+  sheen: { backgroundImage: 'linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0))', boxShadow: '0 6px 18px rgba(37,88,232,0.25), inset 0 1px 0 rgba(255,255,255,0.25)' } as any,
+  hover: { transform: [{ translateY: -1 }], boxShadow: '0 10px 24px rgba(15,23,42,0.16)' } as any,
   btn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -59,6 +62,9 @@ const styles = StyleSheet.create({
     paddingVertical: 13,
     borderRadius: 14,
     minHeight: 48,
-  },
+    transitionProperty: 'transform, box-shadow, opacity',
+    transitionDuration: '160ms',
+    transitionTimingFunction: 'ease-out',
+  } as any,
   text: { fontWeight: '800', fontSize: 15 },
 });

@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import { glass, glassDark, PressScale, Reveal, useLift } from './motion';
 import { useRouter } from 'expo-router';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
-import { Image, ImageBackground, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Animated, Image, ImageBackground, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { categories, type Product } from '../data/products';
 import { industries } from '../data/industries';
 import { popularSystems } from '../data/popularSystems';
@@ -307,7 +308,7 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
           {chips.map((c, i) => {
             const on = cat === c.id;
             return (
-              <Pressable key={c.id} onPress={() => setCat(c.id)} accessibilityRole="button" accessibilityState={{ selected: on }} style={[styles.chipWrap, on && styles.chipWrapOn]}>
+              <PressScale key={c.id} onPress={() => setCat(c.id)} to={0.95} accessibilityRole="button" accessibilityState={{ selected: on }} style={[styles.chipWrap, on && styles.chipWrapOn]}>
                 {i === 0 ? (
                   <View style={[styles.chip, styles.chipFirst]}>
                     <Ionicons name="star-outline" size={17} color="#fff" />
@@ -321,12 +322,12 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
                     </Text>
                   </ImageBackground>
                 )}
-              </Pressable>
+              </PressScale>
             );
           })}
         </ScrollView>
         {wide ? (
-          <Pressable style={styles.chipArrow} onPress={scrollChips} accessibilityLabel={tx('More categories', 'Más categorías', 'Mais categorias')}>
+          <Pressable style={[styles.chipArrow, glass]} onPress={scrollChips} accessibilityLabel={tx('More categories', 'Más categorías', 'Mais categorias')}>
             <Ionicons name="chevron-forward" size={18} color={colors.text} />
           </Pressable>
         ) : null}
@@ -342,10 +343,10 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
       {/* Cards */}
       {list.length ? (
         <View style={[styles.grid, { marginHorizontal: cols === 1 ? 0 : -8 }]}>
-          {list.map((i) => (
-            <View key={i.key} style={{ width: `${100 / cols}%`, paddingHorizontal: cols === 1 ? 0 : 8, paddingBottom: cols === 1 ? 30 : 24 }}>
+          {list.map((i, idx) => (
+            <Reveal key={i.key} delay={(idx % cols) * 70} style={{ width: `${100 / cols}%`, paddingHorizontal: cols === 1 ? 0 : 8, paddingBottom: cols === 1 ? 30 : 24 }}>
               <Card item={i} touch={!wide} single={cols === 1} priceText={priceText(i)} openDemo={openUrl} />
-            </View>
+            </Reveal>
           ))}
         </View>
       ) : (
@@ -430,6 +431,7 @@ function Opt({ on, label, onPress, check }: { on: boolean; label: string; onPres
 
 function Card({ item, touch, single, priceText, openDemo }: { item: Item; touch: boolean; single: boolean; priceText: string; openDemo: (url: string) => void }) {
   const [hover, setHover] = useState(false);
+  const lift = useLift(5);
   const isTpl = item.kind === 'template';
   const badge = item.isNew ? tx('NEW', 'NUEVO', 'NOVO') : isTpl ? tx('TEMPLATE', 'PLANTILLA', 'MODELO') : item.demo ? tx('LIVE DEMO', 'DEMO EN VIVO', 'DEMO AO VIVO') : null;
   const isDemoOnly = item.isNew || (!isTpl && item.demo && item.price == null);
@@ -437,14 +439,14 @@ function Card({ item, touch, single, priceText, openDemo }: { item: Item; touch:
     // Phones: one large rounded card per row; under it the name with a grey pill and the price.
     return (
       <View>
-        <Pressable onPress={item.open} style={styles.coverBig} accessibilityRole="link" accessibilityLabel={item.title}>
+        <PressScale onPress={item.open} style={styles.coverBig} to={0.975} accessibilityRole="link" accessibilityLabel={item.title}>
           {item.cover ? <Image source={{ uri: item.cover }} style={styles.img} resizeMode="cover" /> : null}
           {!isTpl && item.demo ? (
-            <Pressable style={styles.playBtn} onPress={() => (item.isNew ? item.open() : openDemo(item.demo!))} accessibilityRole="link" accessibilityLabel={tx('Try demo', 'Probar demo', 'Testar demo')}>
+            <PressScale style={[styles.playBtn, glass]} to={0.9} onPress={() => (item.isNew ? item.open() : openDemo(item.demo!))} accessibilityRole="link" accessibilityLabel={tx('Try demo', 'Probar demo', 'Testar demo')}>
               <Ionicons name="play" size={16} color={colors.text} />
-            </Pressable>
+            </PressScale>
           ) : null}
-        </Pressable>
+        </PressScale>
         <Pressable onPress={item.open} style={styles.metaBig} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
           <Image source={{ uri: `${ORIGIN}/brand/sylkit-mark.svg` }} style={styles.avatarBig} />
           <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
@@ -463,8 +465,9 @@ function Card({ item, touch, single, priceText, openDemo }: { item: Item; touch:
     );
   }
   return (
-    <View>
-      <Pressable onPress={item.open} onHoverIn={() => setHover(true)} onHoverOut={() => setHover(false)} style={styles.cover} accessibilityRole="link" accessibilityLabel={item.title}>
+    <Animated.View style={lift.style}>
+      <Animated.View pointerEvents="none" style={[styles.liftShadow, lift.shadow]} />
+      <Pressable onPress={item.open} onHoverIn={() => { setHover(true); lift.onHoverIn(); }} onHoverOut={() => { setHover(false); lift.onHoverOut(); }} style={styles.cover} accessibilityRole="link" accessibilityLabel={item.title}>
         {item.cover ? <Image source={{ uri: item.cover }} style={[styles.img, hover && ({ transform: [{ scale: 1.03 }] } as any)]} resizeMode="cover" /> : null}
         <View style={styles.shade as any} pointerEvents="none">
           <Text style={styles.ovTitle} numberOfLines={2}>
@@ -477,15 +480,15 @@ function Card({ item, touch, single, priceText, openDemo }: { item: Item; touch:
           ) : null}
         </View>
         {badge ? (
-          <View style={styles.pill} pointerEvents="none">
+          <View style={[styles.pill, glassDark]} pointerEvents="none">
             <Text style={styles.pillText} numberOfLines={1}>{badge}</Text>
           </View>
         ) : null}
         {hover && !touch && !isTpl && item.demo && !item.isNew ? (
-          <Pressable style={styles.demoBtn} onPress={() => openDemo(item.demo!)} accessibilityRole="link">
+          <PressScale style={[styles.demoBtn, glass]} to={0.94} onPress={() => openDemo(item.demo!)} accessibilityRole="link">
             <Ionicons name="play" size={12} color={colors.text} />
             <Text style={styles.demoBtnText}>{tx('Try demo', 'Probar demo', 'Testar demo')}</Text>
-          </Pressable>
+          </PressScale>
         ) : null}
       </Pressable>
       <Pressable onPress={item.open} style={styles.meta} accessibilityRole="link" accessibilityLabel={`${item.title} · ${priceText}`}>
@@ -500,11 +503,12 @@ function Card({ item, touch, single, priceText, openDemo }: { item: Item; touch:
           {priceText}
         </Text>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  liftShadow: { position: 'absolute', left: 8, right: 8, top: 18, aspectRatio: 1.42, borderRadius: 14, boxShadow: '0 22px 40px rgba(15,23,42,0.22)' } as any,
   toolbar: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   filterBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, height: 48, paddingHorizontal: 18, borderRadius: 999, borderWidth: 1, borderColor: '#D5DAE3', backgroundColor: colors.surface },
   filterBtnOn: { borderColor: colors.primary, backgroundColor: '#F2F6FF' },

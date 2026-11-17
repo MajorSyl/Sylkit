@@ -1,8 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { usePathname, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Animated, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { tx, useLang } from '../i18n';
+import { useHalo } from './motion';
 import { colors, waLink } from '../theme';
 
 // Help widget: a chat bubble on every public page.
@@ -165,6 +166,7 @@ export function HelpWidget() {
   const L = (v: [string, string, string]) => (lang === 'es' ? v[1] : lang === 'pt' ? v[2] : v[0]);
 
   const [open, setOpen] = useState(false);
+  const halo = useHalo(3);
   const [view, setView] = useState<View_>('home');
   const [status, setStatus] = useState<Status | null>(null);
   const [chat, setChat] = useState<Msg[]>([]);
@@ -499,6 +501,7 @@ export function HelpWidget() {
           accessibilityRole="button"
           accessibilityLabel={open ? tx('Close help', 'Cerrar ayuda', 'Fechar ajuda') : tx('Help and support', 'Ayuda y soporte', 'Ajuda e suporte')}
         >
+          {!open ? <Animated.View pointerEvents="none" style={[styles.halo, halo]} /> : null}
           <Ionicons name={open ? 'close' : 'chatbubble-ellipses'} size={28} color="#fff" />
           {!open && unread ? <Text style={styles.launcherBadge}>{unread}</Text> : null}
         </Pressable>
@@ -580,7 +583,8 @@ function Input({ label, value, onChange, multiline, autoComplete, keyboard }: { 
 }
 
 const styles = StyleSheet.create({
-  launcher: { right: 20, bottom: 20, width: 60, height: 60, borderRadius: 999, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', zIndex: 900, boxShadow: '0 12px 30px rgba(37,88,232,0.38)', elevation: 8 } as any,
+  launcher: { right: 20, bottom: 20, width: 60, height: 60, borderRadius: 999, backgroundColor: colors.primary, backgroundImage: 'linear-gradient(145deg,#3D7BFF 0%,#2558E8 55%,#1E46C4 100%)', alignItems: 'center', justifyContent: 'center', zIndex: 900, boxShadow: '0 12px 30px rgba(37,88,232,0.38), inset 0 1px 0 rgba(255,255,255,0.35)', elevation: 8 } as any,
+  halo: { position: 'absolute', top: 0, left: 0, width: 60, height: 60, borderRadius: 999, backgroundColor: colors.primary },
   launcherBadge: { position: 'absolute', top: -2, right: -2, minWidth: 22, height: 22, borderRadius: 999, backgroundColor: '#EF4444', color: '#fff', fontSize: 12, fontWeight: '800', textAlign: 'center', lineHeight: 22, overflow: 'hidden', borderWidth: 2, borderColor: '#fff' },
   panelWrap: { right: 20, bottom: 92, zIndex: 901 },
   panelWrapPhone: { left: 0, right: 0, top: 0, bottom: 0, zIndex: 901 },

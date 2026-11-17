@@ -8,6 +8,7 @@ import { useLang } from '../i18n';
 import { colors, glass, waLink } from '../theme';
 import { Logo } from './Logo';
 import { signOut, useSession } from '../lib/auth';
+import { Reveal } from './motion';
 import { tx } from '../i18n';
 
 // Site navigation. Wide screens show labeled links; phones show a "Menu" button that opens
@@ -142,8 +143,9 @@ export function Header() {
           </View>
           <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
             <Text style={styles.section}>{tx('PRODUCTS', 'PRODUCTOS', "PRODUTOS")}</Text>
-            {products.map((x) => (
-              <Pressable key={x.href} style={styles.item} onPress={() => go(x.href)} accessibilityRole="link">
+            {products.map((x, i) => (
+              <Reveal key={x.href} mount delay={60 + i * 45} distance={12}>
+              <Pressable style={styles.item} onPress={() => go(x.href)} accessibilityRole="link">
                 <View style={styles.itemIcon}>
                   <Ionicons name={x.icon as any} size={22} color={colors.primary} />
                 </View>
@@ -153,6 +155,7 @@ export function Header() {
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={colors.muted} />
               </Pressable>
+              </Reveal>
             ))}
             <View style={styles.divider} />
             <Pressable style={styles.item} onPress={() => go('/account')} accessibilityRole="link">
@@ -187,13 +190,17 @@ export function Header() {
 const styles = StyleSheet.create({
   // A single style object: <Link asChild> can't take a style array.
   navLinkIcon: { paddingHorizontal: 10, minHeight: 40, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  // Frosted glass bar: translucent white with a background blur (web) and a hairline edge.
   wrap: {
-    backgroundColor: colors.glass,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    backdropFilter: 'blur(20px) saturate(180%)',
+    WebkitBackdropFilter: 'blur(20px) saturate(180%)',
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: 'rgba(15,23,42,0.07)',
+    boxShadow: '0 1px 0 rgba(255,255,255,0.8) inset, 0 6px 24px rgba(15,23,42,0.05)',
     position: 'relative',
     zIndex: 10,
-  },
+  } as any,
   inner: {
     width: '100%',
     maxWidth: 1180,
