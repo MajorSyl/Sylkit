@@ -67,12 +67,12 @@
         <div class="x-wrap">
           <section class="x-sec" id="catalog"><h2>${esc(L(c.title))}</h2><p class="lead">${esc(L(c.lead))}</p>
             ${c.filters ? `<div class="x-chips">${[['all', S.all], ...c.filters].map(([id, l]) => `<button class="x-chip ${db.cat === id ? 'on' : ''}" data-cat="${id}">${esc(L(l))}</button>`).join('')}</div>` : ''}
-            <div class="x-grid">${list.map(card).join('') || `<p class="lead">${S.empty}</p>`}</div></section>
+            <div class="x-grid${c.portrait ? ' portrait' : ''}">${list.map(card).join('') || `<p class="lead">${S.empty}</p>`}</div></section>
           ${cfg.perks ? `<div class="x-perks">${cfg.perks.map(([i, t, d]) => `<div class="x-perk"><i>${svg(i, 20)}</i><div><b>${esc(L(t))}</b><span>${esc(L(d))}</span></div></div>`).join('')}</div>` : ''}
         </div>`;
     }
     function card(x) {
-      return `<button class="x-card" data-open="${x.id}"><div class="ph"><img src="${pic(x.photo, 640, 480)}" alt="" loading="lazy">${x.tag ? `<span class="tag">${esc(L(x.tag))}</span>` : ''}</div>
+      return `<button class="x-card" data-open="${x.id}"><div class="ph"><img src="${pic(x.photo, 640, cfg.catalog.portrait ? 800 : 480)}" alt="" loading="lazy">${x.tag ? `<span class="tag">${esc(L(x.tag))}</span>` : ''}</div>
         <div class="bd"><b>${esc(L(x.title))}</b><span class="meta">${esc(L(x.meta))}</span>
         <div class="row"><span class="x-price">${money(x.price)}${x.unit ? ` <small>${esc(L(x.unit))}</small>` : ''}</span><span class="x-btn sm">${esc(L(cfg.book.button))}</span></div></div></button>`;
     }

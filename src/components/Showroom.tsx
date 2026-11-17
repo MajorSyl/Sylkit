@@ -24,7 +24,7 @@ const DEMO_ROUTE: Record<string, string> = { hotels: 'hotel', events: 'events', 
 type Sort = 'featured' | 'price' | 'name';
 // Gallery order: the systems and websites clients ask for most come first.
 const FEATURED = [
-  'demo-hotels', 'pop-rides', 'pop-eats', 'pop-flights', 'punto-de-venta', 'farmacia-pos', 'restaurante-menu-qr', 'tienda-online-whatsapp',
+  'demo-hotels', 'pop-rides', 'pop-eats', 'pop-flights', 'pop-models', 'punto-de-venta', 'farmacia-pos', 'restaurante-menu-qr', 'tienda-online-whatsapp',
   'tpl-lex', 'tpl-vital', 'tpl-cifra', 'pop-delivery', 'pop-gym', 'clinica-citas-historias', 'tpl-sonrisa',
   'demo-realestate', 'pop-car-rental', 'salon-barberia-reservas', 'tpl-norte', 'tpl-nodo', 'pop-crm', 'tpl-grupo',
   'tpl-ngo', 'tpl-club', 'tpl-gov', 'tpl-fc', 'demo-events', 'pop-tours', 'pop-rentals', 'control-de-inventario',
@@ -63,6 +63,7 @@ const CHIP_COVER: Record<string, string> = {
   rides: '/shots/covers/demo-rides.webp',
   eats: '/shots/covers/demo-eats.webp',
   flights: '/shots/covers/demo-flights.webp',
+  models: '/shots/covers/demo-models.webp',
   all: '/shots/covers/portafolio.webp',
   templates: '/shots/covers/tpl-aula-app.webp',
   retail: '/shots/covers/pos.webp',

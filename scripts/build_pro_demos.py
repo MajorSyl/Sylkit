@@ -449,6 +449,56 @@ DEMOS['flights'] = dict(
     .map(([name, item, status, p], i) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 416 000 0000', detail: `${a.date(a.day(14 + i * 3))} · ${p} pax`, total: x.price * p, status, at: new Date(Date.now() - (i + 1) * 4e6).toISOString() }; }),
 }""")
 
+# ---------------------------------------------------------------- Model agency
+DEMOS['models'] = dict(
+    title='Élite Model Management', desc='Live demo of the Sylkit model agency system: model portfolios, client booking requests, options, castings and payments.',
+    photos={'hero': 'model-editorial:0', 'w1': 'model-f:2', 'w2': 'model-f:5', 'w3': 'model-f:7', 'w4': 'model-f:8', 'w5': 'model-f:10', 'w6': 'model-f:14',
+            'm1': 'model-m:0', 'm2': 'model-m:4', 'm3': 'model-m:5', 'm4': 'model-m:10', 'c1': 'photoshoot:9', 'c2': 'photoshoot:14', 'c3': 'runway:2'},
+    cfg="""{
+  id: 'models', version: 1, ref: 'models',
+  theme: { primary: '#111111', primaryD: '#000000', soft: '#f4f4f4', fonts: 'family=Inter:wght@400;600;700;800;900' },
+  brand: { name: 'Élite Models', mark: 'É' },
+  hero: { photo: 'hero', eyebrow: { en: 'Fashion · Commercial · Runway · Events', es: 'Moda · Comercial · Pasarela · Eventos' },
+    title: { en: 'Book the right face for your brand', es: 'Reserva el rostro ideal para tu marca' },
+    lead: { en: 'Browse our models, check availability and send a booking request. Our bookers confirm within hours.', es: 'Mira nuestros modelos, consulta disponibilidad y envía tu solicitud. Nuestros bookers confirman en horas.' },
+    search: [{ name: 'board', label: { en: 'Board', es: 'Categoría' }, type: 'select', options: [['all', { en: 'All models', es: 'Todos' }], ['women', { en: 'Women', es: 'Mujeres' }], ['men', { en: 'Men', es: 'Hombres' }]] },
+      { name: 'date', label: { en: 'Shoot date', es: 'Fecha' }, type: 'date', value: (a) => a.day(7) }],
+    cta: { en: 'Find models', es: 'Buscar modelos' }, onSearch: (v, a) => { a.db.cat = v.board; } },
+  catalog: { portrait: true, title: { en: 'Our models', es: 'Nuestros modelos' }, lead: { en: 'Day rates shown. Tap a model to request a booking or an option.', es: 'Tarifa por día. Toca un modelo para pedir una reserva u opción.' },
+    filters: [['women', { en: 'Women', es: 'Mujeres' }], ['men', { en: 'Men', es: 'Hombres' }]],
+    items: [
+      { id: 'a1', cat: 'women', photo: 'w1', title: 'Camila R.', meta: { en: '1.78 m · 84-61-90 · Caracas', es: '1,78 m · 84-61-90 · Caracas' }, price: 450, unit: { en: '/day', es: '/día' }, tag: { en: 'New face', es: 'New face' } },
+      { id: 'a2', cat: 'women', photo: 'w2', title: 'Isabella M.', meta: { en: '1.80 m · 82-60-89 · Runway', es: '1,80 m · 82-60-89 · Pasarela' }, price: 600, unit: { en: '/day', es: '/día' } },
+      { id: 'b1', cat: 'men', photo: 'm1', title: 'Diego A.', meta: { en: '1.88 m · Suit 40 · Commercial', es: '1,88 m · Talla 40 · Comercial' }, price: 420, unit: { en: '/day', es: '/día' } },
+      { id: 'a3', cat: 'women', photo: 'w3', title: 'Valeria T.', meta: { en: '1.76 m · Beauty & editorial', es: '1,76 m · Belleza y editorial' }, price: 520, unit: { en: '/day', es: '/día' }, tag: { en: 'Top booked', es: 'Más reservada' } },
+      { id: 'b2', cat: 'men', photo: 'm2', title: 'Samuel K.', meta: { en: '1.86 m · Fitness & sport', es: '1,86 m · Fitness y deporte' }, price: 380, unit: { en: '/day', es: '/día' } },
+      { id: 'a4', cat: 'women', photo: 'w4', title: 'Lucía P.', meta: { en: '1.74 m · Commercial & TV', es: '1,74 m · Comercial y TV' }, price: 400, unit: { en: '/day', es: '/día' } },
+      { id: 'b3', cat: 'men', photo: 'm3', title: 'Andrés V.', meta: { en: '1.82 m · Character & editorial', es: '1,82 m · Carácter y editorial' }, price: 350, unit: { en: '/day', es: '/día' } },
+      { id: 'a5', cat: 'women', photo: 'w5', title: 'Mariana G.', meta: { en: '1.79 m · Runway & campaigns', es: '1,79 m · Pasarela y campañas' }, price: 650, unit: { en: '/day', es: '/día' } },
+      { id: 'b4', cat: 'men', photo: 'm4', title: 'Tomás L.', meta: { en: '1.85 m · Lifestyle', es: '1,85 m · Lifestyle' }, price: 360, unit: { en: '/day', es: '/día' } },
+      { id: 'a6', cat: 'women', photo: 'w6', title: 'Sofía N.', meta: { en: '1.77 m · Street & e-commerce', es: '1,77 m · Urbano y e-commerce' }, price: 380, unit: { en: '/day', es: '/día' } },
+    ] },
+  book: { button: { en: 'Book', es: 'Reservar' }, confirm: { en: 'Send booking request', es: 'Enviar solicitud' },
+    fields: [{ name: 'job', label: { en: 'Job type', es: 'Tipo de trabajo' }, type: 'select', options: [['ecom', { en: 'E-commerce shoot', es: 'Fotos e-commerce' }], ['campaign', { en: 'Campaign', es: 'Campaña' }], ['runway', { en: 'Runway show', es: 'Desfile' }], ['event', { en: 'Event / promo', es: 'Evento / promoción' }]] },
+      { name: 'date', label: { en: 'Date', es: 'Fecha' }, type: 'date', value: (a) => a.day(7) }, { name: 'days', label: { en: 'Days', es: 'Días' }, type: 'number', min: 1, value: 1 },
+      { name: 'brand', label: { en: 'Brand / client', es: 'Marca / cliente' }, value: 'Maison Valeria' }],
+    total: (x, v) => x.price * Math.max(1, Number(v.days) || 1), detail: (x, v, a) => `${v.brand} · ${a.date(v.date)} · ${Math.max(1, Number(v.days) || 1)}d` },
+  flow: [{ id: 'req', label: { en: 'Requests', es: 'Solicitudes' } }, { id: 'opt', label: { en: 'On option', es: 'En opción' }, verb: { en: 'Put on option', es: 'Poner en opción' }, tone: 'warn' },
+    { id: 'conf', label: { en: 'Confirmed', es: 'Confirmados' }, verb: { en: 'Confirm', es: 'Confirmar' }, tone: 'info' }, { id: 'paid', label: { en: 'Paid', es: 'Pagados' }, verb: { en: 'Invoice paid', es: 'Factura pagada' } }],
+  dashTitle: { en: 'Booking board', es: 'Tablero de reservas' }, dashLead: { en: 'Requests, options and confirmed jobs for every model, with commissions and model payouts calculated.', es: 'Solicitudes, opciones y trabajos confirmados de cada modelo, con comisiones y pagos a modelos calculados.' },
+  stats: (a) => { const r = a.db.records; return [[{ en: 'Models on board', es: 'Modelos activos' }, '64'], [{ en: 'Jobs this month', es: 'Trabajos del mes' }, String(38 + r.filter((x) => x.status !== 'req').length)],
+    [{ en: 'Billed this month', es: 'Facturado del mes' }, a.money(28600 + r.reduce((s, x) => s + x.total, 0))], [{ en: 'Agency commission', es: 'Comisión agencia' }, '20%']]; },
+  side: { title: { en: 'Castings this week', es: 'Castings de la semana' }, rows: (a) => [
+    { img: 'c3', title: { en: 'Caracas Fashion Week · runway', es: 'Caracas Fashion Week · pasarela' }, sub: { en: 'Thu 10:00 · 6 women, 2 men', es: 'Jue 10:00 · 6 mujeres, 2 hombres' }, right: { en: '8 sent', es: '8 enviados' }, tone: 'info' },
+    { img: 'c1', title: { en: 'Beauty brand campaign', es: 'Campaña de belleza' }, sub: { en: 'Fri 14:00 · studio · 2 women', es: 'Vie 14:00 · estudio · 2 mujeres' }, right: { en: 'Option', es: 'Opción' }, tone: 'warn' },
+    { img: 'c2', title: { en: 'Menswear e-commerce', es: 'E-commerce masculino' }, sub: { en: 'Sat 09:00 · 3 men', es: 'Sáb 09:00 · 3 hombres' }, right: { en: 'Confirmed', es: 'Confirmado' }, tone: 'ok' }] },
+  perks: [['users', { en: 'Digital comp cards', es: 'Comp cards digitales' }, { en: 'Photos, measurements and videos per model.', es: 'Fotos, medidas y videos de cada modelo.' }],
+    ['calendar', { en: 'Options & availability', es: 'Opciones y disponibilidad' }, { en: 'No double bookings.', es: 'Sin reservas dobles.' }],
+    ['card', { en: 'Invoices & payouts', es: 'Facturas y pagos' }, { en: 'Commission split automatically.', es: 'Comisión calculada automáticamente.' }]],
+  seed: (a) => [['Maison Valeria', 'a1', 'conf', 'Campaign · 2d', 900], ['Studio Norte', 'b1', 'opt', 'E-commerce · 1d', 420], ['Rosé Beauty', 'a3', 'req', 'Beauty campaign · 1d', 520], ['Caracas Fashion Week', 'a5', 'paid', 'Runway · 1d', 650], ['Urban Wear', 'b2', 'req', 'Lookbook · 1d', 380]]
+    .map(([name, item, status, detail, total], i) => ({ id: a.uid(), item, name, phone: '+58 412 000 0000', detail, total, status, at: new Date(Date.now() - (i + 1) * 3e6).toISOString() })),
+}""")
+
 
 def main():
     for demo, d in DEMOS.items():

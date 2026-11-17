@@ -374,5 +374,11 @@
   "url": "/demos/flights/",
   "cover": "demo-flights.webp",
   "accent": "2563EB"
+ },
+ {
+  "name": "models",
+  "url": "/demos/models/",
+  "cover": "demo-models.webp",
+  "accent": "8B7355"
  }
 ]

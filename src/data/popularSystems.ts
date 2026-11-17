@@ -59,4 +59,10 @@ export const popularSystems: PopularSystem[] = [
     built: { en: 'Tour pages, seats per departure, bookings and deposits.', es: 'Páginas de tours, cupos por salida, reservas y abonos.', pt: 'Páginas de passeios, vagas por saída, reservas e sinal.' },
     href: '/demos/tours/', cover: '/shots/covers/demo-tours.webp',
   },
+  {
+    id: 'models',
+    title: { en: 'Model agency', es: 'Agencia de modelos', pt: 'Agência de modelos' },
+    built: { en: 'Model portfolios, client bookings, options, castings and payouts.', es: 'Portafolios de modelos, reservas de clientes, opciones, castings y pagos.', pt: 'Portfólios de modelos, reservas, opções, castings e pagamentos.' },
+    href: '/demos/models/', cover: '/shots/covers/demo-models.webp',
+  },
 ];

@@ -109,3 +109,8 @@ button { font: inherit; cursor: pointer; }
   .x-search { grid-template-columns: 1fr 1fr; } .x-search .x-btn { grid-column: 1 / -1; }
   .x-grid { grid-template-columns: 1fr; } .x-wrap { padding: 0 16px; }
 }
+
+.x-grid.portrait { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.x-grid.portrait .x-card .ph { aspect-ratio: 4 / 5; }
+.x-grid.portrait .x-card .ph img { object-position: center 25%; }
+@media (max-width: 600px) { .x-grid.portrait { grid-template-columns: 1fr 1fr; } }
