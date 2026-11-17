@@ -1,36 +1,16 @@
-ok water-bottle 16
-ok soda 16
-ok oj-bottle 16
-ok coffee-bag 16
-ok rice 16
-ok pasta-dry 16
-ok oil 16
-ok sugar 16
-ok milk 16
-ok yogurt 16
-ok soap 16
-ok detergent 16
-ok toilet-paper 16
-ok cleaning 16
-ok cookies 16
-ok chocolate 16
 empty cornmeal {'total': 0, 'page': 1, 'results': []}
-ok cheese-sticks 11
-ok empanadas 13
-ok caesar 4
-ok lemonade 16
-ok flan 16
-ok soft-drink 16
-ok jeans 16
-ok sandals 16
-ok sunglasses 16
-ok dress 16
-ok tacos 16
-ok sushi 16
-ok fried-chicken 16
-ok bowl 16
-ok tour-colonial 16
-ok waterfall 16
-ok island 16
-ok hiking 16
-fetched 34
+ok law-office 16
+ok lawyer 16
+ok legal-docs 16
+ok doctor 16
+ok medical-team 16
+ok clinic-room 7
+ok dentist 16
+ok tax 16
+ok finance-team 16
+ok consultant 16
+ok portrait-pro 16
+ok it-server 4
+ok developer 16
+stop at network-tech HTTP Error 503: Service Unavailable
+fetched 13
