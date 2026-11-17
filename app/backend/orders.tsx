@@ -44,7 +44,7 @@ function Orders() {
   useEffect(() => {
     load();
     const ch = supabase
-      .channel('orders-admin')
+      .channel(`orders-admin-${Date.now()}-${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => load())
       .subscribe();
     return () => {
@@ -111,8 +111,8 @@ function Orders() {
           {shown.map((r) => {
             const sc = statusColor[r.status];
             return (
-              <Link key={r.id} href={`/admin/order?id=${r.id}`} asChild>
-                <Pressable style={[adminStyles.card, shadow, styles.row]}>
+              <Link key={r.id} href={`/backend/order?id=${r.id}`} asChild>
+                <Pressable style={StyleSheet.flatten([adminStyles.card, shadow, styles.row])} accessibilityRole="link">
                   <View style={{ flex: 1, minWidth: 200, gap: 2 }}>
                     <Text style={styles.orderNo}>
                       {r.order_number} · {r.customer_name}

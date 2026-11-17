@@ -3,10 +3,10 @@ import { Link } from 'expo-router';
 import Head from 'expo-router/head';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { friendlyError, supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { colors, shadow } from '../theme';
 import { Button } from './Button';
-import { Field, formStyles } from './Field';
+import { SignInCard } from './SignInGate';
 
 // Admin pages are in English (internal tool).
 
@@ -50,14 +50,16 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
       </Head>
       <View style={styles.bar}>
         <View style={styles.barInner}>
-          <Link href="/admin" style={styles.brand}>
+          <Link href="/backend" style={styles.brand}>
             Sylkit <Text style={{ color: colors.primary }}>Admin</Text>
           </Link>
           {session && isAdmin ? (
             <View style={styles.nav}>
-              <Link href="/admin" style={styles.navLink}>Orders</Link>
-              <Link href="/admin/support" style={styles.navLink}>Support</Link>
-              <Link href="/admin/products" style={styles.navLink}>Products</Link>
+              <Link href="/backend" style={styles.navLink}>Home</Link>
+              <Link href="/backend/orders" style={styles.navLink}>Orders</Link>
+              <Link href="/backend/customers" style={styles.navLink}>Customers</Link>
+              <Link href="/backend/support" style={styles.navLink}>Support</Link>
+              <Link href="/backend/products" style={styles.navLink}>Products</Link>
               <Link href="/" style={styles.navLink}>View site</Link>
               <Pressable onPress={() => supabase.auth.signOut()}>
                 <Text style={styles.navLink}>Sign out</Text>
@@ -67,54 +69,41 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
         </View>
       </View>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 48 }}>
-        <View style={styles.container}>{content}</View>
+        <View style={styles.container}>
+          <AdminErrorBoundary>{content}</AdminErrorBoundary>
+        </View>
       </ScrollView>
     </View>
   );
 }
 
+// If an admin screen crashes, show the error and a reload button instead of a blank page.
+class AdminErrorBoundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <View style={[styles.card, shadow]}>
+        <Text style={styles.h2}>Something went wrong on this screen</Text>
+        <Text style={styles.muted}>{String(this.state.error?.message || this.state.error)}</Text>
+        <Button label="Reload" onPress={() => typeof window !== 'undefined' && window.location.reload()} />
+        <Button label="Sign out" variant="secondary" onPress={() => supabase.auth.signOut().then(() => this.setState({ error: null }))} />
+      </View>
+    );
+  }
+}
+
+// Admin sign-in uses the same passwordless login as customers (Google or an email link).
+// Only accounts listed in public.admins get past the is_admin() check above.
 function Login() {
-  const [mode, setMode] = useState<'in' | 'up'>('in');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
-
-  const submit = async () => {
-    setError('');
-    setInfo('');
-    if (password.length < 8) return setError('Password must be at least 8 characters.');
-    setBusy(true);
-    if (mode === 'in') {
-      const { error: err } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (err) setError(friendlyError(err, 'en'));
-    } else {
-      const { data, error: err } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
-        options: { emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/admin` : undefined },
-      });
-      if (err) setError(err.message);
-      else if (!data.session) setInfo('Account created. Check your email to confirm it, then sign in.');
-    }
-    setBusy(false);
-  };
-
   return (
-    <View style={[styles.card, shadow, { maxWidth: 440, alignSelf: 'center', width: '100%' }]}>
-      <Text style={styles.h2}>{mode === 'in' ? 'Sign in' : 'Create admin account'}</Text>
-      <Field label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" autoComplete="email" />
-      <Field label="Password" value={password} onChangeText={setPassword} secureTextEntry autoComplete="password" onSubmitEditing={submit} />
-      {error ? <Text style={formStyles.error}>{error}</Text> : null}
-      {info ? <Text style={formStyles.success}>{info}</Text> : null}
-      <Button label={mode === 'in' ? 'Sign in' : 'Create account'} onPress={submit} loading={busy} />
-      <Pressable onPress={() => setMode(mode === 'in' ? 'up' : 'in')} style={{ alignItems: 'center', padding: 8 }}>
-        <Text style={{ color: colors.primary, fontWeight: '700' }}>
-          {mode === 'in' ? 'First time? Create an account' : 'Already have an account? Sign in'}
-        </Text>
-      </Pressable>
-    </View>
+    <SignInCard
+      title="Sylkit Admin"
+      sub="Sign in with your admin Google account or get a sign-in link by email. No password needed."
+    />
   );
 }
 
