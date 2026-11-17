@@ -1,0 +1,443 @@
+{
+ "base": "https://sylkit-2-sylkit.fannah2026.workers.dev",
+ "at": "2026-11-17T23:09:51.193Z",
+ "checks": [
+  {
+   "name": "page /",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /templates",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /work",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /account",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /order",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /quote",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /domains",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /security",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /terms",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /privacy",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /refunds",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /product/punto-de-venta",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /product/farmacia-pos",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /product/sitio-web-para-negocios",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demo/hotel",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demo/events",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demo/realestate",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/alertas/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/asistente/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/car-rental/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/clinica/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/crm/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/delivery/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/eats/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/escuela/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/facturas/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/farmacia/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/flights/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/gym/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/inventario/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/models/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/nomina/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/portafolio/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/pos/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/rentals/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/restaurante/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/rides/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/salon/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/servicios/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/taller/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/tienda/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /demos/tours/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/atelier/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/aula-app/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/aurum/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/chispa/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/cifra/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/club/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/coach/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/fc/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/fe/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/fresco/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/gov/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/grupo/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/habitat/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/habitat-app/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/horno/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/lente/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/lex/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/lumen/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/muse/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/ngo/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/nido/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/nodo/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/norte/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/patitas/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/plano/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/plano-app/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/ritmo/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/rose/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/sonrisa/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/vital/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/volt/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "gallery shows results count",
+   "pass": true,
+   "detail": "64 results"
+  },
+  {
+   "name": "gallery order: hotel, then ride app, before POS",
+   "pass": true,
+   "detail": "hotel@136 ride@225 pos@847"
+  },
+  {
+   "name": "phone menu offers sign in",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "phone menu has no sign out when signed out",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "account page asks to sign in",
+   "pass": true,
+   "detail": "sylkit\n\n\nSign in to see your orders\nUse the same email you ordered with and your orders appear here.\n\nContinue with Google\nor\nEmail\n\nEmail me a sign-in link\nJust browsing? You can look at every sy"
+  },
+  {
+   "name": "account page has email sign-in",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "create a quote request",
+   "pass": true,
+   "detail": "{\"order_number\":\"SK-1057\",\"token\":\"8b8d0fac-8907-4650-9d92-86f8b1e5be26\"}"
+  },
+  {
+   "name": "order page shows the request",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "cancel button shown on unpaid order",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "order shows as cancelled",
+   "pass": true,
+   "detail": "sylkit\n\nSecure checkout\n\nOrder SK-1057\nThis order was cancelled\nMessage us if this was a mistake.\n\nChat with us about this order\nOrder summary\nCustom system · Nov 17, 2026\nCancelled\nActivity\n\n\nQuestions? Message us on WhatsApp\nRefunds\nPrivacy\nTerms\n"
+  },
+  {
+   "name": "cancel button gone after cancelling",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "database says cancelled",
+   "pass": true,
+   "detail": "cancelled"
+  },
+  {
+   "name": "cancelling twice is harmless",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "cancel rejects a bad link",
+   "pass": true,
+   "detail": ""
+  }
+ ],
+ "passed": 87,
+ "failed": 0
+}
