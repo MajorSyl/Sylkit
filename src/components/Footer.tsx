@@ -6,10 +6,34 @@ import { colors, waLink } from '../theme';
 import { Logo } from './Logo';
 import { tx } from '../i18n';
 
+const CLOUD_POINTS: { icon: keyof typeof Ionicons.glyphMap; en: string; es: string; pt: string }[] = [
+  { icon: 'download-outline', en: 'Nothing to install', es: 'Nada que instalar', pt: 'Nada para instalar' },
+  { icon: 'phone-portrait-outline', en: 'Works on phone, tablet or PC', es: 'Funciona en teléfono, tablet o PC', pt: 'Funciona no celular, tablet ou PC' },
+  { icon: 'cloud-done-outline', en: 'Data backed up automatically', es: 'Datos respaldados automáticamente', pt: 'Dados com backup automático' },
+  { icon: 'headset-outline', en: 'Remote updates and support', es: 'Actualizaciones y soporte a distancia', pt: 'Atualizações e suporte remotos' },
+  { icon: 'globe-outline', en: 'Ready in days, anywhere', es: 'Listo en días, donde estés', pt: 'Pronto em dias, onde você estiver' },
+];
+
 export function Footer() {
   const { t, lang } = useLang();
   return (
     <View style={styles.wrap}>
+      <View style={styles.cloud}>
+        <Text style={styles.cloudTitle}>
+          {tx('Cloud systems for modern businesses.', 'Sistemas en la nube para negocios modernos.', 'Sistemas na nuvem para empresas modernas.')}
+        </Text>
+        <Text style={styles.cloudSub}>
+          {tx('Set up remotely, anywhere in the world.', 'Instalados a distancia, en cualquier parte del mundo.', 'Configurados remotamente, em qualquer lugar do mundo.')}
+        </Text>
+        <View style={styles.chips}>
+          {CLOUD_POINTS.map((p) => (
+            <View key={p.en} style={styles.chip}>
+              <Ionicons name={p.icon} size={15} color={colors.primary} />
+              <Text style={styles.chipText}>{tx(p.en, p.es, p.pt)}</Text>
+            </View>
+          ))}
+        </View>
+      </View>
       <View style={styles.inner}>
         <View style={{ gap: 4, flexShrink: 1 }}>
           <Logo size={26} />
@@ -50,6 +74,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
   },
+  cloud: {
+    width: '100%',
+    maxWidth: 1180,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 36,
+    paddingBottom: 24,
+    alignItems: 'center',
+    gap: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  cloudTitle: { fontSize: 24, fontWeight: '800', color: colors.text, textAlign: 'center', letterSpacing: -0.3 },
+  cloudSub: { fontSize: 16, color: colors.muted, textAlign: 'center' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginTop: 14 },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    backgroundColor: colors.softBlue,
+  },
+  chipText: { fontSize: 13, fontWeight: '600', color: colors.text },
   brand: { fontSize: 18, fontWeight: '800', color: colors.text },
   text: { fontSize: 14, color: colors.muted },
   link: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44 },
