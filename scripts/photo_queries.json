@@ -510,5 +510,21 @@
  "car-interior": [
   "car back seat passenger",
   "landscape"
+ ],
+ "model-f": [
+  "fashion model portrait woman",
+  "portrait"
+ ],
+ "model-m": [
+  "male model portrait",
+  "portrait"
+ ],
+ "photoshoot": [
+  "fashion photoshoot studio",
+  "landscape"
+ ],
+ "model-editorial": [
+  "editorial fashion model",
+  "landscape"
  ]
 }
