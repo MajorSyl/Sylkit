@@ -466,5 +466,49 @@
  "india-volunteers": [
   "india volunteers community",
   "landscape"
+ ],
+ "airplane": [
+  "airplane flying sky",
+  "landscape"
+ ],
+ "airport": [
+  "airport terminal travelers",
+  "landscape"
+ ],
+ "madrid": [
+  "madrid city",
+  "landscape"
+ ],
+ "miami": [
+  "miami beach skyline",
+  "landscape"
+ ],
+ "bogota": [
+  "bogota colombia city",
+  "landscape"
+ ],
+ "cancun": [
+  "cancun beach resort",
+  "landscape"
+ ],
+ "panama-city": [
+  "panama city skyline",
+  "landscape"
+ ],
+ "punta-cana": [
+  "punta cana beach",
+  "landscape"
+ ],
+ "ride-driver": [
+  "driver car smiling",
+  "landscape"
+ ],
+ "city-night": [
+  "city traffic night",
+  "landscape"
+ ],
+ "car-interior": [
+  "car back seat passenger",
+  "landscape"
  ]
 }
