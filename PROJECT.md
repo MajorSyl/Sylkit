@@ -311,6 +311,12 @@ Mailboxes (Zoho free plan, up to 5): sylvanus@ (admin), hello@, support@, billin
 
 ---
 
+## Customer self-service + automated tests · 17 Nov 2026
+- Customers can **cancel an order themselves until they pay** (statuses new, quoted, accepted) from the order page or My orders: `POST /api/order/cancel` (worker/orders.js) re-checks the status on the server, adds a note to the order and sends a phone alert. After a payment is reported, cancelling goes through Sylkit.
+- **Sign out** is on My orders and in the phone menu.
+- Fixed a React hydration mismatch on every page (icon font now loaded in `app/_layout.tsx`).
+- **End-to-end test**: push a change to `scripts/ci/e2e_run.txt` → GitHub Actions type-checks, runs the worker tests, builds the site, then tests every page, the gallery, the phone menu, the account page and a full order → cancel journey on the sylkit-2 preview. Results land in `.ci/e2e/report.json`. Each run creates one test order named "Sylkit automated test" and cancels it.
+
 ## 10. Pending
 
 | Task | Who |
