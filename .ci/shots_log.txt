@@ -1,31 +1,11 @@
-127.0.0.1 - - [17/Nov/2026 00:48:02] "GET /demos/rides/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:03] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:03] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:04] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 00:48:04] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [17/Nov/2026 00:48:05] "GET /demos/rides/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:05] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:05] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:05] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 00:48:05] "GET /favicon.ico HTTP/1.1" 404 -
-ok rides
-127.0.0.1 - - [17/Nov/2026 00:48:07] "GET /demos/eats/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:07] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:07] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:08] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 00:48:08] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [17/Nov/2026 00:48:09] "GET /demos/eats/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:09] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:09] "GET /_pro/pro.js HTTP/1.1" 200 -
-ok eats
-127.0.0.1 - - [17/Nov/2026 00:48:10] "GET /demos/flights/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:10] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:10] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:12] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 00:48:12] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [17/Nov/2026 00:48:13] "GET /demos/flights/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:13] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:13] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 00:48:13] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 00:48:13] "GET /favicon.ico HTTP/1.1" 404 -
-ok flights
+127.0.0.1 - - [17/Nov/2026 01:00:02] "GET /demos/models/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:00:02] "GET /_pro/pro.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:00:02] "GET /_pro/pro.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:00:03] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 01:00:03] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 01:00:04] "GET /demos/models/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:00:04] "GET /_pro/pro.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:00:04] "GET /_pro/pro.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:00:04] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 01:00:04] "GET /favicon.ico HTTP/1.1" 404 -
+ok models
