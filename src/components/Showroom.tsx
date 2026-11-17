@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Image, ImageBackground, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { categories, type Product } from '../data/products';
 import { industries } from '../data/industries';
+import { popularSystems } from '../data/popularSystems';
 import { storeTemplates } from '../data/storeTemplates';
 import { tx, ui, useLang } from '../i18n';
 import { tplText } from '../lib/names';
@@ -45,6 +46,12 @@ const CHIP_COVER: Record<string, string> = {
   logistics: '/shots/covers/demo-logistics.webp',
   realestate: '/shots/covers/demo-realestate.webp',
   fashion: '/shots/covers/demo-boutique.webp',
+  gym: '/shots/covers/demo-gym.webp',
+  'car-rental': '/shots/covers/demo-car-rental.webp',
+  delivery: '/shots/covers/demo-delivery.webp',
+  crm: '/shots/covers/demo-crm.webp',
+  rentals: '/shots/covers/demo-rentals.webp',
+  tours: '/shots/covers/demo-tours.webp',
   all: '/shots/covers/portafolio.webp',
   templates: '/shots/covers/tpl-aula-app.webp',
   retail: '/shots/covers/pos.webp',
@@ -143,13 +150,36 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
           haystack: [x.title.en, x.title.es, x.title.pt, x.built.en, x.built.es, x.built.pt].join(' ').toLowerCase(),
         };
       });
-    return [...demos, ...sys, ...tpl];
+    const popular: Item[] = popularSystems.map((x) => {
+      const pick = (o: { en: string; es: string; pt: string }) => (lang === 'pt' ? o.pt : lang === 'es' ? o.es : o.en);
+      return {
+        key: 'pop-' + x.id,
+        kind: 'system',
+        isNew: true,
+        title: pick(x.title),
+        sub: pick(x.built),
+        cover: ORIGIN + x.cover,
+        category: x.id,
+        price: null,
+        priceUnit: '',
+        demo: ORIGIN + x.href,
+        platforms: ['Web', 'Android', 'iOS'],
+        open: () => {
+          if (Platform.OS === 'web') window.location.assign(x.href);
+          else Linking.openURL(ORIGIN + x.href);
+        },
+        haystack: [x.title.en, x.title.es, x.title.pt, x.built.en, x.built.es, x.built.pt].join(' ').toLowerCase(),
+      };
+    });
+    // Industry demos first (hotel stays the lead card), then the new popular systems, then the rest.
+    return [...demos.slice(0, 1), ...popular.slice(0, 3), ...demos.slice(1), ...popular.slice(3), ...sys, ...tpl];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, lang]);
 
   const chips = useMemo(() => {
     const out = [{ id: 'all', label: tx('For you', 'Para ti', 'Para você') }];
     for (const x of industries) if (DEMO_ROUTE[x.id]) out.push({ id: x.id, label: lang === 'pt' ? x.title.pt : lang === 'es' ? x.title.es : x.title.en });
+    for (const x of popularSystems) out.push({ id: x.id, label: lang === 'pt' ? x.title.pt : lang === 'es' ? x.title.es : x.title.en });
     out.push({ id: 'templates', label: tx('Templates', 'Plantillas', 'Modelos') });
     for (const c of categories) if (items.some((i) => i.category === c.id)) out.push({ id: c.id, label: t(c.name) });
     return out;

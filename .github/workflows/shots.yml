@@ -16,6 +16,7 @@ jobs:
         with: { ref: sylkit-2 }
       - run: pip install pillow >/dev/null
       - run: python3 scripts/ci/make_shots.py 2>&1 | tee .ci-shots.txt
+        env: { TZ: America/Caracas }
       - run: |
           mkdir -p .ci && cp .ci-shots.txt .ci/shots_log.txt
           git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"

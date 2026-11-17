@@ -225,13 +225,6 @@
   "tpl": "plano-app"
  },
  {
-  "name": "tpl-aula-app",
-  "url": "/preview/aula-app/",
-  "cover": "tpl-aula-app.webp",
-  "accent": "E11D48",
-  "tpl": "aula-app"
- },
- {
   "name": "sitio-web",
   "url": "/preview/habitat/",
   "cover": "sitio-web.webp",

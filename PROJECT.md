@@ -275,6 +275,17 @@ Production runs commit `020c6ce`. Work happens on branch `sylkit-2`; every push 
 
 **Other changes:** camera allowed only for Sylkit's own pages (ticket scanning); limits `demo_ws` 20/day and `demo` 400/day per visitor.
 
+## Real photos everywhere + 6 new systems · 16 Nov 2026 (branch `sylkit-2`)
+
+Goal: every card looks like the hotel card (real photos, laptop + phone on the navy backdrop). No emoji, no drawn illustrations.
+
+- **Templates** (`public/preview/*`): the 8 stores, Plano/Habitat sites and apps now use real product and place photos. Photo picks live in `scripts/template_photos.py` (products renamed to match their photo); run `python3 scripts/build_store_templates.py`. `public/_site/icons.js` swaps any leftover emoji for line icons / initials.
+- **Live demos** (`public/demos/*`, kit engine): a business photo banner on the first screen and real product photos in POS, Pharmacy, Restaurant, Store, Salon, Hardware. Picks in `scripts/demo_photos.py` (run it after editing).
+- **6 new popular systems** at `sylkit.com/demos/<id>/`: Gym & fitness (`gym`), Car rental (`car-rental`), Food ordering & delivery (`delivery`), CRM & sales (`crm`), Property rentals (`rentals`), Travel & tours (`tours`). Each has a customer site and a staff dashboard (board by status); what the visitor books appears on the dashboard. Engine `public/_pro/`, data `scripts/build_pro_demos.py`, gallery list `src/data/popularSystems.ts`. They are shown as NEW cards with "Live demo" (no catalog product/price yet; "Get this system" opens the custom quote). To sell them at a fixed price, add products in Admin → Products.
+- **Photos** come from Unsplash through sylkit.com's own `/api/photos/search` (key stays in the worker), fetched on GitHub Actions because the dev sandbox has no internet: add a query to `scripts/photo_queries.json` and push → `.ci/photos/<query>.json` + a numbered contact sheet to pick from. All pages hotlink and credit photographers.
+- **Covers and screenshots** are made on GitHub Actions too: `scripts/ci/shots.json` lists every page; push a change to it (or run the `shots` workflow) and CI screenshots the real pages, builds the covers with `scripts/make_cover.py` and commits them to `public/shots/`.
+- To do: queue the new photos' Unsplash download tracking (`unsplash_queue`) like the library.
+
 ## Instagram (13 Nov 2026)
 - One account per language, display name always **Sylkit**, same logo.
 - English (Sierra Leone and everyone else): **@sylkit_systems**.
