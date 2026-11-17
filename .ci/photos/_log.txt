@@ -1,7 +1,14 @@
 empty cornmeal {'total': 0, 'page': 1, 'results': []}
 empty gala {'total': 0, 'page': 1, 'results': []}
-ok india-kids 16
-ok india-school 3
-ok india-village 16
-ok india-volunteers 16
-fetched 4
+ok airplane 16
+ok airport 16
+ok madrid 16
+ok miami 16
+ok bogota 16
+ok cancun 16
+ok panama-city 12
+ok punta-cana 16
+ok ride-driver 16
+ok city-night 16
+ok car-interior 4
+fetched 11
