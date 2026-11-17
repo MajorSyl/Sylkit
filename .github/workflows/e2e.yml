@@ -29,6 +29,7 @@ jobs:
         run: npx expo export --platform web > .ci-build.txt 2>&1; echo "build exit $?" >> .ci-build.txt
       - name: Wait for the preview to run this commit
         run: |
+          sleep 300
           for i in $(seq 1 40); do
             s=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'content-type: application/json' -d '{}' https://sylkit-2-sylkit.fannah2026.workers.dev/api/order/cancel)
             [ "$s" = "400" ] && echo "preview ready" && break; sleep 20; done
