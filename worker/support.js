@@ -29,7 +29,7 @@ const HOURS_TEXT = {
   es: 'Lun a sáb, 9 am a 6 pm (hora de Caracas)',
   pt: 'Seg a sáb, 9h às 18h (horário de Caracas)',
 };
-const LIMITS = { ticket: 6, message: 80, ai: 40, ping: 40, hook: 600, account: 120, photos: 60, photos_use: 200, demo_ws: 20, demo: 400 }; // per visitor (IP) per day
+const LIMITS = { ticket: 6, message: 80, ai: 40, ping: 40, hook: 600, account: 120, photos: 60, photos_use: 200, demo_ws: 20, demo: 400, cancel: 20 }; // per visitor (IP) per day
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } });
 const bad = (error, status = 400) => json({ error }, status);

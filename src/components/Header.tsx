@@ -7,7 +7,7 @@ import type { Text as T } from '../i18n';
 import { useLang } from '../i18n';
 import { colors, glass, waLink } from '../theme';
 import { Logo } from './Logo';
-import { useSession } from '../lib/auth';
+import { signOut, useSession } from '../lib/auth';
 import { tx } from '../i18n';
 
 // Site navigation. Wide screens show labeled links; phones show a "Menu" button that opens
@@ -162,6 +162,17 @@ export function Header() {
               <Text style={[styles.itemLabel, { flex: 1 }]}>{session ? tx('My orders', 'Mis pedidos', 'Meus pedidos') : tx('Sign in · My orders', 'Iniciar sesión · Mis pedidos', 'Entrar · Meus pedidos')}</Text>
               <Ionicons name="chevron-forward" size={18} color={colors.muted} />
             </Pressable>
+            {session ? (
+              <Pressable style={styles.item} onPress={() => { signOut(); setOpen(false); }} accessibilityRole="button">
+                <View style={styles.itemIcon}>
+                  <Ionicons name="log-out-outline" size={22} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.itemLabel}>{tx('Sign out', 'Cerrar sesión', 'Sair')}</Text>
+                  <Text style={styles.itemSub} numberOfLines={1}>{session.user.email}</Text>
+                </View>
+              </Pressable>
+            ) : null}
           </ScrollView>
           <Pressable style={[styles.sheetWa, { backgroundColor: colors.primary }]} onPress={help} accessibilityRole="button">
             <Ionicons name="chatbubble-ellipses" size={20} color="#fff" />

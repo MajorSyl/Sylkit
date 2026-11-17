@@ -7,6 +7,7 @@ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, 
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
 import { SignInGate } from '../src/components/SignInGate';
+import { CancelOrder } from '../src/components/CancelOrder';
 import { tx, useLang } from '../src/i18n';
 import { accountApi, signOut } from '../src/lib/auth';
 import { formatDate, formatMoney, statusColor, statusLabel, type OrderStatus } from '../src/lib/status';
@@ -142,6 +143,7 @@ function MyOrders({ session }: { session: Session }) {
                       <Text style={styles.ghostText}>{tx('Invoice', 'Factura', 'Fatura')}</Text>
                     </Pressable>
                   </View>
+                  <CancelOrder token={o.token} status={o.status} onDone={load} compact />
                 </View>
               );
             })

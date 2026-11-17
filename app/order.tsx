@@ -4,6 +4,7 @@ import Head from 'expo-router/head';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../src/components/Button';
+import { CancelOrder } from '../src/components/CancelOrder';
 import { CardPay, ManageCard } from '../src/components/CardPay';
 import { PayPalPay } from '../src/components/PayPalPay';
 import { MonimePay } from '../src/components/MonimePay';
@@ -417,6 +418,7 @@ export default function OrderPage() {
         ) : null}
 
         <Button label={tx('Questions? Message us on WhatsApp', '¿Preguntas? Escríbenos por WhatsApp', "Dúvidas? Fale conosco no WhatsApp")} icon="logo-whatsapp" variant="secondary" onPress={help} />
+        <CancelOrder token={token} status={order.status} onDone={load} />
       </View>
     );
   };

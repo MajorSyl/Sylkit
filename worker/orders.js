@@ -2,10 +2,11 @@ import { hasLive, hasSandbox } from './paypal.js';
 import { alertOwner, orderLine } from './notify.js';
 import { hasMonime } from './monime.js';
 import { overLimit } from './support.js';
-// Customer-facing order helpers (read only, keyed by the secret order token).
+// Customer-facing order helpers, keyed by the secret order token.
 //
-//   GET /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
-//   GET /api/order/invoice?t=<token>  -> everything the printable invoice page needs
+//   GET  /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
+//   GET  /api/order/invoice?t=<token>  -> everything the printable invoice page needs
+//   POST /api/order/cancel { token, reason } -> the customer cancels an order that is not paid yet
 //
 // The invoice includes the customer's own contact details, so it is only returned to someone
 // who holds the order's unguessable token (the same link that opens the order page).
@@ -31,6 +32,38 @@ async function sb(env, path) {
 }
 
 const PAID = new Set(['paid', 'in_progress', 'delivered']);
+
+// A customer can cancel on their own until they pay. After a payment is reported or confirmed,
+// cancelling (and any refund) goes through Sylkit, so it is refused here.
+export const CANCELLABLE = new Set(['new', 'quoted', 'accepted']);
+
+async function sbWrite(env, path, method, body) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method, headers: { ...sbHeaders(env), prefer: 'return=minimal' }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(`supabase ${r.status}: ${(await r.text()).slice(0, 300)}`);
+}
+
+async function cancel(request, env) {
+  if (await overLimit(env, request, 'cancel').catch(() => false)) return json({ error: 'rate_limited' }, 429);
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return json({ error: 'database_not_configured' }, 503);
+  const body = await request.json().catch(() => ({}));
+  const token = String(body.token || '');
+  if (!/^[0-9a-f-]{36}$/i.test(token)) return json({ error: 'invalid_token' }, 400);
+  const reason = String(body.reason || '').replace(/\s+/g, ' ').trim().slice(0, 300);
+  const rows = await sb(env, `orders?token=eq.${encodeURIComponent(token)}&select=id,order_number,status,lang,customer_name,email,whatsapp,quote_amount,quote_currency,products(name_es,name_en)`);
+  const o = rows?.[0];
+  if (!o) return json({ error: 'order_not_found' }, 404);
+  if (o.status === 'cancelled') return json({ ok: true, status: 'cancelled' });
+  if (!CANCELLABLE.has(o.status)) return json({ error: 'cannot_cancel', status: o.status }, 409);
+  // Only change it if nobody else changed it in the meantime (e.g. a payment just arrived).
+  await sbWrite(env, `orders?id=eq.${o.id}&status=eq.${o.status}`, 'PATCH', { status: 'cancelled' });
+  const now = (await sb(env, `orders?id=eq.${o.id}&select=status`))?.[0]?.status;
+  if (now !== 'cancelled') return json({ error: 'cannot_cancel', status: now }, 409);
+  const es = o.lang === 'es' || o.lang === 'pt';
+  const msg = es ? `Cancelaste este pedido.${reason ? ` Motivo: ${reason}` : ''}` : `You cancelled this order.${reason ? ` Reason: ${reason}` : ''}`;
+  await sbWrite(env, 'order_events', 'POST', { order_id: o.id, kind: 'update', message: msg, public: true }).catch(() => null);
+  await alertOwner(env, { title: 'Pedido cancelado por el cliente', message: `${orderLine(o)}${reason ? `\nMotivo: ${reason}` : ''}`, orderId: o.id, tags: 'x' }).catch(() => null);
+  return json({ ok: true, status: 'cancelled' });
+}
 const PAID_WORDS = /confirm|paid|pagad|recibid|received/i;
 
 // For card subscriptions, link the official Stripe invoice (PDF) as well.
@@ -177,6 +210,7 @@ async function ping(request, env) {
 export async function handleOrders(request, env, url) {
   try {
     if (request.method === 'POST' && url.pathname === '/api/order/ping') return await ping(request, env);
+    if (request.method === 'POST' && url.pathname === '/api/order/cancel') return await cancel(request, env);
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
     if (url.pathname === '/api/order/methods') {
       // PayPal: live keys show it to everyone; sandbox keys only for a test page (?paypaltest=1).
