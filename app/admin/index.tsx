@@ -112,7 +112,7 @@ function Orders() {
             const sc = statusColor[r.status];
             return (
               <Link key={r.id} href={`/admin/order?id=${r.id}`} asChild>
-                <Pressable style={[adminStyles.card, shadow, styles.row]}>
+                <Pressable style={StyleSheet.flatten([adminStyles.card, shadow, styles.row])} accessibilityRole="link">
                   <View style={{ flex: 1, minWidth: 200, gap: 2 }}>
                     <Text style={styles.orderNo}>
                       {r.order_number} · {r.customer_name}
