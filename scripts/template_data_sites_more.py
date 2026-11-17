@@ -261,3 +261,31 @@ MORE_SITES += [
                       contact([['pin', E('Av. Libertador, Caracas', 'Av. Libertador, Caracas')], PHONE, ['clock', E('Office Tue–Fri 9:00–17:00', 'Oficina mar–vie 9:00–17:00')]], topics=[E('First visit', 'Primera visita'), E('Prayer request', 'Petición de oración'), E('Volunteer', 'Servir'), E('Donation', 'Ofrenda')], title=E('Plan your visit', 'Planifica tu visita'))],
                   footer=E('Church community', 'Comunidad de fe'))),
 ]
+
+MORE_SITES += [
+    # ---------------------------------------------------------------- Model (personal portfolio)
+    dict(slug='muse', name='Ariana Vega', mark='AV', product=PERSONAL, sector='creative',
+         tagline=['Modelo', 'Model portfolio'], blurb=['Editorial y oscuro, para modelos, actrices, influencers y artistas.', 'Editorial and dark, for models, actresses, influencers and artists.'],
+         vars={'bg': '#0c0c0d', 'text': '#f5f5f5', 'accent': '#e8d5b5', 'accent-ink': '#111111', 'soft': '#141416'},
+         theme={'accent': '#e8d5b5', 'accentInk': '#111111', 'dark': True, 'fonts': 'family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500', 'head': "'Playfair Display',serif", 'headW': '600', 'ls': '-0.01em', 'r': '2px', 'rBtn': '0px'},
+         photos={'hero': 'model-studio-solo:6', 'about': 'model-studio-solo:8', 'g1': 'model-studio-solo:3', 'g2': 'model-studio-solo:4', 'g3': 'model-studio-solo:10', 'g4': 'model-studio-solo:12', 'g5': 'model-studio-solo:13',
+                 's1': 'model-studio-solo:5', 's2': 'model-studio-solo:4', 's3': 'model-studio-solo:12'},
+         cfg=dict(nav=[['gallery', E('Portfolio', 'Portafolio')], ['about', E('About', 'Sobre mí')], ['services', E('Work', 'Trabajos')], ['contact', E('Book', 'Contratar')]], navCta={'t': E('Book Ariana', 'Contratar')},
+                  sections=[
+                      {'type': 'hero', 'layout': 'split', 'photo': 'hero', 'eyebrow': E('Model · Caracas · Available worldwide', 'Modelo · Caracas · Disponible internacionalmente'),
+                       'title': E('Ariana Vega', 'Ariana Vega'),
+                       'lead': E('Editorial, commercial and runway model. Represented by Élite Models; direct bookings welcome.', 'Modelo editorial, comercial y de pasarela. Representada por Élite Models; también acepto reservas directas.'),
+                       'cta': {'t': E('Book Ariana', 'Contratar a Ariana')}, 'cta2': {'t': E('Portfolio', 'Portafolio'), 'href': '#gallery'}},
+                      {'type': 'stats', 'items': [['1.77 m', E('Height', 'Estatura')], ['83 · 61 · 89', E('Measurements (cm)', 'Medidas (cm)')], ['38 EU', E('Shoe size', 'Calzado')], [E('Brown / curly', 'Castaño / rizado'), E('Hair', 'Cabello')]]},
+                      {'type': 'gallery', 'title': E('Portfolio', 'Portafolio'), 'photos': ['g1', 'g2', 'g3', 'g4', 'g5']},
+                      {'type': 'about', 'photo': 'about', 'eyebrow': E('About', 'Sobre mí'), 'title': E('Seven years in front of the camera', 'Siete años frente a la cámara'),
+                       'text': E('Campaigns for fashion and beauty brands in Venezuela, Colombia and Spain, plus runway at Caracas Fashion Week.', 'Campañas para marcas de moda y belleza en Venezuela, Colombia y España, y pasarela en Caracas Fashion Week.'),
+                       'points': [E('Fluent in Spanish and English', 'Español e inglés fluido'), E('Valid passport, ready to travel', 'Pasaporte vigente, lista para viajar'), E('Comp card and video on request', 'Comp card y video a solicitud')]},
+                      {'type': 'cards', 'id': 'services', 'alt': True, 'title': E('Available for', 'Disponible para'), 'items': [
+                          {'photo': 's1', 'title': E('Editorial & campaigns', 'Editorial y campañas'), 'text': E('Fashion and beauty shoots, print and digital.', 'Sesiones de moda y belleza, impreso y digital.')},
+                          {'photo': 's2', 'title': E('Runway & events', 'Pasarela y eventos'), 'text': E('Shows, launches and brand events.', 'Desfiles, lanzamientos y eventos de marca.')},
+                          {'photo': 's3', 'title': E('Content & UGC', 'Contenido y UGC'), 'text': E('Reels and product content for social media.', 'Reels y contenido de producto para redes.')}]},
+                      {'type': 'quotes', 'title': E('Worked with', 'Han trabajado conmigo'), 'items': [[E('Professional, punctual and full of ideas on set.', 'Profesional, puntual y llena de ideas en el set.'), 'Maison Valeria'], [E('Our best-performing campaign this year.', 'Nuestra campaña con mejores resultados del año.'), 'Rosé Beauty'], [E('A natural on the runway.', 'Natural en la pasarela.'), 'Caracas Fashion Week']]},
+                      contact([['mail', E('bookings@arianavega.com', 'bookings@arianavega.com')], PHONE, ['camera', E('@ariana.vega', '@ariana.vega')]], topics=[E('Campaign', 'Campaña'), E('Runway', 'Pasarela'), E('Content', 'Contenido'), E('Other', 'Otro')], title=E('Bookings', 'Contrataciones'))],
+                  footer=E('Model · Represented by Élite Models', 'Modelo · Representada por Élite Models'))),
+]

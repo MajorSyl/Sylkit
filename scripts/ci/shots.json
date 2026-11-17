@@ -380,5 +380,12 @@
   "url": "/demos/models/",
   "cover": "demo-models.webp",
   "accent": "8B7355"
+ },
+ {
+  "name": "tpl-muse",
+  "url": "/preview/muse/",
+  "cover": "tpl-muse.webp",
+  "accent": "8B7355",
+  "tpl": "muse"
  }
 ]

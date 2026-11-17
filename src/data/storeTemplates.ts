@@ -472,6 +472,33 @@ export const storeTemplates: StoreTemplate[] = [
     }
   },
   {
+    "slug": "muse",
+    "name": "Ariana Vega",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "creative",
+    "sectorName": [
+      "Creativos",
+      "Creatives"
+    ],
+    "tagline": [
+      "Modelo",
+      "Model portfolio"
+    ],
+    "blurb": [
+      "Editorial y oscuro, para modelos, actrices, influencers y artistas.",
+      "Editorial and dark, for models, actresses, influencers and artists."
+    ],
+    "colors": {
+      "bg": "#0c0c0d",
+      "text": "#f5f5f5",
+      "accent": "#e8d5b5",
+      "accentInk": "#111111",
+      "soft": "#141416"
+    }
+  },
+  {
     "slug": "lumen",
     "name": "Lumen",
     "kind": "store",
