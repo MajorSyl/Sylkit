@@ -37,3 +37,4 @@ for key, (q, orient) in Q.items():
 print('fetched', done)
 (OUT / '_log.txt').write_text('\n'.join(LOG) + '\n')
 # rerun Mon Nov 16 23:57:16 -04 2026
+# rerun Tue Nov 17 00:18:26 -04 2026
