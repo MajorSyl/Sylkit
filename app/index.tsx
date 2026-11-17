@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Footer } from '../src/components/Footer';
 import { Header } from '../src/components/Header';
-import { glass, PressScale, Reveal } from '../src/components/motion';
+import { glass as frosted, PressScale, Reveal } from '../src/components/motion';
 import { Showroom } from '../src/components/Showroom';
 import { useProducts } from '../src/lib/catalog';
 import { useRouter } from 'expo-router';
@@ -58,7 +58,7 @@ export default function Home() {
           <View style={styles.doors}>
             {doors.map((d, i) => (
               <Reveal key={d.href} delay={i * 60} style={{ width: wide ? '20%' : i === doors.length - 1 ? '100%' : '50%', padding: 6 }}>
-                <PressScale style={[styles.door, shadow, glass]} to={0.97} onPress={() => {
+                <PressScale style={[styles.door, shadow, frosted]} to={0.97} onPress={() => {
                     if (d.href === '#catalog') {
                       try {
                         document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

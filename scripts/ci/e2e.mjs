@@ -62,6 +62,13 @@ const pages = ['/', '/templates', '/work', '/account', '/order', '/quote', '/dom
 {
   const p = await page({ width: 390, height: 844 });
   await p.goto(BASE + '/', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(1200);
+  await shot(p, 'phone-home');
+  await p.mouse.wheel(0, 1400);
+  await p.evaluate(() => document.querySelectorAll('div').forEach((d) => { if (d.scrollHeight > d.clientHeight + 200 && getComputedStyle(d).overflowY !== 'visible') d.scrollTop += 1400; }));
+  await p.waitForTimeout(900);
+  await shot(p, 'phone-home-scrolled');
+  await p.goto(BASE + '/', { waitUntil: 'networkidle' });
   await p.getByLabel('Open menu').first().click().catch(() => null);
   await p.waitForTimeout(600);
   const menu = await p.evaluate(() => document.body.innerText);
