@@ -302,5 +302,153 @@
  "hiking": [
   "mountain hiking group",
   "landscape"
+ ],
+ "law-office": [
+  "law firm office",
+  "landscape"
+ ],
+ "lawyer": [
+  "lawyer portrait professional",
+  "landscape"
+ ],
+ "legal-docs": [
+  "signing contract documents",
+  "landscape"
+ ],
+ "doctor": [
+  "doctor portrait smiling",
+  "landscape"
+ ],
+ "medical-team": [
+  "medical team hospital",
+  "landscape"
+ ],
+ "clinic-room": [
+  "modern clinic interior",
+  "landscape"
+ ],
+ "dentist": [
+  "dentist dental clinic",
+  "landscape"
+ ],
+ "tax": [
+  "tax documents calculator",
+  "landscape"
+ ],
+ "finance-team": [
+  "accountants team meeting finance",
+  "landscape"
+ ],
+ "consultant": [
+  "business consultant presentation",
+  "landscape"
+ ],
+ "portrait-pro": [
+  "business portrait professional",
+  "landscape"
+ ],
+ "it-server": [
+  "server room data center",
+  "landscape"
+ ],
+ "developer": [
+  "software developer working",
+  "landscape"
+ ],
+ "network-tech": [
+  "it technician network cables",
+  "landscape"
+ ],
+ "electrician": [
+  "electrician installation work",
+  "landscape"
+ ],
+ "ngo": [
+  "volunteers community charity",
+  "landscape"
+ ],
+ "ngo-kids": [
+  "children school community africa",
+  "landscape"
+ ],
+ "club-service": [
+  "community service volunteers group",
+  "landscape"
+ ],
+ "gala": [
+  "charity gala dinner",
+  "landscape"
+ ],
+ "gov-building": [
+  "city hall government building",
+  "landscape"
+ ],
+ "public-office": [
+  "public service desk citizens",
+  "landscape"
+ ],
+ "city-aerial": [
+  "city aerial view",
+  "landscape"
+ ],
+ "football-match": [
+  "football match stadium",
+  "landscape"
+ ],
+ "football-team": [
+  "football team players celebrating",
+  "landscape"
+ ],
+ "football-youth": [
+  "youth football training",
+  "landscape"
+ ],
+ "musician-stage": [
+  "musician concert stage",
+  "landscape"
+ ],
+ "music-studio": [
+  "recording studio musician",
+  "landscape"
+ ],
+ "singer-guitar": [
+  "singer acoustic guitar",
+  "landscape"
+ ],
+ "designer-studio": [
+  "fashion designer sewing studio",
+  "landscape"
+ ],
+ "runway": [
+  "fashion runway model",
+  "landscape"
+ ],
+ "fabrics": [
+  "tailor fabrics atelier",
+  "landscape"
+ ],
+ "photographer": [
+  "photographer camera",
+  "landscape"
+ ],
+ "wedding": [
+  "wedding couple photography",
+  "landscape"
+ ],
+ "church": [
+  "church worship congregation",
+  "landscape"
+ ],
+ "church-building": [
+  "church building exterior",
+  "landscape"
+ ],
+ "trainer": [
+  "personal trainer coaching client",
+  "landscape"
+ ],
+ "office-modern": [
+  "modern office interior",
+  "landscape"
  ]
 }
