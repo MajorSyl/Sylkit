@@ -1,26 +1,7 @@
 empty cornmeal {'total': 0, 'page': 1, 'results': []}
-ok network-tech 16
-ok electrician 16
-ok ngo 16
-ok ngo-kids 16
-ok club-service 16
 empty gala {'total': 0, 'page': 1, 'results': []}
-ok gov-building 16
-ok public-office 16
-ok city-aerial 16
-ok football-match 16
-ok football-team 16
-ok football-youth 16
-ok musician-stage 16
-ok music-studio 16
-ok singer-guitar 16
-ok designer-studio 16
-ok runway 16
-ok fabrics 16
-ok photographer 16
-ok wedding 16
-ok church 16
-ok church-building 16
-ok trainer 16
-ok office-modern 16
-fetched 23
+ok india-kids 16
+ok india-school 3
+ok india-village 16
+ok india-volunteers 16
+fetched 4
