@@ -1,0 +1,21 @@
+name: photos
+on:
+  push:
+    branches: [sylkit-2]
+    paths: ['scripts/photo_queries.json', 'scripts/ci/fetch_photos.py', '.github/workflows/photos.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: ci-commit, cancel-in-progress: false }
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: sylkit-2 }
+      - run: pip install pillow >/dev/null
+      - run: python3 scripts/ci/fetch_photos.py
+      - run: |
+          git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"
+          git add .ci/photos && git commit -m "ci: photo search results" || exit 0
+          git pull --rebase origin sylkit-2 && git push
