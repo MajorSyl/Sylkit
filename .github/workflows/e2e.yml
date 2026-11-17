@@ -31,7 +31,7 @@ jobs:
         run: |
           sleep 300
           for i in $(seq 1 40); do
-            s=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'content-type: application/json' -d '{}' https://sylkit-2-sylkit.fannah2026.workers.dev/api/order/cancel)
+            s=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'content-type: application/json' -d '{}' $(head -1 scripts/ci/e2e_run.txt | grep -o 'https://[^ ]*' || echo https://sylkit-2-sylkit.fannah2026.workers.dev)/api/order/cancel)
             [ "$s" = "400" ] && echo "preview ready" && break; sleep 20; done
           sleep 30
       - run: npm i --no-save playwright@1 > .ci-pw.txt 2>&1; npx playwright install --with-deps chromium >> .ci-pw.txt 2>&1; echo "pw exit $?" >> .ci-pw.txt
@@ -39,7 +39,7 @@ jobs:
       - name: Hydration probe (development build)
         continue-on-error: true
         run: npx expo export --platform web --dev --output-dir dist-dev > .ci-devbuild.txt 2>&1; node scripts/ci/hydration.mjs dist-dev >> .ci-devbuild.txt 2>&1; echo "probe exit $?" >> .ci-devbuild.txt
-      - run: node scripts/ci/e2e.mjs > .ci-e2e.txt 2>&1 || true
+      - run: node scripts/ci/e2e.mjs $(head -1 scripts/ci/e2e_run.txt | grep -o 'https://[^ ]*') > .ci-e2e.txt 2>&1 || true
         continue-on-error: true
       - if: always()
         run: |
