@@ -9,8 +9,8 @@ MORE_SITES = [
          tagline=['ONG y fundaciones', 'NGO & foundations'], blurb=['Cálido y transparente, para ONG, fundaciones y causas sociales.', 'Warm and transparent, for NGOs, foundations and social causes.'],
          vars={'bg': '#ffffff', 'text': '#13201a', 'accent': '#ea580c', 'accent-ink': '#ffffff', 'soft': '#fff6ef'},
          theme={'accent': '#ea580c', 'soft': '#fff6ef', 'fonts': FONT, 'r': '16px', 'rBtn': '999px'},
-         photos={'hero': 'ngo-kids:0', 'about': 'ngo:2', 's1': 'ngo-kids:3', 's2': 'ngo-kids:1', 's3': 'ngo:15', 'n1': 'ngo:3', 'n2': 'ngo-kids:9', 'n3': 'ngo:6', 'band': 'ngo-kids:6',
-                 'g1': 'ngo-kids:2', 'g2': 'club-service:5', 'g3': 'ngo-kids:7', 'g4': 'ngo:9'},
+         photos={'hero': 'india-kids:0', 'about': 'india-volunteers:14', 's1': 'india-kids:3', 's2': 'india-school:0', 's3': 'india-volunteers:9', 'n1': 'india-volunteers:7', 'n2': 'india-school:2', 'n3': 'india-volunteers:2', 'band': 'india-kids:14',
+                 'g1': 'india-kids:4', 'g2': 'india-village:3', 'g3': 'india-kids:6', 'g4': 'india-volunteers:1'},
          cfg=dict(topbar=E('Every $10 gives a child school supplies for a month', 'Cada $10 dan útiles escolares a un niño por un mes'),
                   nav=[['programs', E('Programs', 'Programas')], ['news', E('News', 'Noticias')], ['contact', E('Volunteer', 'Voluntariado')]], navCta={'t': E('Donate', 'Donar'), 'href': '#donate'},
                   sections=[
@@ -25,11 +25,11 @@ MORE_SITES = [
                           {'photo': 's3', 'title': E('Health days', 'Jornadas de salud'), 'text': E('Check-ups, vaccines and dental care in every community.', 'Chequeos, vacunas y odontología en cada comunidad.')}]},
                       {'type': 'band', 'id': 'donate', 'photo': 'band', 'title': E('Your donation, fully tracked', 'Tu donación, con seguimiento'), 'text': E('Give once or monthly by card, PayPal or transfer and receive a report of what your gift achieved.', 'Dona una vez o cada mes con tarjeta, PayPal o transferencia y recibe un informe de lo que lograste.'), 'cta': E('Donate', 'Donar')},
                       {'type': 'cards', 'id': 'news', 'alt': True, 'title': E('Latest news', 'Noticias'), 'items': [
-                          {'photo': 'n1', 'meta': E('Oct 28', '28 oct'), 'title': E('New school kitchen opens in Petare', 'Abre un nuevo comedor en Petare'), 'text': E('Built with 120 volunteers in three weekends.', 'Construido con 120 voluntarios en tres fines de semana.')},
+                          {'photo': 'n1', 'meta': E('Oct 28', '28 oct'), 'title': E('New school kitchen opens in Varanasi', 'Abre un nuevo comedor en Varanasi'), 'text': E('Built with 120 volunteers in three weekends.', 'Construido con 120 voluntarios en tres fines de semana.')},
                           {'photo': 'n2', 'meta': E('Oct 12', '12 oct'), 'title': E('1,000 backpacks delivered', '1.000 morrales entregados'), 'text': E('Thanks to our corporate partners.', 'Gracias a nuestras empresas aliadas.')},
                           {'photo': 'n3', 'meta': E('Sep 30', '30 sep'), 'title': E('2025 transparency report', 'Informe de transparencia 2025'), 'text': E('Audited accounts and results, open to everyone.', 'Cuentas auditadas y resultados, abiertos a todos.')}]},
                       {'type': 'gallery', 'title': E('In the field', 'En el terreno'), 'photos': ['g1', 'g2', 'g3', 'g4', 's1']},
-                      contact([CCS, PHONE, ['mail', E('volunteer@manosunidas.org', 'voluntarios@manosunidas.org')]], topics=[E('Volunteer', 'Voluntariado'), E('Donate', 'Donar'), E('Partner company', 'Empresa aliada')], title=E('Join us', 'Súmate'))],
+                      contact([['pin', E('Lajpat Nagar, New Delhi, India', 'Lajpat Nagar, Nueva Delhi, India')], ['phone', E('+91 98 0000 0000 · WhatsApp', '+91 98 0000 0000 · WhatsApp')], ['mail', E('volunteer@manosunidas.org', 'voluntarios@manosunidas.org')]], topics=[E('Volunteer', 'Voluntariado'), E('Donate', 'Donar'), E('Partner company', 'Empresa aliada')], title=E('Join us', 'Súmate'))],
                   footer=E('Nonprofit foundation · Registered charity', 'Fundación sin fines de lucro'))),
 
     # ---------------------------------------------------------------- Social club (Rotary-style)
