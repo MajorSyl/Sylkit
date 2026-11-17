@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v4
         with: { ref: sylkit-2 }
       - run: pip install pillow >/dev/null
-      - run: python3 scripts/ci/fetch_photos.py
+      - run: python3 scripts/ci/fetch_photos.py 2>&1 | tee .ci-run.txt; mkdir -p .ci/photos; cp .ci-run.txt .ci/photos/_run.txt
       - run: |
           git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"
           git add .ci/photos && git commit -m "ci: photo search results" || exit 0

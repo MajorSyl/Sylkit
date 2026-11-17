@@ -10,6 +10,10 @@ UA = {'user-agent': 'sylkit-ci/1.0'}
 def get(url):
     return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=40).read()
 done = 0
+LOG = []
+_print = print
+def print(*a):
+    LOG.append(' '.join(map(str, a))); _print(*a)
 for key, (q, orient) in Q.items():
     if (OUT / f'{key}.json').exists(): continue
     url = 'https://sylkit.com/api/photos/search?' + urllib.parse.urlencode({'q': q, 'per': 16, 'orientation': orient})
@@ -31,3 +35,4 @@ for key, (q, orient) in Q.items():
     sheet.save(OUT / f'{key}.jpg', quality=70)
     done += 1; print('ok', key, len(res)); time.sleep(1)
 print('fetched', done)
+(OUT / '_log.txt').write_text('\n'.join(LOG) + '\n')
