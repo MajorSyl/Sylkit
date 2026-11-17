@@ -1,11 +1,9 @@
-127.0.0.1 - - [17/Nov/2026 01:02:24] "GET /demos/models/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:02:24] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:02:24] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:02:25] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 01:02:25] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [17/Nov/2026 01:02:25] "GET /demos/models/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:02:25] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:02:25] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:02:26] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 01:02:26] "GET /favicon.ico HTTP/1.1" 404 -
-ok models
+127.0.0.1 - - [17/Nov/2026 01:11:35] "GET /preview/muse/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:11:36] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:11:36] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:11:37] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /preview/muse/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /_web/web.js HTTP/1.1" 200 -
+ok tpl-muse
