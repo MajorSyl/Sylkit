@@ -16,12 +16,16 @@ jobs:
         with: { ref: sylkit-2 }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm ci --no-audit --no-fund > .ci-npm.txt 2>&1 || (tail -40 .ci-npm.txt; exit 1)
+      - run: npm ci --no-audit --no-fund > .ci-npm.txt 2>&1; echo "npm exit $?" >> .ci-npm.txt
+        continue-on-error: true
       - name: Type check
+        continue-on-error: true
         run: npx tsc --noEmit > .ci-tsc.txt 2>&1; echo "tsc exit $?" >> .ci-tsc.txt
       - name: Worker tests
+        continue-on-error: true
         run: for t in worker/test/*.mjs; do node --no-warnings $t || echo "FAILED $t"; done > .ci-unit.txt 2>&1
       - name: Web build
+        continue-on-error: true
         run: npx expo export --platform web > .ci-build.txt 2>&1; echo "build exit $?" >> .ci-build.txt
       - name: Wait for the preview to run this commit
         run: |
@@ -29,10 +33,13 @@ jobs:
             s=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H 'content-type: application/json' -d '{}' https://sylkit-2-sylkit.fannah2026.workers.dev/api/order/cancel)
             [ "$s" = "400" ] && echo "preview ready" && break; sleep 20; done
           sleep 30
-      - run: npm i --no-save playwright@1 > /dev/null 2>&1 && npx playwright install --with-deps chromium > /dev/null 2>&1
+      - run: npm i --no-save playwright@1 > .ci-pw.txt 2>&1; npx playwright install --with-deps chromium >> .ci-pw.txt 2>&1; echo "pw exit $?" >> .ci-pw.txt
+        continue-on-error: true
       - run: node scripts/ci/e2e.mjs > .ci-e2e.txt 2>&1 || true
-      - run: |
-          mkdir -p .ci/e2e && cp .ci-tsc.txt .ci-unit.txt .ci-build.txt .ci-e2e.txt .ci/e2e/ 2>/dev/null; tail -c 20000 .ci/e2e/.ci-build.txt > /dev/null || true
+        continue-on-error: true
+      - if: always()
+        run: |
+          mkdir -p .ci/e2e && for f in .ci-npm.txt .ci-pw.txt; do tail -c 4000 $f > .ci/e2e/$f 2>/dev/null; done; cp .ci-tsc.txt .ci-unit.txt .ci-build.txt .ci-e2e.txt .ci/e2e/ 2>/dev/null; tail -c 20000 .ci/e2e/.ci-build.txt > /dev/null || true
           git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"
           git add -f .ci/e2e && git commit -m "ci: end-to-end test results" || exit 0
           git pull --rebase origin sylkit-2 && git push
