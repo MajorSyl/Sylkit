@@ -21,6 +21,10 @@ def shot(url, out, w, h, scale=1):
                     f'--screenshot={out}', f'http://127.0.0.1:{PORT}{url}'], check=True, capture_output=True, timeout=120)
 
 jobs = json.loads((ROOT / 'scripts' / 'ci' / 'shots.json').read_text())
+# Optional: only redo some pages (scripts/ci/shots_only.txt, comma separated names; empty = all).
+only = (ROOT / 'scripts' / 'ci' / 'shots_only.txt')
+only = [x.strip() for x in only.read_text().split(',') if x.strip()] if only.exists() else []
+if only: jobs = [j for j in jobs if j['name'] in only]
 for j in jobs:
     name = j['name']
     d, m = TMP / f'{name}-d.png', TMP / f'{name}-m.png'

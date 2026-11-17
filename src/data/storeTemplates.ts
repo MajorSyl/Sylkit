@@ -202,6 +202,276 @@ export const storeTemplates: StoreTemplate[] = [
     }
   },
   {
+    "slug": "ngo",
+    "name": "Manos Unidas",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "nonprofit",
+    "sectorName": [
+      "ONG",
+      "Nonprofit"
+    ],
+    "tagline": [
+      "ONG y fundaciones",
+      "NGO & foundations"
+    ],
+    "blurb": [
+      "Cálido y transparente, para ONG, fundaciones y causas sociales.",
+      "Warm and transparent, for NGOs, foundations and social causes."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#13201a",
+      "accent": "#ea580c",
+      "accentInk": "#ffffff",
+      "soft": "#fff6ef"
+    }
+  },
+  {
+    "slug": "club",
+    "name": "Club Social Altamar",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "community",
+    "sectorName": [
+      "Clubes",
+      "Clubs"
+    ],
+    "tagline": [
+      "Club social y de servicio",
+      "Social & service club"
+    ],
+    "blurb": [
+      "Institucional y cercano, para clubes de servicio, rotarios, leones y asociaciones.",
+      "Institutional and friendly, for service clubs, Rotary, Lions and associations."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0f1d3a",
+      "accent": "#17458f",
+      "accentInk": "#ffffff",
+      "soft": "#f2f5fb"
+    }
+  },
+  {
+    "slug": "gov",
+    "name": "Alcaldía de Valle Verde",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "government",
+    "sectorName": [
+      "Gobierno",
+      "Government"
+    ],
+    "tagline": [
+      "Portal de gobierno",
+      "Government portal"
+    ],
+    "blurb": [
+      "Claro y accesible, para alcaldías, gobernaciones e instituciones públicas.",
+      "Clear and accessible, for city halls, ministries and public institutions."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0b1b33",
+      "accent": "#0b5394",
+      "accentInk": "#ffffff",
+      "soft": "#f1f5fa"
+    }
+  },
+  {
+    "slug": "fc",
+    "name": "Deportivo Ávila FC",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "sports",
+    "sectorName": [
+      "Deportes",
+      "Sports"
+    ],
+    "tagline": [
+      "Club de fútbol",
+      "Football club"
+    ],
+    "blurb": [
+      "Enérgico y oscuro, para clubes de fútbol, academias y ligas.",
+      "Bold and dark, for football clubs, academies and leagues."
+    ],
+    "colors": {
+      "bg": "#0c0d10",
+      "text": "#f3f4f6",
+      "accent": "#facc15",
+      "accentInk": "#111111",
+      "soft": "#111318"
+    }
+  },
+  {
+    "slug": "chispa",
+    "name": "Chispa Electricidad",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "trades",
+    "sectorName": [
+      "Oficios",
+      "Trades"
+    ],
+    "tagline": [
+      "Electricista",
+      "Electrician"
+    ],
+    "blurb": [
+      "Práctico y directo, para electricistas, plomeros y técnicos.",
+      "Practical and direct, for electricians, plumbers and technicians."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#111827",
+      "accent": "#f59e0b",
+      "accentInk": "#111111",
+      "soft": "#fff8e8"
+    }
+  },
+  {
+    "slug": "coach",
+    "name": "Coach Daniela",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "fitness",
+    "sectorName": [
+      "Fitness",
+      "Fitness"
+    ],
+    "tagline": [
+      "Entrenador personal",
+      "Personal trainer"
+    ],
+    "blurb": [
+      "Energético y directo, para entrenadores, coaches y nutricionistas.",
+      "Energetic and direct, for trainers, coaches and nutritionists."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#111111",
+      "accent": "#e11d48",
+      "accentInk": "#ffffff",
+      "soft": "#fff1f3"
+    }
+  },
+  {
+    "slug": "ritmo",
+    "name": "Leo Rivas",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "music",
+    "sectorName": [
+      "Música",
+      "Music"
+    ],
+    "tagline": [
+      "Músico y artista",
+      "Musician & artist"
+    ],
+    "blurb": [
+      "Oscuro y escénico, para músicos, bandas, DJs y cantantes.",
+      "Dark and stage-ready, for musicians, bands, DJs and singers."
+    ],
+    "colors": {
+      "bg": "#0c0d10",
+      "text": "#f3f4f6",
+      "accent": "#a855f7",
+      "accentInk": "#ffffff",
+      "soft": "#111318"
+    }
+  },
+  {
+    "slug": "atelier",
+    "name": "Valentina Rossi",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "creative",
+    "sectorName": [
+      "Creativos",
+      "Creatives"
+    ],
+    "tagline": [
+      "Diseñadora de moda",
+      "Fashion designer"
+    ],
+    "blurb": [
+      "Editorial y elegante, para diseñadores, modistas y marcas de autor.",
+      "Editorial and elegant, for designers, tailors and independent labels."
+    ],
+    "colors": {
+      "bg": "#fbf9f6",
+      "text": "#141414",
+      "accent": "#141414",
+      "accentInk": "#ffffff",
+      "soft": "#f1ece5"
+    }
+  },
+  {
+    "slug": "lente",
+    "name": "Lente Studio",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "creative",
+    "sectorName": [
+      "Creativos",
+      "Creatives"
+    ],
+    "tagline": [
+      "Fotógrafo",
+      "Photographer"
+    ],
+    "blurb": [
+      "Minimalista y visual, para fotógrafos y videógrafos.",
+      "Minimal and visual, for photographers and videographers."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#111111",
+      "accent": "#111111",
+      "accentInk": "#ffffff",
+      "soft": "#f4f4f4"
+    }
+  },
+  {
+    "slug": "fe",
+    "name": "Iglesia Vida Nueva",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "faith",
+    "sectorName": [
+      "Iglesias",
+      "Churches"
+    ],
+    "tagline": [
+      "Iglesia",
+      "Church"
+    ],
+    "blurb": [
+      "Acogedor y claro, para iglesias, parroquias y ministerios.",
+      "Welcoming and clear, for churches, parishes and ministries."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#1c1917",
+      "accent": "#7c3aed",
+      "accentInk": "#ffffff",
+      "soft": "#f5f3ff"
+    }
+  },
+  {
     "slug": "lumen",
     "name": "Lumen",
     "kind": "store",

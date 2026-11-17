@@ -226,9 +226,9 @@
  },
  {
   "name": "sitio-web",
-  "url": "/preview/habitat/",
+  "url": "/preview/lex/",
   "cover": "sitio-web.webp",
-  "accent": "0F766E",
+  "accent": "8A3B1C",
   "shot": "sitio-web.webp"
  },
  {
@@ -237,5 +237,124 @@
   "cover": "app-movil.webp",
   "accent": "0F766E",
   "shot": "app-movil.webp"
+ },
+ {
+  "name": "tpl-lex",
+  "url": "/preview/lex/",
+  "cover": "tpl-lex.webp",
+  "accent": "8A3B1C",
+  "tpl": "lex"
+ },
+ {
+  "name": "tpl-vital",
+  "url": "/preview/vital/",
+  "cover": "tpl-vital.webp",
+  "accent": "0E7490",
+  "tpl": "vital"
+ },
+ {
+  "name": "tpl-cifra",
+  "url": "/preview/cifra/",
+  "cover": "tpl-cifra.webp",
+  "accent": "15803D",
+  "tpl": "cifra"
+ },
+ {
+  "name": "tpl-norte",
+  "url": "/preview/norte/",
+  "cover": "tpl-norte.webp",
+  "accent": "1D4ED8",
+  "tpl": "norte"
+ },
+ {
+  "name": "tpl-nodo",
+  "url": "/preview/nodo/",
+  "cover": "tpl-nodo.webp",
+  "accent": "22D3EE",
+  "tpl": "nodo"
+ },
+ {
+  "name": "tpl-sonrisa",
+  "url": "/preview/sonrisa/",
+  "cover": "tpl-sonrisa.webp",
+  "accent": "0891B2",
+  "tpl": "sonrisa"
+ },
+ {
+  "name": "tpl-grupo",
+  "url": "/preview/grupo/",
+  "cover": "tpl-grupo.webp",
+  "accent": "2558E8",
+  "tpl": "grupo"
+ },
+ {
+  "name": "tpl-ngo",
+  "url": "/preview/ngo/",
+  "cover": "tpl-ngo.webp",
+  "accent": "EA580C",
+  "tpl": "ngo"
+ },
+ {
+  "name": "tpl-club",
+  "url": "/preview/club/",
+  "cover": "tpl-club.webp",
+  "accent": "17458F",
+  "tpl": "club"
+ },
+ {
+  "name": "tpl-gov",
+  "url": "/preview/gov/",
+  "cover": "tpl-gov.webp",
+  "accent": "0B5394",
+  "tpl": "gov"
+ },
+ {
+  "name": "tpl-fc",
+  "url": "/preview/fc/",
+  "cover": "tpl-fc.webp",
+  "accent": "FACC15",
+  "tpl": "fc"
+ },
+ {
+  "name": "tpl-chispa",
+  "url": "/preview/chispa/",
+  "cover": "tpl-chispa.webp",
+  "accent": "F59E0B",
+  "tpl": "chispa"
+ },
+ {
+  "name": "tpl-ritmo",
+  "url": "/preview/ritmo/",
+  "cover": "tpl-ritmo.webp",
+  "accent": "A855F7",
+  "tpl": "ritmo"
+ },
+ {
+  "name": "tpl-atelier",
+  "url": "/preview/atelier/",
+  "cover": "tpl-atelier.webp",
+  "accent": "8B7355",
+  "tpl": "atelier"
+ },
+ {
+  "name": "tpl-lente",
+  "url": "/preview/lente/",
+  "cover": "tpl-lente.webp",
+  "accent": "6B7280",
+  "tpl": "lente"
+ },
+ {
+  "name": "tpl-fe",
+  "url": "/preview/fe/",
+  "cover": "tpl-fe.webp",
+  "accent": "6D28D9",
+  "tpl": "fe"
+ },
+ {
+  "name": "tpl-coach",
+  "url": "/preview/coach/",
+  "cover": "tpl-coach.webp",
+  "accent": "E11D48",
+  "tpl": "coach"
  }
 ]

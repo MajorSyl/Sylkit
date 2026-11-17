@@ -2,7 +2,7 @@ name: shots
 on:
   push:
     branches: [sylkit-2]
-    paths: ['scripts/ci/shots.json', 'scripts/ci/make_shots.py', '.github/workflows/shots.yml']
+    paths: ['scripts/ci/shots.json', 'scripts/ci/shots_only.txt', 'scripts/ci/make_shots.py', '.github/workflows/shots.yml']
   workflow_dispatch:
 permissions:
   contents: write

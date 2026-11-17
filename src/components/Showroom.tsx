@@ -22,6 +22,14 @@ type Kind = 'all' | 'system' | 'template';
 // Sylkit 2.0 industry demos (app/demo/*) are systems too; their covers are /shots/covers/demo-<id>.webp.
 const DEMO_ROUTE: Record<string, string> = { hotels: 'hotel', events: 'events', construction: 'construction', logistics: 'logistics', realestate: 'realestate', fashion: 'boutique' };
 type Sort = 'featured' | 'price' | 'name';
+// Gallery order: the systems and websites clients ask for most come first.
+const FEATURED = [
+  'demo-hotels', 'punto-de-venta', 'farmacia-pos', 'restaurante-menu-qr', 'tienda-online-whatsapp',
+  'tpl-lex', 'tpl-vital', 'tpl-cifra', 'pop-delivery', 'pop-gym', 'clinica-citas-historias', 'tpl-sonrisa',
+  'demo-realestate', 'pop-car-rental', 'salon-barberia-reservas', 'tpl-norte', 'tpl-nodo', 'pop-crm', 'tpl-grupo',
+  'tpl-ngo', 'tpl-club', 'tpl-gov', 'tpl-fc', 'demo-events', 'pop-tours', 'pop-rentals', 'control-de-inventario',
+  'facturacion', 'gestion-escolar', 'tpl-chispa', 'tpl-ritmo', 'tpl-atelier', 'tpl-lente', 'tpl-fe', 'tpl-coach',
+];
 type Item = {
   key: string;
   kind: 'system' | 'template';
@@ -171,8 +179,10 @@ export function Showroom({ products, initialQuery = '' }: { products: Product[];
         haystack: [x.title.en, x.title.es, x.title.pt, x.built.en, x.built.es, x.built.pt].join(' ').toLowerCase(),
       };
     });
-    // Industry demos first (hotel stays the lead card), then the new popular systems, then the rest.
-    return [...demos.slice(0, 1), ...popular.slice(0, 3), ...demos.slice(1), ...popular.slice(3), ...sys, ...tpl];
+    // Most important first (what clients ask for most), then everything else in its usual order.
+    const all = [...demos, ...popular, ...sys, ...tpl];
+    const rank = (k: string) => { const i = FEATURED.indexOf(k); return i < 0 ? FEATURED.length + all.findIndex((x) => x.key === k) : i; };
+    return all.sort((a, b) => rank(a.key) - rank(b.key));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products, lang]);
 
