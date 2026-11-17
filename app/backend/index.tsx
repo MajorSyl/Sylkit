@@ -44,7 +44,7 @@ function Orders() {
   useEffect(() => {
     load();
     const ch = supabase
-      .channel('orders-admin')
+      .channel(`orders-admin-${Date.now()}-${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => load())
       .subscribe();
     return () => {
