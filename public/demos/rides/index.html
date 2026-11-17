@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="google" content="notranslate"><title>Rueda · Demo · Sylkit</title><meta name="description" content="Live demo of the Sylkit ride-hailing system: rider app with live prices, driver dispatch, trips and payments.">
+<link rel="preconnect" href="https://images.unsplash.com"><link rel="stylesheet" href="/_pro/pro.css"></head><body>
+<script src="/_pro/pro.js"></script>
+<script>
+SylPro.create(Object.assign({ photos: {"hero": ["https://images.unsplash.com/photo-1671245166700-f61e4f26d890?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTR8fGNpdHklMjB0cmFmZmljJTIwbmlnaHR8ZW58MXwwfHx8MTc5NDg5MDY0NXww&ixlib=rb-4.1.0", "Blake Emge", "https://unsplash.com/@blakeemge?utm_source=sylkit&utm_medium=referral"], "moto": ["https://images.unsplash.com/photo-1683553170878-049f180627b0?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8NXx8Zm9vZCUyMGRlbGl2ZXJ5JTIwbW90b3JiaWtlfGVufDF8MHx8fDE3OTQ4ODQyNTh8MA&ixlib=rb-4.1.0", "Ruwell Salatan", "https://unsplash.com/@eru_ru?utm_source=sylkit&utm_medium=referral"], "eco": ["https://images.unsplash.com/photo-1587580945215-5d4aabb2c8ef?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8NHx8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Jamie Street", "https://unsplash.com/@jamie452?utm_source=sylkit&utm_medium=referral"], "comfort": ["https://images.unsplash.com/photo-1723259529937-487a13183d79?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTB8fGNhciUyMHJlbnRhbCUyMHN1diUyMHNlZGFufGVufDF8MHx8fDE3OTQ4ODQyNTB8MA&ixlib=rb-4.1.0", "Surya Ahmad Pajar", "https://unsplash.com/@ahmdpajr?utm_source=sylkit&utm_medium=referral"], "xl": ["https://images.unsplash.com/photo-1615887110697-0819ec23465f?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8M3x8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Vlad Kutepov", "https://unsplash.com/@kvtepov?utm_source=sylkit&utm_medium=referral"], "premium": ["https://images.unsplash.com/photo-1582182248032-800034598b35?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTV8fGNhciUyMHJlbnRhbCUyMHN1diUyMHNlZGFufGVufDF8MHx8fDE3OTQ4ODQyNTB8MA&ixlib=rb-4.1.0", "Photo Pro", "https://unsplash.com/@ibrahimabdulla?utm_source=sylkit&utm_medium=referral"], "ella": ["https://images.unsplash.com/photo-1794208709907-d34f3540d076?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTB8fGRyaXZlciUyMGNhciUyMHNtaWxpbmd8ZW58MXwwfHx8MTc5NDg5MDY0Mnww&ixlib=rb-4.1.0", "Vitaly Gariev", "https://unsplash.com/@silverkblack?utm_source=sylkit&utm_medium=referral"], "d1": ["https://images.unsplash.com/photo-1473655587843-eda8944061e8?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MXx8ZHJpdmVyJTIwY2FyJTIwc21pbGluZ3xlbnwxfDB8fHwxNzk0ODkwNjQyfDA&ixlib=rb-4.1.0", "frank mckenna", "https://unsplash.com/@frankiefoto?utm_source=sylkit&utm_medium=referral"], "d2": ["https://images.unsplash.com/photo-1603696774347-a29b06924581?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8Nnx8ZHJpdmVyJTIwY2FyJTIwc21pbGluZ3xlbnwxfDB8fHwxNzk0ODkwNjQyfDA&ixlib=rb-4.1.0", "Adismara Putri Pradiri", "https://unsplash.com/@adizmarine?utm_source=sylkit&utm_medium=referral"], "d3": ["https://images.unsplash.com/photo-1758521961483-30f5908b9c93?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTN8fGRyaXZlciUyMGNhciUyMHNtaWxpbmd8ZW58MXwwfHx8MTc5NDg5MDY0Mnww&ixlib=rb-4.1.0", "Vitaly Gariev", "https://unsplash.com/@silverkblack?utm_source=sylkit&utm_medium=referral"], "d4": ["https://images.unsplash.com/photo-1749183778740-960ad6364bb4?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8NHx8ZHJpdmVyJTIwY2FyJTIwc21pbGluZ3xlbnwxfDB8fHwxNzk0ODkwNjQyfDA&ixlib=rb-4.1.0", "ZEELOOL Glasses", "https://unsplash.com/@zeelool_official?utm_source=sylkit&utm_medium=referral"]} }, {
+  id: 'rides', version: 1, ref: 'rides',
+  theme: { primary: '#111827', primaryD: '#000000', soft: '#f3f4f6', fonts: 'family=Inter:wght@400;600;700;800;900' },
+  brand: { name: 'Rueda', mark: 'R' },
+  hero: { photo: 'hero', eyebrow: { en: 'Caracas · Valencia · Maracaibo', es: 'Caracas · Valencia · Maracaibo' },
+    title: { en: 'Where to? A safe ride in minutes', es: '¿A dónde vas? Un viaje seguro en minutos' },
+    lead: { en: 'Fixed price before you ride, verified drivers and live trip sharing. Pay with Pago Móvil, card, cash or USDT.', es: 'Precio fijo antes de viajar, conductores verificados y viaje compartido en vivo. Paga con Pago Móvil, tarjeta, efectivo o USDT.' },
+    search: [{ name: 'from', label: { en: 'Pick-up', es: 'Origen' }, value: 'Altamira, Caracas' }, { name: 'to', label: { en: 'Destination', es: 'Destino' }, value: 'CCCT, Chuao' }],
+    cta: { en: 'See prices', es: 'Ver precios' } },
+  catalog: { title: { en: 'Choose your ride', es: 'Elige tu viaje' }, lead: { en: 'Prices for this trip (8.4 km · about 18 min). Tap to request; the driver dashboard gets it instantly.', es: 'Precios para este viaje (8,4 km · unos 18 min). Toca para pedir; el panel de despacho lo recibe al instante.' },
+    filters: [['car', { en: 'Cars', es: 'Carros' }], ['moto', 'Moto']],
+    items: [
+      { id: 'k1', cat: 'moto', photo: 'moto', title: 'Rueda Moto', meta: { en: '1 seat · arrives in 2 min', es: '1 puesto · llega en 2 min' }, price: 2.5, tag: { en: 'Fastest', es: 'Más rápido' } },
+      { id: 'k2', cat: 'car', photo: 'eco', title: 'Rueda Economy', meta: { en: '4 seats · arrives in 4 min', es: '4 puestos · llega en 4 min' }, price: 4.8, tag: { en: 'Best price', es: 'Mejor precio' } },
+      { id: 'k3', cat: 'car', photo: 'comfort', title: 'Rueda Comfort', meta: { en: 'Newer cars, top drivers · 5 min', es: 'Carros nuevos, mejores conductores · 5 min' }, price: 6.9 },
+      { id: 'k4', cat: 'car', photo: 'xl', title: 'Rueda XL', meta: { en: '6 seats, room for luggage · 7 min', es: '6 puestos, espacio para maletas · 7 min' }, price: 8.5 },
+      { id: 'k5', cat: 'car', photo: 'ella', title: 'Rueda Ella', meta: { en: 'Women drivers for women riders · 6 min', es: 'Conductoras para pasajeras · 6 min' }, price: 5.2 },
+      { id: 'k6', cat: 'car', photo: 'premium', title: 'Rueda Premium', meta: { en: 'Executive sedans, airport ready', es: 'Sedanes ejecutivos, ideal aeropuerto' }, price: 14 },
+    ] },
+  book: { button: { en: 'Request', es: 'Pedir' }, confirm: { en: 'Confirm ride', es: 'Confirmar viaje' },
+    fields: [{ name: 'from', label: { en: 'Pick-up', es: 'Origen' }, value: 'Altamira, Caracas' }, { name: 'to', label: { en: 'Destination', es: 'Destino' }, value: 'CCCT, Chuao' },
+      { name: 'pay', label: { en: 'Payment', es: 'Pago' }, type: 'select', options: ['Pago Móvil', 'Card', 'Cash', 'USDT'] }],
+    total: (x) => x.price, detail: (x, v) => `${v.from} → ${v.to} · ${v.pay}` },
+  flow: [{ id: 'req', label: { en: 'Requested', es: 'Solicitados' } }, { id: 'acc', label: { en: 'Driver on the way', es: 'Conductor en camino' }, verb: { en: 'Assign driver', es: 'Asignar' }, tone: 'warn' },
+    { id: 'trip', label: { en: 'On trip', es: 'En viaje' }, verb: { en: 'Start trip', es: 'Iniciar' }, tone: 'info' }, { id: 'done', label: { en: 'Completed', es: 'Completados' }, verb: { en: 'Complete', es: 'Finalizar' } }],
+  dashTitle: { en: 'Dispatch', es: 'Despacho' }, dashLead: { en: 'Every ride from request to drop-off; drivers and riders are tracked live and paid automatically.', es: 'Cada viaje desde la solicitud hasta el destino; conductores y pasajeros con seguimiento en vivo y pago automático.' },
+  stats: (a) => { const r = a.db.records; return [[{ en: 'Trips today', es: 'Viajes hoy' }, String(1284 + r.length)], [{ en: 'Drivers online', es: 'Conductores activos' }, '312'],
+    [{ en: 'Avg. pick-up time', es: 'Tiempo de llegada' }, '4.2 min'], [{ en: 'Gross today', es: 'Facturado hoy' }, a.money(7930 + r.reduce((s, x) => s + x.total, 0))]]; },
+  side: { title: { en: 'Top drivers this week', es: 'Mejores conductores de la semana' }, rows: (a) => [
+    { img: 'd1', title: 'José M. · Comfort', sub: { en: '142 trips · 4.98 ★', es: '142 viajes · 4,98 ★' }, right: { en: 'Online', es: 'Activo' }, tone: 'ok' },
+    { img: 'd2', title: 'Luis R. · Economy', sub: { en: '131 trips · 4.95 ★', es: '131 viajes · 4,95 ★' }, right: { en: 'On trip', es: 'En viaje' }, tone: 'info' },
+    { img: 'd4', title: 'Andrea P. · Ella', sub: { en: '118 trips · 4.99 ★', es: '118 viajes · 4,99 ★' }, right: { en: 'Online', es: 'Activa' }, tone: 'ok' },
+    { img: 'd3', title: 'Carlos T. · XL', sub: { en: '97 trips · 4.93 ★', es: '97 viajes · 4,93 ★' }, right: { en: 'Offline', es: 'Inactivo' } }] },
+  perks: [['shield', { en: 'Verified drivers', es: 'Conductores verificados' }, { en: 'ID, license and car checked.', es: 'Cédula, licencia y vehículo revisados.' }],
+    ['pin', { en: 'Share your trip', es: 'Comparte tu viaje' }, { en: 'Family follows you live.', es: 'Tu familia te sigue en vivo.' }],
+    ['card', { en: 'Fixed prices', es: 'Precio fijo' }, { en: 'You know the price before you ride.', es: 'Sabes el precio antes de viajar.' }]],
+  seed: (a) => [['Gabriela L.', 'k2', 'trip', 'Las Mercedes → Sambil', 3], ['Pedro R.', 'k1', 'acc', 'Chacaíto → La Candelaria', 1], ['Mariana O.', 'k5', 'req', 'El Hatillo → Altamira', 0], ['Jorge S.', 'k6', 'done', 'Maiquetía → La Castellana', 40], ['Ana T.', 'k3', 'done', 'Chuao → Los Palos Grandes', 22]]
+    .map(([name, item, status, detail, min]) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 414 000 0000', detail, total: x.price, status, at: new Date(Date.now() - min * 6e4).toISOString() }; }),
+}));
+</script>
+</body></html>

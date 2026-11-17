@@ -6,6 +6,24 @@ export type PopularSystem = { id: string; title: T; built: T; href: string; cove
 
 export const popularSystems: PopularSystem[] = [
   {
+    id: 'rides',
+    title: { en: 'Ride-hailing app', es: 'App de transporte', pt: 'App de transporte' },
+    built: { en: 'Like Ridery or Uber: rider app, fixed prices, drivers and dispatch.', es: 'Como Ridery o Uber: app del pasajero, precio fijo, conductores y despacho.', pt: 'Como Uber: app do passageiro, preço fixo, motoristas e despacho.' },
+    href: '/demos/rides/', cover: '/shots/covers/demo-rides.webp',
+  },
+  {
+    id: 'eats',
+    title: { en: 'Delivery app (restaurants & market)', es: 'App de delivery (restaurantes y mercado)', pt: 'App de delivery (restaurantes e mercado)' },
+    built: { en: 'Like Yummy: many stores, orders, riders and commissions in one app.', es: 'Como Yummy: muchos locales, pedidos, motorizados y comisiones en una app.', pt: 'Como iFood: várias lojas, pedidos, entregadores e comissões num app.' },
+    href: '/demos/eats/', cover: '/shots/covers/demo-eats.webp',
+  },
+  {
+    id: 'flights',
+    title: { en: 'Travel agency: flights & vacations', es: 'Agencia de viajes: vuelos y vacaciones', pt: 'Agência de viagens: voos e férias' },
+    built: { en: 'Flight tickets, vacation packages, tours, installments and ticket issuing.', es: 'Boletos aéreos, paquetes vacacionales, tours, cuotas y emisión de boletos.', pt: 'Passagens aéreas, pacotes de férias, passeios, parcelas e emissão.' },
+    href: '/demos/flights/', cover: '/shots/covers/demo-flights.webp',
+  },
+  {
     id: 'gym',
     title: { en: 'Gym & fitness', es: 'Gimnasio y fitness', pt: 'Academia e fitness' },
     built: { en: 'Memberships, class bookings, check-ins and renewals.', es: 'Membresías, reservas de clases, entradas y renovaciones.', pt: 'Planos, reservas de aulas, check-ins e renovações.' },
@@ -19,7 +37,7 @@ export const popularSystems: PopularSystem[] = [
   },
   {
     id: 'delivery',
-    title: { en: 'Food ordering & delivery', es: 'Pedidos y delivery de comida', pt: 'Pedidos e delivery de comida' },
+    title: { en: 'Restaurant ordering & delivery', es: 'Pedidos y delivery para restaurantes', pt: 'Pedidos e delivery para restaurantes' },
     built: { en: 'Online menu, orders, kitchen screen and riders.', es: 'Menú en línea, pedidos, pantalla de cocina y motorizados.', pt: 'Cardápio online, pedidos, tela da cozinha e entregadores.' },
     href: '/demos/delivery/', cover: '/shots/covers/demo-delivery.webp',
   },

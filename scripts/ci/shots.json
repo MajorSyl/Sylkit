@@ -356,5 +356,23 @@
   "cover": "tpl-coach.webp",
   "accent": "E11D48",
   "tpl": "coach"
+ },
+ {
+  "name": "rides",
+  "url": "/demos/rides/",
+  "cover": "demo-rides.webp",
+  "accent": "111827"
+ },
+ {
+  "name": "eats",
+  "url": "/demos/eats/",
+  "cover": "demo-eats.webp",
+  "accent": "E11D48"
+ },
+ {
+  "name": "flights",
+  "url": "/demos/flights/",
+  "cover": "demo-flights.webp",
+  "accent": "2563EB"
  }
 ]

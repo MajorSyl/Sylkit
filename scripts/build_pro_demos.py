@@ -311,6 +311,144 @@ DEMOS['tours'] = dict(
     .map(([name, item, status, p], i) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 416 000 0000', detail: `${a.date(a.day(5 + i * 2))} · ${p} pax`, total: x.price * p, status, at: new Date(Date.now() - (i + 1) * 5e6).toISOString() }; }),
 }""")
 
+# ---------------------------------------------------------------- Ride-hailing (Ridery / Uber style)
+DEMOS['rides'] = dict(
+    title='Rueda', desc='Live demo of the Sylkit ride-hailing system: rider app with live prices, driver dispatch, trips and payments.',
+    photos={'hero': 'city-night:13', 'moto': 'delivery-rider:4', 'eco': 'cars:3', 'comfort': 'cars:9', 'xl': 'cars:2', 'premium': 'cars:14', 'ella': 'ride-driver:9',
+            'd1': 'ride-driver:0', 'd2': 'ride-driver:5', 'd3': 'ride-driver:12', 'd4': 'ride-driver:3'},
+    cfg="""{
+  id: 'rides', version: 1, ref: 'rides',
+  theme: { primary: '#111827', primaryD: '#000000', soft: '#f3f4f6', fonts: 'family=Inter:wght@400;600;700;800;900' },
+  brand: { name: 'Rueda', mark: 'R' },
+  hero: { photo: 'hero', eyebrow: { en: 'Caracas · Valencia · Maracaibo', es: 'Caracas · Valencia · Maracaibo' },
+    title: { en: 'Where to? A safe ride in minutes', es: '¿A dónde vas? Un viaje seguro en minutos' },
+    lead: { en: 'Fixed price before you ride, verified drivers and live trip sharing. Pay with Pago Móvil, card, cash or USDT.', es: 'Precio fijo antes de viajar, conductores verificados y viaje compartido en vivo. Paga con Pago Móvil, tarjeta, efectivo o USDT.' },
+    search: [{ name: 'from', label: { en: 'Pick-up', es: 'Origen' }, value: 'Altamira, Caracas' }, { name: 'to', label: { en: 'Destination', es: 'Destino' }, value: 'CCCT, Chuao' }],
+    cta: { en: 'See prices', es: 'Ver precios' } },
+  catalog: { title: { en: 'Choose your ride', es: 'Elige tu viaje' }, lead: { en: 'Prices for this trip (8.4 km · about 18 min). Tap to request; the driver dashboard gets it instantly.', es: 'Precios para este viaje (8,4 km · unos 18 min). Toca para pedir; el panel de despacho lo recibe al instante.' },
+    filters: [['car', { en: 'Cars', es: 'Carros' }], ['moto', 'Moto']],
+    items: [
+      { id: 'k1', cat: 'moto', photo: 'moto', title: 'Rueda Moto', meta: { en: '1 seat · arrives in 2 min', es: '1 puesto · llega en 2 min' }, price: 2.5, tag: { en: 'Fastest', es: 'Más rápido' } },
+      { id: 'k2', cat: 'car', photo: 'eco', title: 'Rueda Economy', meta: { en: '4 seats · arrives in 4 min', es: '4 puestos · llega en 4 min' }, price: 4.8, tag: { en: 'Best price', es: 'Mejor precio' } },
+      { id: 'k3', cat: 'car', photo: 'comfort', title: 'Rueda Comfort', meta: { en: 'Newer cars, top drivers · 5 min', es: 'Carros nuevos, mejores conductores · 5 min' }, price: 6.9 },
+      { id: 'k4', cat: 'car', photo: 'xl', title: 'Rueda XL', meta: { en: '6 seats, room for luggage · 7 min', es: '6 puestos, espacio para maletas · 7 min' }, price: 8.5 },
+      { id: 'k5', cat: 'car', photo: 'ella', title: 'Rueda Ella', meta: { en: 'Women drivers for women riders · 6 min', es: 'Conductoras para pasajeras · 6 min' }, price: 5.2 },
+      { id: 'k6', cat: 'car', photo: 'premium', title: 'Rueda Premium', meta: { en: 'Executive sedans, airport ready', es: 'Sedanes ejecutivos, ideal aeropuerto' }, price: 14 },
+    ] },
+  book: { button: { en: 'Request', es: 'Pedir' }, confirm: { en: 'Confirm ride', es: 'Confirmar viaje' },
+    fields: [{ name: 'from', label: { en: 'Pick-up', es: 'Origen' }, value: 'Altamira, Caracas' }, { name: 'to', label: { en: 'Destination', es: 'Destino' }, value: 'CCCT, Chuao' },
+      { name: 'pay', label: { en: 'Payment', es: 'Pago' }, type: 'select', options: ['Pago Móvil', 'Card', 'Cash', 'USDT'] }],
+    total: (x) => x.price, detail: (x, v) => `${v.from} → ${v.to} · ${v.pay}` },
+  flow: [{ id: 'req', label: { en: 'Requested', es: 'Solicitados' } }, { id: 'acc', label: { en: 'Driver on the way', es: 'Conductor en camino' }, verb: { en: 'Assign driver', es: 'Asignar' }, tone: 'warn' },
+    { id: 'trip', label: { en: 'On trip', es: 'En viaje' }, verb: { en: 'Start trip', es: 'Iniciar' }, tone: 'info' }, { id: 'done', label: { en: 'Completed', es: 'Completados' }, verb: { en: 'Complete', es: 'Finalizar' } }],
+  dashTitle: { en: 'Dispatch', es: 'Despacho' }, dashLead: { en: 'Every ride from request to drop-off; drivers and riders are tracked live and paid automatically.', es: 'Cada viaje desde la solicitud hasta el destino; conductores y pasajeros con seguimiento en vivo y pago automático.' },
+  stats: (a) => { const r = a.db.records; return [[{ en: 'Trips today', es: 'Viajes hoy' }, String(1284 + r.length)], [{ en: 'Drivers online', es: 'Conductores activos' }, '312'],
+    [{ en: 'Avg. pick-up time', es: 'Tiempo de llegada' }, '4.2 min'], [{ en: 'Gross today', es: 'Facturado hoy' }, a.money(7930 + r.reduce((s, x) => s + x.total, 0))]]; },
+  side: { title: { en: 'Top drivers this week', es: 'Mejores conductores de la semana' }, rows: (a) => [
+    { img: 'd1', title: 'José M. · Comfort', sub: { en: '142 trips · 4.98 ★', es: '142 viajes · 4,98 ★' }, right: { en: 'Online', es: 'Activo' }, tone: 'ok' },
+    { img: 'd2', title: 'Luis R. · Economy', sub: { en: '131 trips · 4.95 ★', es: '131 viajes · 4,95 ★' }, right: { en: 'On trip', es: 'En viaje' }, tone: 'info' },
+    { img: 'd4', title: 'Andrea P. · Ella', sub: { en: '118 trips · 4.99 ★', es: '118 viajes · 4,99 ★' }, right: { en: 'Online', es: 'Activa' }, tone: 'ok' },
+    { img: 'd3', title: 'Carlos T. · XL', sub: { en: '97 trips · 4.93 ★', es: '97 viajes · 4,93 ★' }, right: { en: 'Offline', es: 'Inactivo' } }] },
+  perks: [['shield', { en: 'Verified drivers', es: 'Conductores verificados' }, { en: 'ID, license and car checked.', es: 'Cédula, licencia y vehículo revisados.' }],
+    ['pin', { en: 'Share your trip', es: 'Comparte tu viaje' }, { en: 'Family follows you live.', es: 'Tu familia te sigue en vivo.' }],
+    ['card', { en: 'Fixed prices', es: 'Precio fijo' }, { en: 'You know the price before you ride.', es: 'Sabes el precio antes de viajar.' }]],
+  seed: (a) => [['Gabriela L.', 'k2', 'trip', 'Las Mercedes → Sambil', 3], ['Pedro R.', 'k1', 'acc', 'Chacaíto → La Candelaria', 1], ['Mariana O.', 'k5', 'req', 'El Hatillo → Altamira', 0], ['Jorge S.', 'k6', 'done', 'Maiquetía → La Castellana', 40], ['Ana T.', 'k3', 'done', 'Chuao → Los Palos Grandes', 22]]
+    .map(([name, item, status, detail, min]) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 414 000 0000', detail, total: x.price, status, at: new Date(Date.now() - min * 6e4).toISOString() }; }),
+}""")
+
+# ---------------------------------------------------------------- Food & market delivery app (Yummy style)
+DEMOS['eats'] = dict(
+    title='Antojo', desc='Live demo of the Sylkit delivery app: many restaurants, markets and pharmacies, orders, riders and payments in one app.',
+    photos={'hero': 'tacos:0', 'r1': 'burger:3', 'r2': 'pizza:1', 'r3': 'sushi:12', 'r4': 'tacos:2', 'r5': 'fried-chicken:3', 'r6': 'bowl:2', 'r7': 'horno-bread:0', 'm1': 'minimarket:1', 'm2': 'pharmacy:4', 'rider': 'delivery-rider:0'},
+    cfg="""{
+  id: 'eats', version: 1, ref: 'eats',
+  theme: { primary: '#e11d48', primaryD: '#be123c', soft: '#fff1f3', fonts: 'family=Inter:wght@400;600;700;800;900' },
+  brand: { name: 'Antojo', mark: 'A' },
+  hero: { photo: 'hero', eyebrow: { en: 'Restaurants · Market · Pharmacy', es: 'Restaurantes · Mercado · Farmacia' },
+    title: { en: 'Everything you crave, delivered', es: 'Todo lo que se te antoja, a domicilio' },
+    lead: { en: '120 restaurants, supermarkets and pharmacies in one app. Track your rider live and pay your way.', es: '120 restaurantes, supermercados y farmacias en una sola app. Sigue a tu motorizado en vivo y paga como quieras.' },
+    search: [{ name: 'addr', label: { en: 'Deliver to', es: 'Entregar en' }, value: 'Los Palos Grandes, Caracas' },
+      { name: 'kind', label: { en: 'Looking for', es: 'Busco' }, type: 'select', options: [['all', { en: 'Everything', es: 'Todo' }], ['food', { en: 'Restaurants', es: 'Restaurantes' }], ['market', { en: 'Market & pharmacy', es: 'Mercado y farmacia' }]] }],
+    cta: { en: 'Find', es: 'Buscar' }, onSearch: (v, a) => { a.db.cat = v.kind; } },
+  catalog: { title: { en: 'Near you', es: 'Cerca de ti' }, lead: { en: 'Tap a store to order. Each store gets the order on its tablet; riders are assigned automatically.', es: 'Toca una tienda para pedir. Cada local recibe el pedido en su tablet y el motorizado se asigna solo.' },
+    filters: [['food', { en: 'Restaurants', es: 'Restaurantes' }], ['market', { en: 'Market & pharmacy', es: 'Mercado y farmacia' }]],
+    items: [
+      { id: 'e1', cat: 'food', photo: 'r1', title: 'Burger Garage', meta: { en: 'Burgers · 25–35 min · $1.50 delivery', es: 'Hamburguesas · 25–35 min · delivery $1,50' }, price: 9, unit: { en: 'avg. order', es: 'pedido prom.' }, tag: { en: 'Free delivery', es: 'Delivery gratis' } },
+      { id: 'e2', cat: 'food', photo: 'r2', title: 'Forno Napoli', meta: { en: 'Pizza · 30–40 min · $2 delivery', es: 'Pizza · 30–40 min · delivery $2' }, price: 14, unit: { en: 'avg. order', es: 'pedido prom.' } },
+      { id: 'e3', cat: 'food', photo: 'r3', title: 'Kaito Sushi', meta: { en: 'Sushi · 35–45 min · $2 delivery', es: 'Sushi · 35–45 min · delivery $2' }, price: 22, unit: { en: 'avg. order', es: 'pedido prom.' }, tag: { en: '20% off', es: '20% dcto.' } },
+      { id: 'e4', cat: 'food', photo: 'r4', title: 'Taquería Lupe', meta: { en: 'Mexican · 20–30 min · $1.50 delivery', es: 'Mexicana · 20–30 min · delivery $1,50' }, price: 10, unit: { en: 'avg. order', es: 'pedido prom.' } },
+      { id: 'e5', cat: 'food', photo: 'r5', title: 'Pollo Crocante', meta: { en: 'Chicken · 20–30 min · $1 delivery', es: 'Pollo · 20–30 min · delivery $1' }, price: 11, unit: { en: 'avg. order', es: 'pedido prom.' } },
+      { id: 'e6', cat: 'food', photo: 'r6', title: 'Green Bowl', meta: { en: 'Healthy · 25–35 min · $1.50 delivery', es: 'Saludable · 25–35 min · delivery $1,50' }, price: 12, unit: { en: 'avg. order', es: 'pedido prom.' } },
+      { id: 'e7', cat: 'food', photo: 'r7', title: 'Panadería Real', meta: { en: 'Bakery & coffee · 15–25 min', es: 'Panadería y café · 15–25 min' }, price: 6, unit: { en: 'avg. order', es: 'pedido prom.' } },
+      { id: 'e8', cat: 'market', photo: 'm1', title: 'Mercado Fresco', meta: { en: 'Groceries · delivery in 45 min', es: 'Víveres · entrega en 45 min' }, price: 35, unit: { en: 'avg. order', es: 'pedido prom.' }, tag: { en: 'New', es: 'Nuevo' } },
+      { id: 'e9', cat: 'market', photo: 'm2', title: 'Farmacia San Rafael', meta: { en: 'Pharmacy · 30 min · open 24 h', es: 'Farmacia · 30 min · abierta 24 h' }, price: 15, unit: { en: 'avg. order', es: 'pedido prom.' } },
+    ] },
+  book: { button: { en: 'Order', es: 'Pedir' }, confirm: { en: 'Place order', es: 'Hacer pedido' },
+    fields: [{ name: 'items', label: { en: 'What do you want?', es: '¿Qué quieres?' }, value: '2 × combo' }, { name: 'pay', label: { en: 'Payment', es: 'Pago' }, type: 'select', options: ['Pago Móvil', 'Card', 'Cash', 'USDT'] }],
+    total: (x) => x.price + 1.5, detail: (x, v) => `${v.items} · ${v.pay}` },
+  flow: [{ id: 'new', label: { en: 'New orders', es: 'Nuevos' } }, { id: 'prep', label: { en: 'Preparing', es: 'Preparando' }, verb: { en: 'Store accepts', es: 'Local acepta' }, tone: 'warn' },
+    { id: 'road', label: { en: 'Rider on the way', es: 'En camino' }, verb: { en: 'Assign rider', es: 'Asignar motorizado' }, tone: 'info' }, { id: 'done', label: { en: 'Delivered', es: 'Entregados' }, verb: { en: 'Delivered', es: 'Entregado' } }],
+  dashTitle: { en: 'Operations center', es: 'Centro de operaciones' }, dashLead: { en: 'All stores, orders and riders in one place, with commissions calculated per store.', es: 'Todos los locales, pedidos y motorizados en un solo lugar, con la comisión calculada por local.' },
+  stats: (a) => { const r = a.db.records; return [[{ en: 'Orders today', es: 'Pedidos hoy' }, String(2140 + r.length)], [{ en: 'Active stores', es: 'Locales activos' }, '126'],
+    [{ en: 'Riders online', es: 'Motorizados activos' }, '184'], [{ en: 'Commission today', es: 'Comisión hoy' }, a.money(4120 + r.reduce((s, x) => s + x.total * 0.15, 0))]]; },
+  side: { title: { en: 'Top stores today', es: 'Locales top de hoy' }, rows: (a) => [
+    { img: 'r1', title: 'Burger Garage', sub: { en: '214 orders · 4.8 ★', es: '214 pedidos · 4,8 ★' }, bar: 1 },
+    { img: 'r2', title: 'Forno Napoli', sub: { en: '168 orders · 4.7 ★', es: '168 pedidos · 4,7 ★' }, bar: 0.78 },
+    { img: 'm1', title: 'Mercado Fresco', sub: { en: '133 orders · 4.9 ★', es: '133 pedidos · 4,9 ★' }, bar: 0.62 },
+    { img: 'r3', title: 'Kaito Sushi', sub: { en: '97 orders · 4.8 ★', es: '97 pedidos · 4,8 ★' }, bar: 0.45 }] },
+  perks: [['truck', { en: 'Live tracking', es: 'Seguimiento en vivo' }, { en: 'See your rider on the map.', es: 'Ve a tu motorizado en el mapa.' }],
+    ['card', { en: 'All payments', es: 'Todos los pagos' }, { en: 'Pago Móvil, card, cash or USDT.', es: 'Pago Móvil, tarjeta, efectivo o USDT.' }],
+    ['star', { en: 'Rewards', es: 'Recompensas' }, { en: 'Points and free delivery days.', es: 'Puntos y días de delivery gratis.' }]],
+  seed: (a) => [['Valentina S.', 'e1', 'road', '2 × combo · Pago Móvil', 12], ['Ricardo D.', 'e8', 'prep', 'Weekly groceries · Card', 6], ['Paola M.', 'e3', 'new', 'Sushi 32 pcs · USDT', 1], ['Hugo S.', 'e5', 'done', 'Family bucket · Cash', 55], ['Elena B.', 'e9', 'prep', 'Medicines · Pago Móvil', 4]]
+    .map(([name, item, status, detail, min]) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 424 000 0000', detail, total: x.price + 1.5, status, at: new Date(Date.now() - min * 6e4).toISOString() }; }),
+}""")
+
+# ---------------------------------------------------------------- Flights & travel agency
+DEMOS['flights'] = dict(
+    title='Vuela Travel', desc='Live demo of the Sylkit travel agency system: flight search, tickets, vacation packages, tours and payments.',
+    photos={'hero': 'airplane:3', 'f1': 'madrid:0', 'f2': 'miami:2', 'f3': 'bogota:10', 'f4': 'panama-city:1', 'p1': 'cancun:7', 'p2': 'punta-cana:9', 'p3': 'island:11', 'p4': 'waterfall:3', 'air': 'airport:10', 'plane': 'airplane:5'},
+    cfg="""{
+  id: 'flights', version: 1, ref: 'flights',
+  theme: { primary: '#2563eb', primaryD: '#1d4ed8', soft: '#eff6ff', fonts: 'family=Inter:wght@400;600;700;800;900' },
+  brand: { name: 'Vuela Travel', mark: 'V' },
+  hero: { photo: 'hero', eyebrow: { en: 'Flights · Vacation packages · Tours', es: 'Vuelos · Paquetes vacacionales · Tours' },
+    title: { en: 'Your next trip, booked in minutes', es: 'Tu próximo viaje, reservado en minutos' },
+    lead: { en: 'Compare flights, buy your ticket and add hotel, transfers and tours. Pay in installments with card, Pago Móvil or USDT.', es: 'Compara vuelos, compra tu boleto y suma hotel, traslados y tours. Paga en cuotas con tarjeta, Pago Móvil o USDT.' },
+    search: [{ name: 'from', label: { en: 'From', es: 'Desde' }, value: 'Caracas (CCS)' }, { name: 'to', label: { en: 'To', es: 'Hacia' }, type: 'select', options: [['all', { en: 'Anywhere', es: 'Cualquier destino' }], ['flight', { en: 'Flights only', es: 'Solo vuelos' }], ['pack', { en: 'Vacation packages', es: 'Paquetes' }]] },
+      { name: 'date', label: { en: 'Departure', es: 'Salida' }, type: 'date', value: (a) => a.day(21) }, { name: 'pax', label: { en: 'Travelers', es: 'Pasajeros' }, type: 'number', value: 2, min: 1 }],
+    cta: { en: 'Search', es: 'Buscar' }, onSearch: (v, a) => { a.db.cat = v.to; } },
+  catalog: { title: { en: 'Deals from Caracas', es: 'Ofertas desde Caracas' }, lead: { en: 'Round-trip prices per person, taxes included. Book now and the ticket is issued by our agents.', es: 'Precios ida y vuelta por persona, impuestos incluidos. Reserva y nuestros agentes emiten el boleto.' },
+    filters: [['flight', { en: 'Flights', es: 'Vuelos' }], ['pack', { en: 'Packages', es: 'Paquetes' }]],
+    items: [
+      { id: 'v1', cat: 'flight', photo: 'f1', title: { en: 'Caracas → Madrid', es: 'Caracas → Madrid' }, meta: { en: 'Direct · 9 h 05 min · 23 kg bag', es: 'Directo · 9 h 05 min · maleta 23 kg' }, price: 890, unit: { en: 'round trip', es: 'ida y vuelta' }, tag: { en: 'Best seller', es: 'Más vendido' } },
+      { id: 'v2', cat: 'flight', photo: 'f2', title: { en: 'Caracas → Miami', es: 'Caracas → Miami' }, meta: { en: '1 stop · 6 h 40 min', es: '1 escala · 6 h 40 min' }, price: 540, unit: { en: 'round trip', es: 'ida y vuelta' } },
+      { id: 'v3', cat: 'flight', photo: 'f3', title: { en: 'Caracas → Bogotá', es: 'Caracas → Bogotá' }, meta: { en: 'Direct · 2 h 10 min', es: 'Directo · 2 h 10 min' }, price: 310, unit: { en: 'round trip', es: 'ida y vuelta' } },
+      { id: 'v4', cat: 'flight', photo: 'f4', title: { en: 'Caracas → Panama City', es: 'Caracas → Panamá' }, meta: { en: 'Direct · 2 h 25 min', es: 'Directo · 2 h 25 min' }, price: 380, unit: { en: 'round trip', es: 'ida y vuelta' }, tag: { en: '6 seats left', es: 'Quedan 6' } },
+      { id: 'v5', cat: 'pack', photo: 'p1', title: { en: 'Cancún all-inclusive · 5 nights', es: 'Cancún todo incluido · 5 noches' }, meta: { en: 'Flight + resort + transfers', es: 'Vuelo + resort + traslados' }, price: 1290, unit: { en: '/person', es: '/persona' }, tag: { en: 'Installments', es: 'En cuotas' } },
+      { id: 'v6', cat: 'pack', photo: 'p2', title: { en: 'Punta Cana resort · 4 nights', es: 'Punta Cana resort · 4 noches' }, meta: { en: 'Flight + all-inclusive hotel', es: 'Vuelo + hotel todo incluido' }, price: 990, unit: { en: '/person', es: '/persona' } },
+      { id: 'v7', cat: 'pack', photo: 'p3', title: { en: 'Los Roques escape · 3 days', es: 'Escapada a Los Roques · 3 días' }, meta: { en: 'Small plane + inn + boat tours', es: 'Avioneta + posada + paseos en lancha' }, price: 650, unit: { en: '/person', es: '/persona' } },
+      { id: 'v8', cat: 'pack', photo: 'p4', title: { en: 'Canaima & Angel Falls · 3 days', es: 'Canaima y Salto Ángel · 3 días' }, meta: { en: 'Flights + camp + guide', es: 'Vuelos + campamento + guía' }, price: 720, unit: { en: '/person', es: '/persona' } },
+    ] },
+  book: { button: { en: 'Book', es: 'Reservar' }, confirm: { en: 'Book & hold price 24 h', es: 'Reservar y congelar precio 24 h' },
+    fields: [{ name: 'date', label: { en: 'Departure', es: 'Salida' }, type: 'date', value: (a) => a.day(21) }, { name: 'pax', label: { en: 'Travelers', es: 'Pasajeros' }, type: 'number', min: 1, value: 2 },
+      { name: 'cls', label: { en: 'Class', es: 'Clase' }, type: 'select', options: [['1', { en: 'Economy', es: 'Económica' }], ['2.4', { en: 'Business', es: 'Ejecutiva' }]] }],
+    total: (x, v) => x.price * Math.max(1, Number(v.pax) || 1) * (x.cat === 'flight' ? Number(v.cls || 1) : 1), detail: (x, v, a) => `${a.date(v.date)} · ${Math.max(1, Number(v.pax) || 1)} pax` },
+  flow: [{ id: 'held', label: { en: 'Price held', es: 'Reservados' } }, { id: 'paid', label: { en: 'Paid', es: 'Pagados' }, verb: { en: 'Payment in', es: 'Pago recibido' }, tone: 'info' },
+    { id: 'ticket', label: { en: 'Ticketed', es: 'Emitidos' }, verb: { en: 'Issue ticket', es: 'Emitir boleto' } }],
+  dashTitle: { en: 'Agency desk', es: 'Mostrador de la agencia' }, dashLead: { en: 'Bookings, payments, ticket issuing and itineraries for every traveler.', es: 'Reservas, pagos, emisión de boletos e itinerarios para cada viajero.' },
+  stats: (a) => { const r = a.db.records; return [[{ en: 'Travelers this month', es: 'Viajeros del mes' }, String(418 + r.length * 2)], [{ en: 'Sales this month', es: 'Ventas del mes' }, a.money(186400 + r.reduce((s, x) => s + x.total, 0))],
+    [{ en: 'Tickets to issue', es: 'Boletos por emitir' }, String(r.filter((x) => x.status === 'paid').length + 3)], [{ en: 'Avg. margin', es: 'Margen promedio' }, '11%']]; },
+  side: { title: { en: 'Departures this week', es: 'Salidas esta semana' }, rows: (a) => [
+    { img: 'plane', title: 'CCS → MAD · Thu 08:40', sub: { en: '12 travelers · all checked in', es: '12 viajeros · todos con check-in' }, right: { en: 'On time', es: 'A tiempo' }, tone: 'ok' },
+    { img: 'p1', title: { en: 'Cancún group · Sat', es: 'Grupo Cancún · Sáb' }, sub: { en: '24 travelers · transfers booked', es: '24 viajeros · traslados listos' }, right: { en: 'Confirmed', es: 'Confirmado' }, tone: 'info' },
+    { img: 'air', title: 'CCS → PTY · Sun 07:15', sub: { en: '5 travelers · 2 missing passports', es: '5 viajeros · faltan 2 pasaportes' }, right: { en: 'Pending', es: 'Pendiente' }, tone: 'warn' }] },
+  perks: [['card', { en: 'Pay in installments', es: 'Paga en cuotas' }, { en: 'Up to 6 payments before you fly.', es: 'Hasta 6 pagos antes de volar.' }],
+    ['shield', { en: 'Real agents', es: 'Agentes reales' }, { en: 'Help with visas, changes and refunds.', es: 'Ayuda con visas, cambios y reembolsos.' }],
+    ['globe', { en: 'Every airline', es: 'Todas las aerolíneas' }, { en: 'We compare fares for you.', es: 'Comparamos tarifas por ti.' }]],
+  seed: (a) => [['Familia Rondón', 'v5', 'paid', 4], ['Camila Pérez', 'v1', 'ticket', 1], ['Jorge Linares', 'v3', 'held', 2], ['Isabel Mora', 'v7', 'held', 2], ['Grupo Uni Andes', 'v8', 'paid', 10]]
+    .map(([name, item, status, p], i) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 416 000 0000', detail: `${a.date(a.day(14 + i * 3))} · ${p} pax`, total: x.price * p, status, at: new Date(Date.now() - (i + 1) * 4e6).toISOString() }; }),
+}""")
+
 
 def main():
     for demo, d in DEMOS.items():
