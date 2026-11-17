@@ -1,0 +1,115 @@
+FAIL page / - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /templates - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /work - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /account - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /order - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /quote - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /domains - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /security - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /terms - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /privacy - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /refunds - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /product/punto-de-venta - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /product/farmacia-pos - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /product/sitio-web-para-negocios - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /demo/hotel - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /demo/events - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+FAIL page /demo/realestate - pageerror: Minified React error #418; visit https://react.dev/errors/418?args[]= for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+PASS page /demos/alertas/ 
+PASS page /demos/asistente/ 
+PASS page /demos/car-rental/ 
+PASS page /demos/clinica/ 
+PASS page /demos/crm/ 
+PASS page /demos/delivery/ 
+PASS page /demos/eats/ 
+PASS page /demos/escuela/ 
+PASS page /demos/facturas/ 
+PASS page /demos/farmacia/ 
+PASS page /demos/flights/ 
+PASS page /demos/gym/ 
+PASS page /demos/inventario/ 
+PASS page /demos/models/ 
+PASS page /demos/nomina/ 
+PASS page /demos/portafolio/ 
+PASS page /demos/pos/ 
+PASS page /demos/rentals/ 
+PASS page /demos/restaurante/ 
+PASS page /demos/rides/ 
+PASS page /demos/salon/ 
+PASS page /demos/servicios/ 
+PASS page /demos/taller/ 
+PASS page /demos/tienda/ 
+PASS page /demos/tours/ 
+PASS page /preview/atelier/ 
+PASS page /preview/aula-app/ 
+PASS page /preview/aurum/ 
+PASS page /preview/chispa/ 
+PASS page /preview/cifra/ 
+PASS page /preview/club/ 
+PASS page /preview/coach/ 
+PASS page /preview/fc/ 
+PASS page /preview/fe/ 
+PASS page /preview/fresco/ 
+PASS page /preview/gov/ 
+PASS page /preview/grupo/ 
+PASS page /preview/habitat/ 
+PASS page /preview/habitat-app/ 
+PASS page /preview/horno/ 
+PASS page /preview/lente/ 
+PASS page /preview/lex/ 
+PASS page /preview/lumen/ 
+PASS page /preview/muse/ 
+PASS page /preview/ngo/ 
+PASS page /preview/nido/ 
+PASS page /preview/nodo/ 
+PASS page /preview/norte/ 
+PASS page /preview/patitas/ 
+PASS page /preview/plano/ 
+PASS page /preview/plano-app/ 
+PASS page /preview/ritmo/ 
+PASS page /preview/rose/ 
+PASS page /preview/sonrisa/ 
+PASS page /preview/vital/ 
+PASS page /preview/volt/ 
+PASS gallery shows results count - 64 results
+PASS gallery order: hotel, then ride app, before POS - hotel@136 ride@225 pos@847
+PASS phone menu offers sign in 
+PASS phone menu has no sign out when signed out 
+PASS account page asks to sign in - sylkit
+
+
+Sign in to see your orders
+Use the same email you ordered with and your orders appear here.
+
+Continue with Google
+or
+Email
+
+Email me a sign-in link
+Just browsing? You can look at every sy
+PASS account page has email sign-in 
+PASS create a quote request - {"order_number":"SK-1053","token":"a413bdfd-8dd0-4451-802e-ef25e985fd82"}
+PASS order page shows the request 
+PASS cancel button shown on unpaid order 
+FAIL order shows as cancelled - sylkit
+
+Secure checkout
+
+2
+Details
+3
+4
+
+Order SK-1053
+We received your request
+We got your message. We'll reply on WhatsApp, usually the same day.
+
+Chat with us about this order
+Order summary
+Cust
+PASS cancel button gone after cancelling 
+PASS database says cancelled - cancelled
+PASS cancelling twice is harmless 
+PASS cancel rejects a bad link 
+
+69 passed, 18 failed
