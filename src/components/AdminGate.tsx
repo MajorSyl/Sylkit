@@ -67,10 +67,31 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
         </View>
       </View>
       <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 48 }}>
-        <View style={styles.container}>{content}</View>
+        <View style={styles.container}>
+          <AdminErrorBoundary>{content}</AdminErrorBoundary>
+        </View>
       </ScrollView>
     </View>
   );
+}
+
+// If an admin screen crashes, show the error and a reload button instead of a blank page.
+class AdminErrorBoundary extends React.Component<{ children: React.ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <View style={[styles.card, shadow]}>
+        <Text style={styles.h2}>Something went wrong on this screen</Text>
+        <Text style={styles.muted}>{String(this.state.error?.message || this.state.error)}</Text>
+        <Button label="Reload" onPress={() => typeof window !== 'undefined' && window.location.reload()} />
+        <Button label="Sign out" variant="secondary" onPress={() => supabase.auth.signOut().then(() => this.setState({ error: null }))} />
+      </View>
+    );
+  }
 }
 
 // Admin sign-in uses the same passwordless login as customers (Google or an email link).
