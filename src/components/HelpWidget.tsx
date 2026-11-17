@@ -37,53 +37,124 @@ const store = {
 const api = (path: string) => (Platform.OS === 'web' ? path : `https://sylkit.com${path}`);
 
 // Common questions, answered instantly (and used when the AI assistant is off).
-const FAQ: { q: [string, string, string]; a: [string, string, string]; keys: RegExp }[] = [
+// House style: answer first, then the key detail, then one clear next step. Short, warm, professional.
+type Faq = { q?: [string, string, string]; a: [string, string, string]; keys: RegExp[]; handoff?: boolean };
+const FAQ: Faq[] = [
+  {
+    q: ['What does Sylkit do?', '¿Qué hace Sylkit?', 'O que a Sylkit faz?'],
+    keys: [/sylkit|what do you (do|sell|offer)|qué (hacen|venden|ofrecen)|que vocês (fazem|vendem|oferecem)|services?|servicios?|serviços?/i],
+    a: [
+      'Sylkit builds and runs cloud systems for businesses: point of sale, inventory, pharmacy, clinic, restaurant, online stores, websites and custom apps.\n\nEverything runs online, so there is nothing to install. We set it up remotely, host it, back up your data and keep it updated.\n\nNext step: open any system in the catalog to see its price and try the live demo.',
+      'Sylkit crea y opera sistemas en la nube para negocios: punto de venta, inventario, farmacia, clínica, restaurante, tiendas online, páginas web y apps a medida.\n\nTodo funciona en línea, así que no hay nada que instalar. Lo configuramos a distancia, lo alojamos, respaldamos tus datos y lo mantenemos actualizado.\n\nSiguiente paso: abre cualquier sistema del catálogo para ver su precio y probar la demo en vivo.',
+      'A Sylkit cria e opera sistemas na nuvem para empresas: ponto de venda, estoque, farmácia, clínica, restaurante, lojas online, sites e apps sob medida.\n\nTudo funciona online, então não há nada para instalar. Configuramos remotamente, hospedamos, fazemos backup dos seus dados e mantemos tudo atualizado.\n\nPróximo passo: abra qualquer sistema do catálogo para ver o preço e testar a demo ao vivo.',
+    ],
+  },
   {
     q: ['How much does it cost?', '¿Cuánto cuesta?', 'Quanto custa?'],
-    keys: /price|cost|cuesta|precio|plan|cuánto|cuanto|quanto|preço/i,
+    keys: [/price|cost|how much|cuesta|cuánto|cuanto|precio|plan|tarifa|quanto|preço|valor/i],
     a: [
-      'Each system has plans with a monthly price and a one-time setup fee, shown on its page. Paying yearly gives you 2 months free, and you can also buy a lifetime license. Browse prices in the catalog on the home page.',
-      'Cada sistema tiene planes con un precio mensual y una instalación única, que ves en su página. Pagando anual tienes 2 meses gratis, y también puedes comprar una licencia de por vida. Mira los precios en el catálogo de la página principal.',
-      'Cada sistema tem planos com preço mensal e uma taxa única de instalação, mostrados na página dele. Pagando anual você ganha 2 meses grátis, e também pode comprar uma licença vitalícia. Veja os preços no catálogo da página inicial.',
+      'Each system shows its price on its own page: a monthly plan plus a one-time setup fee.\n\nPaying for the year gives you 2 months free. You can also buy a lifetime license, which includes the first 12 months of hosting, support and updates.\n\nNext step: open the system you are interested in and compare its plans.',
+      'Cada sistema muestra su precio en su propia página: un plan mensual más una instalación única.\n\nSi pagas el año completo, tienes 2 meses gratis. También puedes comprar una licencia de por vida, que incluye los primeros 12 meses de alojamiento, soporte y actualizaciones.\n\nSiguiente paso: abre el sistema que te interesa y compara sus planes.',
+      'Cada sistema mostra o preço na própria página: um plano mensal mais uma taxa única de instalação.\n\nPagando o ano inteiro, você ganha 2 meses grátis. Também é possível comprar uma licença vitalícia, que inclui os primeiros 12 meses de hospedagem, suporte e atualizações.\n\nPróximo passo: abra o sistema que interessa e compare os planos.',
     ],
   },
   {
     q: ['How can I pay?', '¿Cómo puedo pagar?', 'Como posso pagar?'],
-    keys: /pay|pago|pagar|card|tarjeta|usdt|pago móvil|cartão/i,
+    keys: [/pay|pago|pagar|card|tarjeta|cart[aã]o|paypal|usdt|crypto|cripto|transfer|m[oó]vil|orange|afrimoney|bol[ií]vares|leones/i],
     a: [
-      'You choose at checkout: card or USDT (crypto). Clients in Venezuela can also pay by Pago Móvil (Banco Mercantil). After paying you get an order page to follow your setup.',
-      'Eliges al pagar: tarjeta o USDT (cripto). En Venezuela también puedes pagar por Pago Móvil (Banco Mercantil). Después del pago recibes una página para seguir tu pedido.',
-      'Você escolhe no pagamento: cartão ou USDT (cripto). Na Venezuela também é possível pagar por Pago Móvil (Banco Mercantil). Depois do pagamento você recebe uma página para acompanhar o pedido.',
+      'You choose how to pay at checkout:\n• Everywhere: PayPal or debit/credit card (on PayPal\'s secure page), or USDT crypto\n• Venezuela: Pago Móvil or bank transfer (Banco Mercantil), in bolívares at the BCV rate\n• Sierra Leone: Orange Money or Afrimoney, in leones\n\nAfter paying you get an order page where you can follow every step.',
+      'Eliges cómo pagar al finalizar la compra:\n• Desde cualquier país: PayPal o tarjeta de débito/crédito (en la página segura de PayPal), o USDT en cripto\n• Venezuela: Pago Móvil o transferencia (Banco Mercantil), en bolívares a tasa BCV\n• Sierra Leona: Orange Money o Afrimoney, en leones\n\nDespués del pago recibes una página de tu pedido para seguir cada paso.',
+      'Você escolhe como pagar na finalização:\n• De qualquer país: PayPal ou cartão de débito/crédito (na página segura do PayPal), ou USDT em cripto\n• Venezuela: Pago Móvil ou transferência (Banco Mercantil), em bolívares pela taxa do BCV\n• Serra Leoa: Orange Money ou Afrimoney, em leones\n\nDepois do pagamento você recebe uma página do pedido para acompanhar cada etapa.',
     ],
   },
   {
     q: ['Can I try it first?', '¿Puedo probarlo antes?', 'Posso testar antes?'],
-    keys: /demo|try|prob|test|ver /i,
+    keys: [/demo|try|test|prob|prueba|testar|see it|verlo|ver como/i],
     a: [
-      'Yes. Most systems have a free live demo with sample data: open the product and tap "Try the live demo". Design templates have a live preview too.',
-      'Sí. La mayoría de los sistemas tienen una demo en vivo gratis con datos de ejemplo: abre el producto y toca "Probar demo en vivo". Las plantillas también tienen vista previa en vivo.',
-      'Sim. A maioria dos sistemas tem uma demo ao vivo grátis com dados de exemplo: abra o produto e toque em "Testar demo ao vivo". Os modelos também têm prévia ao vivo.',
+      'Yes. Most systems have a free live demo with sample data, so you can use it before you pay.\n\nOpen the system and tap "Try the live demo". Design templates have a live preview too.',
+      'Sí. La mayoría de los sistemas tienen una demo en vivo gratis con datos de ejemplo, para que lo uses antes de pagar.\n\nAbre el sistema y toca "Probar demo en vivo". Las plantillas de diseño también tienen vista previa.',
+      'Sim. A maioria dos sistemas tem uma demo ao vivo grátis com dados de exemplo, para você usar antes de pagar.\n\nAbra o sistema e toque em "Testar demo ao vivo". Os modelos de design também têm prévia.',
     ],
   },
   {
     q: ['How long does setup take?', '¿Cuánto tarda la instalación?', 'Quanto tempo leva a instalação?'],
-    keys: /long|tarda|tiempo|cuándo|cuando|setup|instal|demora|prazo/i,
+    keys: [/how long|when|setup|set up|install|deliver|tarda|tiempo|cu[aá]ndo|entrega|instal|demora|prazo|quando/i],
     a: [
-      'It depends on the system and the extras you choose. We confirm the exact date when your order is confirmed, and you can follow every step on your order page.',
-      'Depende del sistema y de los extras que elijas. Te confirmamos la fecha exacta al confirmar tu pedido, y puedes seguir cada paso en la página de tu pedido.',
-      'Depende do sistema e dos extras que você escolher. Confirmamos a data exata quando seu pedido for confirmado, e você acompanha cada etapa na página do pedido.',
+      'It depends on the system and the extras you choose. Ready-made systems are the fastest, and custom projects take longer.\n\nWe confirm your exact delivery date when we confirm your order, and you can follow every step on your order page.',
+      'Depende del sistema y de los extras que elijas. Los sistemas listos son los más rápidos, y los proyectos a medida toman más tiempo.\n\nTe confirmamos la fecha exacta de entrega al confirmar tu pedido, y puedes seguir cada paso en la página de tu pedido.',
+      'Depende do sistema e dos extras que você escolher. Os sistemas prontos são os mais rápidos, e os projetos sob medida levam mais tempo.\n\nConfirmamos a data exata de entrega quando confirmamos seu pedido, e você acompanha cada etapa na página do pedido.',
+    ],
+  },
+  {
+    q: ['Do I need to install anything?', '¿Tengo que instalar algo?', 'Preciso instalar algo?'],
+    keys: [/cloud|nube|nuvem|install|instalar|internet|offline|computer|computadora|phone|tel[eé]fono|celular|device|backup|respaldo|data|datos|dados|secure|segur/i],
+    a: [
+      'No. Sylkit systems run in the cloud and work on phone, tablet or computer, wherever you are.\n\nYour data is stored securely and backed up automatically, so a broken or lost device does not mean lost records. Updates and support happen remotely.',
+      'No. Los sistemas de Sylkit funcionan en la nube y sirven en teléfono, tablet o computadora, donde estés.\n\nTus datos se guardan de forma segura y se respaldan automáticamente, así que si un equipo se daña o se pierde, no pierdes tu información. Las actualizaciones y el soporte se hacen a distancia.',
+      'Não. Os sistemas da Sylkit funcionam na nuvem, no celular, tablet ou computador, onde você estiver.\n\nSeus dados ficam guardados com segurança e com backup automático, então um aparelho quebrado ou perdido não significa perder informações. Atualizações e suporte são feitos remotamente.',
     ],
   },
   {
     q: ['Do you build custom systems?', '¿Hacen sistemas a medida?', 'Vocês fazem sistemas sob medida?'],
-    keys: /custom|medida|personaliz|special|especial|sob medida/i,
+    keys: [/custom|medida|personaliz|special|especial|sob medida|my own|propio|app|website|web|p[aá]gina|site|tienda|store|loja/i],
     a: [
-      'Yes. Tell us what you need on the "Custom system" page and we send you a quote, usually within 24 hours.',
-      'Sí. Cuéntanos qué necesitas en la página "Sistema a medida" y te enviamos una cotización, normalmente en menos de 24 horas.',
-      'Sim. Conte o que você precisa na página "Sistema sob medida" e enviamos um orçamento, normalmente em até 24 horas.',
+      'Yes. We build custom systems, websites, online stores and mobile apps.\n\nTell us what you need on the "Custom system" page, and we reply with a quote, usually within 24 hours.',
+      'Sí. Creamos sistemas a medida, páginas web, tiendas online y apps móviles.\n\nCuéntanos qué necesitas en la página "Sistema a medida" y te respondemos con una cotización, normalmente en menos de 24 horas.',
+      'Sim. Criamos sistemas sob medida, sites, lojas online e apps móveis.\n\nConte o que você precisa na página "Sistema sob medida" e respondemos com um orçamento, normalmente em até 24 horas.',
+    ],
+  },
+  {
+    q: ['Where is my order?', '¿Dónde está mi pedido?', 'Onde está meu pedido?'],
+    keys: [/track|order|status|seguir|pedido|estado|orden|acompanhar|my purchase|mi compra/i],
+    a: [
+      'You can check your order at any time on the "Track my order" page with your order number and email.\n\nIf something looks wrong with an order or a payment, tap "Talk to a person" and our team will look into it.',
+      'Puedes revisar tu pedido en cualquier momento en la página "Seguir mi pedido" con tu número de pedido y tu correo.\n\nSi algo no se ve bien con un pedido o un pago, toca "Hablar con una persona" y nuestro equipo lo revisa.',
+      'Você pode ver seu pedido a qualquer momento na página "Acompanhar meu pedido" com o número do pedido e seu e-mail.\n\nSe algo parecer errado com um pedido ou pagamento, toque em "Falar com uma pessoa" e nossa equipe verifica.',
+    ],
+  },
+  {
+    keys: [/account|sign ?in|log ?in|login|register|sign ?up|cuenta|registr|iniciar sesi[oó]n|entrar|conta|cadastr|password|contraseña|senha/i],
+    a: [
+      'You can create your Sylkit account with Google or with your email. There is no password to remember: we send you a secure sign-in link.\n\nIf you cannot get in, tap "Talk to a person" and we will help you.',
+      'Puedes crear tu cuenta de Sylkit con Google o con tu correo. No hay contraseña que recordar: te enviamos un enlace seguro para entrar.\n\nSi no puedes entrar, toca "Hablar con una persona" y te ayudamos.',
+      'Você pode criar sua conta Sylkit com o Google ou com seu e-mail. Não há senha para lembrar: enviamos um link seguro para entrar.\n\nSe não conseguir entrar, toque em "Falar com uma pessoa" e ajudamos você.',
+    ],
+  },
+  {
+    keys: [/support|soporte|suporte|help after|maintenance|mantenimiento|manuten|update|actualiz|atualiz|hours|horario|hor[aá]rio/i],
+    a: [
+      'Every plan includes support, updates and hosting. Our team answers Monday to Saturday, 9am to 6pm (Caracas time), and messages sent outside those hours are answered the next business day.\n\nYou can always reach us here or on WhatsApp.',
+      'Todos los planes incluyen soporte, actualizaciones y alojamiento. Nuestro equipo atiende de lunes a sábado, de 9 am a 6 pm (hora de Caracas), y los mensajes fuera de ese horario se responden el siguiente día hábil.\n\nSiempre puedes escribirnos aquí o por WhatsApp.',
+      'Todos os planos incluem suporte, atualizações e hospedagem. Nossa equipe atende de segunda a sábado, das 9h às 18h (horário de Caracas), e mensagens fora desse horário são respondidas no próximo dia útil.\n\nVocê sempre pode falar com a gente aqui ou pelo WhatsApp.',
+    ],
+  },
+  {
+    keys: [/refund|reembols|devoluc|devolu[cç][aã]o|cancel|guarantee|garant[ií]a|garantia|problem|problema|not working|no funciona|não funciona|error|falla|complain|queja|reclama/i],
+    handoff: true,
+    a: [
+      'I am sorry for the trouble. Refunds, cancellations and problems with an order are handled personally by our team, so you get a precise answer.\n\nTap "Talk to a person" below and include your order number if you have it.',
+      'Lamento el inconveniente. Los reembolsos, cancelaciones y problemas con un pedido los atiende nuestro equipo personalmente, para darte una respuesta precisa.\n\nToca "Hablar con una persona" aquí abajo e incluye tu número de pedido si lo tienes.',
+      'Sinto muito pelo transtorno. Reembolsos, cancelamentos e problemas com um pedido são tratados pessoalmente pela nossa equipe, para você ter uma resposta precisa.\n\nToque em "Falar com uma pessoa" abaixo e inclua o número do pedido, se tiver.',
     ],
   },
 ];
+
+const GREETING = /^\s*(hi|hello|hey|hola|buenas|buenos d[ií]as|buenas tardes|buenas noches|ol[aá]|oi|bom dia|boa tarde|boa noite)[\s!.,¡]*$/i;
+const THANKS = /^\s*(thanks?|thank you|ok|okay|gracias|muchas gracias|obrigad[oa]|vale|perfecto|perfeito|great|genial)[\s!.,]*$/i;
+
+// Picks the answer whose keywords match the question best (null when nothing fits).
+function bestAnswer(q: string): Faq | null {
+  let best: Faq | null = null;
+  let score = 0;
+  for (const f of FAQ) {
+    const s = f.keys.reduce((n, k) => n + ((q.match(new RegExp(k.source, 'gi')) || []).length), 0);
+    if (s > score) {
+      score = s;
+      best = f;
+    }
+  }
+  return best;
+}
 
 export function HelpWidget() {
   const { lang } = useLang();
@@ -179,15 +250,29 @@ export function HelpWidget() {
       handoff = !!j.handoff;
     }
     if (!reply) {
-      const hit = FAQ.find((f) => f.keys.test(q));
-      reply = hit
-        ? L(hit.a)
-        : tx(
-            "I'll pass this to our team so a person can answer you properly.",
-            'Le paso esto a nuestro equipo para que una persona te responda bien.',
-            'Vou passar isso para nossa equipe para que uma pessoa responda direitinho.',
-          );
-      handoff = !hit;
+      if (GREETING.test(q)) {
+        reply = tx(
+          'Hello, and welcome to Sylkit. I can help with our systems, prices, demos, payments and orders. What would you like to know?',
+          'Hola, bienvenido a Sylkit. Puedo ayudarte con nuestros sistemas, precios, demos, pagos y pedidos. ¿Qué te gustaría saber?',
+          'Olá, bem-vindo à Sylkit. Posso ajudar com nossos sistemas, preços, demos, pagamentos e pedidos. O que você gostaria de saber?',
+        );
+      } else if (THANKS.test(q)) {
+        reply = tx(
+          'You are welcome. If anything else comes up, I am here, or you can talk to our team directly.',
+          'Con gusto. Si surge algo más, aquí estoy, o puedes hablar directamente con nuestro equipo.',
+          'Por nada. Se surgir mais alguma coisa, estou aqui, ou você pode falar direto com nossa equipe.',
+        );
+      } else {
+        const hit = bestAnswer(q);
+        reply = hit
+          ? L(hit.a)
+          : tx(
+              'Thank you for your question. To give you an accurate answer, I will connect you with our team.\n\nTap "Talk to a person" below, and we will reply as soon as possible.',
+              'Gracias por tu pregunta. Para darte una respuesta precisa, te pongo en contacto con nuestro equipo.\n\nToca "Hablar con una persona" aquí abajo y te responderemos lo antes posible.',
+              'Obrigado pela pergunta. Para dar uma resposta precisa, vou colocar você em contato com nossa equipe.\n\nToque em "Falar com uma pessoa" abaixo e responderemos o quanto antes.',
+            );
+        handoff = !hit || !!hit.handoff;
+      }
     }
     setChat([...next, { role: 'assistant', content: reply, handoff }]);
     setBusy(false);
@@ -279,7 +364,7 @@ export function HelpWidget() {
 
   const home = (
     <ScrollView contentContainerStyle={styles.body}>
-      <Text style={styles.hello}>{tx('Hi 👋 How can we help?', 'Hola 👋 ¿En qué te ayudamos?', 'Olá 👋 Como podemos ajudar?')}</Text>
+      <Text style={styles.hello}>{tx('Hello. How can we help you today?', 'Hola. ¿En qué podemos ayudarte hoy?', 'Olá. Como podemos ajudar hoje?')}</Text>
       {thread ? (
         <Pressable style={styles.convCard} onPress={() => setView('thread')} accessibilityRole="button">
           <Ionicons name="chatbubbles" size={20} color={colors.primary} />
@@ -296,9 +381,9 @@ export function HelpWidget() {
       ) : null}
       <Text style={styles.label}>{tx('Quick answers', 'Respuestas rápidas', 'Respostas rápidas')}</Text>
       <View style={styles.chips}>
-        {FAQ.map((f) => (
-          <Pressable key={f.q[0]} style={styles.chip} onPress={() => ask(L(f.q))} accessibilityRole="button">
-            <Text style={styles.chipText}>{L(f.q)}</Text>
+        {FAQ.filter((f) => f.q).slice(0, 6).map((f) => (
+          <Pressable key={f.q![0]} style={styles.chip} onPress={() => ask(L(f.q!))} accessibilityRole="button">
+            <Text style={styles.chipText}>{L(f.q!)}</Text>
           </Pressable>
         ))}
       </View>
@@ -320,7 +405,7 @@ export function HelpWidget() {
   const chatView = (
     <>
       <ScrollView ref={scroller} contentContainerStyle={styles.body}>
-        <Bubble side="left" text={tx("Hi! I'm Sylkit's assistant. Ask me about systems, prices, demos or payments.", '¡Hola! Soy el asistente de Sylkit. Pregúntame por sistemas, precios, demos o pagos.', 'Olá! Sou o assistente da Sylkit. Pergunte sobre sistemas, preços, demos ou pagamentos.')} />
+        <Bubble side="left" text={tx("Hello, I'm the Sylkit assistant. I can answer questions about our systems, prices, demos, payments and orders. How can I help you today?", 'Hola, soy el asistente de Sylkit. Puedo responder tus preguntas sobre nuestros sistemas, precios, demos, pagos y pedidos. ¿En qué puedo ayudarte hoy?', 'Olá, sou o assistente da Sylkit. Posso responder suas perguntas sobre nossos sistemas, preços, demos, pagamentos e pedidos. Como posso ajudar hoje?')} />
         {chat.map((m, i) => (
           <View key={i} style={{ gap: 6 }}>
             <Bubble side={m.role === 'user' ? 'right' : 'left'} text={m.content} />
