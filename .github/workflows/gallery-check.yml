@@ -1,0 +1,24 @@
+name: gallery-check
+on:
+  push:
+    branches: [sylkit-2]
+    paths: ['scripts/ci/gallery_check.txt']
+permissions:
+  contents: write
+concurrency: { group: ci-commit, cancel-in-progress: false }
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: sylkit-2 }
+      - run: sleep 240
+      - run: |
+          mkdir -p .ci/gallery
+          U="https://sylkit-2-sylkit.fannah2026.workers.dev"
+          google-chrome --headless=new --no-sandbox --hide-scrollbars --lang=en-US --window-size=1440,1800 --virtual-time-budget=20000 --screenshot=.ci/gallery/desktop.png "$U/" || true
+          google-chrome --headless=new --no-sandbox --hide-scrollbars --lang=en-US --window-size=390,2400 --force-device-scale-factor=1 --virtual-time-budget=20000 --screenshot=.ci/gallery/phone.png "$U/" || true
+          curl -s -o /dev/null -w "%{http_code}\n" "$U/demos/gym/" > .ci/gallery/status.txt
+          git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"
+          git add .ci/gallery && git commit -m "ci: gallery check" || exit 0
+          git pull --rebase origin sylkit-2 && git push
