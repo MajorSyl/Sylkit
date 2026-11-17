@@ -1,417 +1,184 @@
-127.0.0.1 - - [16/Nov/2026 23:16:33] "GET /demos/gym/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:33] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:33] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:33] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:33] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:35] "GET /demos/gym/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:35] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:35] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:35] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:35] "GET /favicon.ico HTTP/1.1" 404 -
-ok gym
-127.0.0.1 - - [16/Nov/2026 23:16:37] "GET /demos/car-rental/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:37] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:37] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:38] "GET /demos/car-rental/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:38] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:38] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:38] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:38] "GET /favicon.ico HTTP/1.1" 404 -
-ok car-rental
-127.0.0.1 - - [16/Nov/2026 23:16:39] "GET /demos/delivery/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:39] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:39] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:40] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:40] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:40] "GET /demos/delivery/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:41] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:41] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:41] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:41] "GET /favicon.ico HTTP/1.1" 404 -
-ok delivery
-127.0.0.1 - - [16/Nov/2026 23:16:42] "GET /demos/crm/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:42] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:42] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:42] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:42] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:43] "GET /demos/crm/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:43] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:43] "GET /_pro/pro.js HTTP/1.1" 200 -
-ok crm
-127.0.0.1 - - [16/Nov/2026 23:16:45] "GET /demos/rentals/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:45] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:45] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:45] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:45] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:46] "GET /demos/rentals/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:46] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:46] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:46] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:46] "GET /favicon.ico HTTP/1.1" 404 -
-ok rentals
-127.0.0.1 - - [16/Nov/2026 23:16:48] "GET /demos/tours/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:48] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:48] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:48] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:48] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:49] "GET /demos/tours/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:49] "GET /_pro/pro.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:49] "GET /_pro/pro.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:49] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:49] "GET /favicon.ico HTTP/1.1" 404 -
-ok tours
-127.0.0.1 - - [16/Nov/2026 23:16:50] "GET /demos/farmacia/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:51] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:51] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:51] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:51] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:52] "GET /demos/farmacia/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:52] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:52] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:52] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:52] "GET /favicon.ico HTTP/1.1" 404 -
-ok farmacia
-127.0.0.1 - - [16/Nov/2026 23:16:53] "GET /demos/pos/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:53] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:53] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:53] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:53] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:54] "GET /demos/pos/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:54] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:54] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:54] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:54] "GET /favicon.ico HTTP/1.1" 404 -
-ok pos
-127.0.0.1 - - [16/Nov/2026 23:16:56] "GET /demos/restaurante/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:56] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:56] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:56] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:56] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:57] "GET /demos/restaurante/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:57] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:57] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:57] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:57] "GET /favicon.ico HTTP/1.1" 404 -
-ok restaurante
-127.0.0.1 - - [16/Nov/2026 23:16:58] "GET /demos/tienda/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:58] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:58] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:16:59] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:16:59] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:16:59] "GET /demos/tienda/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:00] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:00] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:00] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:00] "GET /favicon.ico HTTP/1.1" 404 -
-ok tienda
-127.0.0.1 - - [16/Nov/2026 23:17:01] "GET /demos/salon/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:01] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:01] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:01] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:01] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:02] "GET /demos/salon/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:02] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:02] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:02] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:02] "GET /favicon.ico HTTP/1.1" 404 -
-ok salon
-127.0.0.1 - - [16/Nov/2026 23:17:04] "GET /demos/taller/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:04] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:04] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:04] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:04] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:05] "GET /demos/taller/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:05] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:05] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:05] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:05] "GET /favicon.ico HTTP/1.1" 404 -
-ok taller
-127.0.0.1 - - [16/Nov/2026 23:17:06] "GET /demos/inventario/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:06] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:06] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:06] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:06] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:07] "GET /demos/inventario/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:07] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:07] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:07] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:07] "GET /favicon.ico HTTP/1.1" 404 -
-ok inventario
-127.0.0.1 - - [16/Nov/2026 23:17:09] "GET /demos/clinica/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:09] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:09] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:09] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:09] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:10] "GET /demos/clinica/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:10] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:10] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:10] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:10] "GET /favicon.ico HTTP/1.1" 404 -
-ok clinica
-127.0.0.1 - - [16/Nov/2026 23:17:11] "GET /demos/escuela/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:11] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:11] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:11] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:11] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:12] "GET /demos/escuela/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:12] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:12] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:12] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:12] "GET /favicon.ico HTTP/1.1" 404 -
-ok escuela
-127.0.0.1 - - [16/Nov/2026 23:17:14] "GET /demos/facturas/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:14] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:14] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:14] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:14] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:15] "GET /demos/facturas/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:15] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:15] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:15] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:15] "GET /favicon.ico HTTP/1.1" 404 -
-ok facturas
-127.0.0.1 - - [16/Nov/2026 23:17:16] "GET /demos/nomina/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:16] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:16] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:16] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:16] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:17] "GET /demos/nomina/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:17] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:17] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:17] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:17] "GET /favicon.ico HTTP/1.1" 404 -
-ok nomina
-127.0.0.1 - - [16/Nov/2026 23:17:19] "GET /demos/servicios/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:19] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:19] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:19] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:19] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:20] "GET /demos/servicios/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:20] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:20] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:20] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:20] "GET /favicon.ico HTTP/1.1" 404 -
-ok servicios
-127.0.0.1 - - [16/Nov/2026 23:17:21] "GET /demos/asistente/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:21] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:21] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:21] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:21] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:22] "GET /demos/asistente/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:22] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:22] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:22] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:22] "GET /favicon.ico HTTP/1.1" 404 -
-ok asistente
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /demos/portafolio/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:24] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /demos/portafolio/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /_kit/kit.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:24] "GET /_kit/kit.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:25] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:25] "GET /favicon.ico HTTP/1.1" 404 -
-ok portafolio
-127.0.0.1 - - [16/Nov/2026 23:17:26] "GET /demos/alertas/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:26] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:26] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:27] "GET /demos/alertas/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:27] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:27] "GET /favicon.ico HTTP/1.1" 404 -
-ok alertas
-127.0.0.1 - - [16/Nov/2026 23:17:28] "GET /preview/lumen/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:28] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:28] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:28] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:28] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:28] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:29] "GET /preview/lumen/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:29] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:29] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:29] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:29] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:29] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-lumen
-127.0.0.1 - - [16/Nov/2026 23:17:31] "GET /preview/rose/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:31] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:31] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:31] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:31] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:31] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:32] "GET /preview/rose/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:32] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:32] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:32] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:32] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:32] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-rose
-127.0.0.1 - - [16/Nov/2026 23:17:34] "GET /preview/volt/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:34] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:34] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:34] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:34] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:34] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:35] "GET /preview/volt/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:35] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:35] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:35] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:35] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:35] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-volt
-127.0.0.1 - - [16/Nov/2026 23:17:37] "GET /preview/horno/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:37] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:37] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:37] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:37] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:37] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:38] "GET /preview/horno/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:38] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:38] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:38] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:38] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:38] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-horno
-127.0.0.1 - - [16/Nov/2026 23:17:39] "GET /preview/fresco/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:39] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:39] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:39] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:39] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:39] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:40] "GET /preview/fresco/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:40] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:40] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:40] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:41] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:41] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-fresco
-127.0.0.1 - - [16/Nov/2026 23:17:42] "GET /preview/aurum/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:42] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:42] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:42] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:43] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:43] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:43] "GET /preview/aurum/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:43] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:43] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:43] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:44] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:44] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-aurum
-127.0.0.1 - - [16/Nov/2026 23:17:45] "GET /preview/nido/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:45] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:45] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:45] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:45] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:45] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:46] "GET /preview/nido/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:46] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:46] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:46] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:46] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:46] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-nido
-127.0.0.1 - - [16/Nov/2026 23:17:47] "GET /preview/patitas/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:47] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:47] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:47] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:48] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:48] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:49] "GET /preview/patitas/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:49] "GET /_store/store.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:49] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:49] "GET /_store/store.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:49] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:49] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-patitas
-127.0.0.1 - - [16/Nov/2026 23:17:50] "GET /preview/plano/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:50] "GET /_site/site.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:50] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:50] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:50] "GET /_site/site.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:50] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:50] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:51] "GET /preview/plano/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:51] "GET /_site/site.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:51] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:51] "GET /_site/site.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:51] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:51] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:51] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-plano
-127.0.0.1 - - [16/Nov/2026 23:17:53] "GET /preview/habitat/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:53] "GET /_site/site.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:53] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:53] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:53] "GET /_site/site.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:53] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:53] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:54] "GET /preview/habitat/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:54] "GET /_site/site.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:54] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:54] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:54] "GET /_site/site.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:54] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:54] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-habitat
-127.0.0.1 - - [16/Nov/2026 23:17:55] "GET /preview/habitat-app/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:55] "GET /_app/app.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /_app/app.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /preview/habitat-app/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /_app/app.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:56] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:57] "GET /_app/app.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:57] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:57] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:57] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-habitat-app
-127.0.0.1 - - [16/Nov/2026 23:17:58] "GET /preview/plano-app/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:58] "GET /_app/app.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:58] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:58] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:58] "GET /_app/app.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:58] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:58] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:17:59] "GET /preview/plano-app/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:59] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:59] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:59] "GET /_app/app.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:59] "GET /_app/app.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:17:59] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:17:59] "GET /favicon.ico HTTP/1.1" 404 -
-ok tpl-plano-app
-127.0.0.1 - - [16/Nov/2026 23:18:00] "GET /preview/habitat/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:00] "GET /_site/site.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:00] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:00] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:00] "GET /_site/site.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:01] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:18:01] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:18:01] "GET /preview/habitat/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:02] "GET /_site/site.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:02] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:02] "GET /_site/site.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:02] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:02] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:18:02] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:12] "GET /preview/lex/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:12] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:12] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:13] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:13] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:14] "GET /preview/lex/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:14] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:14] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:14] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:14] "GET /favicon.ico HTTP/1.1" 404 -
 ok sitio-web
-127.0.0.1 - - [16/Nov/2026 23:18:03] "GET /preview/habitat-app/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:03] "GET /_app/app.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:03] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:03] "GET /_app/app.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:03] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:03] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:18:03] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [16/Nov/2026 23:18:04] "GET /preview/habitat-app/ HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:04] "GET /_app/app.css HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:04] "GET /_site/icons.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:04] "GET /_site/art.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:04] "GET /_app/app.js HTTP/1.1" 200 -
-127.0.0.1 - - [16/Nov/2026 23:18:04] code 404, message File not found
-127.0.0.1 - - [16/Nov/2026 23:18:04] "GET /favicon.ico HTTP/1.1" 404 -
-ok app-movil
+127.0.0.1 - - [17/Nov/2026 00:23:15] "GET /preview/lex/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:15] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:15] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:15] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:15] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:17] "GET /preview/lex/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:17] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:17] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:17] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:17] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-lex
+127.0.0.1 - - [17/Nov/2026 00:23:19] "GET /preview/vital/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:19] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:19] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:19] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:19] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:20] "GET /preview/vital/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:20] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:20] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:20] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:20] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-vital
+127.0.0.1 - - [17/Nov/2026 00:23:21] "GET /preview/cifra/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:21] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:21] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:23] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:23] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:23] "GET /preview/cifra/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:23] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:23] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:24] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:24] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-cifra
+127.0.0.1 - - [17/Nov/2026 00:23:25] "GET /preview/norte/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:25] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:25] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:26] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:26] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:26] "GET /preview/norte/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:27] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:27] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:27] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:27] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-norte
+127.0.0.1 - - [17/Nov/2026 00:23:28] "GET /preview/nodo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:28] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:28] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:29] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:29] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:30] "GET /preview/nodo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:30] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:30] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:30] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:30] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-nodo
+127.0.0.1 - - [17/Nov/2026 00:23:32] "GET /preview/sonrisa/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:32] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:32] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:32] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:32] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:33] "GET /preview/sonrisa/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:33] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:33] "GET /_web/web.js HTTP/1.1" 200 -
+ok tpl-sonrisa
+127.0.0.1 - - [17/Nov/2026 00:23:35] "GET /preview/grupo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:35] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:35] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:35] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:35] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:36] "GET /preview/grupo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:36] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:36] "GET /_web/web.js HTTP/1.1" 200 -
+ok tpl-grupo
+127.0.0.1 - - [17/Nov/2026 00:23:38] "GET /preview/ngo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:38] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:38] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:39] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:39] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:40] "GET /preview/ngo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:40] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:40] "GET /_web/web.js HTTP/1.1" 200 -
+ok tpl-ngo
+127.0.0.1 - - [17/Nov/2026 00:23:41] "GET /preview/club/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:42] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:42] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:42] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:42] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:43] "GET /preview/club/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:43] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:43] "GET /_web/web.css HTTP/1.1" 200 -
+ok tpl-club
+127.0.0.1 - - [17/Nov/2026 00:23:45] "GET /preview/gov/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:45] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:45] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:46] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:46] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:47] "GET /preview/gov/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:47] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:47] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:47] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:47] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-gov
+127.0.0.1 - - [17/Nov/2026 00:23:49] "GET /preview/fc/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:49] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:49] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:50] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:50] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:52] "GET /preview/fc/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:52] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:52] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:52] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:52] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-fc
+127.0.0.1 - - [17/Nov/2026 00:23:54] "GET /preview/chispa/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:54] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:54] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:55] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:55] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:23:55] "GET /preview/chispa/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:55] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:55] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:55] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:23:55] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-chispa
+127.0.0.1 - - [17/Nov/2026 00:23:57] "GET /preview/ritmo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:57] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:57] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:59] "GET /preview/ritmo/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:59] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:23:59] "GET /_web/web.js HTTP/1.1" 200 -
+ok tpl-ritmo
+127.0.0.1 - - [17/Nov/2026 00:24:01] "GET /preview/atelier/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:01] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:01] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:02] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:02] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:24:03] "GET /preview/atelier/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:03] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:03] "GET /_web/web.js HTTP/1.1" 200 -
+ok tpl-atelier
+127.0.0.1 - - [17/Nov/2026 00:24:04] "GET /preview/lente/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:04] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:04] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:06] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:06] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:24:07] "GET /preview/lente/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:07] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:07] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:07] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:07] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-lente
+127.0.0.1 - - [17/Nov/2026 00:24:08] "GET /preview/fe/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:08] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:08] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:11] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:11] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:24:11] "GET /preview/fe/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:11] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:11] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:12] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:12] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-fe
+127.0.0.1 - - [17/Nov/2026 00:24:13] "GET /preview/coach/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:13] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:13] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:14] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:14] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [17/Nov/2026 00:24:15] "GET /preview/coach/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:15] "GET /_web/web.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:15] "GET /_web/web.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 00:24:15] code 404, message File not found
+127.0.0.1 - - [17/Nov/2026 00:24:15] "GET /favicon.ico HTTP/1.1" 404 -
+ok tpl-coach
