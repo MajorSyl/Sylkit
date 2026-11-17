@@ -13,6 +13,195 @@ export type StoreTemplate = {
 
 export const storeTemplates: StoreTemplate[] = [
   {
+    "slug": "lex",
+    "name": "Ávila & Rojas",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "legal",
+    "sectorName": [
+      "Legal",
+      "Legal"
+    ],
+    "tagline": [
+      "Bufete de abogados",
+      "Law firm"
+    ],
+    "blurb": [
+      "Serio y elegante, para bufetes y abogados independientes.",
+      "Serious and elegant, for law firms and independent lawyers."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#111827",
+      "accent": "#7c2d12",
+      "accentInk": "#ffffff",
+      "soft": "#f6f3ef"
+    }
+  },
+  {
+    "slug": "vital",
+    "name": "Dra. Sofía Marín",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "health",
+    "sectorName": [
+      "Salud",
+      "Health"
+    ],
+    "tagline": [
+      "Consultorio médico",
+      "Doctor & medical practice"
+    ],
+    "blurb": [
+      "Cercano y confiable, para médicos, especialistas y consultorios.",
+      "Warm and trustworthy, for doctors, specialists and practices."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0f172a",
+      "accent": "#0e7490",
+      "accentInk": "#ffffff",
+      "soft": "#ecf8fb"
+    }
+  },
+  {
+    "slug": "cifra",
+    "name": "Cifra Contadores",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "finance",
+    "sectorName": [
+      "Contabilidad",
+      "Accounting"
+    ],
+    "tagline": [
+      "Contabilidad e impuestos",
+      "Accounting & tax advisory"
+    ],
+    "blurb": [
+      "Ordenado y confiable, para contadores y asesores fiscales.",
+      "Orderly and reliable, for accountants and tax advisors."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0b1324",
+      "accent": "#15803d",
+      "accentInk": "#ffffff",
+      "soft": "#effaf3"
+    }
+  },
+  {
+    "slug": "norte",
+    "name": "Carlos Medina",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "consulting",
+    "sectorName": [
+      "Consultoría",
+      "Consulting"
+    ],
+    "tagline": [
+      "Consultor de negocios",
+      "Business consultant"
+    ],
+    "blurb": [
+      "Directo y profesional, para consultores, coaches y asesores.",
+      "Direct and professional, for consultants, coaches and advisors."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0f172a",
+      "accent": "#1d4ed8",
+      "accentInk": "#ffffff",
+      "soft": "#eff4ff"
+    }
+  },
+  {
+    "slug": "nodo",
+    "name": "Nodo IT",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "tech",
+    "sectorName": [
+      "Tecnología",
+      "Technology"
+    ],
+    "tagline": [
+      "Especialista en TI",
+      "IT specialist"
+    ],
+    "blurb": [
+      "Moderno y oscuro, para técnicos de TI, programadores y soporte.",
+      "Modern and dark, for IT technicians, developers and support."
+    ],
+    "colors": {
+      "bg": "#0c0d10",
+      "text": "#f3f4f6",
+      "accent": "#22d3ee",
+      "accentInk": "#06202a",
+      "soft": "#111318"
+    }
+  },
+  {
+    "slug": "sonrisa",
+    "name": "Sonrisa Dental",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "health",
+    "sectorName": [
+      "Salud",
+      "Health"
+    ],
+    "tagline": [
+      "Clínica dental",
+      "Dental clinic"
+    ],
+    "blurb": [
+      "Limpio y luminoso, para odontólogos y clínicas dentales.",
+      "Clean and bright, for dentists and dental clinics."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0f172a",
+      "accent": "#0891b2",
+      "accentInk": "#ffffff",
+      "soft": "#ecfeff"
+    }
+  },
+  {
+    "slug": "grupo",
+    "name": "Grupo Meridian",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "corporate",
+    "sectorName": [
+      "Empresas",
+      "Companies"
+    ],
+    "tagline": [
+      "Empresa corporativa",
+      "Corporate firm"
+    ],
+    "blurb": [
+      "Sobrio y corporativo, para empresas, holdings y firmas.",
+      "Sober and corporate, for companies, holdings and firms."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0b1324",
+      "accent": "#0f2a4a",
+      "accentInk": "#ffffff",
+      "soft": "#f3f5f8"
+    }
+  },
+  {
     "slug": "lumen",
     "name": "Lumen",
     "kind": "store",
@@ -374,7 +563,7 @@ export const storeTemplates: StoreTemplate[] = [
 
 export const templateKinds: { id: TemplateKind; name: [string, string] }[] = [{"id": "store", "name": ["Tiendas en línea", "Online stores"]}, {"id": "website", "name": ["Sitios web", "Websites"]}, {"id": "app", "name": ["Apps móviles", "Mobile apps"]}];
 
-export const templateSectors: { id: string; name: [string, string] }[] = [{"id": "fashion", "name": ["Moda", "Fashion"]}, {"id": "beauty", "name": ["Belleza", "Beauty"]}, {"id": "electronics", "name": ["Tecnología", "Electronics"]}, {"id": "food", "name": ["Comida", "Food"]}, {"id": "grocery", "name": ["Víveres", "Grocery"]}, {"id": "jewelry", "name": ["Joyería", "Jewelry"]}, {"id": "home", "name": ["Hogar", "Home"]}, {"id": "pets", "name": ["Mascotas", "Pets"]}, {"id": "architecture", "name": ["Arquitectura", "Architecture"]}, {"id": "realestate", "name": ["Inmobiliaria", "Real estate"]}, {"id": "education", "name": ["Educación", "Education"]}];
+export const templateSectors: { id: string; name: [string, string] }[] = [{"id": "fashion", "name": ["Moda", "Fashion"]}, {"id": "beauty", "name": ["Belleza", "Beauty"]}, {"id": "electronics", "name": ["Tecnología", "Electronics"]}, {"id": "food", "name": ["Comida", "Food"]}, {"id": "grocery", "name": ["Víveres", "Grocery"]}, {"id": "jewelry", "name": ["Joyería", "Jewelry"]}, {"id": "home", "name": ["Hogar", "Home"]}, {"id": "pets", "name": ["Mascotas", "Pets"]}, {"id": "architecture", "name": ["Arquitectura", "Architecture"]}, {"id": "realestate", "name": ["Inmobiliaria", "Real estate"]}, {"id": "education", "name": ["Educación", "Education"]}, {"id": "legal", "name": ["Legal", "Legal"]}, {"id": "health", "name": ["Salud", "Health"]}, {"id": "finance", "name": ["Contabilidad", "Accounting"]}, {"id": "consulting", "name": ["Consultoría", "Consulting"]}, {"id": "tech", "name": ["Tecnología", "Technology"]}, {"id": "trades", "name": ["Oficios", "Trades"]}, {"id": "corporate", "name": ["Empresas", "Companies"]}, {"id": "nonprofit", "name": ["ONG", "Nonprofit"]}, {"id": "community", "name": ["Clubes", "Clubs"]}, {"id": "government", "name": ["Gobierno", "Government"]}, {"id": "sports", "name": ["Deportes", "Sports"]}, {"id": "music", "name": ["Música", "Music"]}, {"id": "creative", "name": ["Creativos", "Creatives"]}, {"id": "faith", "name": ["Iglesias", "Churches"]}, {"id": "fitness", "name": ["Fitness", "Fitness"]}];
 
 export const STORE_PRODUCT = 'tienda-online-whatsapp';
 export const getTemplate = (slug?: string | null) => storeTemplates.find((t) => t.slug === slug);

@@ -36,3 +36,4 @@ for key, (q, orient) in Q.items():
     done += 1; print('ok', key, len(res)); time.sleep(1)
 print('fetched', done)
 (OUT / '_log.txt').write_text('\n'.join(LOG) + '\n')
+# rerun Mon Nov 16 23:57:16 -04 2026

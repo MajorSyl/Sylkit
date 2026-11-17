@@ -436,6 +436,20 @@ def main():
     for t in WEB_TEMPLATES + APP_TEMPLATES:
         t["photos"], t["scene"] = photos, scene
     listing = []
+    # Professional & organization websites (engine public/_web), most requested first.
+    from template_data_sites import SITES, SECTORS as SITE_SECTORS
+    from template_photos import photo
+    SECTORS.update(SITE_SECTORS)
+    for t in SITES:
+        photos = {k: photo(v)[:3] for k, v in t["photos"].items()}
+        cfg = {"slug": t["slug"], "name": t["name"], "mark": t["mark"], "product": t["product"], "theme": t["theme"], "photos": photos, **t["cfg"]}
+        out = ROOT / "public" / "preview" / t["slug"] / "index.html"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(HEAD.format(bg=t["vars"]["bg"], name=t["name"], kind=KIND_LABEL["website"], desc=f'{t["name"]}: {t["blurb"][0]}')
+                       + '<link rel="preconnect" href="https://images.unsplash.com"><link rel="stylesheet" href="/_web/web.css"></head><body>\n<script src="/_web/web.js"></script>\n'
+                       + f'<script>SylWeb.create({json.dumps(cfg, ensure_ascii=False, separators=(",", ":"))});</script>\n</body></html>\n', encoding="utf-8")
+        listing.append({"slug": t["slug"], "name": t["name"], "kind": "website", "product": t["product"], "pair": None, "sector": t["sector"],
+                        "sectorName": SECTORS[t["sector"]], "tagline": t["tagline"], "blurb": t["blurb"], "colors": card_colors(t["vars"])})
     for t in TEMPLATES + WEB_TEMPLATES + APP_TEMPLATES + FIGMA_TEMPLATES:
         kind = t["kind"]
         cfg = {k: v for k, v in t.items() if k not in ("sector", "blurb", "kind", "pair")}
