@@ -30,7 +30,7 @@ const shot = (p, name) => p.screenshot({ path: path.join(OUT, `${name}.png`) }).
 const demos = fs.readdirSync('public/demos').filter((d) => fs.existsSync(`public/demos/${d}/index.html`));
 const previews = fs.readdirSync('public/preview').filter((d) => fs.existsSync(`public/preview/${d}/index.html`));
 const pages = ['/', '/templates', '/work', '/account', '/order', '/quote', '/domains', '/security', '/terms', '/privacy', '/refunds', '/product/punto-de-venta', '/product/farmacia-pos', '/product/sitio-web-para-negocios',
-  '/demo/hotels', '/demo/events', '/demo/realestate', ...demos.map((d) => `/demos/${d}/`), ...previews.map((d) => `/preview/${d}/`)];
+  '/demo/hotel', '/demo/events', '/demo/realestate', ...demos.map((d) => `/demos/${d}/`), ...previews.map((d) => `/preview/${d}/`)];
 {
   const p = await page();
   for (const u of pages) {
@@ -97,7 +97,7 @@ const pages = ['/', '/templates', '/work', '/account', '/order', '/quote', '/dom
     await p.getByText('Ordered by mistake', { exact: true }).click().catch(() => null);
     await shot(p, 'order-confirm-cancel');
     await p.getByText('Yes, cancel order', { exact: true }).click().catch(() => null);
-    await p.waitForTimeout(2500);
+    await p.getByText('This order was cancelled').first().waitFor({ timeout: 15000 }).catch(() => null);
     const after = await p.evaluate(() => document.body.innerText);
     ok('order shows as cancelled', /This order was cancelled/.test(after), after.slice(0, 300));
     ok('cancel button gone after cancelling', (await p.getByText('Cancel this order', { exact: true }).count()) === 0);

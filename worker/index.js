@@ -86,7 +86,7 @@ async function route(request, env, ctx) {
   if (url.pathname === '/api/domain') return domainApi(url);
   if (url.pathname.startsWith('/api/pay/')) return handlePayments(request, env, url);
   if (url.pathname.startsWith('/api/stripe/')) return handleStripe(request, env, url);
-  if (url.pathname.startsWith('/api/order/')) return handleOrders(request, env, url);
+  if (url.pathname.startsWith('/api/order/')) return handleOrders(request, env, url, ctx);
   if (url.pathname.startsWith('/api/paypal/')) return handlePaypal(request, env, url);
   if (url.pathname.startsWith('/api/monime/')) return handleMonime(request, env, url);
   if (url.pathname.startsWith('/api/support/')) return handleSupport(request, env, url, ctx);

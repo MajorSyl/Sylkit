@@ -21,8 +21,9 @@ globalThis.fetch = async (u, o = {}) => {
   if (u.includes('/orders?id=eq.') && (o.method || 'GET') === 'PATCH') {
     const r = byId(Number(m(/id=eq\.(\d+)/))); const need = m(/status=eq\.([a-z_]+)/);
     if (raceTo) { r.status = raceTo; raceTo = null; }
-    if (r.status === need) Object.assign(r, JSON.parse(o.body));
-    return new Response(null, { status: 204 });
+    if (r.status !== need) return new Response('[]');
+    Object.assign(r, JSON.parse(o.body));
+    return new Response(JSON.stringify([{ id: r.id }]));
   }
   if (u.includes('/orders?id=eq.')) return new Response(JSON.stringify([{ status: byId(Number(m(/id=eq\.(\d+)/))).status }]));
   if (u.includes('/order_events')) { events.push(JSON.parse(o.body)); return new Response(null, { status: 201 }); }

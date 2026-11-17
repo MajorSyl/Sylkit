@@ -37,12 +37,14 @@ const PAID = new Set(['paid', 'in_progress', 'delivered']);
 // cancelling (and any refund) goes through Sylkit, so it is refused here.
 export const CANCELLABLE = new Set(['new', 'quoted', 'accepted']);
 
-async function sbWrite(env, path, method, body) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method, headers: { ...sbHeaders(env), prefer: 'return=minimal' }, body: JSON.stringify(body) });
-  if (!r.ok) throw new Error(`supabase ${r.status}: ${(await r.text()).slice(0, 300)}`);
+async function sbWrite(env, path, method, body, prefer = 'return=minimal') {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { method, headers: { ...sbHeaders(env), prefer }, body: JSON.stringify(body) });
+  const text = await r.text();
+  if (!r.ok) throw new Error(`supabase ${r.status}: ${text.slice(0, 300)}`);
+  return text ? JSON.parse(text) : null;
 }
 
-async function cancel(request, env) {
+async function cancel(request, env, ctx) {
   if (await overLimit(env, request, 'cancel').catch(() => false)) return json({ error: 'rate_limited' }, 429);
   if (!env.SUPABASE_SERVICE_ROLE_KEY) return json({ error: 'database_not_configured' }, 503);
   const body = await request.json().catch(() => ({}));
@@ -55,13 +57,17 @@ async function cancel(request, env) {
   if (o.status === 'cancelled') return json({ ok: true, status: 'cancelled' });
   if (!CANCELLABLE.has(o.status)) return json({ error: 'cannot_cancel', status: o.status }, 409);
   // Only change it if nobody else changed it in the meantime (e.g. a payment just arrived).
-  await sbWrite(env, `orders?id=eq.${o.id}&status=eq.${o.status}`, 'PATCH', { status: 'cancelled' });
-  const now = (await sb(env, `orders?id=eq.${o.id}&select=status`))?.[0]?.status;
-  if (now !== 'cancelled') return json({ error: 'cannot_cancel', status: now }, 409);
+  const changed = await sbWrite(env, `orders?id=eq.${o.id}&status=eq.${o.status}&select=id`, 'PATCH', { status: 'cancelled' }, 'return=representation');
+  if (!changed?.length) return json({ error: 'cannot_cancel' }, 409);
   const es = o.lang === 'es' || o.lang === 'pt';
   const msg = es ? `Cancelaste este pedido.${reason ? ` Motivo: ${reason}` : ''}` : `You cancelled this order.${reason ? ` Reason: ${reason}` : ''}`;
-  await sbWrite(env, 'order_events', 'POST', { order_id: o.id, kind: 'update', message: msg, public: true }).catch(() => null);
-  await alertOwner(env, { title: 'Pedido cancelado por el cliente', message: `${orderLine(o)}${reason ? `\nMotivo: ${reason}` : ''}`, orderId: o.id, tags: 'x' }).catch(() => null);
+  // The note on the order and the phone alert happen after the answer, so the customer isn't kept waiting.
+  const after = Promise.all([
+    sbWrite(env, 'order_events', 'POST', { order_id: o.id, kind: 'update', message: msg, public: true }).catch(() => null),
+    alertOwner(env, { title: 'Pedido cancelado por el cliente', message: `${orderLine(o)}${reason ? `\nMotivo: ${reason}` : ''}`, orderId: o.id, tags: 'x' }).catch(() => null),
+  ]);
+  if (ctx?.waitUntil) ctx.waitUntil(after);
+  else await after;
   return json({ ok: true, status: 'cancelled' });
 }
 const PAID_WORDS = /confirm|paid|pagad|recibid|received/i;
@@ -207,10 +213,10 @@ async function ping(request, env) {
   return json({ ok: true });
 }
 
-export async function handleOrders(request, env, url) {
+export async function handleOrders(request, env, url, ctx) {
   try {
     if (request.method === 'POST' && url.pathname === '/api/order/ping') return await ping(request, env);
-    if (request.method === 'POST' && url.pathname === '/api/order/cancel') return await cancel(request, env);
+    if (request.method === 'POST' && url.pathname === '/api/order/cancel') return await cancel(request, env, ctx);
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
     if (url.pathname === '/api/order/methods') {
       // PayPal: live keys show it to everyone; sandbox keys only for a test page (?paypaltest=1).

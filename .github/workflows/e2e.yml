@@ -16,7 +16,7 @@ jobs:
         with: { ref: sylkit-2 }
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npm ci --no-audit --no-fund > .ci-npm.txt 2>&1; echo "npm exit $?" >> .ci-npm.txt
+      - run: npm install --no-audit --no-fund > .ci-npm.txt 2>&1; echo "npm exit $?" >> .ci-npm.txt
         continue-on-error: true
       - name: Type check
         continue-on-error: true
@@ -35,11 +35,14 @@ jobs:
           sleep 30
       - run: npm i --no-save playwright@1 > .ci-pw.txt 2>&1; npx playwright install --with-deps chromium >> .ci-pw.txt 2>&1; echo "pw exit $?" >> .ci-pw.txt
         continue-on-error: true
+      - name: Hydration probe (development build)
+        continue-on-error: true
+        run: npx expo export --platform web --dev --output-dir dist-dev > .ci-devbuild.txt 2>&1; node scripts/ci/hydration.mjs dist-dev >> .ci-devbuild.txt 2>&1; echo "probe exit $?" >> .ci-devbuild.txt
       - run: node scripts/ci/e2e.mjs > .ci-e2e.txt 2>&1 || true
         continue-on-error: true
       - if: always()
         run: |
-          mkdir -p .ci/e2e && for f in .ci-npm.txt .ci-pw.txt; do tail -c 4000 $f > .ci/e2e/$f 2>/dev/null; done; cp .ci-tsc.txt .ci-unit.txt .ci-build.txt .ci-e2e.txt .ci/e2e/ 2>/dev/null; tail -c 20000 .ci/e2e/.ci-build.txt > /dev/null || true
+          mkdir -p .ci/e2e && for f in .ci-npm.txt .ci-pw.txt; do tail -c 4000 $f > .ci/e2e/$f 2>/dev/null; done; tail -c 6000 .ci-devbuild.txt > .ci/e2e/.ci-devbuild.txt 2>/dev/null; tail -c 6000 .ci-build.txt > .ci/e2e/.ci-build.txt; cp .ci-tsc.txt .ci-unit.txt .ci-e2e.txt .ci/e2e/ 2>/dev/null; tail -c 20000 .ci/e2e/.ci-build.txt > /dev/null || true
           git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"
           git add -f .ci/e2e && git commit -m "ci: end-to-end test results" || exit 0
           git pull --rebase origin sylkit-2 && git push
