@@ -1,7 +1,5 @@
 empty cornmeal {'total': 0, 'page': 1, 'results': []}
 empty gala {'total': 0, 'page': 1, 'results': []}
-ok model-f 16
-ok model-m 16
-ok photoshoot 16
-ok model-editorial 16
-fetched 4
+ok model-studio-solo 16
+ok model-studio-2 16
+fetched 2
