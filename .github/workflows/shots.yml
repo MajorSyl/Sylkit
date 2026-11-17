@@ -1,0 +1,23 @@
+name: shots
+on:
+  push:
+    branches: [sylkit-2]
+    paths: ['scripts/ci/shots.json', 'scripts/ci/make_shots.py', '.github/workflows/shots.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: ci-commit, cancel-in-progress: false }
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: sylkit-2 }
+      - run: pip install pillow >/dev/null
+      - run: python3 scripts/ci/make_shots.py 2>&1 | tee .ci-shots.txt
+      - run: |
+          mkdir -p .ci && cp .ci-shots.txt .ci/shots_log.txt
+          git config user.name "sylkit-ci"; git config user.email "ci@sylkit.com"
+          git add public/shots .ci/shots_log.txt && git commit -m "ci: covers and screenshots from the real pages" || exit 0
+          git pull --rebase origin sylkit-2 && git push

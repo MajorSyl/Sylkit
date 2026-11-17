@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" translate="no"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="google" content="notranslate"><title>Ruta Rent a Car · Demo · Sylkit</title><meta name="description" content="Live demo of the Sylkit car rental system: fleet, live availability, bookings, pick-ups and returns.">
+<link rel="preconnect" href="https://images.unsplash.com"><link rel="stylesheet" href="/_pro/pro.css"></head><body>
+<script src="/_pro/pro.js"></script>
+<script>
+SylPro.create(Object.assign({ photos: {"hero": ["https://images.unsplash.com/photo-1615887110697-0819ec23465f?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8M3x8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Vlad Kutepov", "https://unsplash.com/@kvtepov?utm_source=sylkit&utm_medium=referral"], "c1": ["https://images.unsplash.com/photo-1615887110697-0819ec23465f?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8M3x8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Vlad Kutepov", "https://unsplash.com/@kvtepov?utm_source=sylkit&utm_medium=referral"], "c2": ["https://images.unsplash.com/photo-1529369623266-f5264b696110?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8Mnx8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Jamie Street", "https://unsplash.com/@jamie452?utm_source=sylkit&utm_medium=referral"], "c3": ["https://images.unsplash.com/photo-1587580945215-5d4aabb2c8ef?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8NHx8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Jamie Street", "https://unsplash.com/@jamie452?utm_source=sylkit&utm_medium=referral"], "c4": ["https://images.unsplash.com/photo-1754484825706-13feac7a41e6?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8OHx8Y2FyJTIwcmVudGFsJTIwc3V2JTIwc2VkYW58ZW58MXwwfHx8MTc5NDg4NDI1MHww&ixlib=rb-4.1.0", "Nishat Samadzai", "https://unsplash.com/@nishatsamadzai2001?utm_source=sylkit&utm_medium=referral"], "c5": ["https://images.unsplash.com/photo-1723259529937-487a13183d79?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTB8fGNhciUyMHJlbnRhbCUyMHN1diUyMHNlZGFufGVufDF8MHx8fDE3OTQ4ODQyNTB8MA&ixlib=rb-4.1.0", "Surya Ahmad Pajar", "https://unsplash.com/@ahmdpajr?utm_source=sylkit&utm_medium=referral"], "c6": ["https://images.unsplash.com/photo-1701918190763-3851cf361f96?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTN8fGNhciUyMHJlbnRhbCUyMHN1diUyMHNlZGFufGVufDF8MHx8fDE3OTQ4ODQyNTB8MA&ixlib=rb-4.1.0", "Erik Mclean", "https://unsplash.com/@introspectivedsgn?utm_source=sylkit&utm_medium=referral"], "c7": ["https://images.unsplash.com/photo-1582182248032-800034598b35?ixid=M3wxMTMyMjMxfDB8MXxzZWFyY2h8MTV8fGNhciUyMHJlbnRhbCUyMHN1diUyMHNlZGFufGVufDF8MHx8fDE3OTQ4ODQyNTB8MA&ixlib=rb-4.1.0", "Photo Pro", "https://unsplash.com/@ibrahimabdulla?utm_source=sylkit&utm_medium=referral"]} }, {
+  id: 'car-rental', version: 1, ref: 'car-rental',
+  theme: { primary: '#0f766e', primaryD: '#0b5d57', soft: '#e6f4f1', fonts: 'family=Inter:wght@400;600;700;800;900' },
+  brand: { name: 'Ruta Rent a Car', mark: 'R' },
+  hero: { photo: 'hero', eyebrow: { en: 'Airport · City · Beach', es: 'Aeropuerto · Ciudad · Playa' },
+    title: { en: 'Rent the right car in two minutes', es: 'Alquila el carro ideal en dos minutos' },
+    lead: { en: 'Live availability, clear prices with insurance included, and pick-up at the airport or your hotel.', es: 'Disponibilidad en vivo, precios claros con seguro incluido y entrega en el aeropuerto o tu hotel.' },
+    search: [{ name: 'place', label: { en: 'Pick-up', es: 'Entrega' }, type: 'select', options: [['all', { en: 'Maiquetía Airport', es: 'Aeropuerto de Maiquetía' }], ['city', { en: 'Caracas city', es: 'Caracas ciudad' }]] },
+      { name: 'from', label: { en: 'From', es: 'Desde' }, type: 'date', value: (a) => a.day(2) }, { name: 'to', label: { en: 'To', es: 'Hasta' }, type: 'date', value: (a) => a.day(5) }],
+    cta: { en: 'Search cars', es: 'Buscar carros' } },
+  catalog: { title: { en: 'Available cars', es: 'Carros disponibles' }, lead: { en: 'Unlimited km, basic insurance and 24/7 roadside assistance included.', es: 'Kilometraje libre, seguro básico y asistencia 24/7 incluidos.' },
+    filters: [['suv', 'SUV'], ['car', { en: 'Cars', es: 'Autos' }]],
+    items: [
+      { id: 'v1', cat: 'suv', photo: 'c1', title: { en: 'Compact SUV', es: 'SUV compacta' }, meta: { en: '5 seats · Automatic · A/C · 2 bags', es: '5 puestos · Automática · A/A · 2 maletas' }, price: 55, unit: { en: '/day', es: '/día' }, tag: { en: 'Best value', es: 'Mejor precio' } },
+      { id: 'v2', cat: 'suv', photo: 'c2', title: { en: 'Family SUV', es: 'SUV familiar' }, meta: { en: '7 seats · Automatic · 4 bags', es: '7 puestos · Automática · 4 maletas' }, price: 78, unit: { en: '/day', es: '/día' } },
+      { id: 'v3', cat: 'car', photo: 'c3', title: { en: 'City hatchback', es: 'Hatchback urbano' }, meta: { en: '5 seats · Manual · Low fuel use', es: '5 puestos · Sincrónico · Bajo consumo' }, price: 38, unit: { en: '/day', es: '/día' } },
+      { id: 'v4', cat: 'car', photo: 'c4', title: { en: 'Executive sedan', es: 'Sedán ejecutivo' }, meta: { en: '5 seats · Automatic · Leather', es: '5 puestos · Automático · Cuero' }, price: 85, unit: { en: '/day', es: '/día' } },
+      { id: 'v5', cat: 'suv', photo: 'c5', title: { en: 'Urban SUV', es: 'SUV urbana' }, meta: { en: '5 seats · Automatic · CarPlay', es: '5 puestos · Automática · CarPlay' }, price: 64, unit: { en: '/day', es: '/día' }, tag: { en: '2 left', es: 'Quedan 2' } },
+      { id: 'v6', cat: 'suv', photo: 'c6', title: { en: 'Premium SUV', es: 'SUV premium' }, meta: { en: '5 seats · AWD · Panoramic roof', es: '5 puestos · 4x4 · Techo panorámico' }, price: 110, unit: { en: '/day', es: '/día' } },
+      { id: 'v7', cat: 'car', photo: 'c7', title: { en: 'Luxury sedan', es: 'Sedán de lujo' }, meta: { en: 'Chauffeur optional · Airport transfers', es: 'Chofer opcional · Traslados al aeropuerto' }, price: 140, unit: { en: '/day', es: '/día' } },
+    ] },
+  book: { button: { en: 'Reserve', es: 'Reservar' }, confirm: { en: 'Reserve with $50 deposit', es: 'Reservar con $50 de depósito' },
+    fields: [{ name: 'from', label: { en: 'Pick-up', es: 'Retiro' }, type: 'date', value: (a) => a.day(2) }, { name: 'to', label: { en: 'Return', es: 'Devolución' }, type: 'date', value: (a) => a.day(5) },
+      { name: 'extra', label: { en: 'Extras', es: 'Extras' }, type: 'select', options: [['0', { en: 'None', es: 'Ninguno' }], ['8', { en: 'Child seat (+$8/day)', es: 'Silla de niño (+$8/día)' }], ['15', { en: 'Full insurance (+$15/day)', es: 'Seguro total (+$15/día)' }]] }],
+    total: (x, v) => { const d = Math.max(1, Math.round((new Date(v.to) - new Date(v.from)) / 864e5) || 1); return d * (x.price + Number(v.extra || 0)); },
+    detail: (x, v, a) => `${a.date(v.from)} → ${a.date(v.to)}` },
+  flow: [{ id: 'res', label: { en: 'Reserved', es: 'Reservados' } }, { id: 'out', label: { en: 'On the road', es: 'En la calle' }, verb: { en: 'Hand over', es: 'Entregar' }, tone: 'info' },
+    { id: 'back', label: { en: 'Returned', es: 'Devueltos' }, verb: { en: 'Check in', es: 'Recibir' } }],
+  dashTitle: { en: 'Fleet & rentals', es: 'Flota y alquileres' }, dashLead: { en: 'Every booking blocks the car for those dates, so there are no double rentals.', es: 'Cada reserva bloquea el carro en esas fechas: nunca hay alquileres dobles.' },
+  stats: (a) => { const r = a.db.records; return [[{ en: 'Cars on the road', es: 'Carros en la calle' }, `${r.filter((x) => x.status === 'out').length + 9}/24`],
+    [{ en: 'Pick-ups today', es: 'Entregas hoy' }, String(r.filter((x) => x.status === 'res').length)], [{ en: 'Revenue this month', es: 'Ingresos del mes' }, a.money(18420 + r.reduce((s, x) => s + x.total, 0))],
+    [{ en: 'Utilization', es: 'Ocupación' }, '78%', { en: '+6% vs last month', es: '+6% vs mes pasado' }]]; },
+  side: { title: { en: 'Fleet status', es: 'Estado de la flota' }, rows: (a) => [
+    { img: 'c1', title: { en: 'Compact SUV · AB123CD', es: 'SUV compacta · AB123CD' }, sub: { en: 'Back tomorrow 10:00 · 12,400 km', es: 'Vuelve mañana 10:00 · 12.400 km' }, right: { en: 'Rented', es: 'Alquilado' }, tone: 'info' },
+    { img: 'c4', title: { en: 'Executive sedan · AC774KL', es: 'Sedán ejecutivo · AC774KL' }, sub: { en: 'Ready at the airport', es: 'Listo en el aeropuerto' }, right: { en: 'Available', es: 'Disponible' }, tone: 'ok' },
+    { img: 'c2', title: { en: 'Family SUV · AD209PQ', es: 'SUV familiar · AD209PQ' }, sub: { en: 'Oil change due in 300 km', es: 'Cambio de aceite en 300 km' }, right: { en: 'Service', es: 'Servicio' }, tone: 'warn' },
+    { img: 'c3', title: { en: 'City hatchback · AE551MN', es: 'Hatchback urbano · AE551MN' }, sub: { en: 'Clean and fueled', es: 'Limpio y con tanque lleno' }, right: { en: 'Available', es: 'Disponible' }, tone: 'ok' }] },
+  perks: [['shield', { en: 'Insurance included', es: 'Seguro incluido' }, { en: 'Basic cover on every rental.', es: 'Cobertura básica en cada alquiler.' }],
+    ['pin', { en: 'Airport delivery', es: 'Entrega en aeropuerto' }, { en: 'We meet you at arrivals.', es: 'Te esperamos en llegadas.' }],
+    ['card', { en: 'Pay your way', es: 'Paga como quieras' }, { en: 'Card, Pago Móvil, cash or USDT.', es: 'Tarjeta, Pago Móvil, efectivo o USDT.' }]],
+  seed: (a) => [['Daniel Herrera', 'v1', 'out', 2, 5], ['Sofía Castillo', 'v4', 'res', 1, 3], ['Miguel Torres', 'v2', 'res', 0, 4], ['Laura Pineda', 'v3', 'back', -4, -1], ['Ricardo Díaz', 'v5', 'out', -1, 2]]
+    .map(([name, item, status, f, t]) => { const x = a.item(item); return { id: a.uid(), item, name, phone: '+58 412 000 0000', detail: `${a.date(a.day(f))} → ${a.date(a.day(t))}`, total: x.price * Math.max(1, t - f), status, at: new Date(Date.now() - 36e5 * (3 - f)).toISOString() }; }),
+}));
+</script>
+</body></html>

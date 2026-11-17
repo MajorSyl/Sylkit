@@ -20,14 +20,19 @@ DEMOS = {
         'Amoxicilina 500mg x21': 'pharmacy:3', 'Losartán 50mg x30': 'pills:7', 'Metformina 850mg x30': 'pills:8', 'Atorvastatina 20mg x30': 'pills:9',
         'Salbutamol inhalador': 'pills:11', 'Suero oral': 'pills:6', 'Vitamina C 1g x10': 'pills:2', 'Jarabe para la tos': 'pills:13'}),
     'pos': ('minimarket:0', ['Ventas rápidas, inventario al día', 'Fast checkout, stock always up to date'], {
-        'Refresco cola 2L': 'groceries:8', 'Huevos x12': 'fresco-dairy:11', 'Queso blanco 500g': 'fresco-dairy:9', 'Papas fritas': 'groceries:14',
-        'Galletas': 'horno-bread:8', 'Café molido 250g': 'horno-coffee:9', 'Jugo de naranja 1L': 'minimarket:1'}),
+        'Agua mineral 1.5L': 'water-bottle:0', 'Refresco cola 2L': 'soft-drink:6', 'Jugo de naranja 1L': 'oj-bottle:0', 'Café molido 250g': 'coffee-bag:4',
+        'Pan fresco x6': 'horno-bread:14', 'Arroz 1kg': 'rice:3', 'Pasta 1kg': 'pasta-dry:1', 'Aceite 1L': 'oil:3', 'Azúcar 1kg': 'sugar:2',
+        'Leche entera 1L': 'milk:0', 'Queso blanco 500g': 'soap:2', 'Yogurt 1L': 'yogurt:4', 'Huevos x12': 'fresco-dairy:11',
+        'Jabón de baño': 'soap:9', 'Detergente 1kg': 'detergent:0', 'Papel higiénico x4': 'toilet-paper:2', 'Limpiador multiuso 1L': 'cleaning:5',
+        'Galletas': 'cookies:8', 'Papas fritas': 'groceries:14', 'Chocolate': 'chocolate:1'}),
     'restaurante': ('lib:restaurants:0', ['Menú QR, pedidos por mesa y cocina en tiempo real', 'QR menu, table orders and a live kitchen screen'], {
-        'Hamburguesa de la casa': 'burger:13', 'Parrilla mixta': 'food:7', 'Pescado frito': 'food:9', 'Pasta carbonara': 'food:4', 'Ensalada César': 'food:10',
-        'Torta de chocolate': 'horno-cake:1', 'Café': 'horno-coffee:5', 'Pabellón criollo': 'food:14', 'Jugo natural': 'food:5'}),
+        'Hamburguesa de la casa': 'burger:13', 'Parrilla mixta': 'food:7', 'Pescado frito': 'food:9', 'Pasta carbonara': 'food:4', 'Ensalada César': 'caesar:1',
+        'Torta de chocolate': 'horno-cake:1', 'Café': 'horno-coffee:5', 'Pabellón criollo': 'food:14', 'Jugo natural': 'oj-bottle:3',
+        'Tequeños (8)': 'cheese-sticks:1', 'Empanadas (3)': 'empanadas:7', 'Papelón con limón': 'lemonade:5', 'Refresco': 'soft-drink:6', 'Quesillo': 'flan:3'}),
     'tienda': ('boutique:1', ['Tu tienda con stock, pedidos y envíos', 'Your store with stock, orders and shipping'], {
         'Vestido floral': 'lib:fashion:4', 'Blusa de lino': 'lib:clothing:8', 'Camisa casual': 'lib:clothing:5', 'Zapatos deportivos': 'lib:shoes:1',
-        'Cartera de cuero': 'lib:accessories:0', 'Reloj': 'lib:accessories:2', 'Perfume 100ml': 'rose-perfume:1', 'Labial': 'rose-makeup:3', 'Botas': 'lib:shoes:3'}),
+        'Cartera de cuero': 'lib:accessories:0', 'Reloj': 'lib:accessories:2', 'Perfume 100ml': 'rose-perfume:1', 'Labial': 'rose-makeup:3', 'Botas': 'sandals:3',
+        'Jean clásico': 'jeans:0', 'Sandalias': 'sandals:2', 'Lentes de sol': 'sunglasses:0'}),
     'salon': ('barber:2', ['Citas, comisiones y clientes fieles', 'Bookings, commissions and loyal clients'], {
         'Corte de caballero': 'barber:0', "Men's haircut": 'barber:0', 'Barba': 'barber:8', 'Beard trim': 'barber:8',
         'Corte y peinado dama': 'barber:14', "Women's cut & style": 'barber:14'}),

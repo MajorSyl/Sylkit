@@ -1,0 +1,248 @@
+[
+ {
+  "name": "gym",
+  "url": "/demos/gym/",
+  "cover": "demo-gym.webp",
+  "accent": "E8432E"
+ },
+ {
+  "name": "car-rental",
+  "url": "/demos/car-rental/",
+  "cover": "demo-car-rental.webp",
+  "accent": "0F766E"
+ },
+ {
+  "name": "delivery",
+  "url": "/demos/delivery/",
+  "cover": "demo-delivery.webp",
+  "accent": "F97316"
+ },
+ {
+  "name": "crm",
+  "url": "/demos/crm/",
+  "cover": "demo-crm.webp",
+  "accent": "4F46E5"
+ },
+ {
+  "name": "rentals",
+  "url": "/demos/rentals/",
+  "cover": "demo-rentals.webp",
+  "accent": "0E7490"
+ },
+ {
+  "name": "tours",
+  "url": "/demos/tours/",
+  "cover": "demo-tours.webp",
+  "accent": "0284C7"
+ },
+ {
+  "name": "farmacia",
+  "url": "/demos/farmacia/",
+  "cover": "farmacia.webp",
+  "accent": "12B76A",
+  "shot": "farmacia.webp"
+ },
+ {
+  "name": "pos",
+  "url": "/demos/pos/",
+  "cover": "pos.webp",
+  "accent": "2558E8",
+  "shot": "pos.webp"
+ },
+ {
+  "name": "restaurante",
+  "url": "/demos/restaurante/",
+  "cover": "restaurante.webp",
+  "accent": "E04F1A",
+  "shot": "restaurante.webp"
+ },
+ {
+  "name": "tienda",
+  "url": "/demos/tienda/",
+  "cover": "tienda.webp",
+  "accent": "DD2590",
+  "shot": "tienda.webp"
+ },
+ {
+  "name": "salon",
+  "url": "/demos/salon/",
+  "cover": "salon.webp",
+  "accent": "B8860B",
+  "shot": "salon.webp"
+ },
+ {
+  "name": "taller",
+  "url": "/demos/taller/",
+  "cover": "taller.webp",
+  "accent": "F97316",
+  "shot": "taller.webp"
+ },
+ {
+  "name": "inventario",
+  "url": "/demos/inventario/",
+  "cover": "inventario.webp",
+  "accent": "2558E8",
+  "shot": "inventario.webp"
+ },
+ {
+  "name": "clinica",
+  "url": "/demos/clinica/",
+  "cover": "clinica.webp",
+  "accent": "0086C9",
+  "shot": "clinica.webp"
+ },
+ {
+  "name": "escuela",
+  "url": "/demos/escuela/",
+  "cover": "escuela.webp",
+  "accent": "2558E8",
+  "shot": "escuela.webp"
+ },
+ {
+  "name": "facturas",
+  "url": "/demos/facturas/",
+  "cover": "facturas.webp",
+  "accent": "0E9384",
+  "shot": "facturas.webp"
+ },
+ {
+  "name": "nomina",
+  "url": "/demos/nomina/",
+  "cover": "nomina.webp",
+  "accent": "7A5AF8",
+  "shot": "nomina.webp"
+ },
+ {
+  "name": "servicios",
+  "url": "/demos/servicios/",
+  "cover": "servicios.webp",
+  "accent": "0E9384",
+  "shot": "servicios.webp"
+ },
+ {
+  "name": "asistente",
+  "url": "/demos/asistente/",
+  "cover": "asistente.webp",
+  "accent": "12B76A",
+  "shot": "asistente.webp"
+ },
+ {
+  "name": "portafolio",
+  "url": "/demos/portafolio/",
+  "cover": "portafolio.webp",
+  "accent": "7A5AF8",
+  "shot": "portafolio.webp"
+ },
+ {
+  "name": "alertas",
+  "url": "/demos/alertas/",
+  "cover": "alertas.webp",
+  "accent": "1D6BFF",
+  "shot": "alertas.webp"
+ },
+ {
+  "name": "tpl-lumen",
+  "url": "/preview/lumen/",
+  "cover": "tpl-lumen.webp",
+  "accent": "8B7355",
+  "tpl": "lumen"
+ },
+ {
+  "name": "tpl-rose",
+  "url": "/preview/rose/",
+  "cover": "tpl-rose.webp",
+  "accent": "D6457A",
+  "tpl": "rose"
+ },
+ {
+  "name": "tpl-volt",
+  "url": "/preview/volt/",
+  "cover": "tpl-volt.webp",
+  "accent": "2558E8",
+  "tpl": "volt"
+ },
+ {
+  "name": "tpl-horno",
+  "url": "/preview/horno/",
+  "cover": "tpl-horno.webp",
+  "accent": "C2410C",
+  "tpl": "horno"
+ },
+ {
+  "name": "tpl-fresco",
+  "url": "/preview/fresco/",
+  "cover": "tpl-fresco.webp",
+  "accent": "16A34A",
+  "tpl": "fresco"
+ },
+ {
+  "name": "tpl-aurum",
+  "url": "/preview/aurum/",
+  "cover": "tpl-aurum.webp",
+  "accent": "B8860B",
+  "tpl": "aurum"
+ },
+ {
+  "name": "tpl-nido",
+  "url": "/preview/nido/",
+  "cover": "tpl-nido.webp",
+  "accent": "6B8E5A",
+  "tpl": "nido"
+ },
+ {
+  "name": "tpl-patitas",
+  "url": "/preview/patitas/",
+  "cover": "tpl-patitas.webp",
+  "accent": "F59E0B",
+  "tpl": "patitas"
+ },
+ {
+  "name": "tpl-plano",
+  "url": "/preview/plano/",
+  "cover": "tpl-plano.webp",
+  "accent": "C2410C",
+  "tpl": "plano"
+ },
+ {
+  "name": "tpl-habitat",
+  "url": "/preview/habitat/",
+  "cover": "tpl-habitat.webp",
+  "accent": "0F766E",
+  "tpl": "habitat"
+ },
+ {
+  "name": "tpl-habitat-app",
+  "url": "/preview/habitat-app/",
+  "cover": "tpl-habitat-app.webp",
+  "accent": "0F766E",
+  "tpl": "habitat-app"
+ },
+ {
+  "name": "tpl-plano-app",
+  "url": "/preview/plano-app/",
+  "cover": "tpl-plano-app.webp",
+  "accent": "C2410C",
+  "tpl": "plano-app"
+ },
+ {
+  "name": "tpl-aula-app",
+  "url": "/preview/aula-app/",
+  "cover": "tpl-aula-app.webp",
+  "accent": "E11D48",
+  "tpl": "aula-app"
+ },
+ {
+  "name": "sitio-web",
+  "url": "/preview/habitat/",
+  "cover": "sitio-web.webp",
+  "accent": "0F766E",
+  "shot": "sitio-web.webp"
+ },
+ {
+  "name": "app-movil",
+  "url": "/preview/habitat-app/",
+  "cover": "app-movil.webp",
+  "accent": "0F766E",
+  "shot": "app-movil.webp"
+ }
+]
