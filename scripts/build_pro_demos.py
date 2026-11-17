@@ -458,7 +458,7 @@ DEMOS['models'] = dict(
   id: 'models', version: 1, ref: 'models',
   theme: { primary: '#111111', primaryD: '#000000', soft: '#f4f4f4', fonts: 'family=Inter:wght@400;600;700;800;900' },
   brand: { name: 'Élite Models', mark: 'É' },
-  hero: { photo: 'hero', eyebrow: { en: 'Fashion · Commercial · Runway · Events', es: 'Moda · Comercial · Pasarela · Eventos' },
+  hero: { photo: 'hero', pos: 'center 12%', eyebrow: { en: 'Fashion · Commercial · Runway · Events', es: 'Moda · Comercial · Pasarela · Eventos' },
     title: { en: 'Book the right face for your brand', es: 'Reserva el rostro ideal para tu marca' },
     lead: { en: 'Browse our models, check availability and send a booking request. Our bookers confirm within hours.', es: 'Mira nuestros modelos, consulta disponibilidad y envía tu solicitud. Nuestros bookers confirman en horas.' },
     search: [{ name: 'board', label: { en: 'Board', es: 'Categoría' }, type: 'select', options: [['all', { en: 'All models', es: 'Todos' }], ['women', { en: 'Women', es: 'Mujeres' }], ['men', { en: 'Men', es: 'Hombres' }]] },

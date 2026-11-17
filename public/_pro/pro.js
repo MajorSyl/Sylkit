@@ -60,7 +60,7 @@
       const h = cfg.hero, c = cfg.catalog;
       const q = (db.q || '').toLowerCase();
       const list = c.items.filter((x) => (db.cat === 'all' || x.cat === db.cat) && (!q || (L(x.title) + ' ' + L(x.meta)).toLowerCase().includes(q)));
-      return `<section class="x-hero" style="background-image:url('${pic(h.photo, 1800)}')"><div class="x-wrap">
+      return `<section class="x-hero" style="background-image:url('${pic(h.photo, 1800)}');background-position:${h.pos || 'center'}"><div class="x-wrap">
           <div class="x-eyebrow">${esc(L(h.eyebrow))}</div><h1>${esc(L(h.title))}</h1><p>${esc(L(h.lead))}</p>
           ${h.search ? `<form class="x-search" data-form="search">${h.search.map(field).join('')}<button class="x-btn" type="submit">${esc(L(h.cta) || S.search)}</button></form>` : ''}
         </div></section>
