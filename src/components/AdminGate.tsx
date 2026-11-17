@@ -55,7 +55,9 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
           </Link>
           {session && isAdmin ? (
             <View style={styles.nav}>
-              <Link href="/backend" style={styles.navLink}>Orders</Link>
+              <Link href="/backend" style={styles.navLink}>Home</Link>
+              <Link href="/backend/orders" style={styles.navLink}>Orders</Link>
+              <Link href="/backend/customers" style={styles.navLink}>Customers</Link>
               <Link href="/backend/support" style={styles.navLink}>Support</Link>
               <Link href="/backend/products" style={styles.navLink}>Products</Link>
               <Link href="/" style={styles.navLink}>View site</Link>
