@@ -1,0 +1,32 @@
+Starting Metro Bundler
+Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
+Web node_modules/expo-router/entry.js ▓▓▓▓░░░░░░░░░░░░ 30.3% ( 64/158)
+λ node_modules/expo-router/node/render.js ▓░░░░░░░░░░░░░░░  6.8% ( 16/133)
+Web node_modules/expo-router/entry.js ▓▓▓▓░░░░░░░░░░░░ 30.3% ( 84/183)
+λ node_modules/expo-router/node/render.js ▓▓▓░░░░░░░░░░░░░ 23.1% (129/336)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.1% (180/257)
+λ node_modules/expo-router/node/render.js ▓▓▓▓░░░░░░░░░░░░ 30.9% (242/444)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.1% (202/339)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓░░░░░░░░░░ 39.2% (345/551)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.1% (268/414)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓░░░░░░░░░ 46.7% (408/597)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.1% (295/455)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓░░░░░░░░ 56.1% (454/606)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.4% (406/582)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 67.7% (549/667)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓░░░░░░ 67.3% (543/662)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 74.5% (654/766)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 82.3% (750/829)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 89.9% (809/853)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 91.8% (862/915)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 95.0% (918/952)
+Web Bundling failed 36142ms node_modules/expo-router/entry.js (967 modules)
+SyntaxError: SyntaxError: /home/runner/work/Sylkit/Sylkit/app/index.tsx: Identifier 'glass' has already been declared. (21:17)
+
+[0m [90m 19 |[39m [36mimport[39m { useRouter } [36mfrom[39m [32m'expo-router'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { steps[33m,[39m ui[33m,[39m useLang } [36mfrom[39m [32m'../src/i18n'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m { colors[33m,[39m glass[33m,[39m shadow[33m,[39m waLink } [36mfrom[39m [32m'../src/theme'[39m[33m;[39m
+ [90m    |[39m                  [31m[1m^[22m[39m
+ [90m 22 |[39m [36mimport[39m { tx } [36mfrom[39m [32m'../src/i18n'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { tplText } [36mfrom[39m [32m'../src/lib/names'[39m[33m;[39m
+ [90m 24 |[39m[0m

@@ -1,0 +1,30 @@
+Starting Metro Bundler
+Static rendering is enabled. Learn more: https://docs.expo.dev/router/reference/static-rendering/
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 37.9% (11/24)
+λ node_modules/expo-router/node/render.js ▓░░░░░░░░░░░░░░░  6.5% ( 62/244)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 37.9% ( 85/185)
+λ node_modules/expo-router/node/render.js ▓▓░░░░░░░░░░░░░░ 16.3% (138/342)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 37.9% ( 85/185)
+λ node_modules/expo-router/node/render.js ▓▓▓▓░░░░░░░░░░░░ 26.8% (230/444)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 37.9% (182/326)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓░░░░░░░░░ 49.2% (389/570)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 37.9% (201/369)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 69.4% (518/622)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓░░░░░░░░░░ 41.4% (309/480)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 70.7% (538/640)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓░░░░░░░░ 52.1% (397/550)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.6% (623/726)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓░░░░░ 73.9% (613/713)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░ 86.6% (725/779)
+Web node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 93.3% (772/800)
+λ node_modules/expo-router/node/render.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 95.7% (826/879)
+λ Bundling failed 33473ms node_modules/expo-router/node/render.js (905 modules)
+SyntaxError: SyntaxError: /home/runner/work/Sylkit/Sylkit/app/index.tsx: Identifier 'glass' has already been declared. (21:17)
+
+[0m [90m 19 |[39m [36mimport[39m { useRouter } [36mfrom[39m [32m'expo-router'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { steps[33m,[39m ui[33m,[39m useLang } [36mfrom[39m [32m'../src/i18n'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m { colors[33m,[39m glass[33m,[39m shadow[33m,[39m waLink } [36mfrom[39m [32m'../src/theme'[39m[33m;[39m
+ [90m    |[39m                  [31m[1m^[22m[39m
+ [90m 22 |[39m [36mimport[39m { tx } [36mfrom[39m [32m'../src/i18n'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { tplText } [36mfrom[39m [32m'../src/lib/names'[39m[33m;[39m
+ [90m 24 |[39m[0m

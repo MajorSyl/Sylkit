@@ -1,0 +1,115 @@
+PASS page / 
+PASS page /templates 
+PASS page /work 
+PASS page /account 
+PASS page /order 
+PASS page /quote 
+PASS page /domains 
+PASS page /security 
+PASS page /terms 
+PASS page /privacy 
+PASS page /refunds 
+PASS page /product/punto-de-venta 
+PASS page /product/farmacia-pos 
+PASS page /product/sitio-web-para-negocios 
+PASS page /demo/hotel 
+PASS page /demo/events 
+PASS page /demo/realestate 
+PASS page /demos/alertas/ 
+PASS page /demos/asistente/ 
+PASS page /demos/car-rental/ 
+PASS page /demos/clinica/ 
+PASS page /demos/crm/ 
+PASS page /demos/delivery/ 
+PASS page /demos/eats/ 
+PASS page /demos/escuela/ 
+PASS page /demos/facturas/ 
+PASS page /demos/farmacia/ 
+PASS page /demos/flights/ 
+PASS page /demos/gym/ 
+PASS page /demos/inventario/ 
+PASS page /demos/models/ 
+PASS page /demos/nomina/ 
+PASS page /demos/portafolio/ 
+PASS page /demos/pos/ 
+PASS page /demos/rentals/ 
+PASS page /demos/restaurante/ 
+PASS page /demos/rides/ 
+PASS page /demos/salon/ 
+PASS page /demos/servicios/ 
+PASS page /demos/taller/ 
+PASS page /demos/tienda/ 
+PASS page /demos/tours/ 
+PASS page /preview/atelier/ 
+PASS page /preview/aula-app/ 
+PASS page /preview/aurum/ 
+PASS page /preview/chispa/ 
+PASS page /preview/cifra/ 
+PASS page /preview/club/ 
+PASS page /preview/coach/ 
+PASS page /preview/fc/ 
+PASS page /preview/fe/ 
+PASS page /preview/fresco/ 
+PASS page /preview/gov/ 
+PASS page /preview/grupo/ 
+PASS page /preview/habitat/ 
+PASS page /preview/habitat-app/ 
+PASS page /preview/horno/ 
+PASS page /preview/lente/ 
+PASS page /preview/lex/ 
+PASS page /preview/lumen/ 
+PASS page /preview/muse/ 
+PASS page /preview/ngo/ 
+PASS page /preview/nido/ 
+PASS page /preview/nodo/ 
+PASS page /preview/norte/ 
+PASS page /preview/patitas/ 
+PASS page /preview/plano/ 
+PASS page /preview/plano-app/ 
+PASS page /preview/ritmo/ 
+PASS page /preview/rose/ 
+PASS page /preview/sonrisa/ 
+PASS page /preview/vital/ 
+PASS page /preview/volt/ 
+PASS gallery shows results count - 64 results
+PASS gallery order: hotel, then ride app, before POS - hotel@136 ride@225 pos@847
+PASS phone menu offers sign in 
+PASS phone menu has no sign out when signed out 
+PASS account page asks to sign in - sylkit
+
+
+Sign in to see your orders
+Use the same email you ordered with and your orders appear here.
+
+Continue with Google
+or
+Email
+
+Email me a sign-in link
+Just browsing? You can look at every sy
+PASS account page has email sign-in 
+PASS create a quote request - {"order_number":"SK-1056","token":"dee8a369-7387-4f0d-a215-c8648439c91c"}
+PASS order page shows the request 
+PASS cancel button shown on unpaid order 
+PASS order shows as cancelled - sylkit
+
+Secure checkout
+
+Order SK-1056
+This order was cancelled
+Message us if this was a mistake.
+
+Chat with us about this order
+Order summary
+Custom system · Nov 17, 2026
+Cancelled
+Activity
+
+
+Qu
+PASS cancel button gone after cancelling 
+PASS database says cancelled - cancelled
+PASS cancelling twice is harmless 
+PASS cancel rejects a bad link 
+
+87 passed, 0 failed
