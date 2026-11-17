@@ -431,7 +431,7 @@ export default function OrderPage() {
         <title>{tx('My order · Sylkit', 'Mi pedido · Sylkit', "Meu pedido · Sylkit")}</title>
         <meta name="robots" content="noindex" />
       </Head>
-      <CheckoutHeader step={order ? step : undefined} />
+      <CheckoutHeader step={order && order.status !== 'cancelled' ? step : undefined} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>{body()}</View>
         <CheckoutFooter />
