@@ -102,7 +102,7 @@ function OrderDetail() {
 
   return (
     <View style={{ gap: 16 }}>
-      <Link href="/admin" style={{ color: colors.primary, fontWeight: '700' }}>
+      <Link href="/backend" style={{ color: colors.primary, fontWeight: '700' }}>
         ← All orders
       </Link>
 

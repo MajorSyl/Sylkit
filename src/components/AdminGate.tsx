@@ -50,14 +50,14 @@ export function AdminGate({ children, title }: { children: (session: Session) =>
       </Head>
       <View style={styles.bar}>
         <View style={styles.barInner}>
-          <Link href="/admin" style={styles.brand}>
+          <Link href="/backend" style={styles.brand}>
             Sylkit <Text style={{ color: colors.primary }}>Admin</Text>
           </Link>
           {session && isAdmin ? (
             <View style={styles.nav}>
-              <Link href="/admin" style={styles.navLink}>Orders</Link>
-              <Link href="/admin/support" style={styles.navLink}>Support</Link>
-              <Link href="/admin/products" style={styles.navLink}>Products</Link>
+              <Link href="/backend" style={styles.navLink}>Orders</Link>
+              <Link href="/backend/support" style={styles.navLink}>Support</Link>
+              <Link href="/backend/products" style={styles.navLink}>Products</Link>
               <Link href="/" style={styles.navLink}>View site</Link>
               <Pressable onPress={() => supabase.auth.signOut()}>
                 <Text style={styles.navLink}>Sign out</Text>

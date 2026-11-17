@@ -104,7 +104,7 @@ export function HelpWidget() {
   const [form, setForm] = useState({ name: '', email: '', whatsapp: '', message: '' });
   const [error, setError] = useState('');
   const scroller = useRef<ScrollView | null>(null);
-  const hidden = pathname.startsWith('/admin');
+  const hidden = pathname.startsWith('/backend');
 
   const loadThread = useCallback(async (markSeen: boolean) => {
     const t = store.get().token;

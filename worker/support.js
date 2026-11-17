@@ -70,13 +70,13 @@ async function sendEmail(env, to, subject, text, replyTo) {
 }
 async function notifyAdmin(env, ticket, body, isNew) {
   const title = `${isNew ? 'New support request' : 'New message'} ${ticket.number} · ${ticket.name}`;
-  const text = `${body}\n\n${ticket.name}${ticket.email ? ` · ${ticket.email}` : ''}${ticket.whatsapp ? ` · WhatsApp ${ticket.whatsapp}` : ''}\nPage: ${ticket.page || '-'}\n\nReply: ${SITE}/admin/support?id=${ticket.id}`;
+  const text = `${body}\n\n${ticket.name}${ticket.email ? ` · ${ticket.email}` : ''}${ticket.whatsapp ? ` · WhatsApp ${ticket.whatsapp}` : ''}\nPage: ${ticket.page || '-'}\n\nReply: ${SITE}/backend/support?id=${ticket.id}`;
   const jobs = [sendEmail(env, env.SUPPORT_EMAIL || 'sylvanus@sylkit.com', title, text, ticket.email || undefined)];
   if (env.NTFY_TOPIC) {
     jobs.push(
       fetch(`https://ntfy.sh/${encodeURIComponent(env.NTFY_TOPIC)}`, {
         method: 'POST',
-        headers: { Title: title.replace(/[^\x20-\x7E]/g, ''), Click: `${SITE}/admin/support?id=${ticket.id}`, Tags: 'speech_balloon' },
+        headers: { Title: title.replace(/[^\x20-\x7E]/g, ''), Click: `${SITE}/backend/support?id=${ticket.id}`, Tags: 'speech_balloon' },
         body: body.slice(0, 1000),
       }).catch(() => null),
     );

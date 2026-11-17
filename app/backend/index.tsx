@@ -111,7 +111,7 @@ function Orders() {
           {shown.map((r) => {
             const sc = statusColor[r.status];
             return (
-              <Link key={r.id} href={`/admin/order?id=${r.id}`} asChild>
+              <Link key={r.id} href={`/backend/order?id=${r.id}`} asChild>
                 <Pressable style={StyleSheet.flatten([adminStyles.card, shadow, styles.row])} accessibilityRole="link">
                   <View style={{ flex: 1, minWidth: 200, gap: 2 }}>
                     <Text style={styles.orderNo}>

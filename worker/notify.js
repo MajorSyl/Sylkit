@@ -13,7 +13,7 @@ export async function alertOwner(env, { title, message, orderId, priority = 'def
         Title: encodeHeader(title),
         Priority: priority,
         ...(tags ? { Tags: tags } : {}),
-        ...(orderId ? { Click: `${SITE}/admin/order?id=${orderId}` } : {}),
+        ...(orderId ? { Click: `${SITE}/backend/order?id=${orderId}` } : {}),
       },
       body: message,
     });
