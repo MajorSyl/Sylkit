@@ -1,0 +1,14 @@
+name: debug-admin
+on:
+  push:
+    branches: [ci-debug-admin]
+jobs:
+  look:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for P in backend/ backend/customers/ backend/orders/ admin/ ; do
+            echo "===== /$P $(curl -s -o /dev/null -w '%{http_code}' https://sylkit.com/$P)"
+            google-chrome --headless=new --no-sandbox --enable-logging=stderr --v=0 --virtual-time-budget=15000 --dump-dom "https://sylkit.com/$P" 2> err.txt | sed 's/></>\n</g' | grep -iE "Sylkit Admin|Continue with|went wrong|not found" | head -5
+            grep -E "CONSOLE" err.txt | grep -v "418" | head -5
+          done
