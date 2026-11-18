@@ -1,9 +1,9 @@
-127.0.0.1 - - [17/Nov/2026 01:11:35] "GET /preview/muse/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:11:36] "GET /_web/web.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:11:36] "GET /_web/web.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:11:37] code 404, message File not found
-127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /favicon.ico HTTP/1.1" 404 -
-127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /preview/muse/ HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /_web/web.css HTTP/1.1" 200 -
-127.0.0.1 - - [17/Nov/2026 01:11:37] "GET /_web/web.js HTTP/1.1" 200 -
-ok tpl-muse
+127.0.0.1 - - [17/Nov/2026 20:14:46] "GET /clients/sylvester/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:46] "GET /clients/sylvester/manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:46] "GET /clients/sylvester/img/side.webp HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:46] "GET /clients/sylvester/img/icon-192.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:47] "GET /clients/sylvester/ HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:48] "GET /clients/sylvester/manifest.json HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:48] "GET /clients/sylvester/img/side.webp HTTP/1.1" 200 -
+127.0.0.1 - - [17/Nov/2026 20:14:48] "GET /clients/sylvester/img/icon-192.png HTTP/1.1" 200 -
+ok client-sylvester
