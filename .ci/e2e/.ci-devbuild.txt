@@ -1,0 +1,77 @@
+'re passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+
+› web bundles (1):
+_expo/static/js/web/entry-d41d8cd98f00b204e9800998ecf8427e.js (3.17 MB)
+
+› Static routes (52):
+/work (149 kB)
+/ (index) (334 kB)
+/order (54.8 kB)
+/quote (62.2 kB)
+/terms (67.6 kB)
+/track (54.8 kB)
+/account (60.4 kB)
+/domains (74 kB)
+/invoice (53.4 kB)
+/privacy (65.1 kB)
+/refunds (65.1 kB)
+/startup (51.5 kB)
+/checkout (58 kB)
+/security (150 kB)
+/startups (51.5 kB)
+/_sitemap (50.1 kB)
+/templates (100 kB)
+/+not-found (53.8 kB)
+/demo/hotel (61 kB)
+/demo/events (55.6 kB)
+/demo/checkin (56.2 kB)
+/backend (52.5 kB)
+/backend/order (52.5 kB)
+/demo/boutique (96.7 kB)
+/backend/orders (52.5 kB)
+/demo/logistics (55.5 kB)
+/product/[slug] (53.8 kB)
+/backend/support (52.5 kB)
+/demo/realestate (85.5 kB)
+/backend/listings (52.5 kB)
+/backend/products (52.5 kB)
+/backend/customers (52.5 kB)
+/demo/construction (55.5 kB)
+/product/facturacion (79.4 kB)
+/product/hosting-web (78 kB)
+/product/farmacia-pos (81.3 kB)
+/product/punto-de-venta (79.6 kB)
+/product/taller-mecanico (79.6 kB)
+/product/gestion-escolar (79.9 kB)
+/product/dominio-y-correo (77.6 kB)
+/product/nomina-asistencia (79.6 kB)
+/product/app-movil-a-medida (84.3 kB)
+/product/sitio-web-personal (92 kB)
+/product/restaurante-menu-qr (79.7 kB)
+/product/control-de-inventario (79.8 kB)
+/product/servicios-a-domicilio (79.9 kB)
+/product/alertas-de-vencimiento (80.2 kB)
+/product/tienda-online-whatsapp (91.2 kB)
+/product/sitio-web-para-negocios (94.8 kB)
+/product/clinica-citas-historias (80.5 kB)
+/product/salon-barberia-reservas (79.9 kB)
+/product/asistente-ia-para-negocios (79.7 kB)
+
+Exported: dist-dev
+probe exit 0
