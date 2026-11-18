@@ -137,6 +137,8 @@ button{font:inherit;cursor:pointer;color:inherit}
 .endpin{width:18px;height:18px;border-radius:4px;background:var(--ink);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
 .startpin{width:18px;height:18px;border-radius:50%;background:var(--ok);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
 .fadein{animation:fadein .45s ease both}
+.still .fadein,.still .step.now .c{animation:none}
+#map .leaflet-tile-pane{filter:saturate(.85) contrast(.97)}
 @keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .proto{position:absolute;bottom:calc(100% + 8px);right:14px;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;color:var(--ink)}
 @media (min-width:521px){body{background:radial-gradient(circle at 30% 20%,#2A2E38,#0E1014)}#app{border-radius:28px;top:16px;bottom:16px;height:auto}}
@@ -177,6 +179,7 @@ button{font:inherit;cursor:pointer;color:inherit}
   // ------------------------------------------------------------------ language
   let lang = 'es';
   try { const q = new URLSearchParams(location.search).get('lang'); lang = q === 'en' || q === 'es' ? q : /^en/i.test(navigator.language || '') ? 'en' : 'es'; } catch (e) {}
+  if (navigator.webdriver) document.documentElement.classList.add('still');
   const T = (es, en) => (lang === 'en' ? en : es);
   document.documentElement.lang = lang;
 
@@ -193,7 +196,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 
   // ------------------------------------------------------------------ map
   const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([10.4930, -66.8700], 13);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap · © CARTO' }).addTo(map);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
   const carIcon = L.divIcon({ className: '', html: '<div class="carpin"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F2C318"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zM7.5 14a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm9 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zM7 10h10l-1-3H8z"/></svg></div>', iconSize: [38, 38], iconAnchor: [19, 19] });
   const car = L.marker([10.4985, -66.8560], { icon: carIcon }).addTo(map);
   let mFrom = null, mTo = null, route = null;
