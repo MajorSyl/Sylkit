@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="es" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="google" content="notranslate">
+<meta name="theme-color" content="#15171C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Musenge Rides · Viaja con Sylvester</title>
+<meta name="description" content="Pide tu viaje en Caracas con Sylvester Musenge: precio fijo antes de salir, aeropuerto, viajes por hora y encomiendas.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--y:#F2C318;--yd:#D9AC07;--ink:#15171C;--ink2:#23262E;--muted:#6B7280;--line:rgba(21,23,28,.10);--bg:#F5F6F8;--ok:#16A34A;--r:18px;--safe:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--ink);-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;cursor:pointer;color:inherit}
+#app{position:fixed;inset:0;max-width:520px;margin:0 auto;overflow:hidden;background:var(--bg);box-shadow:0 0 0 1px rgba(255,255,255,.04)}
+#map{position:absolute;inset:0;z-index:1}
+.leaflet-control-attribution{font-size:9px!important;background:rgba(255,255,255,.6)!important}
+.leaflet-control-zoom{display:none}
+/* top bar */
+.top{position:absolute;top:0;left:0;right:0;z-index:20;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 0;display:flex;align-items:center;gap:10px;pointer-events:none}
+.glass{background:rgba(255,255,255,.72);backdrop-filter:blur(18px) saturate(170%);-webkit-backdrop-filter:blur(18px) saturate(170%);border:1px solid rgba(255,255,255,.8);box-shadow:0 8px 28px rgba(21,23,28,.14),inset 0 1px 0 rgba(255,255,255,.7)}
+.brand{pointer-events:auto;display:flex;align-items:center;gap:9px;padding:7px 14px 7px 7px;border-radius:999px;font-weight:800;letter-spacing:-.01em}
+.mark{width:32px;height:32px;border-radius:10px;background:var(--y);color:var(--ink);display:grid;place-items:center;font-size:13px;font-weight:900}
+.iconbtn{pointer-events:auto;width:44px;height:44px;border-radius:999px;display:grid;place-items:center;border:0;margin-left:auto}
+.status{pointer-events:auto;display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:999px;font-size:12.5px;font-weight:700}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(22,163,74,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.55)}70%{box-shadow:0 0 0 9px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+/* bottom sheet */
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:30;background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -18px 50px rgba(21,23,28,.18);padding:10px 16px calc(16px + var(--safe));max-height:78%;overflow-y:auto;transition:transform .45s cubic-bezier(.2,.9,.25,1)}
+.grab{width:42px;height:5px;border-radius:9px;background:#D7DAE0;margin:0 auto 12px}
+.sheet h2{font-size:21px;letter-spacing:-.02em;margin:2px 0 12px}
+.driver{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--r);background:var(--ink);color:#fff;margin-bottom:14px;border:0;width:100%;text-align:left}
+.ava{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--y),#F7DC6F);color:var(--ink);display:grid;place-items:center;font-weight:900;font-size:18px;overflow:hidden;border:2px solid rgba(255,255,255,.85)}
+.ava img{width:100%;height:100%;object-fit:cover}
+.driver .g{flex:1;min-width:0}
+.driver b{display:block;font-size:16px}
+.driver span{font-size:12.5px;color:rgba(255,255,255,.7)}
+.carthumb{width:78px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0}
+.star{color:var(--y)}
+/* where */
+.where{position:relative;background:var(--bg);border-radius:var(--r);padding:6px 12px}
+.where::before{content:'';position:absolute;left:21px;top:30px;bottom:30px;width:2px;background:repeating-linear-gradient(var(--muted) 0 3px,transparent 3px 7px);opacity:.5}
+.row{display:flex;align-items:center;gap:12px;min-height:48px}
+.row+.row{border-top:1px solid var(--line)}
+.pin{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-left:3px}
+.pin.a{background:var(--ok);box-shadow:0 0 0 4px rgba(22,163,74,.18)}
+.pin.b{background:var(--ink);border-radius:3px;box-shadow:0 0 0 4px rgba(21,23,28,.12)}
+.row input{flex:1;border:0;background:transparent;font:inherit;font-size:15.5px;font-weight:600;color:var(--ink);outline:0;min-width:0;padding:12px 0}
+.row input::placeholder{color:#9AA1AD;font-weight:500}
+.locbtn{border:0;background:#fff;border-radius:10px;width:36px;height:36px;display:grid;place-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.sugg{margin:8px 0 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);display:none}
+.sugg button{display:flex;gap:12px;align-items:center;width:100%;border:0;background:#fff;padding:12px;text-align:left;border-top:1px solid var(--line)}
+.sugg button:first-child{border-top:0}
+.sugg i{width:34px;height:34px;border-radius:10px;background:var(--bg);display:grid;place-items:center;font-style:normal;flex-shrink:0}
+.sugg b{display:block;font-size:14.5px}.sugg small{color:var(--muted);font-size:12.5px}
+/* services */
+.label{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin:16px 2px 8px}
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.svc button{border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:10px 4px 9px;display:grid;justify-items:center;gap:4px;transition:transform .15s,border-color .2s,background .2s}
+.svc button:active{transform:scale(.95)}
+.svc button.on{border-color:var(--ink);background:#FFFBEA;box-shadow:0 0 0 1px var(--ink) inset}
+.svc svg{width:26px;height:26px}
+.svc b{font-size:12px}.svc small{font-size:11px;color:var(--muted);font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-size:13.5px;font-weight:700;transition:transform .15s}
+.chip:active{transform:scale(.95)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.when{display:none;gap:8px;margin-top:8px}
+.when input,.when select,.field{flex:1;border:1.5px solid var(--line);border-radius:12px;padding:11px;font:inherit;font-size:14.5px;background:#fff;color:var(--ink);width:100%}
+/* quote */
+.quote{display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;border-radius:var(--r);background:linear-gradient(135deg,#FFF7D1,#FFFDF3);border:1px solid #F6E39A}
+.quote .p{font-size:30px;font-weight:900;letter-spacing:-.03em}
+.quote .m{color:#6B5A0E;font-size:12.5px;font-weight:600;line-height:1.4}
+.cta{margin-top:14px;width:100%;border:0;border-radius:16px;padding:17px;font-size:16.5px;font-weight:800;background:var(--y);color:var(--ink);box-shadow:0 10px 24px rgba(242,195,24,.45),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .15s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:9px}
+.cta:active{transform:scale(.97)}
+.cta:disabled{opacity:.45;box-shadow:none}
+.cta.dark{background:var(--ink);color:#fff;box-shadow:0 10px 24px rgba(21,23,28,.25)}
+.cta.wa{background:#25D366;color:#fff;box-shadow:0 10px 24px rgba(37,211,102,.35)}
+.ghost{margin-top:10px;width:100%;border:0;background:transparent;color:#B42318;font-weight:700;padding:10px}
+.note{font-size:12px;color:var(--muted);text-align:center;margin-top:10px}
+/* trip status */
+.steps{margin:6px 0 4px;display:grid;gap:0}
+.step{display:flex;gap:12px;align-items:flex-start;padding:9px 0;opacity:.4;transition:opacity .4s}
+.step.on{opacity:1}
+.step .c{width:26px;height:26px;border-radius:50%;border:2px solid #D7DAE0;display:grid;place-items:center;flex-shrink:0;transition:all .3s;background:#fff}
+.step.on .c{border-color:var(--ok);background:var(--ok);color:#fff}
+.step.now .c{border-color:var(--y);background:var(--y);color:var(--ink);animation:pop .5s}
+@keyframes pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.step b{display:block;font-size:14.5px}.step span{font-size:12.5px;color:var(--muted)}
+.summary{background:var(--bg);border-radius:var(--r);padding:12px 14px;font-size:13.5px;display:grid;gap:7px;margin-top:10px}
+.summary div{display:flex;justify-content:space-between;gap:12px}
+.summary span{color:var(--muted)}.summary b{text-align:right}
+/* car gallery */
+.gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px 6px;scrollbar-width:none}
+.gal::-webkit-scrollbar{display:none}
+.gal img{width:84%;flex-shrink:0;aspect-ratio:1.19;object-fit:cover;border-radius:18px;scroll-snap-align:center}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.spec{background:var(--bg);border-radius:14px;padding:11px 12px}
+.spec small{display:block;color:var(--muted);font-size:11.5px;font-weight:600}.spec b{font-size:14px}
+/* menu + pages */
+.drawer{position:absolute;inset:0;z-index:60;display:none}
+.drawer .bg{position:absolute;inset:0;background:rgba(10,12,16,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.drawer .panel{position:absolute;top:0;bottom:0;left:0;width:82%;max-width:360px;background:#fff;padding:calc(env(safe-area-inset-top,0px) + 18px) 16px 20px;transform:translateX(-100%);transition:transform .35s cubic-bezier(.2,.9,.25,1);overflow-y:auto}
+.drawer.open .panel{transform:none}
+.mitem{display:flex;align-items:center;gap:14px;width:100%;border:0;background:transparent;padding:14px 6px;font-size:15.5px;font-weight:700;border-bottom:1px solid var(--line);text-align:left}
+.mitem i{width:38px;height:38px;border-radius:12px;background:var(--bg);display:grid;place-items:center;font-style:normal}
+.trip{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.trip:first-child{border-top:0}
+.trip .ic{width:42px;height:42px;border-radius:12px;background:var(--bg);display:grid;place-items:center}
+.trip b{display:block;font-size:14px}.trip span{font-size:12.5px;color:var(--muted)}
+.pill{font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:999px;background:var(--bg);white-space:nowrap}
+.pill.ok{background:#E8F7EE;color:#067647}.pill.wait{background:#FFF4D6;color:#8A6500}.pill.no{background:#FDECEC;color:#B42318}
+/* driver mode */
+.earn{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.earn div{background:var(--ink);color:#fff;border-radius:16px;padding:12px}
+.earn small{display:block;font-size:11.5px;color:rgba(255,255,255,.65);font-weight:600}.earn b{font-size:19px}
+.req{border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px}
+.req .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.req .r{font-size:13px;color:var(--muted);margin:6px 0 10px;line-height:1.5}
+.req .a{display:flex;gap:8px}
+.req .a button{flex:1;border:0;border-radius:12px;padding:11px;font-weight:800}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:var(--r);background:var(--bg);margin-bottom:12px;font-weight:700}
+.sw{width:50px;height:30px;border-radius:999px;background:#C9CDD4;position:relative;border:0;transition:background .25s}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on{background:var(--ok)}.sw.on::after{transform:translateX(20px)}
+.toast{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);transform:translate(-50%,-20px);opacity:0;z-index:80;background:var(--ink);color:#fff;padding:11px 16px;border-radius:14px;font-weight:700;font-size:14px;transition:all .3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.carpin{width:38px;height:38px;border-radius:50%;background:var(--ink);border:3px solid var(--y);display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.35)}
+.endpin{width:18px;height:18px;border-radius:4px;background:var(--ink);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.startpin{width:18px;height:18px;border-radius:50%;background:var(--ok);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.fadein{animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.proto{position:absolute;bottom:calc(100% + 8px);right:14px;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;color:var(--ink)}
+@media (min-width:521px){body{background:radial-gradient(circle at 30% 20%,#2A2E38,#0E1014)}#app{border-radius:28px;top:16px;bottom:16px;height:auto}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="map"></div>
+  <div class="top">
+    <button class="iconbtn glass" id="menuBtn" aria-label="Menú" style="margin-left:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
+    <div class="brand glass"><span class="mark">MR</span><span>Musenge Rides</span></div>
+    <div class="status glass" style="margin-left:auto"><span class="dot"></span><span id="availTxt">Disponible</span></div>
+  </div>
+  <div class="sheet" id="sheet"></div>
+  <div class="drawer" id="drawer"><div class="bg" data-close></div><div class="panel" id="panel"></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(() => {
+  // ------------------------------------------------------------------ settings
+  const DRIVER = { name: 'Sylvester Musenge', first: 'Sylvester', phone: '584241445471', rating: 4.9, trips: 312, since: 2021, photo: null };
+  const CAR = { model: 'Chery X1', color: { es: 'Amarillo', en: 'Yellow' }, seats: 4, plate: { es: 'Se muestra al confirmar', en: 'Shown when confirmed' } };
+  const PHOTOS = ['side', 'front', 'cabin', 'rear-seats', 'trunk', 'wheel'];
+  // Prices in USD. Distance by road ≈ straight line × 1.35 in Caracas.
+  const PRICE = { base: 2.5, perKm: 0.55, min: 4, airport: 30, hour: 10, minHours: 2, pkgBase: 3, pkgKm: 0.45 };
+  const PLACES = [
+    ['Aeropuerto de Maiquetía', 'La Guaira', 10.6012, -66.9912, 'plane'], ['Altamira · Plaza Francia', 'Chacao', 10.4966, -66.8487], ['Sambil Caracas', 'Chacao', 10.4890, -66.8533],
+    ['Las Mercedes', 'Baruta', 10.4810, -66.8620], ['CCCT', 'Chuao', 10.4843, -66.8418], ['El Rosal', 'Chacao', 10.4870, -66.8590], ['La Castellana', 'Chacao', 10.5000, -66.8520],
+    ['Los Palos Grandes', 'Chacao', 10.5010, -66.8440], ['El Hatillo (pueblo)', 'El Hatillo', 10.4260, -66.8250], ['Plaza Venezuela', 'Libertador', 10.4995, -66.8860],
+    ['Sabana Grande', 'Libertador', 10.4966, -66.8746], ['La Candelaria', 'Libertador', 10.5065, -66.9030], ['Plaza Bolívar', 'Centro', 10.5061, -66.9146],
+    ['UCV · Ciudad Universitaria', 'Los Chaguaramos', 10.4905, -66.8907], ['Parque del Este', 'Sucre', 10.4930, -66.8340], ['Petare', 'Sucre', 10.4770, -66.8070],
+    ['La Trinidad', 'Baruta', 10.4380, -66.8640], ['Prados del Este', 'Baruta', 10.4500, -66.8700], ['El Cafetal', 'Baruta', 10.4630, -66.8300],
+    ['Los Dos Caminos', 'Sucre', 10.4950, -66.8290], ['Terminal La Bandera', 'Libertador', 10.4790, -66.9190], ['C.C. El Recreo', 'Sabana Grande', 10.4968, -66.8780],
+    ['Macuto', 'La Guaira', 10.6070, -66.8900], ['Torre El Chorro', 'Centro', 10.5049, -66.9097], ['Chacaíto', 'Chacao', 10.4925, -66.8686],
+  ].map(([n, z, lat, lng, ic]) => ({ n, z, lat, lng, ic: ic === 'plane' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.5 3 11l1.5-1.5 7.5 1 4-4.5a2 2 0 0 1 3 3l-4.5 4 1 7.5L15 22l-2.5-7.5"/></svg>' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>' }));
+
+  // ------------------------------------------------------------------ language
+  let lang = 'es';
+  try { const q = new URLSearchParams(location.search).get('lang'); lang = q === 'en' || q === 'es' ? q : /^en/i.test(navigator.language || '') ? 'en' : 'es'; } catch (e) {}
+  const T = (es, en) => (lang === 'en' ? en : es);
+  document.documentElement.lang = lang;
+
+  // ------------------------------------------------------------------ state
+  const KEY = 'musenge_rides_v1';
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } };
+  let db = Object.assign({ trips: [], online: true, me: '' }, load());
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} };
+  const st = { from: null, to: null, svc: 'ride', when: 'now', date: '', time: '', pay: 'Pago Móvil', hours: 2, focus: null, current: null };
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const money = (n) => '$' + (Math.round(n * 2) / 2).toFixed(n % 1 ? 2 : 0).replace(/\.00$/, '').replace(/\.50$/, '.50');
+  const toast = (m) => { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2600); };
+
+  // ------------------------------------------------------------------ map
+  const map = L.map('map', { zoomControl: false, attributionControl: true }).setView([10.4930, -66.8700], 13);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19, attribution: '© OpenStreetMap · © CARTO' }).addTo(map);
+  const carIcon = L.divIcon({ className: '', html: '<div class="carpin"><svg width="20" height="20" viewBox="0 0 24 24" fill="#F2C318"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zM7.5 14a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm9 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zM7 10h10l-1-3H8z"/></svg></div>', iconSize: [38, 38], iconAnchor: [19, 19] });
+  const car = L.marker([10.4985, -66.8560], { icon: carIcon }).addTo(map);
+  let mFrom = null, mTo = null, route = null;
+  const pinIcon = (cls) => L.divIcon({ className: '', html: `<div class="${cls}"></div>`, iconSize: [18, 18], iconAnchor: [9, 9] });
+  const km = (a, b) => { const R = 6371, dLat = (b.lat - a.lat) * Math.PI / 180, dLng = (b.lng - a.lng) * Math.PI / 180; const x = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * Math.PI / 180) * Math.cos(b.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)) * 1.35; };
+  function curve(a, b) { // gentle arc between two points, looks like a route preview
+    const pts = [], mx = (a.lat + b.lat) / 2, my = (a.lng + b.lng) / 2, dx = b.lat - a.lat, dy = b.lng - a.lng, k = 0.18;
+    const c = { lat: mx - dy * k, lng: my + dx * k };
+    for (let t = 0; t <= 1.0001; t += 0.04) pts.push([(1 - t) ** 2 * a.lat + 2 * (1 - t) * t * c.lat + t * t * b.lat, (1 - t) ** 2 * a.lng + 2 * (1 - t) * t * c.lng + t * t * b.lng]);
+    return pts;
+  }
+  function drawRoute() {
+    [mFrom, mTo, route].forEach((x) => x && map.removeLayer(x)); mFrom = mTo = route = null;
+    if (st.from) mFrom = L.marker([st.from.lat, st.from.lng], { icon: pinIcon('startpin') }).addTo(map);
+    if (st.to) mTo = L.marker([st.to.lat, st.to.lng], { icon: pinIcon('endpin') }).addTo(map);
+    if (st.from && st.to) {
+      const pts = curve(st.from, st.to);
+      route = L.polyline(pts, { color: '#15171C', weight: 5, opacity: 0.9, lineCap: 'round' }).addTo(map);
+      map.fitBounds(route.getBounds(), { paddingTopLeft: [40, 90], paddingBottomRight: [40, sheetH() + 30], maxZoom: 15, animate: true });
+    } else if (st.from || st.to) {
+      const p = st.from || st.to; map.flyTo([p.lat - 0.012, p.lng], 14, { duration: 0.8 });
+    }
+  }
+  const sheetH = () => ($('sheet').offsetHeight || 400);
+
+  // ------------------------------------------------------------------ pricing
+  function quote() {
+    if (st.svc === 'hour') return { price: Math.max(PRICE.minHours, st.hours) * PRICE.hour, dist: null, mins: null };
+    if (!st.from || !st.to) return null;
+    const d = km(st.from, st.to), mins = Math.round(6 + d * 2.2);
+    if (st.svc === 'airport') return { price: PRICE.airport, dist: d, mins };
+    if (st.svc === 'pkg') return { price: Math.max(PRICE.min, PRICE.pkgBase + d * PRICE.pkgKm), dist: d, mins };
+    return { price: Math.max(PRICE.min, PRICE.base + d * PRICE.perKm), dist: d, mins };
+  }
+
+  // ------------------------------------------------------------------ icons
+  const I = {
+    ride: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l1.6-4.6A2 2 0 0 1 8.5 6h7a2 2 0 0 1 1.9 1.4L19 12v5H5z"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/><path d="M5 17v2M19 17v2"/></svg>',
+    airport: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.5 3 11l1.5-1.5 7.5 1 4-4.5a2 2 0 0 1 3 3l-4.5 4 1 7.5L15 22l-2.5-7.5"/></svg>',
+    hour: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>',
+    pkg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>',
+    loc: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>',
+    wa: '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l2 .9c.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg>',
+    check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+  };
+  const SVC = [['ride', T('Viaje', 'Ride'), T('Hasta 4', 'Up to 4')], ['airport', T('Aeropuerto', 'Airport'), money(PRICE.airport)], ['hour', T('Por hora', 'Hourly'), money(PRICE.hour) + '/h'], ['pkg', T('Encomienda', 'Parcel'), T('Paquetes', 'Packages')]];
+  const PAYS = ['Pago Móvil', T('Efectivo $', 'Cash $'), 'Binance USDT', 'Zelle'];
+
+  // ------------------------------------------------------------------ screens
+  const driverCard = () => `<button class="driver fadein" data-act="car">
+      <div class="ava">${DRIVER.photo ? `<img src="${DRIVER.photo}" alt="">` : 'SM'}</div>
+      <div class="g"><b>${DRIVER.name}</b><span><span class="star">★</span> ${DRIVER.rating} · ${DRIVER.trips} ${T('viajes', 'trips')} · ${CAR.model} ${CAR.color[lang]}</span></div>
+      <img class="carthumb" src="img/side.webp" alt="${CAR.model}"></button>`;
+
+  function home() {
+    const q = quote();
+    const ready = st.svc === 'hour' ? !!st.from : !!(st.from && st.to);
+    $('sheet').innerHTML = `<div class="grab"></div>
+      <span class="proto glass">${T('PROTOTIPO', 'PROTOTYPE')}</span>
+      ${driverCard()}
+      <h2 class="fadein">${st.svc === 'hour' ? T('¿Dónde te recojo?', 'Where do I pick you up?') : T('¿A dónde vamos?', 'Where to?')}</h2>
+      <div class="where fadein">
+        <div class="row"><span class="pin a"></span><input id="from" placeholder="${T('Punto de partida', 'Pick-up point')}" value="${esc(st.from?.n || '')}" autocomplete="off"><button class="locbtn" data-act="gps" aria-label="${T('Mi ubicación', 'My location')}">${I.loc}</button></div>
+        ${st.svc === 'hour' ? '' : `<div class="row"><span class="pin b"></span><input id="to" placeholder="${st.svc === 'airport' ? T('Aeropuerto de Maiquetía', 'Maiquetía Airport') : T('¿A dónde vas?', 'Destination')}" value="${esc(st.to?.n || '')}" autocomplete="off"></div>`}
+      </div>
+      <div class="sugg" id="sugg"></div>
+      <div class="label">${T('Servicio', 'Service')}</div>
+      <div class="svc">${SVC.map(([id, n, s]) => `<button class="${st.svc === id ? 'on' : ''}" data-svc="${id}">${I[id]}<b>${n}</b><small>${s}</small></button>`).join('')}</div>
+      ${st.svc === 'hour' ? `<div class="label">${T('Horas', 'Hours')}</div><div class="chips">${[2, 3, 4, 6, 8].map((h) => `<button class="chip ${st.hours === h ? 'on' : ''}" data-hours="${h}">${h} h</button>`).join('')}</div>` : ''}
+      <div class="label">${T('Cuándo', 'When')}</div>
+      <div class="chips"><button class="chip ${st.when === 'now' ? 'on' : ''}" data-when="now">${T('Ahora', 'Now')}</button><button class="chip ${st.when === 'later' ? 'on' : ''}" data-when="later">${T('Programar', 'Schedule')}</button></div>
+      <div class="when" id="when" style="display:${st.when === 'later' ? 'flex' : 'none'}"><input type="date" id="date" value="${st.date}"><input type="time" id="time" value="${st.time}"></div>
+      <div class="label">${T('Pago', 'Payment')}</div>
+      <div class="chips">${PAYS.map((p) => `<button class="chip ${st.pay === p ? 'on' : ''}" data-pay="${esc(p)}">${p}</button>`).join('')}</div>
+      ${q && ready ? `<div class="quote fadein"><div class="p">${money(q.price)}</div><div class="m">${st.svc === 'hour' ? T(`${st.hours} horas con chofer · precio fijo`, `${st.hours} hours with driver · fixed price`) : `${q.dist.toFixed(1)} km · ~${q.mins} min<br>${T('Precio fijo, sin sorpresas', 'Fixed price, no surprises')}`}</div></div>` : ''}
+      <button class="cta" data-act="request" ${ready && db.online ? '' : 'disabled'}>${db.online ? (st.when === 'later' ? T('Programar viaje', 'Schedule ride') : T('Pedir a Sylvester', 'Request Sylvester')) : T('Sylvester no está disponible', 'Sylvester is offline')}</button>
+      <p class="note">${T('Sylvester confirma por WhatsApp en minutos.', 'Sylvester confirms on WhatsApp within minutes.')}</p>`;
+    bindInputs();
+  }
+
+  function bindInputs() {
+    ['from', 'to'].forEach((k) => {
+      const el = $(k); if (!el) return;
+      el.addEventListener('focus', () => { st.focus = k; suggest(el.value); });
+      el.addEventListener('input', () => suggest(el.value));
+    });
+    const d = $('date'), t = $('time');
+    if (d) d.addEventListener('change', () => (st.date = d.value));
+    if (t) t.addEventListener('change', () => (st.time = t.value));
+  }
+  function suggest(q) {
+    const box = $('sugg'); const n = (q || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const list = PLACES.filter((p) => !n || (p.n + ' ' + p.z).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').includes(n)).slice(0, 5);
+    if (!list.length && !n) { box.style.display = 'none'; return; }
+    const custom = n && !list.some((p) => p.n.toLowerCase() === n) ? `<button data-custom="${esc(q)}"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></i><div><b>${esc(q)}</b><small>${T('Usar esta dirección', 'Use this address')}</small></div></button>` : '';
+    box.innerHTML = list.map((p) => `<button data-place="${PLACES.indexOf(p)}"><i>${p.ic}</i><div><b>${esc(p.n)}</b><small>${esc(p.z)}, Caracas</small></div></button>`).join('') + custom;
+    box.style.display = 'block';
+  }
+  function setPlace(p) {
+    st[st.focus || (st.from ? 'to' : 'from')] = p;
+    if (st.svc === 'airport' && !st.to && st.focus === 'from') st.to = PLACES[0];
+    st.focus = null; drawRoute(); home();
+    if (st.from && !st.to && st.svc !== 'hour') setTimeout(() => $('to')?.focus(), 50);
+  }
+
+  function request() {
+    const q = quote(); if (!q) return;
+    if (st.when === 'later' && (!st.date || !st.time)) return toast(T('Elige fecha y hora', 'Pick a date and time'));
+    const trip = { id: Math.random().toString(36).slice(2, 7).toUpperCase(), svc: st.svc, from: st.from?.n, to: st.svc === 'hour' ? null : st.to?.n, hours: st.svc === 'hour' ? st.hours : null, price: q.price, dist: q.dist, when: st.when === 'later' ? `${st.date} ${st.time}` : T('Ahora', 'Now'), pay: st.pay, status: 'sent', at: Date.now() };
+    db.trips.unshift(trip); save(); st.current = trip.id; status(); drawRoute();
+    // Prototype: Sylvester "accepts" after a few seconds so the flow can be seen end to end.
+    advance(trip.id, 'accepted', 3500);
+  }
+  function advance(id, s, ms) {
+    setTimeout(() => {
+      const t = db.trips.find((x) => x.id === id); if (!t || t.status === 'cancelled' || t.status === 'done') return;
+      t.status = s; save();
+      if (st.current === id) status();
+      if (s === 'accepted') { toast(T('¡Sylvester aceptó tu viaje!', 'Sylvester accepted your ride!')); if (t.when === T('Ahora', 'Now')) { animateCar(); advance(id, 'arriving', 6000); } }
+      if (s === 'arriving') { toast(T('Sylvester está llegando', 'Sylvester is arriving')); advance(id, 'arrived', 5000); }
+      if (s === 'arrived') toast(T('Sylvester llegó · Chery X1 amarillo', 'Sylvester is here · yellow Chery X1'));
+    }, ms);
+  }
+  function animateCar() {
+    if (!st.from) return;
+    const a = car.getLatLng(), b = L.latLng(st.from.lat, st.from.lng), t0 = performance.now(), dur = 10000;
+    const step = (now) => { const k = Math.min(1, (now - t0) / dur), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2; car.setLatLng([a.lat + (b.lat - a.lat) * e, a.lng + (b.lng - a.lng) * e]); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  const STEPS = [['sent', T('Solicitud enviada', 'Request sent'), T('Esperando confirmación', 'Waiting for confirmation')], ['accepted', T('Sylvester aceptó', 'Sylvester accepted'), T('Va en camino a buscarte', 'On his way to you')], ['arriving', T('Llegando', 'Arriving'), T('A menos de 3 minutos', 'Less than 3 minutes away')], ['arrived', T('Llegó', 'Arrived'), T('Chery X1 amarillo te espera', 'Yellow Chery X1 is waiting')]];
+  function waText(t) {
+    const svc = { ride: T('Viaje', 'Ride'), airport: T('Traslado al aeropuerto', 'Airport transfer'), hour: T('Chofer por hora', 'Hourly driver'), pkg: T('Encomienda', 'Parcel') }[t.svc];
+    return encodeURIComponent([`*Musenge Rides* · ${svc} #${t.id}`, `${T('Nombre', 'Name')}: ${db.me || '—'}`, `${T('Desde', 'From')}: ${t.from}`, t.to ? `${T('Hasta', 'To')}: ${t.to}` : `${T('Horas', 'Hours')}: ${t.hours}`, `${T('Cuándo', 'When')}: ${t.when}`, `${T('Precio', 'Price')}: ${money(t.price)} · ${t.pay}`].join('\n'));
+  }
+  function status() {
+    const t = db.trips.find((x) => x.id === st.current); if (!t) return home();
+    const idx = Math.max(0, STEPS.findIndex((s) => s[0] === t.status));
+    $('sheet').innerHTML = `<div class="grab"></div>${driverCard()}
+      <h2 class="fadein">${t.status === 'cancelled' ? T('Viaje cancelado', 'Ride cancelled') : STEPS[idx][1]}</h2>
+      ${t.status === 'cancelled' ? '' : `<div class="steps">${STEPS.map((s, i) => `<div class="step ${i <= idx ? 'on' : ''} ${i === idx ? 'now' : ''}"><span class="c">${i <= idx ? I.check : ''}</span><div><b>${s[1]}</b><span>${s[2]}</span></div></div>`).join('')}</div>`}
+      <div class="summary"><div><span>${T('Desde', 'From')}</span><b>${esc(t.from)}</b></div>${t.to ? `<div><span>${T('Hasta', 'To')}</span><b>${esc(t.to)}</b></div>` : `<div><span>${T('Horas', 'Hours')}</span><b>${t.hours} h</b></div>`}<div><span>${T('Cuándo', 'When')}</span><b>${esc(t.when)}</b></div><div><span>${T('Pago', 'Payment')}</span><b>${esc(t.pay)}</b></div><div><span>${T('Precio fijo', 'Fixed price')}</span><b>${money(t.price)}</b></div></div>
+      <div class="label">${T('Tu nombre (para Sylvester)', 'Your name (for Sylvester)')}</div><input class="field" id="me" value="${esc(db.me)}" placeholder="${T('Ej. Ana Rodríguez', 'e.g. Ana Rodriguez')}">
+      <a class="cta wa" href="https://wa.me/${DRIVER.phone}?text=${waText(t)}" target="_blank" rel="noopener" id="waBtn" style="text-decoration:none">${I.wa} ${T('Enviar a Sylvester por WhatsApp', 'Send to Sylvester on WhatsApp')}</a>
+      <a class="cta dark" href="tel:+${DRIVER.phone}" style="text-decoration:none">${T('Llamar a Sylvester', 'Call Sylvester')}</a>
+      ${['sent', 'accepted'].includes(t.status) ? `<button class="ghost" data-act="cancel">${T('Cancelar viaje', 'Cancel ride')}</button>` : `<button class="ghost" style="color:var(--ink)" data-act="new">${T('Nuevo viaje', 'New ride')}</button>`}`;
+    $('me').addEventListener('input', (e) => { db.me = e.target.value; save(); $('waBtn').href = `https://wa.me/${DRIVER.phone}?text=${waText(t)}`; });
+  }
+  function carSheet() {
+    $('sheet').innerHTML = `<div class="grab"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div class="ava" style="width:58px;height:58px">${DRIVER.photo ? `<img src="${DRIVER.photo}" alt="">` : 'SM'}</div><div><h2 style="margin:0">${DRIVER.name}</h2><span style="color:var(--muted);font-size:13.5px"><span class="star">★</span> ${DRIVER.rating} · ${DRIVER.trips} ${T('viajes', 'trips')} · ${T('Conductor desde', 'Driving since')} ${DRIVER.since}</span></div></div>
+      <div class="gal">${PHOTOS.map((p) => `<img src="img/${p}.webp" alt="" loading="lazy">`).join('')}</div>
+      <div class="specs"><div class="spec"><small>${T('Vehículo', 'Car')}</small><b>${CAR.model}</b></div><div class="spec"><small>${T('Color', 'Color')}</small><b>${CAR.color[lang]}</b></div><div class="spec"><small>${T('Pasajeros', 'Passengers')}</small><b>${T('Hasta', 'Up to')} ${CAR.seats}</b></div><div class="spec"><small>${T('Placa', 'Plate')}</small><b>${CAR.plate[lang]}</b></div><div class="spec"><small>${T('Comodidad', 'Comfort')}</small><b>${T('Aire acondicionado', 'Air conditioning')}</b></div><div class="spec"><small>${T('Equipaje', 'Luggage')}</small><b>${T('Maletero amplio', 'Roomy trunk')}</b></div></div>
+      <button class="cta" data-act="back" style="margin-top:16px">${T('Pedir un viaje', 'Request a ride')}</button>`;
+  }
+
+  // ------------------------------------------------------------------ drawer pages
+  const SVCN = (s) => ({ ride: T('Viaje', 'Ride'), airport: T('Aeropuerto', 'Airport'), hour: T('Por hora', 'Hourly'), pkg: T('Encomienda', 'Parcel') }[s]);
+  const PILL = (s) => ({ sent: ['wait', T('Enviado', 'Sent')], accepted: ['ok', T('Aceptado', 'Accepted')], arriving: ['ok', T('En camino', 'On the way')], arrived: ['ok', T('Llegó', 'Arrived')], done: ['ok', T('Completado', 'Done')], cancelled: ['no', T('Cancelado', 'Cancelled')], declined: ['no', T('Rechazado', 'Declined')] }[s] || ['', s]);
+  function menu() {
+    $('panel').innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="mark" style="width:40px;height:40px;font-size:15px">MR</span><div><b style="font-size:17px">Musenge Rides</b><div style="font-size:12.5px;color:var(--muted)">${T('Tu chofer de confianza en Caracas', 'Your trusted driver in Caracas')}</div></div></div>
+      <button class="mitem" data-page="ride"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l1.6-4.6A2 2 0 0 1 8.5 6h7a2 2 0 0 1 1.9 1.4L19 12v5H5z"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg></i>${T('Pedir viaje', 'Request a ride')}</button>
+      <button class="mitem" data-page="trips"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></i>${T('Mis viajes', 'My trips')}</button>
+      <button class="mitem" data-page="car"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></i>${T('Sylvester y su carro', 'Sylvester and his car')}</button>
+      <button class="mitem" data-page="prices"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></i>${T('Tarifas', 'Prices')}</button>
+      <button class="mitem" data-page="driver"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 3v7M5 16l5-3M19 16l-5-3"/></svg></i>${T('Modo conductor', 'Driver mode')}</button>
+      <button class="mitem" data-page="lang"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg></i>${lang === 'es' ? 'English' : 'Español'}</button>
+      <a class="cta wa" style="text-decoration:none;margin-top:18px" href="https://wa.me/${DRIVER.phone}" target="_blank" rel="noopener">${I.wa} WhatsApp</a>
+      <p class="note">${T('Prototipo hecho por', 'Prototype made by')} <a href="https://sylkit.com" target="_blank" rel="noopener" style="color:inherit;font-weight:700">Sylkit</a></p>`;
+    $('drawer').style.display = 'block'; requestAnimationFrame(() => $('drawer').classList.add('open'));
+  }
+  const closeMenu = () => { $('drawer').classList.remove('open'); setTimeout(() => ($('drawer').style.display = 'none'), 350); };
+  function page(p) {
+    closeMenu();
+    if (p === 'lang') { lang = lang === 'es' ? 'en' : 'es'; const u = new URL(location.href); u.searchParams.set('lang', lang); location.href = u.toString(); return; }
+    if (p === 'ride') { st.current = null; return home(); }
+    if (p === 'car') return carSheet();
+    if (p === 'prices') {
+      $('sheet').innerHTML = `<div class="grab"></div><h2>${T('Tarifas', 'Prices')}</h2><div class="summary">
+        <div><span>${T('Viaje en la ciudad', 'City ride')}</span><b>${money(PRICE.base)} + ${money(PRICE.perKm)}/km</b></div><div><span>${T('Tarifa mínima', 'Minimum fare')}</span><b>${money(PRICE.min)}</b></div>
+        <div><span>${T('Caracas ↔ Maiquetía', 'Caracas ↔ Maiquetía')}</span><b>${money(PRICE.airport)}</b></div><div><span>${T('Chofer por hora', 'Hourly driver')}</span><b>${money(PRICE.hour)}/h (${T('mín.', 'min.')} ${PRICE.minHours} h)</b></div>
+        <div><span>${T('Encomiendas', 'Parcels')}</span><b>${money(PRICE.pkgBase)} + ${money(PRICE.pkgKm)}/km</b></div></div>
+        <p class="note">${T('El precio se fija antes de salir. Pago Móvil, efectivo en dólares, Binance o Zelle.', 'Price is fixed before you go. Pago Móvil, cash dollars, Binance or Zelle.')}</p>
+        <button class="cta" data-act="back">${T('Pedir un viaje', 'Request a ride')}</button>`;
+      return;
+    }
+    if (p === 'trips') {
+      $('sheet').innerHTML = `<div class="grab"></div><h2>${T('Mis viajes', 'My trips')}</h2>${db.trips.length ? db.trips.map((t) => { const [c, l] = PILL(t.status); return `<div class="trip"><div class="ic">${I[t.svc]}</div><div style="flex:1;min-width:0"><b>${esc(t.to || SVCN(t.svc))}</b><span>${esc(t.from)} · ${esc(t.when)}</span></div><div style="text-align:right"><b>${money(t.price)}</b><br><span class="pill ${c}">${l}</span></div></div>`; }).join('') : `<p class="note">${T('Aún no tienes viajes.', 'No trips yet.')}</p>`}<button class="cta" data-act="back">${T('Pedir un viaje', 'Request a ride')}</button>`;
+      return;
+    }
+    if (p === 'driver') return driverMode();
+  }
+  function driverMode() {
+    const sample = [{ id: 'D41', svc: 'airport', from: 'Los Palos Grandes', to: 'Aeropuerto de Maiquetía', when: T('Mañana 5:30 am', 'Tomorrow 5:30 am'), price: 30, pay: 'Zelle', status: 'sent', who: 'Carla M.' }];
+    const reqs = [...db.trips.map((t) => ({ ...t, who: db.me || T('Cliente', 'Customer') })), ...sample];
+    const done = db.trips.filter((t) => ['accepted', 'arriving', 'arrived', 'done'].includes(t.status));
+    $('sheet').innerHTML = `<div class="grab"></div><h2>${T('Modo conductor', 'Driver mode')}</h2>
+      <div class="toggle"><span>${db.online ? T('Disponible para viajes', 'Available for rides') : T('No disponible', 'Offline')}</span><button class="sw ${db.online ? 'on' : ''}" data-act="online" aria-label="online"></button></div>
+      <div class="earn"><div><small>${T('Hoy', 'Today')}</small><b>${money(48 + done.reduce((s, t) => s + t.price, 0))}</b></div><div><small>${T('Viajes hoy', 'Trips today')}</small><b>${5 + done.length}</b></div><div><small>${T('Semana', 'Week')}</small><b>$286</b></div></div>
+      <div class="label">${T('Solicitudes', 'Requests')}</div>
+      ${reqs.map((t) => { const [c, l] = PILL(t.status); return `<div class="req"><div class="h"><b>${esc(t.who)} · ${SVCN(t.svc)}</b><span class="pill ${c}">${l}</span></div><div class="r">${esc(t.from)}${t.to ? ' → ' + esc(t.to) : ` · ${t.hours} h`}<br>${esc(t.when)} · <b>${money(t.price)}</b> · ${esc(t.pay)}</div>${t.status === 'sent' ? `<div class="a"><button style="background:#F2F4F7" data-decline="${t.id}">${T('Rechazar', 'Decline')}</button><button style="background:var(--y)" data-accept="${t.id}">${T('Aceptar', 'Accept')}</button></div>` : ''}</div>`; }).join('')}
+      <button class="cta dark" data-act="back">${T('Volver al modo pasajero', 'Back to rider mode')}</button>`;
+  }
+
+  // ------------------------------------------------------------------ events
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('button, [data-close]'); if (!el) return;
+    const d = el.dataset;
+    if (el.id === 'menuBtn') return menu();
+    if (d.close !== undefined) return closeMenu();
+    if (d.page) return page(d.page);
+    if (d.place) return setPlace(PLACES[+d.place]);
+    if (d.custom) { const base = st.focus === 'to' && st.from ? st.from : { lat: 10.4930, lng: -66.8700 }; return setPlace({ n: d.custom, z: 'Caracas', lat: base.lat + (Math.random() - 0.5) * 0.04, lng: base.lng + (Math.random() - 0.5) * 0.05 }); }
+    if (d.svc) { st.svc = d.svc; if (d.svc === 'airport') st.to = PLACES[0]; else if (st.to === PLACES[0] && d.svc !== 'airport') st.to = null; drawRoute(); return home(); }
+    if (d.hours) { st.hours = +d.hours; return home(); }
+    if (d.when) { st.when = d.when; return home(); }
+    if (d.pay) { st.pay = d.pay; return home(); }
+    if (d.accept || d.decline) { const t = db.trips.find((x) => x.id === (d.accept || d.decline)); if (t) { t.status = d.accept ? 'accepted' : 'declined'; save(); } toast(d.accept ? T('Viaje aceptado · el cliente recibe aviso', 'Ride accepted · customer notified') : T('Solicitud rechazada', 'Request declined')); return driverMode(); }
+    const a = d.act;
+    if (a === 'car') return carSheet();
+    if (a === 'back' || a === 'new') { st.current = null; if (a === 'new') { st.to = null; drawRoute(); } return home(); }
+    if (a === 'request') return request();
+    if (a === 'cancel') { const t = db.trips.find((x) => x.id === st.current); if (t) { t.status = 'cancelled'; save(); } toast(T('Viaje cancelado', 'Ride cancelled')); return status(); }
+    if (a === 'online') { db.online = !db.online; save(); $('availTxt').textContent = db.online ? T('Disponible', 'Available') : T('No disponible', 'Offline'); document.querySelector('.dot').style.background = db.online ? '' : '#9CA3AF'; return driverMode(); }
+    if (a === 'gps') {
+      if (!navigator.geolocation) return toast(T('Ubicación no disponible', 'Location unavailable'));
+      toast(T('Buscando tu ubicación…', 'Finding your location…'));
+      navigator.geolocation.getCurrentPosition((p) => { st.focus = 'from'; setPlace({ n: T('Mi ubicación', 'My location'), z: 'GPS', lat: p.coords.latitude, lng: p.coords.longitude }); }, () => toast(T('Permite la ubicación o escribe la dirección', 'Allow location or type the address')), { enableHighAccuracy: true, timeout: 8000 });
+    }
+  });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.where') && !e.target.closest('#sugg')) { const s = $('sugg'); if (s) s.style.display = 'none'; } }, true);
+
+  $('availTxt').textContent = db.online ? T('Disponible', 'Available') : T('No disponible', 'Offline');
+  const last = db.trips.find((t) => ['sent', 'accepted', 'arriving'].includes(t.status) && Date.now() - t.at < 36e5);
+  if (last) { st.current = last.id; status(); } else home();
+})();
+</script>
+</body>
+</html>

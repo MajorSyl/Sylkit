@@ -1,0 +1,14 @@
+{
+  "name": "Musenge Rides",
+  "short_name": "Musenge",
+  "description": "Pide tu viaje con Sylvester Musenge en Caracas.",
+  "start_url": "/clients/sylvester/",
+  "scope": "/clients/sylvester/",
+  "display": "standalone",
+  "background_color": "#15171C",
+  "theme_color": "#15171C",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

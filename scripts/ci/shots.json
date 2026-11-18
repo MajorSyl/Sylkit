@@ -387,5 +387,12 @@
   "cover": "tpl-muse.webp",
   "accent": "8B7355",
   "tpl": "muse"
+ },
+ {
+  "name": "client-sylvester",
+  "url": "/clients/sylvester/",
+  "cover": "client-sylvester.webp",
+  "accent": "F2C318",
+  "shot": "client-sylvester.webp"
  }
 ]
