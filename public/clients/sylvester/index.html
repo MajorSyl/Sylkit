@@ -137,6 +137,12 @@ button{font:inherit;cursor:pointer;color:inherit}
 .endpin{width:18px;height:18px;border-radius:4px;background:var(--ink);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
 .startpin{width:18px;height:18px;border-radius:50%;background:var(--ok);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35)}
 .fadein{animation:fadein .45s ease both}
+.paybox{margin-top:12px;border:1px solid #F6E39A;background:#FFFBEA;border-radius:var(--r);padding:12px 14px;display:grid;gap:8px;font-size:13.5px}
+.paybox>span{color:#6B5A0E;font-size:12.5px;line-height:1.45}
+.paybox .pr{display:flex;align-items:center;gap:10px}
+.paybox .pr span{color:var(--muted);min-width:64px}
+.paybox .pr b{flex:1;min-width:0;overflow-wrap:anywhere}
+.copy{border:0;background:var(--ink);color:#fff;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:800}
 .still .fadein,.still .step.now .c{animation:none}
 #map .leaflet-tile-pane{filter:saturate(.85) contrast(.97)}
 @keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -243,7 +249,17 @@ button{font:inherit;cursor:pointer;color:inherit}
     check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
   };
   const SVC = [['ride', T('Viaje', 'Ride'), T('Hasta 4', 'Up to 4')], ['airport', T('Aeropuerto', 'Airport'), money(PRICE.airport)], ['hour', T('Por hora', 'Hourly'), money(PRICE.hour) + '/h'], ['pkg', T('Encomienda', 'Parcel'), T('Paquetes', 'Packages')]];
-  const PAYS = ['Pago Móvil', T('Efectivo $', 'Cash $'), 'Binance USDT', 'Zelle'];
+  const PAYS = ['Pago Móvil', T('Efectivo $', 'Cash $'), 'Binance USDT'];
+  // Sylvester's real payment details, shown to the customer after booking.
+  const PAYINFO = {
+    'Pago Móvil': [[T('Banco', 'Bank'), '0102 · Banco de Venezuela'], [T('Cédula', 'ID'), 'E-84613636'], [T('Teléfono', 'Phone'), '04241445471']],
+    'Binance USDT': [['Binance Pay (email)', 'Sylvestermusenge1996@gmail.com']],
+  };
+  const payBox = (pay, price) => {
+    const rows = PAYINFO[pay];
+    if (!rows) return `<div class="paybox"><b>${T('Pago en efectivo', 'Cash payment')}</b><span>${T('Pagas', 'You pay')} ${money(price)} ${T('en dólares al llegar a tu destino.', 'in dollars when you arrive.')}</span></div>`;
+    return `<div class="paybox"><b>${T('Datos de pago', 'Payment details')} · ${pay}</b>${rows.map(([k, v]) => `<div class="pr"><span>${k}</span><b>${esc(v)}</b><button class="copy" data-copy="${esc(v.replace(/^0102 · .*/, '0102'))}">${T('Copiar', 'Copy')}</button></div>`).join('')}<span>${pay === 'Pago Móvil' ? T(`Monto: ${money(price)} en bolívares a la tasa BCV del día. Envía el capture por WhatsApp.`, `Amount: ${money(price)} in bolivars at today's BCV rate. Send the screenshot on WhatsApp.`) : T(`Monto: ${money(price)} USDT. Envía el capture por WhatsApp.`, `Amount: ${money(price)} USDT. Send the screenshot on WhatsApp.`)}</span></div>`;
+  };
 
   // ------------------------------------------------------------------ screens
   const driverCard = () => `<button class="driver fadein" data-act="car">
@@ -338,6 +354,7 @@ button{font:inherit;cursor:pointer;color:inherit}
       <h2 class="fadein">${t.status === 'cancelled' ? T('Viaje cancelado', 'Ride cancelled') : STEPS[idx][1]}</h2>
       ${t.status === 'cancelled' ? '' : `<div class="steps">${STEPS.map((s, i) => `<div class="step ${i <= idx ? 'on' : ''} ${i === idx ? 'now' : ''}"><span class="c">${i <= idx ? I.check : ''}</span><div><b>${s[1]}</b><span>${s[2]}</span></div></div>`).join('')}</div>`}
       <div class="summary"><div><span>${T('Desde', 'From')}</span><b>${esc(t.from)}</b></div>${t.to ? `<div><span>${T('Hasta', 'To')}</span><b>${esc(t.to)}</b></div>` : `<div><span>${T('Horas', 'Hours')}</span><b>${t.hours} h</b></div>`}<div><span>${T('Cuándo', 'When')}</span><b>${esc(t.when)}</b></div><div><span>${T('Pago', 'Payment')}</span><b>${esc(t.pay)}</b></div><div><span>${T('Precio fijo', 'Fixed price')}</span><b>${money(t.price)}</b></div></div>
+      ${t.status === 'cancelled' ? '' : payBox(t.pay, t.price)}
       <div class="label">${T('Tu nombre (para Sylvester)', 'Your name (for Sylvester)')}</div><input class="field" id="me" value="${esc(db.me)}" placeholder="${T('Ej. Ana Rodríguez', 'e.g. Ana Rodriguez')}">
       <a class="cta wa" href="https://wa.me/${DRIVER.phone}?text=${waText(t)}" target="_blank" rel="noopener" id="waBtn" style="text-decoration:none">${I.wa} ${T('Enviar a Sylvester por WhatsApp', 'Send to Sylvester on WhatsApp')}</a>
       <a class="cta dark" href="tel:+${DRIVER.phone}" style="text-decoration:none">${T('Llamar a Sylvester', 'Call Sylvester')}</a>
@@ -378,7 +395,7 @@ button{font:inherit;cursor:pointer;color:inherit}
         <div><span>${T('Viaje en la ciudad', 'City ride')}</span><b>${money(PRICE.base)} + ${money(PRICE.perKm)}/km</b></div><div><span>${T('Tarifa mínima', 'Minimum fare')}</span><b>${money(PRICE.min)}</b></div>
         <div><span>${T('Caracas ↔ Maiquetía', 'Caracas ↔ Maiquetía')}</span><b>${money(PRICE.airport)}</b></div><div><span>${T('Chofer por hora', 'Hourly driver')}</span><b>${money(PRICE.hour)}/h (${T('mín.', 'min.')} ${PRICE.minHours} h)</b></div>
         <div><span>${T('Encomiendas', 'Parcels')}</span><b>${money(PRICE.pkgBase)} + ${money(PRICE.pkgKm)}/km</b></div></div>
-        <p class="note">${T('El precio se fija antes de salir. Pago Móvil, efectivo en dólares, Binance o Zelle.', 'Price is fixed before you go. Pago Móvil, cash dollars, Binance or Zelle.')}</p>
+        <p class="note">${T('El precio se fija antes de salir. Pago Móvil, efectivo en dólares o Binance (USDT).', 'Price is fixed before you go. Pago Móvil, cash dollars or Binance (USDT).')}</p>
         <button class="cta" data-act="back">${T('Pedir un viaje', 'Request a ride')}</button>`;
       return;
     }
@@ -389,7 +406,7 @@ button{font:inherit;cursor:pointer;color:inherit}
     if (p === 'driver') return driverMode();
   }
   function driverMode() {
-    const sample = [{ id: 'D41', svc: 'airport', from: 'Los Palos Grandes', to: 'Aeropuerto de Maiquetía', when: T('Mañana 5:30 am', 'Tomorrow 5:30 am'), price: 30, pay: 'Zelle', status: 'sent', who: 'Carla M.' }];
+    const sample = [{ id: 'D41', svc: 'airport', from: 'Los Palos Grandes', to: 'Aeropuerto de Maiquetía', when: T('Mañana 5:30 am', 'Tomorrow 5:30 am'), price: 30, pay: 'Binance USDT', status: 'sent', who: 'Carla M.' }];
     const reqs = [...db.trips.map((t) => ({ ...t, who: db.me || T('Cliente', 'Customer') })), ...sample];
     const done = db.trips.filter((t) => ['accepted', 'arriving', 'arrived', 'done'].includes(t.status));
     $('sheet').innerHTML = `<div class="grab"></div><h2>${T('Modo conductor', 'Driver mode')}</h2>
@@ -414,6 +431,7 @@ button{font:inherit;cursor:pointer;color:inherit}
     if (d.when) { st.when = d.when; return home(); }
     if (d.pay) { st.pay = d.pay; return home(); }
     if (d.accept || d.decline) { const t = db.trips.find((x) => x.id === (d.accept || d.decline)); if (t) { t.status = d.accept ? 'accepted' : 'declined'; save(); } toast(d.accept ? T('Viaje aceptado · el cliente recibe aviso', 'Ride accepted · customer notified') : T('Solicitud rechazada', 'Request declined')); return driverMode(); }
+    if (d.copy) { (navigator.clipboard ? navigator.clipboard.writeText(d.copy) : Promise.reject()).then(() => toast(T('Copiado', 'Copied')), () => toast(d.copy)); return; }
     const a = d.act;
     if (a === 'car') return carSheet();
     if (a === 'back' || a === 'new') { st.current = null; if (a === 'new') { st.to = null; drawRoute(); } return home(); }
