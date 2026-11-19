@@ -499,6 +499,357 @@ export const storeTemplates: StoreTemplate[] = [
     }
   },
   {
+    "slug": "altura",
+    "name": "Altura Bienes Raíces",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "realestate",
+    "sectorName": [
+      "Inmobiliarias",
+      "Real estate"
+    ],
+    "tagline": [
+      "Inmobiliaria",
+      "Real estate agency"
+    ],
+    "blurb": [
+      "Elegante y vendedor, para inmobiliarias y agentes independientes.",
+      "Elegant and sales-driven, for agencies and independent agents."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0f172a",
+      "accent": "#0f766e",
+      "accentInk": "#ffffff",
+      "soft": "#effaf8"
+    }
+  },
+  {
+    "slug": "clinica",
+    "name": "Clínica Santa Elena",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "health",
+    "sectorName": [
+      "Salud",
+      "Health"
+    ],
+    "tagline": [
+      "Clínica y hospital",
+      "Clinic & hospital"
+    ],
+    "blurb": [
+      "Moderno y confiable, para clínicas, hospitales y centros médicos.",
+      "Modern and reassuring, for clinics, hospitals and medical centers."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0b1b33",
+      "accent": "#1d4ed8",
+      "accentInk": "#ffffff",
+      "soft": "#eef4ff"
+    }
+  },
+  {
+    "slug": "colegio",
+    "name": "Colegio Los Robles",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "education",
+    "sectorName": [
+      "Educación",
+      "Education"
+    ],
+    "tagline": [
+      "Colegio",
+      "School"
+    ],
+    "blurb": [
+      "Cálido y ordenado, para colegios, academias e institutos.",
+      "Warm and organized, for schools, academies and institutes."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#1f2937",
+      "accent": "#15803d",
+      "accentInk": "#ffffff",
+      "soft": "#f0fbf3"
+    }
+  },
+  {
+    "slug": "obra",
+    "name": "Constructora Pilar",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "construction",
+    "sectorName": [
+      "Construcción",
+      "Construction"
+    ],
+    "tagline": [
+      "Constructora",
+      "Construction company"
+    ],
+    "blurb": [
+      "Sólido y directo, para constructoras, contratistas e ingenieros.",
+      "Solid and direct, for builders, contractors and engineers."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#111827",
+      "accent": "#f59e0b",
+      "accentInk": "#111827",
+      "soft": "#fff8e8"
+    }
+  },
+  {
+    "slug": "trazo",
+    "name": "Trazo Arquitectos",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "architecture",
+    "sectorName": [
+      "Arquitectura",
+      "Architecture"
+    ],
+    "tagline": [
+      "Estudio de arquitectura",
+      "Architecture studio"
+    ],
+    "blurb": [
+      "Minimalista y editorial, para arquitectos e interioristas.",
+      "Minimal and editorial, for architects and interior designers."
+    ],
+    "colors": {
+      "bg": "#faf9f7",
+      "text": "#1c1917",
+      "accent": "#1c1917",
+      "accentInk": "#ffffff",
+      "soft": "#f1eee9"
+    }
+  },
+  {
+    "slug": "glow",
+    "name": "Glow Beauty Studio",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "beauty",
+    "sectorName": [
+      "Belleza",
+      "Beauty"
+    ],
+    "tagline": [
+      "Salón de belleza y spa",
+      "Beauty salon & spa"
+    ],
+    "blurb": [
+      "Suave y femenino, para salones, spas, uñas y estética.",
+      "Soft and feminine, for salons, spas, nails and aesthetics."
+    ],
+    "colors": {
+      "bg": "#fffaf8",
+      "text": "#2b1d1a",
+      "accent": "#be6b5e",
+      "accentInk": "#ffffff",
+      "soft": "#fbefeb"
+    }
+  },
+  {
+    "slug": "calma",
+    "name": "Lic. Valeria Torres",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "health",
+    "sectorName": [
+      "Salud",
+      "Health"
+    ],
+    "tagline": [
+      "Psicóloga y terapeuta",
+      "Psychologist & therapist"
+    ],
+    "blurb": [
+      "Sereno y humano, para psicólogos, terapeutas y nutricionistas.",
+      "Calm and human, for psychologists, therapists and nutritionists."
+    ],
+    "colors": {
+      "bg": "#fbfaf6",
+      "text": "#22312b",
+      "accent": "#4d7c6b",
+      "accentInk": "#ffffff",
+      "soft": "#eef3ef"
+    }
+  },
+  {
+    "slug": "amparo",
+    "name": "Amparo Seguros",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "insurance",
+    "sectorName": [
+      "Seguros",
+      "Insurance"
+    ],
+    "tagline": [
+      "Corredor de seguros",
+      "Insurance broker"
+    ],
+    "blurb": [
+      "Confiable y claro, para corredores de seguros y asesores financieros.",
+      "Trustworthy and clear, for insurance brokers and financial advisors."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#0f1d3a",
+      "accent": "#1e3a8a",
+      "accentInk": "#ffffff",
+      "soft": "#eff3fb"
+    }
+  },
+  {
+    "slug": "huella",
+    "name": "Huella Veterinaria",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "pets",
+    "sectorName": [
+      "Veterinarias",
+      "Vets"
+    ],
+    "tagline": [
+      "Clínica veterinaria",
+      "Veterinary clinic"
+    ],
+    "blurb": [
+      "Alegre y confiable, para veterinarias, peluquerías caninas y tiendas de mascotas.",
+      "Cheerful and trusted, for vets, pet groomers and pet stores."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#1f2937",
+      "accent": "#7c3aed",
+      "accentInk": "#ffffff",
+      "soft": "#f5f0ff"
+    }
+  },
+  {
+    "slug": "motor",
+    "name": "Motor Pro",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "trades",
+    "sectorName": [
+      "Oficios",
+      "Trades"
+    ],
+    "tagline": [
+      "Taller mecánico",
+      "Auto repair shop"
+    ],
+    "blurb": [
+      "Potente y oscuro, para talleres, autolavados y repuestos.",
+      "Bold and dark, for garages, car washes and auto parts."
+    ],
+    "colors": {
+      "bg": "#0b0d10",
+      "text": "#f3f4f6",
+      "accent": "#ef4444",
+      "accentInk": "#ffffff",
+      "soft": "#15181d"
+    }
+  },
+  {
+    "slug": "evento",
+    "name": "Gala Eventos",
+    "kind": "website",
+    "product": "sitio-web-para-negocios",
+    "pair": null,
+    "sector": "events",
+    "sectorName": [
+      "Eventos",
+      "Events"
+    ],
+    "tagline": [
+      "Organizador de eventos",
+      "Event & wedding planner"
+    ],
+    "blurb": [
+      "Lujoso y emotivo, para organizadores de bodas, eventos y decoración.",
+      "Luxurious and emotional, for wedding, event and decor planners."
+    ],
+    "colors": {
+      "bg": "#fffdf8",
+      "text": "#2a2318",
+      "accent": "#a16207",
+      "accentInk": "#ffffff",
+      "soft": "#f8f1e3"
+    }
+  },
+  {
+    "slug": "voz",
+    "name": "Carlos Medina",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "speakers",
+    "sectorName": [
+      "Conferencistas",
+      "Speakers"
+    ],
+    "tagline": [
+      "Conferencista y autor",
+      "Speaker & author"
+    ],
+    "blurb": [
+      "Audaz y personal, para conferencistas, autores, coaches e influencers.",
+      "Bold and personal, for speakers, authors, coaches and creators."
+    ],
+    "colors": {
+      "bg": "#ffffff",
+      "text": "#111111",
+      "accent": "#f97316",
+      "accentInk": "#ffffff",
+      "soft": "#fff4ec"
+    }
+  },
+  {
+    "slug": "sazon",
+    "name": "Chef Lucía Bello",
+    "kind": "website",
+    "product": "sitio-web-personal",
+    "pair": null,
+    "sector": "food",
+    "sectorName": [
+      "Gastronomía",
+      "Food"
+    ],
+    "tagline": [
+      "Chef y catering",
+      "Chef & catering"
+    ],
+    "blurb": [
+      "Apetitoso y cálido, para chefs, catering, restaurantes y repostería.",
+      "Appetizing and warm, for chefs, caterers, restaurants and bakers."
+    ],
+    "colors": {
+      "bg": "#fffbf5",
+      "text": "#2d1f14",
+      "accent": "#c2410c",
+      "accentInk": "#ffffff",
+      "soft": "#fdf0e3"
+    }
+  },
+  {
     "slug": "lumen",
     "name": "Lumen",
     "kind": "store",
@@ -587,7 +938,7 @@ export const storeTemplates: StoreTemplate[] = [
     "pair": null,
     "sector": "food",
     "sectorName": [
-      "Comida",
+      "Gastronomía",
       "Food"
     ],
     "tagline": [
@@ -695,8 +1046,8 @@ export const storeTemplates: StoreTemplate[] = [
     "pair": null,
     "sector": "pets",
     "sectorName": [
-      "Mascotas",
-      "Pets"
+      "Veterinarias",
+      "Vets"
     ],
     "tagline": [
       "Mascotas",
@@ -749,7 +1100,7 @@ export const storeTemplates: StoreTemplate[] = [
     "pair": "habitat-app",
     "sector": "realestate",
     "sectorName": [
-      "Inmobiliaria",
+      "Inmobiliarias",
       "Real estate"
     ],
     "tagline": [
@@ -776,7 +1127,7 @@ export const storeTemplates: StoreTemplate[] = [
     "pair": "habitat",
     "sector": "realestate",
     "sectorName": [
-      "Inmobiliaria",
+      "Inmobiliarias",
       "Real estate"
     ],
     "tagline": [
@@ -860,7 +1211,7 @@ export const storeTemplates: StoreTemplate[] = [
 
 export const templateKinds: { id: TemplateKind; name: [string, string] }[] = [{"id": "store", "name": ["Tiendas en línea", "Online stores"]}, {"id": "website", "name": ["Sitios web", "Websites"]}, {"id": "app", "name": ["Apps móviles", "Mobile apps"]}];
 
-export const templateSectors: { id: string; name: [string, string] }[] = [{"id": "fashion", "name": ["Moda", "Fashion"]}, {"id": "beauty", "name": ["Belleza", "Beauty"]}, {"id": "electronics", "name": ["Tecnología", "Electronics"]}, {"id": "food", "name": ["Comida", "Food"]}, {"id": "grocery", "name": ["Víveres", "Grocery"]}, {"id": "jewelry", "name": ["Joyería", "Jewelry"]}, {"id": "home", "name": ["Hogar", "Home"]}, {"id": "pets", "name": ["Mascotas", "Pets"]}, {"id": "architecture", "name": ["Arquitectura", "Architecture"]}, {"id": "realestate", "name": ["Inmobiliaria", "Real estate"]}, {"id": "education", "name": ["Educación", "Education"]}, {"id": "legal", "name": ["Legal", "Legal"]}, {"id": "health", "name": ["Salud", "Health"]}, {"id": "finance", "name": ["Contabilidad", "Accounting"]}, {"id": "consulting", "name": ["Consultoría", "Consulting"]}, {"id": "tech", "name": ["Tecnología", "Technology"]}, {"id": "trades", "name": ["Oficios", "Trades"]}, {"id": "corporate", "name": ["Empresas", "Companies"]}, {"id": "nonprofit", "name": ["ONG", "Nonprofit"]}, {"id": "community", "name": ["Clubes", "Clubs"]}, {"id": "government", "name": ["Gobierno", "Government"]}, {"id": "sports", "name": ["Deportes", "Sports"]}, {"id": "music", "name": ["Música", "Music"]}, {"id": "creative", "name": ["Creativos", "Creatives"]}, {"id": "faith", "name": ["Iglesias", "Churches"]}, {"id": "fitness", "name": ["Fitness", "Fitness"]}];
+export const templateSectors: { id: string; name: [string, string] }[] = [{"id": "fashion", "name": ["Moda", "Fashion"]}, {"id": "beauty", "name": ["Belleza", "Beauty"]}, {"id": "electronics", "name": ["Tecnología", "Electronics"]}, {"id": "food", "name": ["Gastronomía", "Food"]}, {"id": "grocery", "name": ["Víveres", "Grocery"]}, {"id": "jewelry", "name": ["Joyería", "Jewelry"]}, {"id": "home", "name": ["Hogar", "Home"]}, {"id": "pets", "name": ["Veterinarias", "Vets"]}, {"id": "architecture", "name": ["Arquitectura", "Architecture"]}, {"id": "realestate", "name": ["Inmobiliarias", "Real estate"]}, {"id": "education", "name": ["Educación", "Education"]}, {"id": "legal", "name": ["Legal", "Legal"]}, {"id": "health", "name": ["Salud", "Health"]}, {"id": "finance", "name": ["Contabilidad", "Accounting"]}, {"id": "consulting", "name": ["Consultoría", "Consulting"]}, {"id": "tech", "name": ["Tecnología", "Technology"]}, {"id": "trades", "name": ["Oficios", "Trades"]}, {"id": "corporate", "name": ["Empresas", "Companies"]}, {"id": "nonprofit", "name": ["ONG", "Nonprofit"]}, {"id": "community", "name": ["Clubes", "Clubs"]}, {"id": "government", "name": ["Gobierno", "Government"]}, {"id": "sports", "name": ["Deportes", "Sports"]}, {"id": "music", "name": ["Música", "Music"]}, {"id": "creative", "name": ["Creativos", "Creatives"]}, {"id": "faith", "name": ["Iglesias", "Churches"]}, {"id": "fitness", "name": ["Fitness", "Fitness"]}, {"id": "construction", "name": ["Construcción", "Construction"]}, {"id": "insurance", "name": ["Seguros", "Insurance"]}, {"id": "events", "name": ["Eventos", "Events"]}, {"id": "speakers", "name": ["Conferencistas", "Speakers"]}];
 
 export const STORE_PRODUCT = 'tienda-online-whatsapp';
 export const getTemplate = (slug?: string | null) => storeTemplates.find((t) => t.slug === slug);

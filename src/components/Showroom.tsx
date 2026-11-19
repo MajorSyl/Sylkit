@@ -26,10 +26,10 @@ type Sort = 'featured' | 'price' | 'name';
 // Gallery order: the systems and websites clients ask for most come first.
 const FEATURED = [
   'demo-hotels', 'pop-rides', 'pop-eats', 'pop-flights', 'pop-models', 'tpl-muse', 'punto-de-venta', 'farmacia-pos', 'restaurante-menu-qr', 'tienda-online-whatsapp',
-  'tpl-lex', 'tpl-vital', 'tpl-cifra', 'pop-delivery', 'pop-gym', 'clinica-citas-historias', 'tpl-sonrisa',
-  'demo-realestate', 'pop-car-rental', 'salon-barberia-reservas', 'tpl-norte', 'tpl-nodo', 'pop-crm', 'tpl-grupo',
+  'tpl-lex', 'tpl-vital', 'tpl-clinica', 'tpl-altura', 'tpl-cifra', 'pop-delivery', 'pop-gym', 'clinica-citas-historias', 'tpl-sonrisa',
+  'demo-realestate', 'pop-car-rental', 'salon-barberia-reservas', 'tpl-norte', 'tpl-nodo', 'pop-crm', 'tpl-grupo', 'tpl-colegio', 'tpl-obra', 'tpl-glow', 'tpl-amparo',
   'tpl-ngo', 'tpl-club', 'tpl-gov', 'tpl-fc', 'demo-events', 'pop-tours', 'pop-rentals', 'control-de-inventario',
-  'facturacion', 'gestion-escolar', 'tpl-chispa', 'tpl-ritmo', 'tpl-atelier', 'tpl-lente', 'tpl-fe', 'tpl-coach',
+  'facturacion', 'gestion-escolar', 'tpl-chispa', 'tpl-motor', 'tpl-huella', 'tpl-calma', 'tpl-trazo', 'tpl-evento', 'tpl-sazon', 'tpl-voz', 'tpl-ritmo', 'tpl-atelier', 'tpl-lente', 'tpl-fe', 'tpl-coach',
 ];
 type Item = {
   key: string;

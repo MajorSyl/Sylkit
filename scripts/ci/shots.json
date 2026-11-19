@@ -394,5 +394,96 @@
   "cover": "client-sylvester.webp",
   "accent": "F2C318",
   "shot": "client-sylvester.webp"
+ },
+ {
+  "name": "tpl-altura",
+  "url": "/preview/altura/",
+  "cover": "tpl-altura.webp",
+  "accent": "0F766E",
+  "tpl": "altura"
+ },
+ {
+  "name": "tpl-clinica",
+  "url": "/preview/clinica/",
+  "cover": "tpl-clinica.webp",
+  "accent": "1D4ED8",
+  "tpl": "clinica"
+ },
+ {
+  "name": "tpl-colegio",
+  "url": "/preview/colegio/",
+  "cover": "tpl-colegio.webp",
+  "accent": "15803D",
+  "tpl": "colegio"
+ },
+ {
+  "name": "tpl-obra",
+  "url": "/preview/obra/",
+  "cover": "tpl-obra.webp",
+  "accent": "D97706",
+  "tpl": "obra"
+ },
+ {
+  "name": "tpl-trazo",
+  "url": "/preview/trazo/",
+  "cover": "tpl-trazo.webp",
+  "accent": "1C1917",
+  "tpl": "trazo"
+ },
+ {
+  "name": "tpl-glow",
+  "url": "/preview/glow/",
+  "cover": "tpl-glow.webp",
+  "accent": "B45F52",
+  "tpl": "glow"
+ },
+ {
+  "name": "tpl-calma",
+  "url": "/preview/calma/",
+  "cover": "tpl-calma.webp",
+  "accent": "4D7C6B",
+  "tpl": "calma"
+ },
+ {
+  "name": "tpl-amparo",
+  "url": "/preview/amparo/",
+  "cover": "tpl-amparo.webp",
+  "accent": "1E3A8A",
+  "tpl": "amparo"
+ },
+ {
+  "name": "tpl-huella",
+  "url": "/preview/huella/",
+  "cover": "tpl-huella.webp",
+  "accent": "7C3AED",
+  "tpl": "huella"
+ },
+ {
+  "name": "tpl-motor",
+  "url": "/preview/motor/",
+  "cover": "tpl-motor.webp",
+  "accent": "EF4444",
+  "tpl": "motor"
+ },
+ {
+  "name": "tpl-evento",
+  "url": "/preview/evento/",
+  "cover": "tpl-evento.webp",
+  "accent": "A16207",
+  "tpl": "evento"
+ },
+ {
+  "name": "tpl-voz",
+  "url": "/preview/voz/",
+  "cover": "tpl-voz.webp",
+  "accent": "EA580C",
+  "tpl": "voz"
+ },
+ {
+  "name": "tpl-sazon",
+  "url": "/preview/sazon/",
+  "cover": "tpl-sazon.webp",
+  "accent": "C2410C",
+  "tpl": "sazon"
  }
 ]

@@ -215,3 +215,9 @@ try:
     SITES += MORE_SITES
 except ImportError:
     pass
+try:
+    from template_data_sites_pro import PRO_SITES, SECTORS_PRO
+    SITES += PRO_SITES
+    SECTORS.update(SECTORS_PRO)
+except ImportError:
+    pass
