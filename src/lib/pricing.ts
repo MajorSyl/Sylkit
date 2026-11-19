@@ -145,8 +145,9 @@ export function useAddons() {
       .order('sort')
       .then(({ data }) => {
         if (!alive || !data || data.length === 0) return;
-        cache = Object.fromEntries(data.map((r) => [r.id, rowToAddon(r)]));
-        setList(cache);
+        const next: Record<string, Addon> = Object.fromEntries(data.map((r) => [r.id, rowToAddon(r)]));
+        cache = next;
+        setList(next);
       });
     return () => {
       alive = false;

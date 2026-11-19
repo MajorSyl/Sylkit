@@ -110,7 +110,7 @@ function MyOrders({ session }: { session: Session }) {
                     <View style={{ flex: 1, minWidth: 200, gap: 2 }}>
                       <Text style={styles.h2}>{productName(o)}</Text>
                       <Text style={styles.muted}>
-                        {o.order_number} · {formatDate(o.created_at, lang === 'es' ? 'es' : 'en')}
+                        {o.order_number} · {formatDate(o.created_at, lang)}
                         {o.amount != null ? ` · ${formatMoney(o.amount, o.currency)}` : ''}
                       </Text>
                     </View>
@@ -127,7 +127,7 @@ function MyOrders({ session }: { session: Session }) {
                           <View style={styles.dot} />
                           <View style={{ flex: 1 }}>
                             <Text style={styles.updateText}>{u.message}</Text>
-                            <Text style={styles.small}>{formatDate(u.at, lang === 'es' ? 'es' : 'en')}</Text>
+                            <Text style={styles.small}>{formatDate(u.at, lang)}</Text>
                           </View>
                         </View>
                       ))}
@@ -180,7 +180,7 @@ function ConversationCard({ c, onSent }: { c: Conversation; onSent: () => void }
   return (
     <View style={styles.card}>
       <Text style={styles.muted}>
-        {tx('Chat', 'Chat', 'Chat')} {c.number} · {formatDate(c.updated_at, lang === 'es' ? 'es' : 'en')}
+        {tx('Chat', 'Chat', 'Chat')} {c.number} · {formatDate(c.updated_at, lang)}
       </Text>
       {c.messages.slice(-6).map((m, i) => (
         <View key={i} style={[styles.bubble, m.sender === 'customer' ? styles.mine : styles.theirs]}>
