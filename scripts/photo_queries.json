@@ -534,5 +534,129 @@
  "model-studio-2": [
   "model posing studio white background curly hair",
   "landscape"
+ ],
+ "realtor": [
+  "real estate agent showing house",
+  "landscape"
+ ],
+ "house-modern": [
+  "modern house exterior",
+  "landscape"
+ ],
+ "living-room": [
+  "bright living room interior",
+  "landscape"
+ ],
+ "hospital": [
+  "modern hospital building",
+  "landscape"
+ ],
+ "nurse": [
+  "nurse patient care",
+  "landscape"
+ ],
+ "lab-test": [
+  "medical laboratory",
+  "landscape"
+ ],
+ "school-class": [
+  "students classroom teacher",
+  "landscape"
+ ],
+ "school-kids": [
+  "school children learning",
+  "landscape"
+ ],
+ "graduation": [
+  "graduation ceremony students",
+  "landscape"
+ ],
+ "construction": [
+  "construction site building",
+  "landscape"
+ ],
+ "engineer": [
+  "construction engineer helmet",
+  "landscape"
+ ],
+ "architecture": [
+  "modern architecture building",
+  "landscape"
+ ],
+ "architect-desk": [
+  "architect drawing plans",
+  "landscape"
+ ],
+ "interior-design": [
+  "interior design living space",
+  "landscape"
+ ],
+ "beauty-salon": [
+  "beauty salon hair styling",
+  "landscape"
+ ],
+ "spa": [
+  "spa massage treatment",
+  "landscape"
+ ],
+ "nails": [
+  "manicure nail salon",
+  "landscape"
+ ],
+ "therapy": [
+  "therapist counseling session",
+  "landscape"
+ ],
+ "calm-office": [
+  "calm therapy office plants",
+  "landscape"
+ ],
+ "vet": [
+  "veterinarian dog clinic",
+  "landscape"
+ ],
+ "vet-cat": [
+  "veterinarian cat exam",
+  "landscape"
+ ],
+ "insurance": [
+  "family insurance advisor",
+  "landscape"
+ ],
+ "family-home": [
+  "happy family at home",
+  "landscape"
+ ],
+ "auto-repair": [
+  "auto repair mechanic engine",
+  "landscape"
+ ],
+ "car-service": [
+  "car service garage",
+  "landscape"
+ ],
+ "event-decor": [
+  "event decoration banquet",
+  "landscape"
+ ],
+ "event-party": [
+  "corporate event conference",
+  "landscape"
+ ],
+ "speaker": [
+  "keynote speaker stage",
+  "landscape"
+ ],
+ "author-book": [
+  "author writing books",
+  "landscape"
+ ],
+ "chef": [
+  "chef cooking restaurant kitchen",
+  "landscape"
+ ],
+ "catering": [
+  "catering buffet food",
+  "landscape"
  ]
 }
