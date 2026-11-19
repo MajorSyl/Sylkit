@@ -15,6 +15,7 @@ const NOWPAYMENTS_SANDBOX = 'https://api-sandbox.nowpayments.io/v1';
 // Set the plain variable NOWPAYMENTS_SANDBOX = "true" in Cloudflare to use a sandbox (test) key.
 let NOWPAYMENTS = NOWPAYMENTS_LIVE;
 import { alertOwner, orderLine } from './notify.js';
+import { afterPaid } from './email.js';
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SITE = 'https://sylkit.com';
 const DEFAULT_CURRENCY = 'usdttrc20';
@@ -131,6 +132,7 @@ async function applyPayment(env, order, p, { fromPoll = false } = {}) {
     await patchOrder(env, order.id, { status: 'paid', ...ref });
     await addEvent(env, order.id, 'update', `Crypto payment confirmed: ${p.actually_paid ?? p.pay_amount} ${String(p.pay_currency).toUpperCase()}.`);
     await alertOwner(env, { title: `Pagado con cripto ${p.actually_paid ?? p.pay_amount} ${String(p.pay_currency).toUpperCase()}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
+    await afterPaid(env, order);
     return { status: 'paid' };
   }
   if (['confirming', 'confirmed', 'sending'].includes(status) && order.status === 'accepted') {

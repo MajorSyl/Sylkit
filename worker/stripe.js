@@ -1,3 +1,4 @@
+import { afterPaid } from './email.js';
 // Stripe (card payments) for Sylkit orders.
 //
 //   POST /api/stripe/checkout  { token }  -> Stripe Checkout link for an accepted order
@@ -242,6 +243,8 @@ async function markPaid(env, order, session) {
         : ' It renews automatically; you can manage your card or cancel from this page.'
       : '';
   await addEvent(env, order.id, 'update', es ? `Pago con tarjeta confirmado: ${money2(paidTotal)}.${renew}` : `Card payment confirmed: ${money2(paidTotal)}.${renew}`);
+  // Stripe never alerted the owner before; afterPaid does it together with the customer's receipt.
+  await afterPaid(env, order, { ownerAlert: `Pagado con tarjeta ${money2(paidTotal)}` });
   return { status: 'paid' };
 }
 

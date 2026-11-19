@@ -15,6 +15,7 @@ import type { ServerEstimate } from '../src/components/EstimateBreakdown';
 import { Field, formStyles } from '../src/components/Field';
 import { useLang } from '../src/i18n';
 import { productName } from '../src/lib/names';
+import { useProducts } from '../src/lib/catalog';
 import { orderLines } from '../src/lib/orderLines';
 import { hasPayDetails, isBolivarMethod, PayOption, payTitle, usePayOptions } from '../src/lib/payOptions';
 import { money } from '../src/lib/pricing';
@@ -89,6 +90,26 @@ export default function OrderPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Keep the page live: payment confirmations and setup progress appear without a reload.
+  const finished = order?.status === 'delivered' || order?.status === 'cancelled';
+  useEffect(() => {
+    if (!token || finished) return;
+    const id = setInterval(() => {
+      if (typeof document === 'undefined' || document.visibilityState === 'visible') load();
+    }, 20000);
+    return () => clearInterval(id);
+  }, [token, finished, load]);
+
+  // Whether someone is at Sylkit right now, so the customer knows when to expect a reply.
+  const [online, setOnline] = useState<boolean | null>(null);
+  useEffect(() => {
+    fetch('/api/support/status')
+      .then((r) => r.json())
+      .then((j) => setOnline(!!j.open))
+      .catch(() => setOnline(null));
+  }, []);
+  const products = useProducts();
 
   // A crypto payment already started on this order keeps the crypto box open.
   useEffect(() => {
@@ -199,8 +220,18 @@ export default function OrderPage() {
           </Text>
           <Text style={styles.h1}>{hero.title}</Text>
           <Text style={[styles.muted, { textAlign: 'center' }]}>{hero.sub}</Text>
+          {online !== null && order.status !== 'delivered' && order.status !== 'cancelled' && !(payable && order.status !== 'payment_submitted') ? (
+            <View style={styles.live}>
+              <View style={[styles.liveDot, { backgroundColor: online ? '#12B76A' : '#98A2B3' }]} />
+              <Text style={styles.liveText}>
+                {online
+                  ? tx("We're online now and usually reply within the hour.", 'Estamos en línea y normalmente respondemos en menos de una hora.', 'Estamos online e normalmente respondemos em menos de uma hora.')
+                  : tx("We're offline right now. We reply from 9:00 Caracas time (Mon–Sat).", 'Ahora estamos fuera de horario. Respondemos desde las 9:00 hora de Caracas (lun–sáb).', 'Estamos fora do horário agora. Respondemos a partir das 9:00, horário de Caracas (seg–sáb).')}
+              </Text>
+            </View>
+          ) : null}
           {params.new ? (
-            // No emails yet: this page is the client's order link, so make it easy to keep.
+            // We also email this link (when email is switched on); copying it is the backup.
             <View style={{ alignItems: 'center', gap: 2 }}>
               <Text style={[styles.muted, { textAlign: 'center', fontSize: 13 }]}>{tx('Save this page: it is your order link.', 'Guarda esta página: es el enlace de tu pedido.', 'Guarde esta página: é o link do seu pedido.')}</Text>
               <CopyButton text={`https://sylkit.com/order?t=${token}`} label={tx('Copy my order link', 'Copiar el enlace de mi pedido', 'Copiar o link do meu pedido')} />
@@ -310,6 +341,49 @@ export default function OrderPage() {
             ) : null}
             {order.quote_notes ? <Text style={styles.notes}>{order.quote_notes}</Text> : null}
             <Button label={tx('Accept and pay', 'Aceptar y pagar', "Aceitar e pagar")} icon="checkmark-circle" onPress={accept} loading={busy} />
+          </View>
+        ) : null}
+
+        {/* ---------- right after paying: things the customer can do now ---------- */}
+        {paid && order.status !== 'delivered' ? (
+          <View style={[styles.card, shadow]}>
+            <Text style={styles.h2}>{tx('Start now', 'Empieza ya', 'Comece agora')}</Text>
+            <Text style={styles.muted}>{tx('Your setup has started. These steps make it faster:', 'Tu instalación ya empezó. Estos pasos la hacen más rápida:', 'Sua instalação já começou. Estes passos deixam tudo mais rápido:')}</Text>
+            <Pressable
+              style={styles.startRow}
+              accessibilityRole="link"
+              onPress={() =>
+                Linking.openURL(
+                  waLink(
+                    tx(
+                      `Hi! I paid order ${order.order_number}. Here are my logo and my product/price list:`,
+                      `¡Hola! Pagué el pedido ${order.order_number}. Aquí van mi logo y mi lista de productos/precios:`,
+                      `Olá! Paguei o pedido ${order.order_number}. Aqui estão meu logo e minha lista de produtos/preços:`,
+                    ),
+                  ),
+                )
+              }
+            >
+              <Ionicons name="logo-whatsapp" size={22} color={colors.whatsapp} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.startTitle}>{tx('Send your logo and product list', 'Envía tu logo y tu lista de productos', 'Envie seu logo e sua lista de produtos')}</Text>
+                <Text style={styles.muted}>{tx('On WhatsApp, in any format (photo, Excel, PDF).', 'Por WhatsApp, en cualquier formato (foto, Excel, PDF).', 'Pelo WhatsApp, em qualquer formato (foto, Excel, PDF).')}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.muted} />
+            </Pressable>
+            {(() => {
+              const demo = products.find((x) => x.name.en === order.product_name_en)?.demoUrl;
+              return demo ? (
+                <Pressable style={styles.startRow} accessibilityRole="link" onPress={() => Linking.openURL(demo)}>
+                  <Ionicons name="play-circle" size={22} color={colors.primary} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.startTitle}>{tx('Practice with the live demo', 'Practica con la demo en vivo', 'Pratique com a demo ao vivo')}</Text>
+                    <Text style={styles.muted}>{tx('Same system with sample data, so you and your team learn it while we set up yours.', 'El mismo sistema con datos de ejemplo, para que tú y tu equipo lo aprendan mientras preparamos el tuyo.', 'O mesmo sistema com dados de exemplo, para você e sua equipe aprenderem enquanto preparamos o seu.')}</Text>
+                  </View>
+                  <Ionicons name="open-outline" size={18} color={colors.muted} />
+                </Pressable>
+              ) : null;
+            })()}
           </View>
         ) : null}
 
@@ -514,6 +588,11 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
 }
 
 const styles = StyleSheet.create({
+  live: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#F2F4F7', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+  liveDot: { width: 8, height: 8, borderRadius: 999 },
+  liveText: { fontSize: 13, color: colors.text, fontWeight: '600', flexShrink: 1 },
+  startRow: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 14 },
+  startTitle: { fontSize: 15, fontWeight: '800', color: colors.text },
   heroWa: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.whatsapp, borderRadius: 999, paddingHorizontal: 18, height: 44, marginTop: 6 },
   heroWaText: { color: '#fff', fontSize: 15, fontWeight: '800' },
   waDetails: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: colors.whatsapp, borderRadius: 12, paddingHorizontal: 16, minHeight: 48 },

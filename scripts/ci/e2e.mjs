@@ -84,6 +84,17 @@ const pages = ['/', '/templates', '/work', '/account', '/order', '/quote', '/dom
   await p.context().close();
 }
 
+// 3b. Guest checkout: the checkout form shows straight away, no sign-in wall.
+{
+  const p = await page({ width: 390, height: 844 });
+  await p.goto(`${BASE}/checkout?product=punto-de-venta&lang=en`, { waitUntil: 'networkidle' });
+  await p.waitForTimeout(1500);
+  const txt = await p.evaluate(() => document.body.innerText);
+  ok('checkout opens without signing in', /Your details/.test(txt) && !/Sign in to order/.test(txt), txt.slice(0, 200));
+  await shot(p, 'checkout-guest');
+  await p.context().close();
+}
+
 // 4. Order journey: request a quote, open the order page, cancel it, check it shows as cancelled.
 {
   const rpc = await fetch(`${SB}/rest/v1/rpc/create_order`, {

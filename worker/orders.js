@@ -2,6 +2,7 @@ import { hasLive, hasSandbox } from './paypal.js';
 import { alertOwner, orderLine } from './notify.js';
 import { hasMonime } from './monime.js';
 import { overLimit } from './support.js';
+import { emailCustomer } from './email.js';
 // Customer-facing order helpers, keyed by the secret order token.
 //
 //   GET  /api/order/methods            -> which automatic payment methods are switched on { card, crypto }
@@ -179,7 +180,7 @@ async function bcvRate() {
 // The site calls this right after a customer places an order or reports a manual payment,
 // so the owner gets a phone alert. Only real, recent state changes trigger an alert.
 const pinged = new Set();
-async function ping(request, env) {
+async function ping(request, env, ctx) {
   if (await overLimit(env, request, 'ping').catch(() => false)) return json({ ok: false, error: 'rate_limited' }, 429);
   const body = await request.json().catch(() => ({}));
   const token = String(body.token || '');
@@ -201,6 +202,10 @@ async function ping(request, env) {
       priority: custom ? 'high' : 'default',
       tags: custom ? 'speech_balloon' : 'shopping_cart',
     });
+    // The customer gets an instant confirmation with their order link (sent after we answer).
+    const mail = emailCustomer(env, o, 'received');
+    if (ctx?.waitUntil) ctx.waitUntil(mail);
+    else await mail;
   } else if (o.status === 'payment_submitted' && !String(o.payment_method || '').startsWith('crypto')) {
     await alertOwner(env, {
       title: `Pago reportado: ${o.payment_method || 'manual'}`,
@@ -209,13 +214,16 @@ async function ping(request, env) {
       priority: 'high',
       tags: 'bank',
     });
+    const mail = emailCustomer(env, o, 'reported');
+    if (ctx?.waitUntil) ctx.waitUntil(mail);
+    else await mail;
   }
   return json({ ok: true });
 }
 
 export async function handleOrders(request, env, url, ctx) {
   try {
-    if (request.method === 'POST' && url.pathname === '/api/order/ping') return await ping(request, env);
+    if (request.method === 'POST' && url.pathname === '/api/order/ping') return await ping(request, env, ctx);
     if (request.method === 'POST' && url.pathname === '/api/order/cancel') return await cancel(request, env, ctx);
     if (request.method !== 'GET') return json({ error: 'not_found' }, 404);
     if (url.pathname === '/api/order/methods') {

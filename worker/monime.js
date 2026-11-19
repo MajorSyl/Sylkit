@@ -17,6 +17,7 @@
 // the order paid. Test-mode payments never mark an order paid.
 
 import { alertOwner, orderLine } from './notify.js';
+import { afterPaid } from './email.js';
 import { overLimit } from './support.js';
 
 const API = 'https://api.monime.io';
@@ -187,6 +188,7 @@ async function settle(env, order) {
   const es = order.lang === 'es';
   await addEvent(env, order.id, 'update', es ? `Pago confirmado con Monime (${channel}): ${leones(paid / 100)}.` : `Payment confirmed with Monime (${channel}): ${leones(paid / 100)}.`);
   await alertOwner(env, { title: `Pagado con Monime ${leones(paid / 100)}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
+  await afterPaid(env, order);
   return 'paid';
 }
 

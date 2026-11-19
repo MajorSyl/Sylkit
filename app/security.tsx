@@ -236,7 +236,10 @@ export default function SecurityPage() {
     });
     setBusy(false);
     if (err || !res) return setError(friendlyError(err, lang));
-    router.push(`/order?t=${(res as any).token}&new=1`);
+    const token = (res as any).token as string;
+    // Alert the owner's phone and email the customer right away (best effort).
+    fetch('/api/order/ping', { method: 'POST', keepalive: true, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
+    router.push(`/order?t=${token}&new=1`);
   };
 
   const cols = width >= 1024 ? 3 : width >= 640 ? 2 : 1;

@@ -155,10 +155,11 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
       }
       // Save the order in the customer's account ("My orders").
       await linkOrder(token);
-      // Tell the owner's phone right away (best effort).
-      fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
       // Confirm the order at the server-calculated total so it can be paid right away.
       await fetch('/api/pay/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) }).catch(() => null);
+      // Then (with the price set) alert the owner's phone and email the customer their order link.
+      // keepalive lets it finish even when the page leaves for PayPal/Monime a moment later.
+      fetch('/api/order/ping', { method: 'POST', keepalive: true, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
       if (chosen.kind === 'paypal') {
         const r = await fetch('/api/paypal/checkout', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, test: paypalTest() }) }).catch(() => null);
         const j = r ? await r.json().catch(() => ({})) : {};

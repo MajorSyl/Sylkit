@@ -15,6 +15,7 @@
 // "payment_submitted" with an internal note, so fake money can never unlock real work.
 
 import { alertOwner, orderLine } from './notify.js';
+import { afterPaid } from './email.js';
 const SUPABASE_URL = 'https://chcljhwcvzlmxrrhetfv.supabase.co';
 const SITE = 'https://sylkit.com';
 const LIVE_API = 'https://api-m.paypal.com';
@@ -261,6 +262,7 @@ async function captureFor(env, order, ppId) {
   await patchOrder(env, order.id, { status: 'paid', payment_method: 'paypal', payment_reference: cap.id });
   await addEvent(env, order.id, 'update', es ? `Pago con PayPal confirmado: ${money2(paid)}.` : `PayPal payment confirmed: ${money2(paid)}.`);
   await alertOwner(env, { title: `Pagado con PayPal ${money2(paid)}`, message: `${orderLine(order)}\nRevisa y empieza la instalación.`, orderId: order.id, priority: 'high', tags: 'moneybag' });
+  await afterPaid(env, order);
   return { status: 200, body: { order_status: 'paid' } };
 }
 

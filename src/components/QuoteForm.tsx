@@ -52,7 +52,6 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
     }
     const token = (data as any).token as string;
     await linkOrder(token); // save it in the customer's account ("My orders")
-    fetch('/api/order/ping', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
     // Fixed-price plan: confirm it at the server-calculated total so the client can pay right away.
     if (config) {
       try {
@@ -61,6 +60,8 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
         /* if this fails, the order stays as a request and we send the quote manually */
       }
     }
+    // Alert the owner's phone and email the customer their order link (after the price is set).
+    fetch('/api/order/ping', { method: 'POST', keepalive: true, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token, event: 'new' }) }).catch(() => null);
     setBusy(false);
     router.push(`/order?t=${token}&new=1`);
   };

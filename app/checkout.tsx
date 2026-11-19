@@ -3,7 +3,7 @@ import Head from 'expo-router/head';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { CheckoutFooter, CheckoutHeader } from '../src/components/CheckoutHeader';
 import { CheckoutFlow } from '../src/components/CheckoutFlow';
-import { SignInGate } from '../src/components/SignInGate';
+import { OptionalSignIn } from '../src/components/SignInGate';
 import { useLang } from '../src/i18n';
 import { useProducts } from '../src/lib/catalog';
 import { configFromQuery } from '../src/lib/pricing';
@@ -31,9 +31,9 @@ export default function CheckoutPage() {
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View style={styles.container}>
           {p?.pricing ? (
-            <SignInGate title={`${tx('Sign in to order', 'Inicia sesión para pedir', 'Entre para pedir')} ${t(p.name)}`}>
-              {() => <CheckoutFlow product={p} initial={cfg} />}
-            </SignInGate>
+            <OptionalSignIn>
+              <CheckoutFlow product={p} initial={cfg} />
+            </OptionalSignIn>
           ) : (
             <View style={styles.empty}>
               <Text style={styles.h1}>{tx('Your cart is empty', 'Tu carrito está vacío', "Seu carrinho está vazio")}</Text>

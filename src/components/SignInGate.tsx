@@ -15,6 +15,42 @@ export function SignInGate({ title, sub, children }: { title: string; sub?: stri
   return <SignInCard title={title} sub={sub} />;
 }
 
+/**
+ * Ordering without a wall: the page always renders. Signed-out visitors see a slim bar offering
+ * "Continue with Google" to prefill and keep their orders together, but can simply fill in the form.
+ * Guest orders still show up in "My orders" later, because accounts also find orders by verified email.
+ */
+export function OptionalSignIn({ children }: { children: ReactNode }) {
+  const session = useSession();
+  const [hasGoogle, setHasGoogle] = useState(false);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    googleEnabled().then(setHasGoogle);
+  }, []);
+  const google = async () => {
+    setBusy(true);
+    const { error } = await signInWithGoogle();
+    if (error) setBusy(false);
+  };
+  return (
+    <>
+      {session === null && hasGoogle ? (
+        <View style={styles.bar}>
+          <Ionicons name="flash-outline" size={18} color={colors.primary} />
+          <Text style={styles.barText}>
+            {tx('Faster with Google: we fill in your details and keep your orders in one place. Optional.', 'Más rápido con Google: llenamos tus datos y guardamos tus pedidos en un solo lugar. Opcional.', 'Mais rápido com Google: preenchemos seus dados e guardamos seus pedidos num só lugar. Opcional.')}
+          </Text>
+          <Pressable onPress={google} disabled={busy} style={[styles.barBtn, busy && { opacity: 0.6 }]} accessibilityRole="button">
+            {busy ? <ActivityIndicator color={colors.text} size="small" /> : <Ionicons name="logo-google" size={16} color={colors.text} />}
+            <Text style={styles.barBtnText}>{tx('Continue with Google', 'Continuar con Google', 'Continuar com Google')}</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      {children}
+    </>
+  );
+}
+
 export function SignInCard({ title, sub }: { title: string; sub?: string }) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState<'google' | 'email' | null>(null);
@@ -153,5 +189,9 @@ const styles = StyleSheet.create({
   sentText: { fontSize: 14, lineHeight: 20, color: '#054F31' },
   link: { fontSize: 13.5, fontWeight: '700', color: colors.primary, marginTop: 4 },
   error: { fontSize: 14, color: '#B42318', fontWeight: '600' },
+  bar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 10, backgroundColor: colors.softBlue, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10, marginBottom: 14 },
+  barText: { flex: 1, minWidth: 200, fontSize: 13.5, lineHeight: 19, color: colors.text },
+  barBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 40, paddingHorizontal: 14, borderRadius: 999, backgroundColor: '#fff', borderWidth: 1, borderColor: 'rgba(11,27,58,0.18)' },
+  barBtnText: { fontSize: 14, fontWeight: '700', color: colors.text },
   fine: { fontSize: 12.5, color: colors.muted, lineHeight: 18, marginTop: 4 },
 });
