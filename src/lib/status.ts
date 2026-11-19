@@ -1,5 +1,4 @@
-import type { Text } from '../i18n';
-import { tx } from '../i18n';
+import type { Lang, Text } from '../i18n';
 
 export type OrderStatus =
   | 'new'
@@ -44,10 +43,12 @@ export const stepIndex = (s: OrderStatus) => {
 export const formatMoney = (amount: number | null | undefined, currency = 'USD') =>
   amount == null ? '' : `${currency} ${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-export const formatDate = (iso: string | null | undefined, lang: 'es' | 'en') => {
+const dateLocale: Record<Lang, string> = { en: 'en-US', es: 'es-VE', pt: 'pt-BR' };
+
+export const formatDate = (iso: string | null | undefined, lang: Lang) => {
   if (!iso) return '';
   try {
-    return new Date(iso).toLocaleDateString(tx('en-US', 'es-VE', "pt-BR"), { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString(dateLocale[lang] ?? 'en-US', { day: 'numeric', month: 'short', year: 'numeric' });
   } catch {
     return iso;
   }

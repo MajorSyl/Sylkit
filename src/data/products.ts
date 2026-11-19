@@ -436,6 +436,7 @@ export const products: Product[] = [
   "category": "domains",
   "icon": "server",
   "tint": "blue",
+  "priceFrom": null,
   "name": {
     "es": "Hosting para tu sitio web",
     "en": "Website hosting", "pt": "Hospedagem de sites"

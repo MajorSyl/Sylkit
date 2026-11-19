@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   cover: { width: '100%', aspectRatio: 1.28, borderRadius: 4, overflow: 'hidden', backgroundColor: '#EEF1F6', position: 'relative' },
   img: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', transitionDuration: '300ms' } as any,
-  shade: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16, paddingTop: 48, paddingBottom: 14, backgroundImage: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%)' },
+  shade: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 16, paddingTop: 48, paddingBottom: 14, backgroundImage: 'linear-gradient(180deg,rgba(0,0,0,0) 0%,rgba(0,0,0,0.72) 100%)' } as any, // web-only CSS
   ovTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
   ovSub: { color: 'rgba(255,255,255,0.82)', fontSize: 13, marginTop: 2, fontWeight: '600' },
   coverBig: { width: '100%', aspectRatio: 1.28, borderRadius: 20, overflow: 'hidden', backgroundColor: '#EEF1F6', position: 'relative' },
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   emptySub: { fontSize: 14, color: colors.muted, textAlign: 'center', paddingHorizontal: 16 },
   emptyBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: colors.whatsapp, borderRadius: 999, paddingHorizontal: 18, minHeight: 44, marginTop: 6 },
   emptyBtnText: { color: '#fff', fontWeight: '800', fontSize: 15 },
-  panelBg: { position: Platform.OS === 'web' ? 'fixed' : 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, backgroundColor: 'rgba(8,12,24,0.35)' },
+  panelBg: { position: Platform.OS === 'web' ? 'fixed' : 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, backgroundColor: 'rgba(8,12,24,0.35)' } as any, // 'fixed' is web-only
   panel: { position: 'absolute', top: 0, right: 0, bottom: 0, backgroundColor: colors.surface, boxShadow: '-12px 0 40px rgba(8,12,24,0.18)' },
   panelHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18, height: 60, borderBottomWidth: 1, borderBottomColor: colors.border },
   panelTitle: { fontSize: 17, fontWeight: '800', color: colors.text },
