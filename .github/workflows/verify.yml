@@ -1,0 +1,58 @@
+# Blocking quality gate for pull requests (proposal from Engineering Assignment 001).
+# - Fails the run when the type check, worker unit tests or web build fail.
+# - Always uploads the full logs as an artifact, so diagnostics are kept without committing them.
+# - Read-only: no commits, no deploys, no secrets, and it does not touch the existing e2e/deploy triggers.
+# To make it block merges, mark "verify" as a required status check on main (repo settings).
+name: verify
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash # explicit bash = -eo pipefail, so "| tee" can't hide a failing command
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Install
+        run: npm install --no-audit --no-fund 2>&1 | tee ci-npm.txt
+      - name: Type check
+        id: tsc
+        continue-on-error: true
+        run: npx tsc --noEmit 2>&1 | tee ci-tsc.txt
+      - name: Worker unit tests
+        id: unit
+        continue-on-error: true
+        run: |
+          for t in worker/test/*.mjs; do
+            echo "## $t"
+            node --no-warnings "$t" || echo "FAILED $t"
+          done 2>&1 | tee ci-unit.txt
+          ! grep -q '^FAILED ' ci-unit.txt
+      - name: Web build
+        id: build
+        continue-on-error: true
+        run: npx expo export --platform web 2>&1 | tee ci-build.txt
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-logs
+          path: ci-*.txt
+          retention-days: 14
+      - name: Gate
+        if: always()
+        run: |
+          echo "tsc=${{ steps.tsc.outcome }} unit=${{ steps.unit.outcome }} build=${{ steps.build.outcome }}"
+          test "${{ steps.tsc.outcome }}" = success
+          test "${{ steps.unit.outcome }}" = success
+          test "${{ steps.build.outcome }}" = success
