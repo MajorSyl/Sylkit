@@ -1,4 +1,4 @@
-'re passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+n to 'Screen' instead. Otherwise capitalize your component's name. 
 λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
 λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
 λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
@@ -15,15 +15,16 @@
 λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
 λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
 λ  WARN  Got a component with the name 'i' for the screen '__root'. React Components must start with an uppercase letter. If you're passing a regular function and not a component, pass it as children to 'Screen' instead. Otherwise capitalize your component's name. 
+λ Bundled 28535ms node_modules/expo-router/node/render.js (985 modules)
 
 › web bundles (1):
-_expo/static/js/web/entry-d41d8cd98f00b204e9800998ecf8427e.js (3.17 MB)
+_expo/static/js/web/entry-d41d8cd98f00b204e9800998ecf8427e.js (3.19 MB)
 
 › Static routes (52):
 /work (149 kB)
-/ (index) (334 kB)
+/ (index) (373 kB)
 /order (54.8 kB)
-/quote (62.2 kB)
+/quote (66 kB)
 /terms (67.6 kB)
 /track (54.8 kB)
 /account (60.4 kB)
@@ -62,13 +63,13 @@ _expo/static/js/web/entry-d41d8cd98f00b204e9800998ecf8427e.js (3.17 MB)
 /product/dominio-y-correo (77.6 kB)
 /product/nomina-asistencia (79.6 kB)
 /product/app-movil-a-medida (84.3 kB)
-/product/sitio-web-personal (92 kB)
+/product/sitio-web-personal (96 kB)
 /product/restaurante-menu-qr (79.7 kB)
 /product/control-de-inventario (79.8 kB)
 /product/servicios-a-domicilio (79.9 kB)
 /product/alertas-de-vencimiento (80.2 kB)
 /product/tienda-online-whatsapp (91.2 kB)
-/product/sitio-web-para-negocios (94.8 kB)
+/product/sitio-web-para-negocios (108 kB)
 /product/clinica-citas-historias (80.5 kB)
 /product/salon-barberia-reservas (79.9 kB)
 /product/asistente-ia-para-negocios (79.7 kB)

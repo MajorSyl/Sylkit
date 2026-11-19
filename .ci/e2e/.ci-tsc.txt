@@ -1,8 +1,8 @@
-app/order.tsx(308,104): error TS2345: Argument of type 'Lang' is not assignable to parameter of type '"es" | "en"'.
+app/order.tsx(339,104): error TS2345: Argument of type 'Lang' is not assignable to parameter of type '"es" | "en"'.
   Type '"pt"' is not assignable to type '"es" | "en"'.
-app/order.tsx(348,59): error TS2345: Argument of type 'Lang' is not assignable to parameter of type '"es" | "en"'.
+app/order.tsx(422,59): error TS2345: Argument of type 'Lang' is not assignable to parameter of type '"es" | "en"'.
   Type '"pt"' is not assignable to type '"es" | "en"'.
-app/order.tsx(412,74): error TS2345: Argument of type 'Lang' is not assignable to parameter of type '"es" | "en"'.
+app/order.tsx(486,74): error TS2345: Argument of type 'Lang' is not assignable to parameter of type '"es" | "en"'.
   Type '"pt"' is not assignable to type '"es" | "en"'.
 src/components/Showroom.tsx(443,61): error TS2769: No overload matches this call.
   Overload 1 of 2, '(props: ImageProps): Image', gave the following error.

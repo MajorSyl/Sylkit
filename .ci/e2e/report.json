@@ -1,6 +1,6 @@
 {
- "base": "https://sylkit.com",
- "at": "2026-11-18T00:02:19.155Z",
+ "base": "https://sylkit-2-sylkit.fannah2026.workers.dev",
+ "at": "2026-11-19T17:50:21.411Z",
  "checks": [
   {
    "name": "page /",
@@ -213,6 +213,16 @@
    "detail": ""
   },
   {
+   "name": "page /preview/altura/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/amparo/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "page /preview/atelier/",
    "pass": true,
    "detail": ""
@@ -228,6 +238,11 @@
    "detail": ""
   },
   {
+   "name": "page /preview/calma/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "page /preview/chispa/",
    "pass": true,
    "detail": ""
@@ -238,12 +253,27 @@
    "detail": ""
   },
   {
+   "name": "page /preview/clinica/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "page /preview/club/",
    "pass": true,
    "detail": ""
   },
   {
    "name": "page /preview/coach/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/colegio/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/evento/",
    "pass": true,
    "detail": ""
   },
@@ -259,6 +289,11 @@
   },
   {
    "name": "page /preview/fresco/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/glow/",
    "pass": true,
    "detail": ""
   },
@@ -288,6 +323,11 @@
    "detail": ""
   },
   {
+   "name": "page /preview/huella/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "page /preview/lente/",
    "pass": true,
    "detail": ""
@@ -299,6 +339,11 @@
   },
   {
    "name": "page /preview/lumen/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/motor/",
    "pass": true,
    "detail": ""
   },
@@ -328,6 +373,11 @@
    "detail": ""
   },
   {
+   "name": "page /preview/obra/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "page /preview/patitas/",
    "pass": true,
    "detail": ""
@@ -353,7 +403,17 @@
    "detail": ""
   },
   {
+   "name": "page /preview/sazon/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "page /preview/sonrisa/",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "name": "page /preview/trazo/",
    "pass": true,
    "detail": ""
   },
@@ -368,9 +428,14 @@
    "detail": ""
   },
   {
+   "name": "page /preview/voz/",
+   "pass": true,
+   "detail": ""
+  },
+  {
    "name": "gallery shows results count",
    "pass": true,
-   "detail": "64 results"
+   "detail": "77 results"
   },
   {
    "name": "gallery order: hotel, then ride app, before POS",
@@ -398,9 +463,14 @@
    "detail": ""
   },
   {
+   "name": "checkout opens without signing in",
+   "pass": true,
+   "detail": "sylkit\n\nSecure checkout\n\n2\nDetails\n3\n4\n\nFaster with Google: we fill in your details and keep your orders in one place. Optional.\n\nContinue with Google\n\nShow order summary\n\n$569\nYour details\nWe s"
+  },
+  {
    "name": "create a quote request",
    "pass": true,
-   "detail": "{\"order_number\":\"SK-1058\",\"token\":\"35048f70-8cb3-400e-97db-fb4388f9c6db\"}"
+   "detail": "{\"order_number\":\"SK-1060\",\"token\":\"d9887cb5-67a4-482b-8874-9804ae91b17d\"}"
   },
   {
    "name": "order page shows the request",
@@ -415,7 +485,7 @@
   {
    "name": "order shows as cancelled",
    "pass": true,
-   "detail": "sylkit\n\nSecure checkout\n\nOrder SK-1058\nThis order was cancelled\nMessage us if this was a mistake.\n\nChat with us about this order\nOrder summary\nCustom system · Nov 18, 2026\nCancelled\nActivity\n\n\nQuestions? Message us on WhatsApp\nRefunds\nPrivacy\nTerms\n"
+   "detail": "sylkit\n\nSecure checkout\n\nOrder SK-1060\nThis order was cancelled\nMessage us if this was a mistake.\n\nChat with us about this order\nOrder summary\nCustom system · Nov 19, 2026\nCancelled\nActivity\n\n\nQuestions? Message us on WhatsApp\nRefunds\nPrivacy\nTerms\n"
   },
   {
    "name": "cancel button gone after cancelling",
@@ -438,6 +508,6 @@
    "detail": ""
   }
  ],
- "passed": 87,
+ "passed": 101,
  "failed": 0
 }

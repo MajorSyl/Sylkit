@@ -40,38 +40,51 @@ PASS page /demos/servicios/
 PASS page /demos/taller/ 
 PASS page /demos/tienda/ 
 PASS page /demos/tours/ 
+PASS page /preview/altura/ 
+PASS page /preview/amparo/ 
 PASS page /preview/atelier/ 
 PASS page /preview/aula-app/ 
 PASS page /preview/aurum/ 
+PASS page /preview/calma/ 
 PASS page /preview/chispa/ 
 PASS page /preview/cifra/ 
+PASS page /preview/clinica/ 
 PASS page /preview/club/ 
 PASS page /preview/coach/ 
+PASS page /preview/colegio/ 
+PASS page /preview/evento/ 
 PASS page /preview/fc/ 
 PASS page /preview/fe/ 
 PASS page /preview/fresco/ 
+PASS page /preview/glow/ 
 PASS page /preview/gov/ 
 PASS page /preview/grupo/ 
 PASS page /preview/habitat/ 
 PASS page /preview/habitat-app/ 
 PASS page /preview/horno/ 
+PASS page /preview/huella/ 
 PASS page /preview/lente/ 
 PASS page /preview/lex/ 
 PASS page /preview/lumen/ 
+PASS page /preview/motor/ 
 PASS page /preview/muse/ 
 PASS page /preview/ngo/ 
 PASS page /preview/nido/ 
 PASS page /preview/nodo/ 
 PASS page /preview/norte/ 
+PASS page /preview/obra/ 
 PASS page /preview/patitas/ 
 PASS page /preview/plano/ 
 PASS page /preview/plano-app/ 
 PASS page /preview/ritmo/ 
 PASS page /preview/rose/ 
+PASS page /preview/sazon/ 
 PASS page /preview/sonrisa/ 
+PASS page /preview/trazo/ 
 PASS page /preview/vital/ 
 PASS page /preview/volt/ 
-PASS gallery shows results count - 64 results
+PASS page /preview/voz/ 
+PASS gallery shows results count - 77 results
 PASS gallery order: hotel, then ride app, before POS - hotel@136 ride@225 pos@847
 PASS phone menu offers sign in 
 PASS phone menu has no sign out when signed out 
@@ -88,20 +101,38 @@ Email
 Email me a sign-in link
 Just browsing? You can look at every sy
 PASS account page has email sign-in 
-PASS create a quote request - {"order_number":"SK-1058","token":"35048f70-8cb3-400e-97db-fb4388f9c6db"}
+PASS checkout opens without signing in - sylkit
+
+Secure checkout
+
+2
+Details
+3
+4
+
+Faster with Google: we fill in your details and keep your orders in one place. Optional.
+
+Continue with Google
+
+Show order summary
+
+$569
+Your details
+We s
+PASS create a quote request - {"order_number":"SK-1060","token":"d9887cb5-67a4-482b-8874-9804ae91b17d"}
 PASS order page shows the request 
 PASS cancel button shown on unpaid order 
 PASS order shows as cancelled - sylkit
 
 Secure checkout
 
-Order SK-1058
+Order SK-1060
 This order was cancelled
 Message us if this was a mistake.
 
 Chat with us about this order
 Order summary
-Custom system · Nov 18, 2026
+Custom system · Nov 19, 2026
 Cancelled
 Activity
 
@@ -112,4 +143,4 @@ PASS database says cancelled - cancelled
 PASS cancelling twice is harmless 
 PASS cancel rejects a bad link 
 
-87 passed, 0 failed
+101 passed, 0 failed
