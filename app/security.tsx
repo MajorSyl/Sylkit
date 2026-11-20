@@ -14,6 +14,7 @@ import { useLang } from '../src/i18n';
 import { friendlyError, supabase, createOrder } from '../src/lib/supabase';
 import { colors, shadow } from '../src/theme';
 import { tx } from '../src/i18n';
+import { orderSource } from '../src/lib/attribution';
 
 // Sylkit Shield: book a security check for a website, app or business system.
 // Bookings are saved as quote requests (create_order) and appear in Admin with every other quote.
@@ -231,7 +232,7 @@ export default function SecurityPage() {
       p_details: details,
       p_product_slug: null,
       p_lang: lang,
-      p_source: `shield:${plan}`,
+      p_source: `shield:${plan} ${orderSource()}`.slice(0, 200),
       p_config: null,
     });
     setBusy(false);

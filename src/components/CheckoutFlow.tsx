@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { orderSource } from '../lib/attribution';
 import { Link, useRouter } from 'expo-router';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -130,7 +131,7 @@ export function CheckoutFlow({ product, initial }: { product: Product; initial: 
     if (!chosen) return setError(tx('Choose how you want to pay.', 'Elige cómo quieres pagar.', "Escolha como quer pagar."));
     setBusy(true);
     try {
-      const source = typeof window !== 'undefined' ? window.location.search.slice(0, 200) || 'direct' : 'app';
+      const source = orderSource();
       const { data, error: err } = await createOrder({
         p_customer_name: contact.name.trim(),
         p_email: contact.email.trim(),
