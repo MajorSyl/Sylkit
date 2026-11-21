@@ -1,6 +1,6 @@
 {
-  "name": "Musenge Rides",
-  "short_name": "Musenge",
+  "name": "Sylva Ride",
+  "short_name": "Sylva Ride",
   "description": "Pide tu viaje con Sylvester Musenge en Caracas.",
   "start_url": "/clients/sylvester/",
   "scope": "/clients/sylvester/",

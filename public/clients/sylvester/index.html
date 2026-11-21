@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#15171C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Musenge Rides · Viaja con Sylvester</title>
+<title>Sylva Ride · Viaja con Sylvester</title>
 <meta name="description" content="Pide tu viaje en Caracas con Sylvester Musenge: precio fijo antes de salir, aeropuerto, viajes por hora y encomiendas.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="img/icon-192.png">
@@ -158,7 +158,7 @@ button{font:inherit;cursor:pointer;color:inherit}
   <div id="map"></div>
   <div class="top">
     <button class="iconbtn glass" id="menuBtn" aria-label="Menú" style="margin-left:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
-    <div class="brand glass"><span class="mark">MR</span><span>Musenge Rides</span></div>
+    <div class="brand glass"><span class="mark">SR</span><span>Sylva Ride</span></div>
     <div class="status glass" style="margin-left:auto"><span class="dot"></span><span id="availTxt">Disponible</span></div>
   </div>
   <div class="sheet" id="sheet"></div>
@@ -365,10 +365,10 @@ button{font:inherit;cursor:pointer;color:inherit}
     const step = (now) => { const k = Math.min(1, (now - t0) / dur), e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2; car.setLatLng([a.lat + (b.lat - a.lat) * e, a.lng + (b.lng - a.lng) * e]); if (k < 1) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   }
-  const STEPS = [['sent', T('Esperando confirmación', 'Waiting for confirmation'), T('Sylvester recibió tu solicitud', 'Sylvester got your request')], ['accepted', T('Viaje confirmado', 'Ride confirmed'), T('Sylvester tomó tu viaje', 'Sylvester took your ride')], ['arriving', T('Va en camino', 'On the way'), T('Sigue el carro en el mapa', 'Watch the car on the map')], ['arrived', T('Tu conductor llegó', 'Your driver is here'), T('Chery X1 amarillo te espera', 'Yellow Chery X1 is waiting')], ['in_progress', T('En viaje', 'On trip'), T('Buen viaje', 'Enjoy the ride')], ['done', T('Completado', 'Completed'), T('Gracias por viajar con Musenge Rides', 'Thanks for riding with Musenge Rides')]];
+  const STEPS = [['sent', T('Esperando confirmación', 'Waiting for confirmation'), T('Sylvester recibió tu solicitud', 'Sylvester got your request')], ['accepted', T('Viaje confirmado', 'Ride confirmed'), T('Sylvester tomó tu viaje', 'Sylvester took your ride')], ['arriving', T('Va en camino', 'On the way'), T('Sigue el carro en el mapa', 'Watch the car on the map')], ['arrived', T('Tu conductor llegó', 'Your driver is here'), T('Chery X1 amarillo te espera', 'Yellow Chery X1 is waiting')], ['in_progress', T('En viaje', 'On trip'), T('Buen viaje', 'Enjoy the ride')], ['done', T('Completado', 'Completed'), T('Gracias por viajar con Sylva Ride', 'Thanks for riding with Sylva Ride')]];
   function waText(t) {
     const svc = { ride: T('Viaje', 'Ride'), airport: T('Traslado al aeropuerto', 'Airport transfer'), hour: T('Chofer por hora', 'Hourly driver'), pkg: T('Encomienda', 'Parcel') }[t.svc];
-    return encodeURIComponent([`*Musenge Rides* · ${svc} #${t.id}`, `${T('Nombre', 'Name')}: ${db.me || '—'}`, `${T('Desde', 'From')}: ${t.from}`, t.to ? `${T('Hasta', 'To')}: ${t.to}` : `${T('Horas', 'Hours')}: ${t.hours}`, `${T('Cuándo', 'When')}: ${t.when}`, `${T('Precio', 'Price')}: ${money(t.price)} · ${t.pay}`].join('\n'));
+    return encodeURIComponent([`*Sylva Ride* · ${svc} #${t.id}`, `${T('Nombre', 'Name')}: ${db.me || '—'}`, `${T('Desde', 'From')}: ${t.from}`, t.to ? `${T('Hasta', 'To')}: ${t.to}` : `${T('Horas', 'Hours')}: ${t.hours}`, `${T('Cuándo', 'When')}: ${t.when}`, `${T('Precio', 'Price')}: ${money(t.price)} · ${t.pay}`].join('\n'));
   }
   function status() {
     const t = db.trips.find((x) => x.id === st.current); if (!t) return home();
@@ -398,7 +398,7 @@ button{font:inherit;cursor:pointer;color:inherit}
   const SVCN = (s) => ({ ride: T('Viaje', 'Ride'), airport: T('Aeropuerto', 'Airport'), hour: T('Por hora', 'Hourly'), pkg: T('Encomienda', 'Parcel') }[s]);
   const PILL = (s) => ({ sent: ['wait', T('Enviado', 'Sent')], accepted: ['ok', T('Aceptado', 'Accepted')], arriving: ['ok', T('En camino', 'On the way')], arrived: ['ok', T('Llegó', 'Arrived')], in_progress: ['ok', T('En viaje', 'On trip')], done: ['ok', T('Completado', 'Done')], cancelled: ['no', T('Cancelado', 'Cancelled')], declined: ['no', T('Rechazado', 'Declined')] }[s] || ['', s]);
   function menu() {
-    $('panel').innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="mark" style="width:40px;height:40px;font-size:15px">MR</span><div><b style="font-size:17px">Musenge Rides</b><div style="font-size:12.5px;color:var(--muted)">${T('Tu chofer de confianza en Caracas', 'Your trusted driver in Caracas')}</div></div></div>
+    $('panel').innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span class="mark" style="width:40px;height:40px;font-size:15px">SR</span><div><b style="font-size:17px">Sylva Ride</b><div style="font-size:12.5px;color:var(--muted)">${T('Tu chofer de confianza en Caracas', 'Your trusted driver in Caracas')}</div></div></div>
       <button class="mitem" data-page="ride"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l1.6-4.6A2 2 0 0 1 8.5 6h7a2 2 0 0 1 1.9 1.4L19 12v5H5z"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg></i>${T('Pedir viaje', 'Request a ride')}</button>
       <button class="mitem" data-page="trips"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg></i>${T('Mis viajes', 'My trips')}</button>
       <button class="mitem" data-page="car"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></i>${T('Sylvester y su carro', 'Sylvester and his car')}</button>
