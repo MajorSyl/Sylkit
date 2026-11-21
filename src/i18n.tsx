@@ -16,10 +16,14 @@ const LangContext = createContext<Ctx>({ lang: 'en', t: (x) => x.en });
 const ES_COUNTRIES = new Set(['VE', 'CO', 'MX', 'AR', 'CL', 'PE', 'EC', 'BO', 'PY', 'UY', 'CR', 'PA', 'DO', 'GT', 'HN', 'SV', 'NI', 'CU', 'PR', 'ES', 'GQ']);
 const PT_COUNTRIES = new Set(['BR', 'PT', 'AO', 'MZ', 'CV', 'GW', 'ST', 'TL']);
 
+// Language of each country page (see src/data/markets.ts).
+const MARKET_LANG: Record<string, Lang> = { '/ve': 'es', '/sl': 'en', '/br': 'pt' };
+
 const fromCode = (code: string): Lang | null => (code.startsWith('pt') ? 'pt' : code.startsWith('es') ? 'es' : code.startsWith('en') ? 'en' : null);
 
 // Order of decisions:
 //  1. ?lang=pt|es|en in the address (handy for sharing a link in a given language; remembered on this device)
+//     then a country page's own language (/ve Spanish, /sl English, /br Portuguese; also remembered)
 //  2. the visitor's browser languages, in their own order of preference
 //  3. the country of their connection (Cloudflare adds it as the sk_cc cookie; no location permission needed)
 //  4. English
@@ -32,6 +36,14 @@ export function detectLang(): Lang {
         localStorage.setItem('sylkit_lang', forced);
       } catch {}
       return forced;
+    }
+    // Country pages (/ve, /sl, /br) open in that country's language and keep it for the rest of the visit.
+    const market = MARKET_LANG[window.location.pathname.replace(/\/+$/, '').toLowerCase()];
+    if (market) {
+      try {
+        localStorage.setItem('sylkit_lang', market);
+      } catch {}
+      return market;
     }
     try {
       const saved = localStorage.getItem('sylkit_lang');

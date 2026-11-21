@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { orderSource } from '../lib/attribution';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLang } from '../i18n';
@@ -33,7 +34,7 @@ export function QuoteForm({ productSlug, productName, config }: { productSlug?: 
     if (!productSlug && f.details.trim().length < 10)
       return setError(tx('Tell us a little about what you need.', 'Cuéntanos un poco qué necesitas.', "Conte um pouco sobre o que você precisa."));
     setBusy(true);
-    const source = typeof window !== 'undefined' ? window.location.search.slice(0, 200) || 'direct' : 'app';
+    const source = orderSource();
     const { data, error: err } = await createOrder({
       p_customer_name: f.name,
       p_email: f.email,
